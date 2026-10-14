@@ -2,7 +2,7 @@
 
 Other libraries draw brackets. This page says what each one's own README and package say, read on 2026-10-13, so that a reader can choose. Nothing here was run, and only ideas were taken from these projects, never code. A blank means the README does not say.
 
-| | Taisen | [brackets-viewer.js](https://github.com/Drarig29/brackets-viewer.js) | [react-tournament-brackets](https://github.com/g-loot/react-tournament-brackets) | [react-brackets](https://github.com/mohux/react-brackets) | [bracketry](https://github.com/sbachinin/bracketry) | [jquery-bracket](https://github.com/teijo/jquery-bracket) |
+| | Taisen Brackets | [brackets-viewer.js](https://github.com/Drarig29/brackets-viewer.js) | [react-tournament-brackets](https://github.com/g-loot/react-tournament-brackets) | [react-brackets](https://github.com/mohux/react-brackets) | [bracketry](https://github.com/sbachinin/bracketry) | [jquery-bracket](https://github.com/teijo/jquery-bracket) |
 | --- | --- | --- | --- | --- | --- | --- |
 | Needs | nothing: functions return strings | nothing (vanilla JS; i18next for translation) | React | React | nothing stated | jQuery |
 | What it draws | an SVG string, with a table beside it | a bracket in the page (round robin, single and double elimination) | an SVG of the matches (single and double elimination), with optional pan and zoom | a `<Bracket>` component (single, two-sided single, double by custom seeds); a swipeable view below a breakpoint | a bracket in the browser (single elimination; third-place matches) | a bracket in the page (single and double elimination) |
@@ -28,7 +28,7 @@ Where a README and a package's metadata disagree on the licence (two of them do)
 - **Double elimination.** brackets-viewer.js, react-tournament-brackets and jquery-bracket draw it. Taisen does not (see the roadmap).
 - **A component for your framework.** react-tournament-brackets and react-brackets are React components, with custom renderers for a box.
 
-## Where Taisen goes further
+## Where Taisen Brackets goes further
 
 - **It reads games, not a tree.** A series, two legs, a replay and a shoot-out are ties with a result of their own, and the winner, the score drawn and the note ("in 7", "a.e.t.", "pens 4–2") come from them.
 - **It works without a browser.** The same call draws the bracket in a build step, a worker, a server or a script that makes pictures for a social card.

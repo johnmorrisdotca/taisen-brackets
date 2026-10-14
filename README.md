@@ -1,4 +1,4 @@
-<h1 align="center">Taisen <sub>対戦</sub></h1>
+<h1 align="center">Taisen Brackets <sub>対戦</sub></h1>
 
 <p align="center"><strong>Knockout brackets as SVG, from a list of ties.</strong><br>
 Give it the games, series, two-legged ties or replays of a tournament and it works out the rounds, the halves, the byes and who feeds whom, then draws the bracket: two halves that meet at the final, or one tree left to right, wide, square or tall for a phone, in light, dark or a gold-on-navy poster look, with each team's logo or round flag, the champion in the centre, and a table for readers the drawing does not serve. NHL, NBA, MLB, NFL, CFL and World Cup formats by era. One function, no dependencies.</p>

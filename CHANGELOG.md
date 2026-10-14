@@ -6,7 +6,11 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
-## [0.1.0]
+## [0.1.1] - 2026-10-14
+
+- The title is now "Taisen Brackets 対戦" in the README, the demo and the package description, matching the package name.
+
+## [0.1.0] - 2026-10-14
 
 First version.
 
@@ -21,5 +25,6 @@ First version.
 - A demo with real results read from spxn.com (the NHL 2024 playoffs, the World Cups of 2022, 1938 and 2026, the MLB 2022 postseason; sources and terms in NOTICE.md), two made-up examples (two-legged ties, a 32-team field) and a flags-only poster of the 2026 World Cup, in a playground that changes the size, look and shape.
 - Playoff formats checked against English Wikipedia, each era citing its articles (docs/formats.md). The year is the year the playoffs are played in.
 
-[Unreleased]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.1.1...HEAD
+[0.1.1]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/johnmorrisdotca/taisen-brackets/releases/tag/v0.1.0

@@ -1,10 +1,10 @@
-# Migrating spxn.com to Taisen
+# Migrating spxn.com to Taisen Brackets
 
 spxn.com (the `spx-stats` repository, `web/`) draws its playoff brackets and World Cup knockouts with its own layout: `web/src/lib/bracket.ts`, `web/src/components/BracketFrame.tsx`, the adapters `seriesTies()` in `web/src/lib/series.ts` and `knockoutOf()` in `web/src/lib/soccerBracket.ts`, the box components in `SeasonPlayoffs.tsx` and the soccer page, and the CSS in `series.css`. This package is that layout with the sport taken out and a drawing added. This note says how `web/` would use it. Nothing in `spx-stats` has been changed.
 
 ## What maps to what
 
-| spxn | Taisen |
+| spxn | Taisen Brackets |
 | --- | --- |
 | `Tie<K>` (`teams`, `winner`, `start`) | `Matchup` (`sides`, `winner`, `date`) |
 | `buildBracket(ties, round, confOf)` | `layoutBracket({ matchups, teams })`: `round` is `Matchup.round`, `confOf` is `Team.group` |
