@@ -32,11 +32,27 @@ export interface PlayoffFormat {
   /** The names of the two halves, left first, or null where the bracket is not split in two. */
   groups: readonly [string, string] | null;
   note?: string;
+  /** The league's default emblem id (`LEAGUE_EMBLEMS`), for `trophy` with an `emblems` renderer. */
+  emblem: string;
   /** The English Wikipedia articles this entry was checked against (CC BY-SA 4.0; only facts are used). */
   sources: readonly string[];
 }
 
-interface Era extends Omit<PlayoffFormat, "year" | "to"> { to: number | null; years?: readonly number[]; except?: readonly number[] }
+/**
+ * The emblem each league's champion gets by default: an id of `@johnmorrisdotca/dougu-sports` (generic forms, no league's own mark). Pass it as
+ * `trophy` together with an `emblems` renderer; with no renderer it draws nothing. A cup for MLS because the MLS Cup is one.
+ */
+export const LEAGUE_EMBLEMS: Readonly<Record<League, string>> = Object.freeze({
+  nhl: "trophy:hockey-cup",
+  nba: "trophy:basketball",
+  mlb: "trophy:baseball",
+  nfl: "trophy:football",
+  cfl: "trophy:canadian-bowl",
+  mls: "trophy:cup",
+  worldcup: "trophy:soccer-globe",
+});
+
+interface Era extends Omit<PlayoffFormat, "year" | "to" | "emblem"> { to: number | null; years?: readonly number[]; except?: readonly number[] }
 
 /** The address of English Wikipedia articles, by title. */
 const wiki = (...titles: string[]) => titles.map((t) => `https://en.wikipedia.org/wiki/${t.replace(/ /g, "_")}`);
@@ -110,10 +126,10 @@ export function playoffFormat(league: League, year: number): PlayoffFormat | nul
   if (!hit) return null;
   const { years: _years, except: _except, ...rest } = hit;
   void _years; void _except;
-  return { ...rest, year };
+  return { ...rest, year, emblem: LEAGUE_EMBLEMS[league] };
 }
 
 /** Every era of a league, oldest first. */
 export function playoffEras(league: League): PlayoffFormat[] {
-  return ERAS[league].map(({ years: _y, except: _e, ...rest }) => { void _y; void _e; return { ...rest, year: rest.from }; });
+  return ERAS[league].map(({ years: _y, except: _e, ...rest }) => { void _y; void _e; return { ...rest, year: rest.from, emblem: LEAGUE_EMBLEMS[league] }; });
 }

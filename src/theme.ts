@@ -42,6 +42,7 @@ function rules(p: Palette, poster: boolean, withFont: boolean): Rule[] {
     [[".tb-initials"], `fill:${v("ink")}`],
     [[".tb-half"], `fill:${v("ink")}`],
     [[".tb-gold"], `fill:${v("gold")}`],
+    [[".tb-emblem"], `color:${v("ink")}`],
     [[".tb-champ .tb-ring"], `stroke:${v("gold")};stroke-width:3`],
     [[".tb-champ-label"], `fill:${v("gold")}`],
     [[".tb-halo"], `paint-order:stroke;stroke:${v("bg")};stroke-width:4px;stroke-linejoin:round`],

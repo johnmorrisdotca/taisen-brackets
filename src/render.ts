@@ -1,7 +1,7 @@
 import type { BracketInput, BracketLayout, Detail, DrawOptions, LayoutBox, Matchup, Size, SizeName, Team, ThemeName, Tie } from "./types.ts";
 import { layoutBracket } from "./layout.ts";
 import { abbrOf, describeTie, noteParts } from "./matchup.ts";
-import { cleanSvg, clipId, drawMark, safeUrl, type MarkContext } from "./marks.ts";
+import { cleanSvg, clipId, drawEmblem, drawMark, hasTrophy as hasTrophyOf, isEmblemId, safeUrl, type MarkContext } from "./marks.ts";
 import { roundLabel } from "./rounds.ts";
 import { styleFor } from "./theme.ts";
 import { esc, fit, hash, num, textWidth } from "./text.ts";
@@ -110,7 +110,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
   const halves = layout.shape === "halves";
   const nc = layout.columns.length;
   const rows = layout.rows;
-  const hasTrophy = !!o.trophy && champ;
+  const hasTrophy = hasTrophyOf(o) && champ;
 
   // ----- slots along the rounds' axis (t): the columns of the left half, the centre, the columns of the right half.
   // Horizontal: t is x. Vertical: t is y, and the left half is the top.
@@ -374,9 +374,11 @@ function championBlock(team: Team, cx: number, top: number, mark: number, trophy
   let y = top;
   if (o.trophy && trophyH) {
     const t = o.trophy.trim();
-    const svg = t.startsWith("<") ? cleanSvg(t) : null;
-    if (svg) out.push(`<svg class="tb-gold" x="${num(cx - trophyH / 2)}" y="${num(y)}" width="${num(trophyH)}" height="${num(trophyH)}" viewBox="${esc(svg.viewBox)}" preserveAspectRatio="xMidYMid meet">${svg.inner}</svg>`);
-    else if (safeUrl(t)) out.push(`<image href="${esc(t)}" x="${num(cx - trophyH / 2)}" y="${num(y)}" width="${num(trophyH)}" height="${num(trophyH)}" preserveAspectRatio="xMidYMid meet"/>`);
+    const emblem = isEmblemId(t) ? drawEmblem(t, Number(num(trophyH)), o) : null;
+    const svg = emblem ? null : t.startsWith("<") ? cleanSvg(t) : null;
+    if (emblem) out.push(`<svg class="tb-emblem" x="${num(cx - trophyH / 2)}" y="${num(y)}" width="${num(trophyH)}" height="${num(trophyH)}" viewBox="${esc(emblem.viewBox)}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${emblem.inner}</svg>`);
+    else if (svg) out.push(`<svg class="tb-gold" x="${num(cx - trophyH / 2)}" y="${num(y)}" width="${num(trophyH)}" height="${num(trophyH)}" viewBox="${esc(svg.viewBox)}" preserveAspectRatio="xMidYMid meet">${svg.inner}</svg>`);
+    else if (!isEmblemId(t) && safeUrl(t)) out.push(`<image href="${esc(t)}" x="${num(cx - trophyH / 2)}" y="${num(y)}" width="${num(trophyH)}" height="${num(trophyH)}" preserveAspectRatio="xMidYMid meet"/>`);
     y += trophyH + 6;
   }
   const cy = y + mark / 2;

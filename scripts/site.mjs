@@ -8,5 +8,7 @@ mkdirSync("site", { recursive: true });
 cpSync("demo", "site", { recursive: true, filter: (from) => !/\.d\.ts$/.test(from) });
 // The declarations are for editors, not for a browser.
 cpSync("dist", "site/dist", { recursive: true, filter: (from) => !/\.d\.ts$/.test(from) });
+// The trophies of the demo: the emblems package's compiled files, loaded one module per emblem.
+cpSync("node_modules/@johnmorrisdotca/dougu-sports/dist", "site/dougu-sports", { recursive: true, filter: (from) => !/\.d\.ts$/.test(from) });
 writeFileSync("site/index.html", renderIndex());
 console.log("site/ is ready");

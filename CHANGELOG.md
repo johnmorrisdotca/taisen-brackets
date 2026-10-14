@@ -6,6 +6,23 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-10-14
+
+### Added
+
+- **Emblems for the trophy.** The `trophy` option also takes an emblem id such as `"trophy:hockey-cup"`, drawn by a function passed as the new `emblems` option: any `(id, { style, size, tint, theme }) => svg`, such as `renderEmblem` from `@johnmorrisdotca/dougu-sports/emblems`. The renderer is asked for the size the trophy has in the drawing and for `theme: "light"` or `"dark"` in those looks (`"dark"` for `poster`), else `"inherit"`; `emblemStyle` (`metal`, `line`, `color`) and `emblemTint` are passed on. What it returns is cleaned like any inline SVG, drawn in a nested `<svg class="tb-emblem">` that takes its ink from `--tb-ink`, and its English `<title>` is left out. With no renderer an emblem id draws nothing and takes no room; a renderer that throws or returns something that is not an `<svg>` draws no trophy.
+- `LEAGUE_EMBLEMS` and `PlayoffFormat.emblem`: each league's default emblem (NHL `trophy:hockey-cup`, NBA `trophy:basketball`, MLB `trophy:baseball`, NFL `trophy:football`, CFL `trophy:canadian-bowl`, MLS `trophy:cup`, World Cup `trophy:soccer-globe`), used only when a renderer is plugged in; `isEmblemId(value)`; the types `EmblemRenderer`, `EmblemRequest` and `EmblemStyle`.
+- `@johnmorrisdotca/dougu-sports` as an optional peer dependency (and a pinned development dependency, for the tests and the demo). The package still has no dependencies, imports nothing from it, and an inline SVG or an address given as `trophy` is drawn exactly as before.
+- The demo draws each league's emblem for its champion, with a "Trophy" switch and a Metal, Line or Colour choice; the emblems are loaded one module each from the Dougu Sports files the Pages build copies beside the page.
+
+### Changed
+
+- Every drawing's stylesheet has one more rule, `.tb-emblem{color:var(--tb-ink, …)}`.
+
+### Fixed
+
+- `docs/formats.md` titled the MLS section "undefined".
+
 ## [0.2.1] - 2026-10-14
 
 ### Added
@@ -52,7 +69,8 @@ First version.
 - A demo with real results read from spxn.com (the NHL 2024 playoffs, the World Cups of 2022, 1938 and 2026, the MLB 2022 postseason; sources and terms in NOTICE.md), two made-up examples (two-legged ties, a 32-team field) and a flags-only poster of the 2026 World Cup, in a playground that changes the size, look and shape.
 - Playoff formats checked against English Wikipedia, each era citing its articles (docs/formats.md). The year is the year the playoffs are played in.
 
-[Unreleased]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.2.1...HEAD
+[Unreleased]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.1.0...v0.1.1

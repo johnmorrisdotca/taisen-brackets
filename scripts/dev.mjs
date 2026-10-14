@@ -15,8 +15,10 @@ const TYPES = { ".html": "text/html; charset=utf-8", ".js": "text/javascript; ch
 createServer(async (request, response) => {
   const path = decodeURIComponent(new URL(request.url ?? "/", "http://localhost").pathname);
   const rel = normalize(path === "/" ? "/index.html" : path).replace(/^([/\\])+/, "");
-  const base = rel.startsWith("dist/") ? root : join(root, "demo");
-  const file = join(base, rel);
+  // The demo's trophies come from the emblems package (a dev dependency), served at /dougu-sports/ as the Pages build copies them.
+  const emblems = rel.startsWith("dougu-sports/");
+  const base = emblems ? join(root, "node_modules", "@johnmorrisdotca", "dougu-sports", "dist") : rel.startsWith("dist/") ? root : join(root, "demo");
+  const file = join(base, emblems ? rel.slice("dougu-sports/".length) : rel);
   if (!file.startsWith(root)) { response.writeHead(403).end("no"); return; }
   try {
     const body = rel === "index.html" ? Buffer.from(renderIndex()) : await readFile(file);

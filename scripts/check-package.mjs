@@ -57,6 +57,14 @@ if (Object.keys(pkg.dependencies ?? {}).length > 0) {
   process.exit(1);
 }
 console.log("ok   no runtime dependencies");
+// The emblems package is an optional peer that the caller passes in as a function: nothing that ships may import it.
+for (const file of inTarball) {
+  if (file.endsWith(".js") && /(?:from|import\()\s*["'][^"']*dougu-sports/.test(readFileSync(join(root, file), "utf8"))) {
+    console.error(`FAIL ${file} imports @johnmorrisdotca/dougu-sports; it is an optional peer, passed in by the caller`);
+    process.exit(1);
+  }
+}
+console.log("ok   nothing in the tarball imports the emblems package");
 
 // 3. Install it into an empty project.
 const project = join(scratch, "project");

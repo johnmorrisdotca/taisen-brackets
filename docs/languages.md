@@ -58,6 +58,7 @@ const spain = defineLocale("es-ES", { tag: "es-ES", words: { pens: "penaltis", p
 - **Numbers and dates** are written by `Intl` for the language (`voiceOf(...).number`, `.date`): *Dec 18, 2022*, *18 déc. 2022*, *2022/12/18*, *18 dic 2022*, *18.12.2022*.
 - **A title or a subtitle** (`title`, `subtitle`) is your text, not the package's: the demo gives each language's Wikipedia title of the World Cup for the World Cup examples (and the subtitle of the poster in each language), and a name that needs no translation (`NHL 2024`) for the leagues. Those strings are the demo's and were not read by a reviewer.
 - **Capitals** follow the language's rules (`toLocaleUpperCase`), and Japanese is never upper-cased.
+- **Trophy emblems** (`emblems`, `trophy: "trophy:hockey-cup"`) add no word to the five languages: an emblem is a picture, and its own `<title>` (English, and Japanese in its package) is left out of the drawing, whose description already names the champion in the bracket's language. The demo's new controls ("Trophy", "Metal", "Line", "Colour") are English like the rest of the playground's controls; none of them was translated or read by a reviewer, so French, Japanese, Spanish and German have nothing new to review for this feature.
 
 ## Every round name
 

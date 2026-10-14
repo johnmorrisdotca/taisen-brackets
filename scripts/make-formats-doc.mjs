@@ -4,9 +4,9 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
-import { LEAGUES, playoffEras } from "../dist/index.js";
+import { LEAGUES, LEAGUE_EMBLEMS, playoffEras } from "../dist/index.js";
 
-const TITLE = { nhl: "NHL (Stanley Cup playoffs)", nba: "NBA", mlb: "MLB", nfl: "NFL", cfl: "CFL", worldcup: "FIFA World Cup" };
+const TITLE = { nhl: "NHL (Stanley Cup playoffs)", nba: "NBA", mlb: "MLB", nfl: "NFL", cfl: "CFL", mls: "MLS", worldcup: "FIFA World Cup" };
 
 export function formatsPage() {
   const out = [
@@ -28,7 +28,7 @@ export function formatsPage() {
     "",
   ];
   for (const league of LEAGUES) {
-    out.push(`## ${TITLE[league]}`, "", "| Years | Teams | Byes | Halves | Rounds (series length) | Note | Checked against |", "| --- | --- | --- | --- | --- | --- | --- |");
+    out.push(`## ${TITLE[league]}`, "", `Default trophy emblem (\`LEAGUE_EMBLEMS.${league}\`, for \`trophy\` with an \`emblems\` renderer): \`${LEAGUE_EMBLEMS[league]}\`.`, "", "| Years | Teams | Byes | Halves | Rounds (series length) | Note | Checked against |", "| --- | --- | --- | --- | --- | --- | --- |");
     for (const era of playoffEras(league)) {
       const years = era.to === null ? `${era.from} on` : era.to === era.from ? `${era.from}` : `${era.from}–${era.to}`;
       const rounds = era.rounds.map((r) => (r.bestOf === null ? r.name : `${r.name} (${r.bestOf})`)).join(", ");

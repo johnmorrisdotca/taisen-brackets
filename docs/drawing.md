@@ -28,7 +28,9 @@ console.log(svg.includes('viewBox="0 0 1080 1080"')); // true
 | `roundLabels` | the names over the columns | `true` |
 | `scores`, `seeds` | show the scores, show seeds before names | `true`, `false` |
 | `markShape` | `round`, `square`, `none` | `round` |
-| `champion`, `trophy` | the champion in the centre, and your trophy (inline SVG or an address) | `true`, none |
+| `champion`, `trophy` | the champion in the centre, and your trophy (inline SVG, an address, or an emblem id such as `"trophy:hockey-cup"` with `emblems`) | `true`, none |
+| `emblems` | the function that draws an emblem id: `(id, { style, size, tint, theme }) => svg`, such as `renderEmblem` of `@johnmorrisdotca/dougu-sports/emblems`; with none, an emblem id draws nothing | none |
+| `emblemStyle`, `emblemTint` | the emblem's style (`metal`, `line`, `color`) and the colour of its main part | `metal`, none |
 | `thirdPlace` | `below`, `hide` | `below` |
 | `winnerHighlight` | bold the winner and ring its mark, quiet the loser | `true` |
 | `words` | replace any of the package's words (`WORDS`) | English |
@@ -47,6 +49,10 @@ On a phone the rounds are rows: the first round at the top and, mirrored, at the
 ## Marks
 
 A team's `mark` is an image address or inline SVG. An inline mark is cleaned (`cleanSvg`) and written once as a `<symbol>`, then used wherever the team appears: a World Cup of 32 round flags carries one copy of each flag and a short `<use>` wherever a team appears. An address must be http(s), relative or `data:image/` (`safeUrl`). A team with no mark, or whose mark is refused, is its initials on its `color` (or the look's plain colour).
+
+## Trophies and emblems
+
+`trophy` is inline SVG (cleaned, drawn with the look's gold), an image address, or an emblem id. An emblem id is a `group:name` string such as `"trophy:hockey-cup"` or `"medal:gold/line"` (`isEmblemId`); the drawing hands it to the `emblems` function with `{ style, size, tint, theme }` and draws the SVG it returns, cleaned like an inline mark and with its `<title>` removed, in a nested `<svg class="tb-emblem">` that takes its ink from `--tb-ink`. `theme` is `light` or `dark` in those looks (`dark` for `poster`) and `inherit` otherwise. Taisen never imports an emblem package: `@johnmorrisdotca/dougu-sports` is an optional peer, and `renderEmblem` from its `/emblems` entry is the function to pass. With no `emblems`, or one that throws or returns something that is not an `<svg>`, an emblem id draws no trophy. `LEAGUE_EMBLEMS` (and `playoffFormat(league, year).emblem`) names each league's default.
 
 ## Looks and custom properties
 

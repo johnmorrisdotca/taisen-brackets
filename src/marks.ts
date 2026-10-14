@@ -1,4 +1,4 @@
-import type { Team } from "./types.ts";
+import type { DrawOptions, EmblemRequest, Team } from "./types.ts";
 import { abbreviate, esc, num } from "./text.ts";
 
 /**
@@ -24,6 +24,37 @@ export function cleanSvg(markup: string): { viewBox: string; inner: string } | n
     .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
     .replace(/(\s(?:xlink:)?href\s*=\s*)(["'])\s*javascript:[^"']*\2/gi, "$1$2#$2");
   return { viewBox: box, inner };
+}
+
+const EMBLEM_ID = /^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9-]*(?:\/(?:metal|line|color))?$/;
+
+/** Whether a `trophy` value names an emblem (`"trophy:hockey-cup"`, `"medal:gold/line"`) rather than being inline SVG or an image address. */
+export function isEmblemId(value: string): boolean {
+  return EMBLEM_ID.test(value.trim());
+}
+
+/** Whether `drawBracket` has something to draw for this `trophy` and `emblems`: an emblem id needs a renderer; SVG and addresses do not. */
+export function hasTrophy(o: Pick<DrawOptions, "trophy" | "emblems">): boolean {
+  const t = o.trophy?.trim();
+  if (!t) return false;
+  return isEmblemId(t) ? typeof o.emblems === "function" : true;
+}
+
+/**
+ * The emblem a renderer makes for an id, cleaned like any inline SVG and with its `<title>` removed (the drawing says what it shows in its own
+ * words), or `null` when the renderer throws or returns something that is not an `<svg>`. The look decides the ink: `light` and `dark` are
+ * forced, `poster` is dark, and `auto` and `none` are `inherit`, which the drawing's stylesheet colours from `--tb-ink`.
+ */
+export function drawEmblem(id: string, size: number, o: Pick<DrawOptions, "emblems" | "emblemStyle" | "emblemTint" | "theme">): { viewBox: string; inner: string } | null {
+  if (typeof o.emblems !== "function") return null;
+  const look = o.theme ?? "auto";
+  const request: EmblemRequest = { style: o.emblemStyle ?? "metal", size, theme: look === "light" ? "light" : look === "dark" || look === "poster" ? "dark" : "inherit" };
+  if (o.emblemTint) request.tint = o.emblemTint;
+  let markup: unknown;
+  try { markup = o.emblems(id.trim(), request); } catch { return null; }
+  if (typeof markup !== "string") return null;
+  const svg = cleanSvg(markup);
+  return svg ? { viewBox: svg.viewBox, inner: svg.inner.replace(/<title\b[\s\S]*?<\/title\s*>/gi, "") } : null;
 }
 
 /** Readable text on a team colour: white on a dark one, near-black on a light one; `null` when the colour is not a hex one this can read. */

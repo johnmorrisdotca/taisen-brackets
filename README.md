@@ -93,7 +93,7 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **Wide, square, phone**: 1200 by 675, 1080 by 1080, or 390 wide and as tall as it needs; the rounds are columns, or rows on a phone. Boxes show names and scores, abbreviations, or only the marks, whichever fits.
 - **Light, dark, poster**: every colour is a CSS custom property with a fallback, so the drawing follows the page's `prefers-color-scheme` or `data-theme` and can be restyled from outside.
 - **Team marks you supply**: a logo address or inline SVG, drawn round or square; a team with none is its initials on a colour. Round flags from [Hata](https://github.com/johnmorrisdotca/hata) go in as they are.
-- **The champion in the centre**, with a slot for your trophy.
+- **The champion in the centre**, with a slot for your trophy: your own SVG or image, or an emblem from [Dougu Sports](https://github.com/johnmorrisdotca/dougu-sports) (a hockey cup, a basketball trophy, a globe) through an optional plug-in, with no dependency added.
 - **Accessible**: `role="img"` with a title and a description, a tooltip sentence on every tie, and `bracketTable`.
 - **Formats by era**: NHL, NBA, MLB, NFL, CFL, MLS and FIFA World Cup round names, series lengths and byes.
 - **Five languages**: English, French, Japanese, Spanish and German, for every word the drawing, the tooltips, the description and the table write, with the football terms of each language; countries named by `Intl` from their ISO code; numbers and dates by `Intl`. Add a language of your own.
@@ -288,6 +288,24 @@ const svg = drawBracket([{ sides: ["A", "B"], score: [2, 1] }], { trophy });
 console.log(svg.includes('class="tb-gold"')); // true
 ```
 
+### Emblems for the trophy
+
+The trophy can also be an emblem id, such as `"trophy:hockey-cup"`, drawn by a function you plug in as `emblems`: any function from an id and a request (`{ style, size, tint, theme }`) to an SVG string. [`@johnmorrisdotca/dougu-sports`](https://github.com/johnmorrisdotca/dougu-sports) ([gallery](https://johnmorrisdotca.github.io/dougu-sports/)) has one, `renderEmblem`, and a cup, a basketball, a baseball, a football, a Canadian-football bowl and a soccer globe among its trophies. Taisen does not import it: it is an optional peer dependency, and the package has no dependencies of its own.
+
+```js
+import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+import { renderEmblem } from "@johnmorrisdotca/dougu-sports/emblems";
+
+const data = [{ sides: ["Aurora", "Harbour"], score: [2, 1] }];
+const svg = drawBracket(data, { emblems: renderEmblem, trophy: "trophy:hockey-cup" });
+console.log(svg.includes('class="tb-emblem"')); // true
+```
+
+- **The look follows the bracket.** The renderer is asked for the size the trophy has in the drawing, and for `theme: "light"` or `"dark"` when the bracket is in that look (`"dark"` for `poster`), else `"inherit"`, where the drawing's own colour (`--tb-ink`) is the ink. `emblemStyle` (`"metal"`, the default, `"line"` or `"color"`) and `emblemTint` (a hex colour) are passed on.
+- **Each league has a default.** `LEAGUE_EMBLEMS` names one (`nhl` the hockey cup, `nba` the basketball, `mlb` the baseball, `nfl` the football, `cfl` the Canadian bowl, `mls` a cup, `worldcup` the soccer globe), and `playoffFormat(league, year).emblem` carries it: `trophy: playoffFormat("nhl", 2024).emblem`.
+- **Without a renderer** an emblem id draws nothing and takes no room, and nothing throws; a trophy that is inline SVG or an address is drawn exactly as before, whatever `emblems` is. A renderer that throws, or returns something that is not an `<svg>`, draws no trophy. What it returns is cleaned like any inline SVG, and the emblem's own `<title>` (English only) is left out; the drawing's description names the champion in the bracket's language. `isEmblemId(value)` tells an emblem id from SVG and from an address.
+- **No global switch.** There is no module-level setting: a drawing is a pure function of its options, so the renderer is passed to each call.
+
 ### A table for readers the picture does not serve
 
 ```js
@@ -319,14 +337,15 @@ The string is built from your data, with every name escaped; do not put untruste
 
 Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part from `/layout`, the formats from `/presets`. The types are in the package; each function's doc comment has its details.
 
-- `drawBracket(input, options?)`: the SVG string. `input` is a list of matchups, `{ matchups, teams }` or a layout. Options: `size`, `orientation`, `shape`, `detail`, `theme`, `background`, `title`, `subtitle`, `roundNames`, `roundLabels`, `scores`, `seeds`, `markShape`, `champion`, `trophy`, `thirdPlace`, `winnerHighlight`, `locale`, `words`, `teamName`, `groupOrder`, `id`, `className`.
+- `drawBracket(input, options?)`: the SVG string. `input` is a list of matchups, `{ matchups, teams }` or a layout. Options: `size`, `orientation`, `shape`, `detail`, `theme`, `background`, `title`, `subtitle`, `roundNames`, `roundLabels`, `scores`, `seeds`, `markShape`, `champion`, `trophy`, `emblems`, `emblemStyle`, `emblemTint`, `thirdPlace`, `winnerHighlight`, `locale`, `words`, `teamName`, `groupOrder`, `id`, `className`.
 - `layoutBracket(input, options?)`: the rounds, halves, rows, byes and results, without drawing. `shape: "ltr"` and `groupOrder` are its options.
 - `bracketTable(input, options?)`: the HTML table.
 - `describeBracket(input, options?)`: the sentence a screen reader gets.
 - `singleElimination(teams, options?)`, `advanceWinners(matchups)`, `standardSeeds(size)`: brackets for any number of teams.
 - `matchupsFromGames(games, options)`: matchups from a flat list of games.
 - `resolveMatchup`, `collectTeams`, `describeTie`, `noteParts`, `noteLong`: one tie's result, the teams of a bracket, a tie in a sentence.
-- `playoffFormat(league, year)`, `playoffEras(league)`, `LEAGUES`: the formats by era (`nhl`, `nba`, `mlb`, `nfl`, `cfl`, `mls`, `worldcup`).
+- `playoffFormat(league, year)`, `playoffEras(league)`, `LEAGUES`: the formats by era (`nhl`, `nba`, `mlb`, `nfl`, `cfl`, `mls`, `worldcup`). `LEAGUE_EMBLEMS`: each league's default emblem id.
+- `isEmblemId(value)`, and the types `EmblemRenderer`, `EmblemRequest`, `EmblemStyle`: the trophy emblems (see "Emblems for the trophy").
 - `roundName(remaining)`, `roundNamesFor(count)`, `roundLabel(layout, round, names, words)`: round names.
 - `LOCALES`, `LOCALE_CODES`, `defineLocale`, `localeOf`, `voiceOf`, `countryName`: the languages (see Languages), a language of your own, the formats and the names of countries from `Intl`. `localizedLayout(layout, voice)` is a layout with the team names in a language.
 - `SIZES`, `THEMES`, `WORDS`, `VERSION`: the sizes, the looks' colours, the English words, the version.

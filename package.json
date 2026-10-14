@@ -1,6 +1,6 @@
 {
   "name": "@johnmorrisdotca/taisen-brackets",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Taisen Brackets 対戦, knockout brackets as SVG: from a list of ties (games, best-of series, two legs, replays, byes, a third-place match) it works out the rounds and halves and draws the bracket with the halves meeting at the final, or left to right, wide, square or for a phone, in light, dark or a gold-on-navy poster look, with each team's logo or round flag, the champion in the centre, and an accessible table. NHL, NBA, MLB, NFL, CFL, MLS and World Cup formats by era, in English, French, Japanese, Spanish and German. Zero dependencies.",
   "keywords": [
     "bracket",
@@ -90,8 +90,17 @@
     "test:demo": "pnpm site && playwright test",
     "screenshots": "pnpm site && node scripts/screenshots.mjs"
   },
+  "peerDependencies": {
+    "@johnmorrisdotca/dougu-sports": ">=0.1.0 <1"
+  },
+  "peerDependenciesMeta": {
+    "@johnmorrisdotca/dougu-sports": {
+      "optional": true
+    }
+  },
   "devDependencies": {
     "@eslint/js": "^9.0.0",
+    "@johnmorrisdotca/dougu-sports": "0.1.0",
     "@johnmorrisdotca/hata": "1.5.0",
     "@playwright/test": "^1.63.0",
     "@types/node": "^24.0.0",

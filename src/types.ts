@@ -295,6 +295,23 @@ export interface Size {
 /** How much a box shows: both names and scores, an abbreviation and the score, or only the marks. */
 export type Detail = "auto" | "full" | "compact" | "mark";
 
+/** How an emblem is drawn; the names are those of `@johnmorrisdotca/dougu-sports`. */
+export type EmblemStyle = "metal" | "line" | "color";
+
+/** What `drawBracket` asks an `emblems` renderer for. */
+export interface EmblemRequest {
+  style: EmblemStyle;
+  /** Width and height in pixels. */
+  size: number;
+  /** The colour of the main part, when `emblemTint` is set. */
+  tint?: string;
+  /** `light` or `dark` for a bracket in that look (`poster` is dark); `inherit` for `auto` and `none`, where the drawing's stylesheet or the page sets the ink. */
+  theme: "inherit" | "light" | "dark";
+}
+
+/** A function from an emblem id and a request to an SVG string; `renderEmblem` of `@johnmorrisdotca/dougu-sports/emblems` is one. */
+export type EmblemRenderer = (id: string, options: EmblemRequest) => string;
+
 export interface DrawOptions extends LayoutOptions {
   /** `wide` 1200 by 675, `square` 1080 by 1080, `phone` 390 wide and as tall as it needs; or a size of your own. Default `wide`. */
   size?: SizeName | { width: number; height?: number | null };
@@ -319,8 +336,21 @@ export interface DrawOptions extends LayoutOptions {
   markShape?: "round" | "square" | "none";
   /** Show the champion in the centre once the final is played. Default true. */
   champion?: boolean;
-  /** A trophy for the centre: inline SVG or an image address. Drawn above the champion. */
+  /**
+   * A trophy for the centre, drawn above the champion: inline SVG, an image address, or (with `emblems`) an emblem id such as
+   * `"trophy:hockey-cup"`. An emblem id with no `emblems` renderer draws nothing and takes no room.
+   */
   trophy?: string;
+  /**
+   * Draws the emblem a `trophy` id names: any function from an id and a request to an SVG string, such as `renderEmblem` from
+   * `@johnmorrisdotca/dougu-sports/emblems`. Called once per champion, with the size the trophy has in the drawing. Its SVG is cleaned
+   * like any inline SVG; a renderer that throws, or returns something that is not an `<svg>`, draws no trophy.
+   */
+  emblems?: EmblemRenderer;
+  /** The style an emblem is drawn in: `metal` (the default), `line` or `color`. */
+  emblemStyle?: EmblemStyle;
+  /** A colour for the emblem's main part (a hex colour or `rgb()`), passed to the renderer as `tint`. */
+  emblemTint?: string;
   /** Where the third-place match goes: `below` the final (the default) or `hide`. */
   thirdPlace?: "below" | "hide";
   /** Highlight the side that went through. Default true. */

@@ -84,6 +84,29 @@ test("the language switcher changes the rounds, the notes and the countries, and
   await expect(page.locator("#stage > svg")).toHaveAttribute("lang", "en");
 });
 
+test("a league's champion gets its emblem, which the Trophy switch and style choice change, and a made-up bracket has none", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/?ex=nhl2024");
+  const emblem = page.locator("#stage > svg .tb-emblem");
+  await expect(emblem).toBeVisible();
+  await expect(page.locator("#code")).toContainText("LEAGUE_EMBLEMS.nhl");
+  await page.locator("#estyle").getByRole("button", { name: "Line", exact: true }).click();
+  expect(page.url()).toContain("estyle=line");
+  await expect(emblem).toBeVisible();
+  await page.getByRole("button", { name: "Trophy", exact: true }).click();
+  await expect(emblem).toHaveCount(0);
+  for (const key of ["nba2024", "mlb2022", "nfl2024", "cfl2024", "mls2024", "wc2022", "poster"]) {
+    await page.goto(`/?ex=${key}`);
+    await expect(page.locator("#stage > svg .tb-emblem")).toBeVisible();
+  }
+  await page.goto("/?ex=generic32");
+  await expect(page.locator("#stage > svg")).toBeVisible();
+  await expect(page.locator("#stage > svg .tb-emblem")).toHaveCount(0);
+  await expect(page.locator("#trophy-chip")).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
 test("every example follows the language, and none overflows the page", async ({ page }) => {
   // Forty-eight page loads: a slow runner needs more than the default thirty seconds.
   test.setTimeout(240_000);

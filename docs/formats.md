@@ -16,6 +16,8 @@ A round's `bestOf` is the length of the series, 1 for a single game. `byes` is t
 
 ## NHL (Stanley Cup playoffs)
 
+Default trophy emblem (`LEAGUE_EMBLEMS.nhl`, for `trophy` with an `emblems` renderer): `trophy:hockey-cup`.
+
 | Years | Teams | Byes | Halves | Rounds (series length) | Note | Checked against |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1975–1979 | 12 | 2 | none | Preliminary Round (3), Quarterfinals (7), Semifinals (7), Stanley Cup Final (7) | 12 teams, a best-of-three preliminary round. Division winners had a bye; the second and third placed teams played a preliminary round. | [1977 Stanley Cup playoffs](https://en.wikipedia.org/wiki/1977_Stanley_Cup_playoffs), [Stanley Cup playoffs](https://en.wikipedia.org/wiki/Stanley_Cup_playoffs) |
@@ -29,6 +31,8 @@ A round's `bestOf` is the length of the series, 1 for a single game. `byes` is t
 
 ## NBA
 
+Default trophy emblem (`LEAGUE_EMBLEMS.nba`, for `trophy` with an `emblems` renderer): `trophy:basketball`.
+
 | Years | Teams | Byes | Halves | Rounds (series length) | Note | Checked against |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1977–1983 | 12 | 2 | Western / Eastern | First Round (3), Conference Semifinals (7), Conference Finals (7), NBA Finals (7) | 12 teams, a best-of-three first round. Division winners had a bye. | [NBA playoffs](https://en.wikipedia.org/wiki/NBA_playoffs) |
@@ -36,6 +40,8 @@ A round's `bestOf` is the length of the series, 1 for a single game. `byes` is t
 | 2003 on | 16 | 0 | Western / Eastern | First Round (7), Conference Semifinals (7), Conference Finals (7), NBA Finals (7) | 16 teams, best-of-seven throughout. Since 2021 a play-in tournament decides the seventh and eighth seeds of each conference. | [NBA playoffs](https://en.wikipedia.org/wiki/NBA_playoffs) |
 
 ## MLB
+
+Default trophy emblem (`LEAGUE_EMBLEMS.mlb`, for `trophy` with an `emblems` renderer): `trophy:baseball`.
 
 | Years | Teams | Byes | Halves | Rounds (series length) | Note | Checked against |
 | --- | --- | --- | --- | --- | --- | --- |
@@ -50,6 +56,8 @@ A round's `bestOf` is the length of the series, 1 for a single game. `byes` is t
 
 ## NFL
 
+Default trophy emblem (`LEAGUE_EMBLEMS.nfl`, for `trophy` with an `emblems` renderer): `trophy:football`.
+
 | Years | Teams | Byes | Halves | Rounds (series length) | Note | Checked against |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1970–1977 | 8 | 0 | AFC / NFC | Divisional Playoffs (1), Conference Championships (1), Super Bowl (1) | 8 teams | [NFL playoffs](https://en.wikipedia.org/wiki/NFL_playoffs), [1975–76 NFL playoffs](https://en.wikipedia.org/wiki/1975–76_NFL_playoffs) |
@@ -60,17 +68,23 @@ A round's `bestOf` is the length of the series, 1 for a single game. `byes` is t
 
 ## CFL
 
+Default trophy emblem (`LEAGUE_EMBLEMS.cfl`, for `trophy` with an `emblems` renderer): `trophy:canadian-bowl`.
+
 | Years | Teams | Byes | Halves | Rounds (series length) | Note | Checked against |
 | --- | --- | --- | --- | --- | --- | --- |
 | 1996–2026 | 6 | 1 | West / East | Division Semi-Final (1), Division Final (1), Grey Cup (1) | division semi-finals and finals, with a crossover. Three teams of each division qualify and the first-placed team has a bye. A fourth-placed team with a better record than the third-placed team of the other division takes that place (the crossover, since 1996). The league has announced an eight-team format from 2027. | [1996 CFL season](https://en.wikipedia.org/wiki/1996_CFL_season), [2012 CFL season](https://en.wikipedia.org/wiki/2012_CFL_season), [2019 CFL season](https://en.wikipedia.org/wiki/2019_CFL_season), [CFL playoffs](https://en.wikipedia.org/wiki/CFL_playoffs) |
 
-## undefined
+## MLS
+
+Default trophy emblem (`LEAGUE_EMBLEMS.mls`, for `trophy` with an `emblems` renderer): `trophy:cup`.
 
 | Years | Teams | Byes | Halves | Rounds (series length) | Note | Checked against |
 | --- | --- | --- | --- | --- | --- | --- |
 | 2023 on | 18 | 7 | Western / Eastern | Wild Card Round (1), Round One (3), Conference Semifinals (1), Conference Finals (1), MLS Cup (1) | 18 teams, nine a conference: a wild card match, then best of three. The teams ranked 8th and 9th of each conference play one wild card match (settled by a shoot-out if level); the other seven teams skip it. Round One is a best-of-three series (a game level after play is settled by a shoot-out, and counts as a win); the rest are single matches. Earlier seasons had other formats and are not covered. | [MLS Cup Playoffs](https://en.wikipedia.org/wiki/MLS_Cup_Playoffs), [2024 MLS Cup Playoffs](https://en.wikipedia.org/wiki/2024_MLS_Cup_Playoffs) |
 
 ## FIFA World Cup
+
+Default trophy emblem (`LEAGUE_EMBLEMS.worldcup`, for `trophy` with an `emblems` renderer): `trophy:soccer-globe`.
 
 | Years | Teams | Byes | Halves | Rounds (series length) | Note | Checked against |
 | --- | --- | --- | --- | --- | --- | --- |
