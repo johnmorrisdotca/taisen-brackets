@@ -15,6 +15,7 @@ const PINS = [
   { key: "mlb2022", league: "mlb", year: 2022, champion: "Houston Astros", final: [4, 2], teams: 12, ties: 11, rounds: 4, byes: 4, halves: ["American League", "National League"] },
   { key: "nfl2024", league: "nfl", year: 2024, champion: "Philadelphia Eagles", final: [40, 22], teams: 14, ties: 13, rounds: 4, byes: 2, halves: ["American Football Conference", "National Football Conference"] },
   { key: "cfl2024", league: "cfl", year: 2024, champion: "Toronto Argonauts", final: [41, 24], teams: 6, ties: 5, rounds: 3, byes: 2, halves: ["West", "East"] },
+  { key: "mls2024", league: "mls", year: 2024, champion: "LA Galaxy", final: [2, 1], teams: 18, ties: 17, rounds: 5, byes: 2, halves: ["Western Conference", "Eastern Conference"] },
 ] as const;
 
 for (const pin of PINS) {
@@ -74,3 +75,19 @@ for (const pin of PINS) {
     });
   }
 }
+
+test("MLS 2024: a wild card match, a best-of-three round one settled with shoot-outs counting as wins, then single matches", () => {
+  const layout = T.layoutBracket(data.mls2024);
+  const round = (n: number) => layout.ties.filter((t) => t.round === n);
+  assert.deepEqual([1, 2, 3, 4, 5].map((n) => round(n).length), [2, 8, 4, 2, 1]);
+  assert.ok(round(1).every((t) => t.result.kind === "game" && t.result.pens !== null || t.result.score !== null), "the wild card matches are single games");
+  assert.ok(round(2).every((t) => t.result.kind === "series" && t.result.bestOf === 3), "round one is best of three");
+  assert.ok([3, 4, 5].every((n) => round(n).every((t) => t.result.kind === "game")), "the other rounds are single matches");
+  // Seattle drew both its games with Houston and won both shoot-outs: two wins to none.
+  const seattle = round(2).find((t) => t.sides.some((s) => s?.name === "Seattle Sounders FC"))!;
+  assert.deepEqual(seattle.result.score, seattle.sides[0]!.name === "Seattle Sounders FC" ? [2, 0] : [0, 2]);
+  assert.equal(seattle.result.played, 2);
+  // Seven clubs of each conference skipped the wild card match: the format says so, and so does the layout (the sides no tie fed).
+  const skipped = layout.sides.flatMap((s) => s.boxes).reduce((n, b) => n + b.byes.length, 0);
+  assert.equal(skipped, T.playoffFormat("mls", 2024)!.byes * 2);
+});

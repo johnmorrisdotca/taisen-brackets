@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const examples = ["nhl2024", "nhl1984", "nba2024", "mlb2022", "nfl2024", "cfl2024", "poster", "wc2022", "wc1938", "generic32", "twoLegs"];
+const examples = ["nhl2024", "nhl1984", "nba2024", "mlb2022", "nfl2024", "cfl2024", "mls2024", "poster", "wc2022", "wc1938", "generic32", "twoLegs"];
 
 test("the demo draws a bracket and does not scroll sideways", async ({ page }) => {
   const errors = [];
@@ -53,7 +53,7 @@ test("the table and the call are there, and 44 pixels is the least a control giv
 
 test("a sport picker opens each sport, and the examples of a sport are its editions", async ({ page }) => {
   await page.goto("/");
-  for (const [sport, key, note] of [["NBA", "nba2024", "conferences"], ["NFL", "nfl2024", "Super Bowl"], ["CFL", "cfl2024", "Grey Cup"], ["MLB", "mlb2022", "byes"], ["World Cup", "poster", "poster look"]]) {
+  for (const [sport, key, note] of [["NBA", "nba2024", "conferences"], ["NFL", "nfl2024", "Super Bowl"], ["CFL", "cfl2024", "Grey Cup"], ["MLS", "mls2024", "best-of-three"], ["MLB", "mlb2022", "byes"], ["World Cup", "poster", "poster look"]]) {
     await page.locator("#sport").getByRole("button", { name: sport, exact: true }).click();
     await expect(page.locator("#note")).toContainText(note);
     expect(page.url()).toContain(`ex=${key}`);

@@ -43,6 +43,7 @@ try {
   await shoot("nba-desk-light", "ex=nba2024", { width: 1280, height: 900 });
   await shoot("nfl-desk-light", "ex=nfl2024", { width: 1280, height: 900 });
   await shoot("cfl-desk-light", "ex=cfl2024", { width: 1280, height: 900 });
+  await shoot("mls-desk-light", "ex=mls2024", { width: 1280, height: 900 });
   await shoot("nhl1984-desk-light", "ex=nhl1984", { width: 1280, height: 900 });
   await shoot("poster-desk-ja", "ex=poster&lang=ja", { width: 1280, height: 900 });
   await shoot("hero-desk-fr", "ex=wc2022&lang=fr", { width: 1280, height: 900 });

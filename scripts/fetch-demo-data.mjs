@@ -84,3 +84,12 @@ const nhl1984Align = (await get("alignment?league=eq.nhl&year=eq.1983&select=*")
 file("nhl-1984", `// Made by scripts/fetch-demo-data.mjs from spxn.com's public API (games, alignment), retrieved ${retrieved}; do not edit.
 // Every game of the 1984 Stanley Cup playoffs (the 1983-84 season, which spxn.com calls 1983), with each team's conference (the Campbell and
 // Wales conferences). Source: the NHL (credited "NHL", as spxn.com credits it).`, "NHL_1984", { retrieved, games: nhl1984, alignment: nhl1984Align });
+
+// ----- MLS, from spxn.com's soccer views (league mls): the 2024 MLS Cup Playoffs, and each club's conference.
+const mls = (await get("soccer_matches?tournament_id=eq.mls2024&stage_key=neq.regular&order=match_date.asc,match_id.asc")).map((row) => pick(row, SOCCER));
+const mlsTeams = (await get("mls_season_teams?tournament_id=eq.mls2024&select=team_id,team_name,conference")).map((row) => pick(row, ["team_id", "team_name", "conference"]));
+file("mls-2024", `// Made by scripts/fetch-demo-data.mjs from spxn.com's public API (soccer_matches, mls_season_teams), retrieved ${retrieved}; do not edit.
+// Every match of the 2024 MLS Cup Playoffs, with each club's conference. spxn.com's MLS data is from openfootball/world (CC0,
+// https://github.com/openfootball/world) checked against English Wikipedia (CC BY-SA 4.0, https://en.wikipedia.org/wiki/2024_MLS_Cup_Playoffs).
+// This file is an adaptation of both and is shared under CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/legalcode); the rest of
+// this repository is MIT.`, "MLS_2024", { retrieved, matches: mls, teams: mlsTeams });

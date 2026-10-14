@@ -3,6 +3,7 @@
 // Two examples are made up and say so: the two-legged ties (the clubs do not exist) and the 32-team field.
 import { CFL_2024 } from "./data/cfl-2024.js";
 import { MLB_2022 } from "./data/mlb-2022.js";
+import { MLS_2024 } from "./data/mls-2024.js";
 import { NBA_2024 } from "./data/nba-2024.js";
 import { NFL_2024 } from "./data/nfl-2024.js";
 import { NHL_1984 } from "./data/nhl-1984.js";
@@ -50,6 +51,12 @@ const CLUB = {
   "Montréal Canadiens": ["MTL", "#af1e2d"], "Buffalo Sabres": ["BUF", "#002654"], "Quebec Nordiques": ["QUE", "#6cace4"], "Calgary Flames": ["CGY", "#c8102e"],
   "Chicago Blackhawks": ["CHI", "#cf0a2c"], "Minnesota North Stars": ["MNS", "#154734"], "Detroit Red Wings": ["DET", "#ce1126"], "St. Louis Blues": ["STL", "#002f87"],
   "Philadelphia Flyers": ["PHI", "#f74902"],
+  // MLS, 2024
+  "Atlanta United FC": ["ATL", "#80000a"], "Charlotte FC": ["CLT", "#1a85c8"], "FC Cincinnati": ["CIN", "#f05323"], "Columbus Crew": ["CLB", "#fedd00"],
+  "CF Montréal": ["MTL", "#0050a4"], "Inter Miami CF": ["MIA", "#f7b5cd"], "New York City FC": ["NYC", "#6cace4"], "New York Red Bulls": ["NYRB", "#ed1e36"],
+  "Orlando City SC": ["ORL", "#633492"], "Colorado Rapids": ["COL", "#862633"], "Houston Dynamo FC": ["HOU", "#ff6b00"], "LA Galaxy": ["LAG", "#00245d"],
+  "Los Angeles FC": ["LAFC", "#c39e6d"], "Minnesota United FC": ["MIN", "#8cd2f4"], "Portland Timbers": ["POR", "#004812"], "Real Salt Lake": ["RSL", "#b30838"],
+  "Seattle Sounders FC": ["SEA", "#5d9732"], "Vancouver Whitecaps FC": ["VAN", "#00245e"],
 };
 
 const g = (a, b, extra = {}) => ({ score: [a, b], ...extra });
@@ -80,6 +87,14 @@ export function build(T, flags = {}) {
   // 1938 had no flags that are today's (Germany's, Czechoslovakia's, the Dutch East Indies'), so its teams are initials.
   const wc1938 = soccer(WORLD_CUPS.wc1938, { stages: ["round_of_16", "quarter", "semi", "final"], third: "third_place" }, false);
   const wc2026 = soccer(WORLD_CUP_2026.matches, { stages: ["round_of_32", "round_of_16", "quarter", "semi", "final"], third: "third_place" }, true);
+
+  // ----- MLS: a wild card match, a best-of-three round one, then single matches. The clubs carry their conference as the halves' group.
+  const mls2024 = (() => {
+    const conference = new Map(MLS_2024.teams.map((t) => [t.team_id, t.conference]));
+    const made = soccer(MLS_2024.matches, { stages: ["wild_card", "round_one", "conference_semi", "conference_final", "final"], series: { round_one: 3 } }, false);
+    const teams = made.teams.map((t) => ({ ...t, abbr: CLUB[t.name]?.[0], color: CLUB[t.name]?.[1], group: conference.get(t.id) }));
+    return { teams, matchups: made.matchups };
+  })();
 
   // ----- A playoff: games become series (the games won of each pair), with the conference of each team.
   const playoff = (data, bestOfByWins) => {
@@ -127,5 +142,5 @@ export function build(T, flags = {}) {
       { id: "F", sides: ["AUR", "CAS"], games: [g(2, 1, { date: "2026-05-30" })] },
     ],
   };
-  return { nhl2024, nba2024, mlb2022, nfl2024, cfl2024, nhl1984, wc2022, wc2026, wc1938, twoLegs };
+  return { nhl2024, nba2024, mlb2022, nfl2024, cfl2024, mls2024, nhl1984, wc2022, wc2026, wc1938, twoLegs };
 }
