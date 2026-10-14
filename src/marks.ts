@@ -1,0 +1,73 @@
+import type { Team } from "./types.ts";
+import { abbreviate, esc, num } from "./text.ts";
+
+/**
+ * Takes inline SVG markup from a caller and makes it safe to put inside a drawing: the outer `<svg>`'s viewBox is kept,
+ * and scripts, event handlers, `<style>`, `<foreignObject>`, comments and `javascript:` addresses are removed. Returns the
+ * viewBox and the inner markup, or `null` when it is not an `<svg>`.
+ */
+export function cleanSvg(markup: string): { viewBox: string; inner: string } | null {
+  const text = markup.trim().replace(/^<\?xml[^>]*>/i, "").replace(/<!DOCTYPE[^>]*>/gi, "").replace(/<!--[\s\S]*?-->/g, "");
+  const open = /^<svg\b([^>]*)>/i.exec(text);
+  if (!open || !/<\/svg>\s*$/i.test(text)) return null;
+  const attrs = open[1];
+  const viewBox = /\bviewBox\s*=\s*["']([^"']+)["']/i.exec(attrs)?.[1];
+  const w = /\bwidth\s*=\s*["']?([\d.]+)/i.exec(attrs)?.[1];
+  const h = /\bheight\s*=\s*["']?([\d.]+)/i.exec(attrs)?.[1];
+  const box = viewBox ?? (w && h ? `0 0 ${w} ${h}` : "0 0 100 100");
+  let inner = text.slice(open[0].length).replace(/<\/svg>\s*$/i, "");
+  inner = inner
+    .replace(/<script\b[\s\S]*?<\/script\s*>/gi, "")
+    .replace(/<script\b[^>]*\/>/gi, "")
+    .replace(/<style\b[\s\S]*?<\/style\s*>/gi, "")
+    .replace(/<foreignObject\b[\s\S]*?<\/foreignObject\s*>/gi, "")
+    .replace(/\son[a-z]+\s*=\s*("[^"]*"|'[^']*'|[^\s>]+)/gi, "")
+    .replace(/(\s(?:xlink:)?href\s*=\s*)(["'])\s*javascript:[^"']*\2/gi, "$1$2#$2");
+  return { viewBox: box, inner };
+}
+
+/** Whether an image address is one a drawing will load: http(s), a relative path, or a `data:image/`. */
+export function safeUrl(url: string): boolean {
+  const u = url.trim();
+  if (/^data:image\/(png|jpe?g|gif|webp|svg\+xml|avif);/i.test(u)) return true;
+  if (/^https?:\/\//i.test(u)) return true;
+  return !/^[a-z][a-z0-9+.-]*:/i.test(u) && !u.startsWith("//") ? u.length > 0 : false;
+}
+
+export interface MarkContext {
+  /** Collects the radii that need a round clip; the drawing writes `<clipPath>` for each. */
+  radii: Set<number>;
+  prefix: string;
+  shape: "round" | "square" | "none";
+}
+
+/** The id of the circular clip for a radius. */
+export const clipId = (prefix: string, r: number) => `${prefix}-c${String(num(r)).replace(".", "_")}`;
+
+/**
+ * A team's mark centred at (cx, cy), `size` across. A logo or flag is clipped to a circle (or left square); a team
+ * with no mark, or one that cannot be used, is its initials on a plain disc. Returns SVG text.
+ */
+export function drawMark(team: Team | null, cx: number, cy: number, size: number, ctx: MarkContext, abbrText?: string): string {
+  const r = size / 2;
+  if (!team) return `<circle class="tb-plain tb-mark" cx="${num(cx)}" cy="${num(cy)}" r="${num(r)}" opacity=".5"/>`;
+  const x = cx - r, y = cy - r;
+  const clip = ctx.shape === "round";
+  if (clip) ctx.radii.add(r);
+  const wrapOpen = clip ? `<g class="tb-mark" transform="translate(${num(cx)} ${num(cy)})" clip-path="url(#${clipId(ctx.prefix, r)})">` : `<g class="tb-mark">`;
+  const ox = clip ? -r : x, oy = clip ? -r : y;
+  const ring = clip ? `<circle class="tb-ring" cx="${num(cx)}" cy="${num(cy)}" r="${num(r)}"/>` : `<rect class="tb-ring" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="2"/>`;
+  const mark = team.mark?.trim();
+  if (mark) {
+    if (mark.startsWith("<")) {
+      const svg = cleanSvg(mark);
+      if (svg) return `${wrapOpen}<svg x="${num(ox)}" y="${num(oy)}" width="${num(size)}" height="${num(size)}" viewBox="${esc(svg.viewBox)}" preserveAspectRatio="xMidYMid slice">${svg.inner}</svg></g>${ring}`;
+    } else if (safeUrl(mark)) {
+      return `${wrapOpen}<image href="${esc(mark)}" x="${num(ox)}" y="${num(oy)}" width="${num(size)}" height="${num(size)}" preserveAspectRatio="xMidYMid slice"/></g>${ring}`;
+    }
+  }
+  const text = (abbrText ?? team.abbr ?? abbreviate(team.name)).slice(0, 3);
+  const fill = team.color ? ` style="fill:${esc(team.color)}"` : "";
+  const shape = clip ? `<circle class="tb-plain" cx="${num(cx)}" cy="${num(cy)}" r="${num(r)}"${fill}/>` : `<rect class="tb-plain" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="2"${fill}/>`;
+  return `<g class="tb-mark">${shape}<text class="tb-initials" x="${num(cx)}" y="${num(cy + size * 0.12)}" font-size="${num(size * 0.36)}" font-weight="700" text-anchor="middle">${esc(text)}</text></g>${ring}`;
+}
