@@ -61,6 +61,9 @@ export type MatchupKind =
   /** A drawn game and the game replayed: the last one decides. */
   | "replay";
 
+/** What takes a side of a tie: a tie's id (its winner, as `feeds` always meant) or `{ tie, result }`, which can name the tie's loser as well (a play-in's loser goes on to a decider). */
+export type Feed = string | { tie: string; result: "winner" | "loser" };
+
 /**
  * One tie: two sides and who went through. Everything but `sides` is optional, so that a bracket can be drawn from
  * what is known (the sides of a first round, a few results) and fill in as the games are played.
@@ -85,7 +88,7 @@ export interface Matchup {
    * Which ties feed this one: `feeds[0]` the one whose winner takes the first side, `feeds[1]` the second. Names the
    * tree outright, for a bracket whose sides are not known yet. Left out, a winner goes on to the next tie its team plays.
    */
-  feeds?: readonly [string | null, string | null];
+  feeds?: readonly [Feed | null, Feed | null];
   /** How the tie is contested. Left out: replay if a game replays, series if there is a `bestOf` or several games, else game. */
   kind?: MatchupKind;
   /** The length of the series (7 for a best-of-seven). */
@@ -106,6 +109,10 @@ export interface Matchup {
   walkover?: boolean;
   /** This is the third-place match: it leads nowhere and is drawn apart. */
   third?: boolean;
+  /** `"play-in"`: a game of a play-in (the NBA's) that is outside the rounds of the tree: its winner (and loser, see `feeds`) goes on to a place the tree's ties name. Drawn by the `playin` layout and, apart, under the other layouts' trees. */
+  stage?: "play-in";
+  /** The side playing at home (0 or 1), for the `at` wording of the `columns` layout: the home side is drawn second, after "AT". Left out, the second side. */
+  home?: 0 | 1;
   note?: string;
   /** The seed tags of the two sides for this tie (`["C1", "WC2"]`), written beside the marks in the road look when `seeds` is on; a side's `Team.tag` is used where this has none. */
   seeds?: readonly [string | number | null, string | number | null];
@@ -147,6 +154,18 @@ export interface Tie {
   note: string | null;
   /** The seed tags given for the tie's sides (`Matchup.seeds`). */
   seeds?: readonly [string | number | null, string | number | null];
+  /** Where each side comes from, when the matchup's `feeds` name it: another tie's winner or its loser. Left out for a tie that says nothing of the kind. */
+  from?: readonly [Source | null, Source | null];
+  /** The tie is a play-in game (`Matchup.stage`). */
+  playIn?: boolean;
+  /** The side at home (`Matchup.home`), when given. */
+  home?: 0 | 1;
+}
+
+/** Where a side of a tie comes from: the winner or the loser of the tie at `tie` (its index). */
+export interface Source {
+  tie: number;
+  result: "winner" | "loser";
 }
 
 /** Where the layout put a tie. */
@@ -198,6 +217,8 @@ export interface BracketLayout {
   /** Ties that lead nowhere near the final, and round-robin games. */
   other: number[];
   robin: number[];
+  /** The play-in games (`Matchup.stage`), kept out of the tree. */
+  playIn: number[];
   /** The third-place match, when there is one. */
   third: number | null;
   /** Where each tie is: a half, the final, or elsewhere; by tie index. */
@@ -307,6 +328,29 @@ export interface Words {
   /** `{name}`. */
   roadChampion: string;
   roadToPlay: string;
+  /** "vs": the tag between two sides of a tie in the `columns` layout, and between the shields. */
+  vs: string;
+  /** The word between the two sides of a tie of the `columns` layout that names the home side (`at: true`): "AT". */
+  at: string;
+  /** `{n}`: a group's name, "Group A" (`n` is the letter). */
+  groupName: string;
+  /** The heads of a group table: played, won, drawn, lost, goal difference, points. */
+  colPlayed: string;
+  colWon: string;
+  colDrawn: string;
+  colLost: string;
+  colDiff: string;
+  colPoints: string;
+  /** The heading over a bracket's play-in games. */
+  playIn: string;
+  /** `{a}`, `{b}`: the seeds of the two games a box takes the winner (or the loser) of: "Winner 9/10", "Loser 7/8". */
+  playInWinner: string;
+  playInLoser: string;
+  /** `{n}`: a seed's place, "Seed 7". */
+  seedSlot: string;
+  /** `{name}`: a side that is the winner or loser of another tie, in a sentence or a table: "Loser of {name}". */
+  winnerOf: string;
+  loserOf: string;
 }
 
 /** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */
@@ -398,7 +442,28 @@ export interface BackgroundImageOptions {
   theme?: "light" | "dark";
 }
 
+/** How the ties are drawn: `tree` (the default) is the bracket as ever; the others are other ways to draw the same ties. */
+export type LayoutName = "tree" | "rows" | "shields" | "update" | "columns" | "playin" | "series" | "groups";
+
 export interface DrawOptions extends LayoutOptions {
+  /**
+   * `tree` (the default): the halves meeting at the final. `rows`: each team a row, its name on the left and its mark on the right, a slot for the result toward the centre. `shields`: marks in shields with "vs",
+   * the matchups on both sides of the trophy. `update`: a compact score-update card. `columns`: tall slots that grow toward the centre, the conferences in two colours, "VS" (or "AT") on a tag, big seed numbers.
+   * `playin`: the play-in games with their winners and losers going on. `series`: a tall card, one line a series ("BOS 4-0 MIA"), the first half above and the second below. `groups`: the group-stage tables.
+   */
+  layout?: LayoutName;
+  /** Big title tiles (the halves' groups: West and East, AFC and NFC) over each half, in any layout: each half's `group` name in the colour of that half. Default false. */
+  headers?: boolean;
+  /** In the `columns` layout, write "AT" (the word `at` of the language) in place of "VS" between the two sides of a tie: the first side is the visitor and the second the home side (`Matchup.home` says otherwise). Default false. */
+  at?: boolean;
+  /** In the `groups` layout, the columns of a group's table: `points` (played, won, drawn, lost, goal difference, points) or `record` (won and lost, softball's). Default `points`. */
+  standings?: "points" | "record";
+  /** In the `groups` layout, how many teams of each group go through: their rows are marked. Default 0, none. */
+  qualify?: number;
+  /** Write the `<style>` into the drawing. Default true; false leaves it out, for a second drawing of a page that shares the first's (`styleScope`, `bracketStyle`). */
+  style?: boolean;
+  /** A class that carries this drawing's rules in place of its own: two drawings with the same `styleScope` take their colours from one `<style>`, and the second can leave it out (`style: false`). A word of letters, digits, `-` and `_`. */
+  styleScope?: string;
   /** `wide` 1200 by 675, `square` 1080 by 1080, `card` 1080 by 1350 (a tall post), `phone` 390 wide and as tall as it needs; or a size of your own. Default `wide`. */
   size?: SizeName | { width: number; height?: number | null };
   /** `horizontal`: the rounds are columns. `vertical`: the rounds are rows, for a tall page. Default horizontal; the phone's is vertical. */

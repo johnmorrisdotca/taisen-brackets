@@ -91,6 +91,8 @@ export interface MarkContext {
   theme?: FlagRequest["theme"];
   /** The flags already asked for, by code, shape and size, so that a renderer is called once for each. */
   flagCache?: Map<string, { viewBox: string; inner: string } | null>;
+  /** Other `<defs>` the drawing's shapes need (the shields' clip), each written once under its id. */
+  defs?: Map<string, string>;
 }
 
 /** Whether an address may be a link in a drawing: http(s), a relative path or a `#` fragment. `javascript:`, `data:` and every other scheme are refused. */
@@ -125,6 +127,7 @@ export function markDefs(ctx: MarkContext): string {
   return [
     ...[...ctx.radii].sort((a, b) => a - b).map((r) => `<clipPath id="${clipId(ctx.prefix, r)}"><circle r="${num(r)}"/></clipPath>`),
     ...[...ctx.symbols.values()].map((s) => `<symbol id="${s.id}" viewBox="${esc(s.viewBox)}" preserveAspectRatio="xMidYMid slice">${s.inner}</symbol>`),
+    ...(ctx.defs ? [...ctx.defs.values()] : []),
   ].join("");
 }
 

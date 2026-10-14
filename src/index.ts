@@ -1,10 +1,12 @@
 export * from "./layout-entry.ts";
-export { drawBracket, describeBracket, localizedLayout, SIZES } from "./render.ts";
+export { drawBracket, describeBracket, localizedLayout, bracketStyle, SIZES, LAYOUTS } from "./render.ts";
+export { groupStandings, groupsTable } from "./groups.ts";
+export type { GroupRow, GroupTable } from "./groups.ts";
 export { bracketTable } from "./table.ts";
 export type { TableOptions } from "./table.ts";
 export { roadToFinal } from "./road.ts";
 export type { RoadChart, RoadDecided, RoadFinal, RoadFinalist, RoadGroupMatch, RoadInput, RoadMatch, RoadOptions, RoadRecord, RoadScore, RoadSize, RoadTeam, RoadTotals } from "./road.ts";
-export { THEMES, ROAD_THEMES } from "./theme.ts";
+export { THEMES, ROAD_THEMES, CONFERENCE_COLORS } from "./theme.ts";
 export type { Palette, RoadPalette } from "./theme.ts";
 export { cleanSvg, safeUrl, safeHref, isEmblemId } from "./marks.ts";
 export { abbreviate } from "./text.ts";

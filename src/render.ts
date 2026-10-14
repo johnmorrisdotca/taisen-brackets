@@ -1,4 +1,4 @@
-import type { BracketInput, BracketLayout, Detail, DrawOptions, LayoutBox, Matchup, Size, SizeName, Team, ThemeName, Tie } from "./types.ts";
+import type { BracketInput, BracketLayout, Detail, DrawOptions, LayoutBox, LayoutName, Matchup, Place, Size, SizeName, Team, ThemeName, Tie } from "./types.ts";
 import { layoutBracket } from "./layout.ts";
 import { abbrOf, describeTie, noteParts } from "./matchup.ts";
 import { cleanSvg, drawEmblem, drawMark, hasTrophy as hasTrophyOf, isEmblemId, markDefs, safeHref, safeUrl, type MarkContext } from "./marks.ts";
@@ -7,6 +7,14 @@ import { styleFor } from "./theme.ts";
 import { resolveBackground } from "./background.ts";
 import { emWidth, esc, fit, hash, num } from "./text.ts";
 import { fill, voiceOf, type Voice } from "./locales.ts";
+import { paintVariant, seriesLineWidth, type PaintEnv, type VariantKind } from "./layouts.ts";
+import { drawGroups } from "./groups.ts";
+import { headTile } from "./furniture.ts";
+import { drawPlayIn } from "./playin.ts";
+
+/** The names of the layouts, the tree first. */
+export const LAYOUTS: readonly LayoutName[] = Object.freeze(["tree", "rows", "shields", "update", "columns", "playin", "series", "groups"] as const);
+const VARIANTS: readonly string[] = ["rows", "shields", "update", "columns", "series"];
 
 /** The sizes by name. A phone's drawing is 390 wide and as tall as the bracket needs; a card is 1080 by 1350, a tall post. */
 export const SIZES: Readonly<Record<SizeName, Size>> = Object.freeze({
@@ -48,6 +56,10 @@ interface Plan {
   markCols: boolean;
   /** Each mark's three letters are written under it in such a box. */
   codes: boolean;
+  /** The layout that draws a tie its own way (`rows`, `shields`, `update`, `columns`, `series`), or `null` for the tree's boxes. */
+  variant: VariantKind | null;
+  /** The widest name, and the widest three-letter name, in ems. */
+  em: { full: number; abbr: number; tag: number };
 }
 
 interface Seg { x0: number; y0: number; x1: number; y1: number }
@@ -129,43 +141,86 @@ export function describeBracket(input: BracketLayout | readonly Matchup[] | Brac
  */
 export function drawBracket(input: BracketLayout | readonly Matchup[] | BracketInput, options: DrawOptions = {}): string {
   const v = voiceOf(options);
-  const layout = localizedLayout(isLayout(input) ? input : layoutBracket(input, options), v);
+  const kind: LayoutName = options.layout ?? "tree";
+  if (!LAYOUTS.includes(kind)) throw new RangeError(`taisen-brackets: unknown layout ${JSON.stringify(String(kind))}: use one of ${LAYOUTS.join(", ")}`);
+  // The series card lists the east first: with no order asked for, a group named east goes before one named west.
+  const groupOrder = kind === "series" && options.groupOrder === undefined && !isLayout(input) ? eastFirst(input) : options.groupOrder;
+  const layout = localizedLayout(isLayout(input) ? input : layoutBracket(input, groupOrder ? { ...options, groupOrder } : options), v);
   const theme: ThemeName = options.theme ?? "auto";
-  const sizeName = typeof options.size === "string" || options.size === undefined ? options.size ?? "wide" : null;
+  // The series card is a tall card unless a size is asked for.
+  const sizeName = typeof options.size === "string" || options.size === undefined ? options.size ?? (kind === "series" ? "card" : "wide") : null;
   const size: Size = sizeName ? SIZES[sizeName] : { width: (options.size as { width: number }).width, height: (options.size as { height?: number | null }).height ?? null };
-  const orientation = options.orientation && options.orientation !== "auto" ? options.orientation : sizeName === "phone" || sizeName === "card" || (size.height !== null && size.width < size.height * 0.8) ? "vertical" : "horizontal";
+  const orientation = options.orientation && options.orientation !== "auto" ? options.orientation : kind === "series" || sizeName === "phone" || sizeName === "card" || (size.height !== null && size.width < size.height * 0.8) ? "vertical" : "horizontal";
   const road = options.look === "road";
   const hasBg = typeof options.background === "string" || (typeof options.background === "object" && options.background !== null);
-  const prefix = options.id ?? `tb-${hash(JSON.stringify([v.locale.code, layout.teams.map((t) => t.name), layout.ties.map((t) => [t.id, t.sides.map((s) => s?.id ?? null), t.winner, t.result.score, t.round]), options.size, orientation, options.detail, theme, options.title, options.subtitle, options.seeds, options.scores, options.champion, options.markShape, options.roundLabels, options.thirdPlace, options.trophy ? 1 : 0, road ? 1 : 0, options.highlightPath ?? null, options.flags ? 1 : 0, ...(hasBg ? [options.background, options.vs, options.codes, options.seeds] : []), ...(options.flagHref ? ["h"] : [])]))}`;
-  const ctx: MarkContext = { radii: new Set(), symbols: new Map(), prefix, shape: options.markShape ?? "round", look: road ? "road" : "classic", flags: options.flags, flagHref: options.flagHref, theme: theme === "light" ? "light" : theme === "dark" || theme === "poster" ? "dark" : "inherit", flagCache: new Map() };
+  const prefix = options.id ?? `tb-${hash(JSON.stringify([v.locale.code, layout.teams.map((t) => t.name), layout.ties.map((t) => [t.id, t.sides.map((s) => s?.id ?? null), t.winner, t.result.score, t.round]), options.size, orientation, options.detail, theme, options.title, options.subtitle, options.seeds, options.scores, options.champion, options.markShape, options.roundLabels, options.thirdPlace, options.trophy ? 1 : 0, road ? 1 : 0, options.highlightPath ?? null, options.flags ? 1 : 0, ...(hasBg ? [options.background, options.vs, options.codes, options.seeds] : []), ...(options.flagHref ? ["h"] : []), ...(kind !== "tree" ? [kind, options.at, options.standings, options.qualify] : []), ...(options.headers ? ["head"] : [])]))}`;
+  const ctx: MarkContext = { radii: new Set(), symbols: new Map(), prefix, shape: options.markShape ?? "round", look: road ? "road" : "classic", flags: options.flags, flagHref: options.flagHref, theme: theme === "light" ? "light" : theme === "dark" || theme === "poster" ? "dark" : "inherit", flagCache: new Map(), defs: new Map() };
   const path = pathOf(layout, options.highlightPath);
-  const plan = planBracket(layout, options, v, size, orientation === "vertical", ctx, road, path);
-
   const linked = { count: 0 };
-  const drawn = plan.boxes.map((b) => drawBox(b, plan, options, v, ctx, linked)); // draws the marks, so before the defs are written
   const title = options.title ?? v.words.title;
   const desc = describeBracket(layout, options);
-  const picture = resolveBackground(options.background, theme, plan.width, plan.height, prefix);
+  // The group tables and the play-in are not the tree: they plan and draw their own parts, and share the frame (the style, the background, the title) with it.
+  const own = kind === "groups" ? drawGroups(layout, options, v, size, ctx, road, linked) : kind === "playin" ? drawPlayIn(layout, options, v, size, ctx, road, linked) : null;
+  if (own) return frame({ prefix, v, options, theme, road, kind, title, desc: own.desc ?? desc, width: own.width, height: own.height, followed: false, links: [], parts: [...own.body, ...own.texts], linkCount: linked.count, ctx });
+  const plan = planBracket(layout, options, v, size, orientation === "vertical", ctx, road, path, kind);
+  const drawn = plan.boxes.map((b) => drawBox(b, plan, options, v, ctx, linked, layout.place[b.tie.index])); // draws the marks, so before the defs are written
+  return frame({ prefix, v, options, theme, road, kind, title, desc, width: plan.width, height: plan.height, followed: path.size > 0, links: plan.links, parts: [...drawn, ...plan.texts, ...plan.extras], linkCount: linked.count, ctx });
+}
+
+/** The drawing's frame: the root `<svg>` with its title, its style, the defs the marks wrote and the background, round the parts a layout drew. */
+function frame(f: { prefix: string; v: Voice; options: DrawOptions; theme: ThemeName; road: boolean; kind: LayoutName; title: string; desc: string; width: number; height: number; followed: boolean; links: string[]; parts: string[]; linkCount: number; ctx: MarkContext }): string {
+  const { prefix, v, options, theme, road, ctx } = f;
+  const picture = resolveBackground(options.background, theme, f.width, f.height, prefix);
   const defs = markDefs(ctx) + (picture?.defs ?? "");
-  const style = theme === "none" ? "" : `<style>${styleFor(`.${prefix}`, theme, { road, links: linked.count > 0, follow: path.size > 0, bgAuto: picture?.auto }, picture?.inks)}</style>`;
-  const bg = options.background === false ? "" : `<rect class="tb-bg" width="${num(plan.width)}" height="${num(plan.height)}"${theme === "none" ? ' fill="none"' : ""}/>${picture?.body ?? ""}`;
+  const scope = scopeOf(options, prefix);
+  const style = theme === "none" || options.style === false ? "" : `<style>${styleFor(`.${scope}`, theme, { road, links: f.linkCount > 0, follow: f.followed, bgAuto: picture?.auto, layout: f.kind !== "tree" || options.headers === true }, picture?.inks)}</style>`;
+  const bg = options.background === false ? "" : `<rect class="tb-bg" width="${num(f.width)}" height="${num(f.height)}"${theme === "none" ? ' fill="none"' : ""}/>${picture?.body ?? ""}`;
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" lang="${esc(v.locale.code)}" class="taisen ${prefix}${road ? " tb-look-road" : ""}${path.size > 0 ? " tb-follow" : ""}${options.className ? ` ${esc(options.className)}` : ""}" viewBox="0 0 ${num(plan.width)} ${num(plan.height)}" width="${num(plan.width)}" height="${num(plan.height)}" style="max-width:100%;height:auto" role="img" aria-labelledby="${prefix}-t ${prefix}-d">`,
-    `<title id="${prefix}-t">${esc(title)}</title><desc id="${prefix}-d">${esc(desc)}</desc>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" lang="${esc(v.locale.code)}" class="taisen ${prefix}${scope !== prefix ? ` ${scope}` : ""}${road ? " tb-look-road" : ""}${f.followed ? " tb-follow" : ""}${options.className ? ` ${esc(options.className)}` : ""}" viewBox="0 0 ${num(f.width)} ${num(f.height)}" width="${num(f.width)}" height="${num(f.height)}" style="max-width:100%;height:auto" role="img" aria-labelledby="${prefix}-t ${prefix}-d">`,
+    `<title id="${prefix}-t">${esc(f.title)}</title><desc id="${prefix}-d">${esc(f.desc)}</desc>`,
     style,
     defs ? `<defs>${defs}</defs>` : "",
     bg,
-    ...plan.links,
-    ...drawn,
-    ...plan.texts,
-    ...plan.extras,
+    ...f.links,
+    ...f.parts,
     "</svg>",
   ].filter(Boolean).join("\n");
 }
 
+/** The class that carries a drawing's rules: its `styleScope` when it has one, else its own id prefix. */
+function scopeOf(o: Pick<DrawOptions, "styleScope">, prefix: string): string {
+  if (o.styleScope === undefined) return prefix;
+  if (typeof o.styleScope !== "string" || !/^[A-Za-z_][\w-]*$/.test(o.styleScope)) throw new RangeError("taisen-brackets: styleScope is one word of letters, digits, - and _");
+  return o.styleScope;
+}
+
+/**
+ * The stylesheet of a drawing with these options, for a page that draws the same bracket twice (a desk's size and a phone's): put it in the page once, give each drawing the same `styleScope`
+ * and `style: false`, and every drawing takes its colours from it. Needs `styleScope`; `theme`, `look`, `background`, `layout`, `headers`, and whether there is an `href` or a `highlightPath` decide which rules are in it.
+ */
+export function bracketStyle(options: DrawOptions): string {
+  if (options.styleScope === undefined) throw new RangeError("taisen-brackets: bracketStyle needs a styleScope");
+  const scope = scopeOf(options, "");
+  const theme: ThemeName = options.theme ?? "auto";
+  if (theme === "none") return "";
+  const picture = resolveBackground(options.background, theme, 100, 100, "x");
+  return styleFor(`.${scope}`, theme, { road: options.look === "road", links: typeof options.href === "function", follow: options.highlightPath !== undefined, bgAuto: picture?.auto, layout: (options.layout ?? "tree") !== "tree" || options.headers === true }, picture?.inks);
+}
+
+/** The groups' names with the east first, for the series card: the names the teams carry, ordered so that a name with "east" comes before one with "west". */
+function eastFirst(input: readonly Matchup[] | BracketInput): string[] | undefined {
+  const teams = Array.isArray(input) ? [] : (input as BracketInput).teams ?? [];
+  const names = [...new Set(teams.map((t) => t.group).filter((g): g is string => typeof g === "string"))];
+  if (names.length < 2) return undefined;
+  const rank = (g: string) => (/east/i.test(g) ? 0 : /west/i.test(g) ? 2 : 1);
+  return names.sort((a, b) => rank(a) - rank(b) || (a < b ? -1 : 1));
+}
+
 // ---------------------------------------------------------------------------------------------- the plan
 
-function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size, vertical: boolean, ctx: MarkContext, road: boolean, path: ReadonlySet<number>): Plan {
+function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size, vertical: boolean, ctx: MarkContext, road: boolean, path: ReadonlySet<number>, kind: LayoutName): Plan {
+  // The layouts that draw each tie their own way take the tree's places and lines, and fill the boxes themselves.
+  const V: VariantKind | null = VARIANTS.includes(kind) ? (kind as VariantKind) : null;
   const pad = vertical ? 14 : 22;
   const showLabels = o.roundLabels ?? true;
   const poster = o.theme === "poster";
@@ -181,6 +236,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
   const W0 = size.width;
   const titleH = (o.title ? (poster ? 46 : 38) : 0) + (o.subtitle ? 24 : 0) + (o.title || o.subtitle ? 10 : 0);
   const hasGroups = layout.sides.some((s) => s.label);
+  const groupRoom = o.headers === true ? 34 : 28;
   const champ = (o.champion ?? true) && layout.champion !== null && layout.finalIndex !== null;
   const withThird = layout.third !== null && (o.thirdPlace ?? "below") !== "hide";
   // Beside the final in a horizontal bracket of two halves, under the final; elsewhere the lines into the final would run through it, so it goes at the foot.
@@ -218,7 +274,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     centreT = Math.max(centreMin, D * 1.2);
     // The names of the rounds head their columns: a name that cannot be one line in its column is set on two, which needs a taller strip over the boxes.
     if (showLabels && layout.columns.some((c) => !nameFits(v, road, roundLabel(layout, c, o.roundNames, v), D + gapT * 0.8))) labelRoom = 34;
-    const top = pad + titleH + (hasGroups ? 28 : 0) + labelRoom;
+    const top = pad + titleH + (hasGroups ? groupRoom : 0) + labelRoom;
     others = othersOf(layout);
     ow = clamp(D * 1.1, 120, 200);
     extraH0 = othersHeight(others.length, W0, pad, ow, OTHER_H) + thirdBlock;
@@ -240,7 +296,8 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
   const longest = Math.max(0, ...layout.teams.map((t) => wide(t.name, 13)));
   const longestAbbr = Math.max(0, ...layout.teams.map((t) => wide(abbrOf(t, v), 13)));
   // Seed tags (the road look with `seeds`): a small pill beside each mark, or above it in a box of marks alone.
-  const tagsOn = road && (o.seeds ?? false) && layout.ties.some((t) => tagOf(t, 0) !== "" || tagOf(t, 1) !== "");
+  const seedsDefault = V === "rows" || V === "update" || V === "series" || V === "columns";
+  const tagsOn = (road || (V !== null && V !== "columns")) && (o.seeds ?? seedsDefault) && layout.ties.some((t) => tagOf(t, 0) !== "" || tagOf(t, 1) !== "");
   const tagW = tagsOn ? Math.max(...layout.ties.flatMap((t) => [tagOf(t, 0), tagOf(t, 1)]).map((x) => boldWidth(x, 8))) + 8 : 0;
   // The road look's marks and scores are large: they are scaled down together until a row fits its box, before a name is dropped for its abbreviation.
   const anyNotes = layout.ties.some((t) => noteParts(t, v).length > 0);
@@ -296,8 +353,22 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     if (chosen.detail !== "mark") fitNow = Math.min(1, fitOf(w, chosen.h, chosen.detail));
     return chosen;
   };
+  // The layouts of their own: how much a box says follows from its width and height; a tall page gives each a height of its own.
+  const variantDetail = (w: number): Exclude<Detail, "auto"> => {
+    if (o.detail && o.detail !== "auto") return o.detail;
+    if (V === "shields") return "mark";
+    if (V === "update" || V === "series") return w >= 56 ? "compact" : "mark";
+    // The box's own painter leaves out what does not fit (the tag, then the names' length); the names are asked for where there is room for most of them.
+    if (V === "columns") return w >= 110 ? "full" : w >= 60 ? "compact" : "mark";
+    return w >= 150 ? "full" : w >= 84 ? "compact" : "mark";
+  };
+  const oneLine = V === "series" && vertical && layout.ties.every((t) => seriesLineWidth(t, v, 10, o.scores ?? true) <= boxW - 8);
+  const variantH = V === "rows" ? 54 : V === "shields" ? 76 : V === "update" ? 46 : V === "columns" ? 84 : oneLine ? 32 : 46;
   let detail: Exclude<Detail, "auto">;
-  if (road) {
+  if (V !== null) {
+    detail = variantDetail(boxW);
+    if (vertical) boxH = variantH;
+  } else if (road) {
     const picked = roadPick(boxW, vertical ? clamp(boxW * 0.42, 48, 124) : boxH, vertical);
     detail = picked.detail;
     if (vertical) boxH = picked.h; else { S = picked.h; boxH = S; }
@@ -315,7 +386,39 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
   const champH = champ ? trophyH + (hasTrophy ? 6 : 0) + champMark + 8 + nameFont + 6 + 11 + 2 : 0;
   const finalW = halves ? (vertical ? Math.min(size.width - 2 * pad, Math.max(boxW, 160)) : Math.min(centreT - 12, Math.max(D * 1.1, 120))) : D;
   let finalH = vertical ? (detail === "mark" ? Math.max(boxH, 52) : boxH) : boxH;
+  // The final of the columns layout is two tall slots side by side.
+  if (V === "columns") finalH = vertical ? Math.max(boxH, 96) : Math.min(Math.max(boxH * 1.7, 120), 220);
   const thirdH = withThird && !bottomThird ? 18 + boxH + 14 : 0;
+
+  // A final alone (the World Cups of 1974 and 1978 ended with one and a third-place match): there is no tree to join, so it is centred, the champion over it and the third place under it.
+  const lone = !halves && layout.sides.length === 1 && layout.sides[0].boxes.length === 1 && layout.finalIndex !== null && layout.sides[0].boxes[0].i === layout.finalIndex;
+  if (lone) {
+    const availW = W0 - 2 * pad;
+    const wl = vertical ? Math.min(availW, road ? 340 : 300) : clamp(availW * 0.3, 240, 380);
+    let hl = V === "columns" ? 120 : V === "shields" ? 86 : V !== null ? 72 : road ? 0 : 92;
+    let dl: Exclude<Detail, "auto">;
+    if (V !== null) dl = variantDetail(wl);
+    else if (road) { const picked = roadPick(wl, 132); dl = picked.detail; hl = picked.h; }
+    else dl = pick(wl, hl);
+    const strays = othersOf(layout);
+    const ows = Math.min(availW, 200);
+    const strayH = othersHeight(strays.length, W0, pad, ows, OTHER_H);
+    const labelH = showLabels ? 22 : 8;
+    const content = (champ ? champH + 14 : 0) + labelH + hl + (withThird ? 8 + 18 + hl + 8 : 0) + strayH;
+    const top0 = pad + titleH;
+    const height = Math.max(size.height ?? 0, top0 + content + pad);
+    const cx = W0 / 2;
+    let y = top0 + Math.max(6, (height - top0 - pad - content) / 2);
+    if (champ) { extras.push(...championBlock(layout.champion!, cx, y, champMark, trophyH, nameFont, o, v, ctx, poster)); y += champH + 14; }
+    if (showLabels) texts.push(label(v, road, roundLabel(layout, layout.rounds, o.roundNames, v), cx, y + 12, "middle"));
+    y += labelH;
+    boxes.push({ rect: { x: cx - wl / 2, y, w: wl, h: hl }, tie: layout.ties[layout.finalIndex!], order: layout.sides[0].boxes[0].order, bye: null, byes: [], final: true, champion: champ });
+    y += hl;
+    if (withThird) { thirdAtFoot(layout, y + 8, cx, wl, hl, v, road, boxes, texts); y += 8 + 18 + hl + 8; }
+    if (strays.length > 0) othersBlock(layout, strays, y + 6, W0, pad, ows, OTHER_H, v, road, boxes, texts);
+    texts.push(...headings(v, o, W0, pad, poster));
+    return finish({ width: W0, height, boxes, links: [], texts, extras, detail: dl, vertical, road, path, fit: fitNow, notes: anyNotes, markScores, markCols, tags: tagsOn, codes: codesOn, variant: V, em: { full: longest / 13, abbr: longestAbbr / 13, tag: tagsOn ? Math.max(...layout.ties.flatMap((t) => [tagOf(t, 0), tagOf(t, 1)]).map((x) => boldWidth(x, 1))) : 0 } });
+  }
 
   // ----- the slot positions along t
   if (!vertical) {
@@ -327,7 +430,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     sizes.forEach((sz) => { starts.push(t); t += sz + gapT; });
     const width = Math.max(W0, total + 2 * pad);
     // ----- span positions
-    const top = pad + titleH + (hasGroups ? 28 : 0) + labelRoom;
+    const top = pad + titleH + (hasGroups ? groupRoom : 0) + labelRoom;
     const treeH = rows * rowStep;
     // The final sits at the middle of the rows; the champion above it and the third place below need room.
     const upNeed = (champ ? champH + 8 : 0) + 22 + finalH / 2;
@@ -374,6 +477,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
         extras.push(...championBlock(layout.champion!, cx, fy - champH / 2, champMark, trophyH, nameFont, o, v, ctx, poster));
       }
     }
+    if (V === "columns") growColumns(layout, rects, false, S, treeH, top, height - pad - extraH0);
     if (showLabels) {
       for (const c of layout.columns) {
         const name = roundLabel(layout, c, o.roundNames, v);
@@ -388,13 +492,15 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
         if (!sd.label) return;
         const ks = layout.columns.map((_, ci) => slotOfColumn(sd.key, ci));
         const x0 = Math.min(...ks.map((k) => starts[k])), x1 = Math.max(...ks.map((k) => starts[k] + D));
-        texts.push(`<text class="tb-half" x="${num((x0 + x1) / 2)}" y="${num(top - (showLabels ? labelRoom + 12 : 14))}" font-size="${poster ? 16 : 15}" font-weight="700" letter-spacing=".1em" text-anchor="middle">${esc(poster ? v.upper(sd.label) : sd.label)}</text>`);
+        const labelY = top - (showLabels ? labelRoom + 12 : 14);
+        if (o.headers === true) texts.push(headTile(poster ? v.upper(sd.label) : sd.label, (x0 + x1) / 2, x1 - x0, labelY, sd.key === "l" ? 0 : 1, layout.sides.length === 2));
+        else texts.push(`<text class="tb-half" x="${num((x0 + x1) / 2)}" y="${num(labelY)}" font-size="${poster ? 16 : 15}" font-weight="700" letter-spacing=".1em" text-anchor="middle">${esc(poster ? v.upper(sd.label) : sd.label)}</text>`);
       });
     }
     // lines
     for (const t of layout.ties) {
       const p = layout.parent[t.index];
-      if (p === -1) continue;
+      if (p === -1 || V === "shields") continue;
       const a = rects.get(t.index), b = rects.get(p);
       if (!a || !b || layout.place[t.index] === "o") continue;
       const goingRight = b.x > a.x;
@@ -407,11 +513,11 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     if (bottomThird) thirdAtFoot(layout, height - pad - extraH0 + 6, width / 2, ow, OTHER_H, v, road, boxes, texts);
     othersBlock(layout, others, height - pad - extraH0 + thirdBlock + 6, width, pad, ow, OTHER_H, v, road, boxes, texts);
     texts.push(...headings(v, o, width, pad, poster));
-    return finish({ width, height, boxes, links: orderLinks(links), texts, extras, detail, vertical, road, path, fit: fitNow, notes: anyNotes, markScores, markCols, tags: tagsOn, codes: codesOn });
+    return finish({ width, height, boxes, links: orderLinks(links), texts, extras, detail, vertical, road, path, fit: fitNow, notes: anyNotes, markScores, markCols, tags: tagsOn, codes: codesOn, variant: V, em: { full: longest / 13, abbr: longestAbbr / 13, tag: tagsOn ? Math.max(...layout.ties.flatMap((t) => [tagOf(t, 0), tagOf(t, 1)]).map((x) => boldWidth(x, 1))) : 0 } });
   }
 
   // ----- vertical: the rounds are rows. The left half is the top; the final is a band in the middle.
-  const groupBand = hasGroups ? 26 : 0;
+  const groupBand = hasGroups ? (o.headers === true ? 34 : 26) : 0;
   // On a tall page the champion sits at the top, as the page's first thing; the lines into the final must not run through it.
   const champTop = halves && champ ? champH + 14 : 0;
   const topT = pad + titleH + champTop + groupBand + (showLabels ? 14 : 0);
@@ -422,19 +528,28 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
   const othersV = othersHeight(others.length, W0, pad, ow, OTHER_H);
   // The height the page needs for boxes `h` high with `gap` between the rounds, and what it keeps for the final's band and the third-place match.
   const needOf = (h: number, gap: number) => {
-    const finalHere = detail === "mark" ? Math.max(h, 52) : h;
+    const finalHere = V === "columns" ? Math.max(h, finalH) : detail === "mark" ? Math.max(h, 52) : h;
     const centre = (showLabels ? 32 : 0) + 6 + finalHere + 14;
     const thirdV = bottomThird ? 18 + (road ? h : 52) + 16 : 0;
     const band = h + gap;
     return (halves ? topT + bandsPerSide * band + centre + bandsPerSide * band + groupBand + pad : topT + (nc + (champ ? 1 : 0)) * band + (champ ? champH : 0) + pad) + othersV + thirdV;
   };
   // The road look fits a tall page: the boxes are made lower until the rounds fit, or, with room to spare, the room left over is shared between the rounds.
-  if (road && size.height !== null) {
+  if (road && size.height !== null && V === null) {
     while (boxH > 40 && needOf(boxH, gapT) > size.height) boxH -= 2;
     const slack = size.height - needOf(boxH, gapT);
     if (slack > 0 && bandCount > 0) gapT += Math.min(slack / bandCount, boxH * 0.5);
     D = boxH;
     finalH = detail === "mark" ? Math.max(boxH, 52) : boxH;
+  }
+  // The layouts of their own fill a tall page too: the boxes are made taller, and the rounds are spaced apart, until the page is as high as it was asked to be.
+  if (V !== null && size.height !== null && vertical) {
+    const cap = V === "series" ? (oneLine ? 52 : 60) : V === "columns" ? 150 : V === "shields" ? 110 : V === "rows" ? 96 : 80;
+    while (boxH < cap && needOf(boxH + 2, gapT) <= size.height) { boxH += 2; if (V !== "columns") finalH = boxH; }
+    D = boxH;
+    const slack = size.height - needOf(boxH, gapT);
+    if (slack > 0 && bandCount > 0) gapT += Math.min(slack / bandCount, 56);
+    if (V !== "columns") finalH = boxH;
   }
   const centreBand = (showLabels ? 32 : 0) + 6 + finalH + 14;
   const thirdH2 = road ? boxH : 52;
@@ -476,6 +591,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     const fr = rects.get(layout.finalIndex)!;
     extras.push(...championBlock(layout.champion!, fr.x + fr.w / 2, fr.y + fr.h + 12, champMark, trophyH, nameFont, o, v, ctx, poster));
   }
+  if (V === "columns") growColumns(layout, rects, true, S, treeW, pad, W0 - pad);
   if (showLabels) {
     layout.columns.forEach((c, ci) => {
       const name = roundLabel(layout, c, o.roundNames, v);
@@ -500,12 +616,13 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     layout.sides.forEach((sd) => {
       if (!sd.label) return;
       const y = sd.key === "l" ? pad + titleH + champTop + 16 : totalT - pad - 2;
-      texts.push(`<text class="tb-half" x="${num(midX)}" y="${num(y)}" font-size="14" font-weight="700" letter-spacing=".1em" text-anchor="middle">${esc(v.upper(sd.label))}</text>`);
+      if (o.headers === true) texts.push(headTile(v.upper(sd.label), midX, W0 - 2 * pad, y, sd.key === "l" ? 0 : 1, layout.sides.length === 2));
+      else texts.push(`<text class="tb-half" x="${num(midX)}" y="${num(y)}" font-size="14" font-weight="700" letter-spacing=".1em" text-anchor="middle">${esc(v.upper(sd.label))}</text>`);
     });
   }
   for (const t of layout.ties) {
     const p = layout.parent[t.index];
-    if (p === -1) continue;
+    if (p === -1 || V === "shields") continue;
     const a = rects.get(t.index), b = rects.get(p);
     if (!a || !b || layout.place[t.index] === "o") continue;
     const down = b.y > a.y;
@@ -519,7 +636,31 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
   if (bottomThird) thirdAtFoot(layout, totalT - pad + 6, W0 / 2, Math.min(W0 - 2 * pad, road ? Math.max(boxW, 200) : 200), thirdH2, v, road, boxes, texts);
   othersBlock(layout, others, totalT - pad + thirdBlockV + 6, W0, pad, ow, OTHER_H, v, road, boxes, texts);
   texts.push(...headings(v, o, W0, pad, poster));
-  return finish({ width: W0, height, boxes, links: orderLinks(links), texts, extras, detail, vertical, road, path, fit: fitNow, notes: anyNotes, markScores, markCols, tags: tagsOn, codes: codesOn });
+  return finish({ width: W0, height, boxes, links: orderLinks(links), texts, extras, detail, vertical, road, path, fit: fitNow, notes: anyNotes, markScores, markCols, tags: tagsOn, codes: codesOn, variant: V, em: { full: longest / 13, abbr: longestAbbr / 13, tag: tagsOn ? Math.max(...layout.ties.flatMap((t) => [tagOf(t, 0), tagOf(t, 1)]).map((x) => boldWidth(x, 1))) : 0 } });
+}
+
+/**
+ * The columns layout's tall slots: a tie of a later round is made taller than the first round's, as tall as the room between its neighbours of the same column leaves (`base` times 1.55 for each round in, at most),
+ * on the same centre. `span` is the room across the tree, for a column with a single tie.
+ */
+function growColumns(layout: BracketLayout, rects: Map<number, Rect>, vertical: boolean, base: number, span: number, lo: number, hi: number): void {
+  const centre = (r: Rect) => (vertical ? r.x + r.w / 2 : r.y + r.h / 2);
+  for (const sd of layout.sides) {
+    layout.columns.forEach((col, ci) => {
+      const here = sd.boxes.filter((b) => b.round === col).map((b) => rects.get(b.i)).filter((r): r is Rect => r !== undefined);
+      if (here.length === 0) return;
+      const at = here.map(centre).sort((a, b) => a - b);
+      let gap = Infinity;
+      for (let i = 1; i < at.length; i++) gap = Math.min(gap, at[i] - at[i - 1]);
+      const want = Math.max(base, Math.min(base * 1.55 ** ci, gap === Infinity ? span * 0.6 : gap - 8));
+      for (const r of here) {
+        const c = centre(r);
+        // Never past the room there is on either side of the centre.
+        const size = Math.max(Math.min(base, 2 * (c - lo), 2 * (hi - c)), Math.min(want, 2 * (c - lo), 2 * (hi - c)));
+        if (vertical) { r.x = c - size / 2; r.w = size; } else { r.y = c - size / 2; r.h = size; }
+      }
+    });
+  }
 }
 
 /** A line's class: `tb-path` when both ties it joins are on the highlighted team's path. */
@@ -663,7 +804,7 @@ function championBlock(team: Team, cx: number, top: number, mark: number, trophy
 
 /** The ties that are not part of the tree (they lead nowhere near the final, or are round-robin games), drawn in a grid below it. */
 function othersOf(layout: BracketLayout): number[] {
-  return [...layout.other, ...layout.robin];
+  return [...layout.other, ...layout.robin, ...layout.playIn];
 }
 
 function othersHeight(count: number, width: number, pad: number, ow: number, oh: number): number {
@@ -697,7 +838,7 @@ function hrefOf(o: DrawOptions, tie: Tie, side?: 0 | 1): string | null {
   return typeof url === "string" && safeHref(url) ? url.trim() : null;
 }
 
-function drawBox(p: Placed, plan: Plan, o: DrawOptions, v: Voice, ctx: MarkContext, linked: { count: number }): string {
+function drawBox(p: Placed, plan: Plan, o: DrawOptions, v: Voice, ctx: MarkContext, linked: { count: number }, side: Place): string {
   const { rect, tie } = p;
   const { x, y, w, h } = rect;
   const detail = plan.detail;
@@ -729,7 +870,13 @@ function drawBox(p: Placed, plan: Plan, o: DrawOptions, v: Voice, ctx: MarkConte
     return anchor(url, `${team.name}: ${description}`, `<rect class="tb-hit" x="${num(rx)}" y="${num(ry)}" width="${num(rw)}" height="${num(rh)}" fill="transparent"/>${inner}`);
   };
 
-  if (detail === "mark" && plan.markCols) {
+  if (plan.variant !== null) {
+    const env: PaintEnv = {
+      kind: plan.variant, x, y, w, h, tie, order: p.order, side, final: p.final, road, detail, vertical: plan.vertical, tags: plan.tags, codes: plan.codes, scoresOn, v, ctx, o,
+      cls, link: row, tagOf, em: plan.em,
+    };
+    parts.push(...paintVariant(env));
+  } else if (detail === "mark" && plan.markCols) {
     // Two columns, each a stack: the seed tag, the mark, its three letters, the score. The marks are as large as the box lets the whole stack be, and every part is inside the box.
     const padX = 6, padY = 5;
     const colW = (w - 2 * padX) / 2;
@@ -851,7 +998,9 @@ function drawBox(p: Placed, plan: Plan, o: DrawOptions, v: Voice, ctx: MarkConte
     }
   }
   const extra = tieClassOf(o, tie);
-  const cls2 = `tb-tie${p.final ? " tb-final" : ""}${p.champion ? " tb-has-champ" : ""}${plan.path.has(tie.index) ? " tb-on-path" : ""}${extra}`;
+  // The layouts of their own colour a half by its side: the first half (the left, or the top) is `tb-c0`, the second `tb-c1`.
+  const conf = plan.variant !== null && (side === "l" || side === "r") ? ` tb-c${side === "l" ? 0 : 1}` : "";
+  const cls2 = `tb-tie${p.final ? " tb-final" : ""}${p.champion ? " tb-has-champ" : ""}${plan.path.has(tie.index) ? " tb-on-path" : ""}${conf}${extra}`;
   const body = boxHref !== null ? anchor(boxHref, description, parts.join("")) : parts.join("");
   return `<g class="${cls2}"><title>${esc(description)}</title>${body}</g>`;
 }

@@ -1,4 +1,4 @@
-import type { BracketInput, BracketLayout, LayoutBox, LayoutOptions, LayoutSide, Matchup, Place, SideId, Team, Tie } from "./types.ts";
+import type { BracketInput, BracketLayout, Feed, LayoutBox, LayoutOptions, LayoutSide, Matchup, Place, SideId, Source, Team, Tie } from "./types.ts";
 import { collectTeams, resolveMatchup } from "./matchup.ts";
 
 /**
@@ -20,10 +20,42 @@ export function layoutBracket(input: readonly Matchup[] | BracketInput, options:
     byId.set(t.id, t.index);
   }
 
-  const thirds = ties.filter((t) => t.third).map((t) => t.index);
-  const robin = ties.filter((t) => !t.third && matchups[t.index].round === 0).map((t) => t.index);
-  const inTree = ties.filter((t) => !t.third && matchups[t.index].round !== 0).map((t) => t.index);
+  // A play-in game is outside the tree; so are a third-place match and a round-robin game.
+  const playIns = ties.filter((t) => matchups[t.index].stage === "play-in").map((t) => t.index);
+  const isPlayIn = new Set(playIns);
+  const thirds = ties.filter((t) => t.third && !isPlayIn.has(t.index)).map((t) => t.index);
+  const robin = ties.filter((t) => !t.third && !isPlayIn.has(t.index) && matchups[t.index].round === 0).map((t) => t.index);
+  const inTree = ties.filter((t) => !t.third && !isPlayIn.has(t.index) && matchups[t.index].round !== 0).map((t) => t.index);
   const isTree = new Set(inTree);
+
+  // Where each side comes from, when `feeds` says so with more than a tie's winner (`{ tie, result }`), or names a play-in game: those edges are not the tree's.
+  const feedOf = (f: Feed): { id: string; result: "winner" | "loser" } => (typeof f === "string" ? { id: f, result: "winner" } : { id: f.tie, result: f.result });
+  const from = new Map<number, readonly [Source | null, Source | null]>();
+  for (const t of ties) {
+    const feeds = matchups[t.index].feeds;
+    if (!feeds) continue;
+    const sources = feeds.map((f) => {
+      if (f == null) return null;
+      const { id, result } = feedOf(f);
+      if (result !== "winner" && result !== "loser") throw new Error(`taisen-brackets: matchup ${JSON.stringify(t.id)} is fed by the ${JSON.stringify(String(result))} of ${JSON.stringify(id)}: a feed's result is "winner" or "loser"`);
+      const c = byId.get(id);
+      if (c === undefined) throw new Error(`taisen-brackets: matchup ${JSON.stringify(t.id)} is fed by ${JSON.stringify(id)}, which is not a matchup`);
+      if (c === t.index) throw new Error(`taisen-brackets: matchup ${JSON.stringify(t.id)} is fed by itself`);
+      return { tie: c, result } as Source;
+    }) as unknown as readonly [Source | null, Source | null];
+    const special = isPlayIn.has(t.index) || feeds.some((f) => f != null && (typeof f !== "string" || isPlayIn.has(byId.get(f) ?? -1)));
+    if (special) from.set(t.index, sources);
+  }
+  // A tie cannot be fed, through winners or losers, by a tie it feeds.
+  const state = new Map<number, 1 | 2>();
+  const visit = (i: number, trail: number[]): void => {
+    if (state.get(i) === 2) return;
+    if (state.get(i) === 1) throw new Error(`taisen-brackets: matchups feed each other in a circle: ${[...trail.slice(trail.indexOf(i)), i].map((k) => JSON.stringify(ties[k].id)).join(" -> ")}`);
+    state.set(i, 1);
+    for (const src of matchups[i].feeds ?? []) if (src != null) visit(byId.get(feedOf(src).id) ?? i, [...trail, i]);
+    state.set(i, 2);
+  };
+  for (const t of ties) visit(t.index, []);
 
   const winnerId = (i: number): SideId | null => (ties[i].winner === null ? null : ties[i].sides[ties[i].winner!]?.id ?? null);
   const sideIdOf = (i: number, k: 0 | 1): SideId | null => ties[i].sides[k]?.id ?? null;
@@ -38,9 +70,12 @@ export function layoutBracket(input: readonly Matchup[] | BracketInput, options:
     if (!feeds) continue;
     explicit.add(j);
     const list: number[] = [];
-    feeds.forEach((id, k) => {
-      if (id == null) return;
+    feeds.forEach((feed, k) => {
+      if (feed == null) return;
+      const { id, result } = feedOf(feed);
       const c = byId.get(id);
+      // A loser, or a play-in game's winner, goes where `from` says; it takes no part in the tree.
+      if (result === "loser" || (c !== undefined && isPlayIn.has(c))) return;
       if (c === undefined) throw new Error(`taisen-brackets: matchup ${JSON.stringify(ties[j].id)} is fed by ${JSON.stringify(id)}, which is not a matchup`);
       if (!isTree.has(c)) throw new Error(`taisen-brackets: matchup ${JSON.stringify(ties[j].id)} is fed by ${JSON.stringify(id)}, which is not part of the tree`);
       if (c === j || parent[c] !== -1) throw new Error(`taisen-brackets: ${JSON.stringify(id)} feeds more than one matchup, or itself`);
@@ -106,6 +141,8 @@ export function layoutBracket(input: readonly Matchup[] | BracketInput, options:
   for (const i of thirds) ties[i] = { ...ties[i], round: rounds };
   for (const i of inTree) ties[i] = { ...ties[i], round: round[i] };
   for (const i of robin) ties[i] = { ...ties[i], round: 0 };
+  for (const i of playIns) ties[i] = { ...ties[i], round: 0, playIn: true };
+  for (const [i, sources] of from) ties[i] = { ...ties[i], from: sources };
 
   const place: Place[] = new Array(n).fill("o");
   const subtree = (i: number): number[] => [i, ...(children.get(i) ?? []).flatMap(subtree)];
@@ -223,7 +260,7 @@ export function layoutBracket(input: readonly Matchup[] | BracketInput, options:
   return {
     ties, shape, sides, final, finalIndex: fin, columns, rounds,
     rows: Math.max(1, ...sides.map((s) => s.rows)),
-    other, robin, third: thirds[0] ?? null, place, parent, champion,
+    other, robin, playIn: playIns, third: thirds[0] ?? null, place, parent, champion,
     teams: [...teamMap.values()],
   };
 }

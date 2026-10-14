@@ -68,7 +68,7 @@ export function problems(svg: string, { pad = 1.5, namesOverLines = false }: { p
   const view = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(svg)!.slice(1).map(Number);
   const picture: Box = { x: 0, y: 0, w: view[0], h: view[1] };
   const all = walk(root);
-  const ties = all.filter((t) => has(t, "tb-tie"));
+  const ties = all.filter((t) => has(t, "tb-tie") || has(t, "tb-group"));
   const boxes: Box[] = [];
   ties.forEach((tie, k) => {
     const nodes = walk(tie);

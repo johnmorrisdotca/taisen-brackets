@@ -82,9 +82,11 @@ export function advanceWinners(matchups: readonly Matchup[]): Matchup[] {
       const sides = [...m.sides] as [SideId | Team | null, SideId | Team | null];
       m.feeds.forEach((feed, k) => {
         if (feed == null) return;
-        const child = at.get(feed);
+        const child = at.get(typeof feed === "string" ? feed : feed.tie);
         if (!child || child.winner === null) return;
-        const team = child.sides[m.third ? ((1 - child.winner) as 0 | 1) : child.winner];
+        // The loser goes on from a third-place match's feeders, and from a feed that asks for the loser (a play-in's).
+        const takesLoser = m.third || (typeof feed !== "string" && feed.result === "loser");
+        const team = child.sides[takesLoser ? ((1 - child.winner) as 0 | 1) : child.winner];
         const here = sides[k];
         if (team && (here !== null && typeof here === "object" ? here.id : here) !== team.id) { sides[k] = team.id; touched = true; changed = true; }
       });

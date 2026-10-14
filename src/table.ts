@@ -24,7 +24,7 @@ export function bracketTable(input: BracketLayout | readonly Matchup[] | Bracket
   const w = v.words;
   const caption = options.caption ?? fill(layout.rounds === 1 ? w.summaryOne : w.summary, { n: v.number(layout.teams.length), r: v.number(layout.rounds) });
   const order = layout.ties
-    .filter((t) => t.round > 0 || layout.robin.includes(t.index))
+    .filter((t) => t.round > 0 || layout.robin.includes(t.index) || layout.playIn.includes(t.index))
     .sort((a, b) => Number(a.third) - Number(b.third) || a.round - b.round || (a.date < b.date ? -1 : a.date > b.date ? 1 : a.index - b.index));
   const dated = order.some((t) => v.date(t.date) !== null);
   const name = (t: Tie, k: 0 | 1) => {
@@ -33,10 +33,13 @@ export function bracketTable(input: BracketLayout | readonly Matchup[] | Bracket
     return t.winner === k ? `<strong>${text}</strong>` : text;
   };
   const score = (t: Tie) => (t.result.score ? fill(w.scoreText, { a: v.number(t.result.score[0]), b: v.number(t.result.score[1]) }) : "");
+  // Where a side comes from, in words, when the tie says so: "Loser of A v B".
+  const named = (i: number) => fill(w.tieVs, { a: layout.ties[i].sides[0]?.name ?? w.tbd, b: layout.ties[i].sides[1]?.name ?? w.tbd });
+  const origins = (t: Tie): string[] => (t.from ?? []).flatMap((s) => (s ? [fill(s.result === "loser" ? w.loserOf : w.winnerOf, { name: named(s.tie) })] : []));
   const rows = order.map((t) => {
-    const roundText = t.third ? w.thirdPlace : t.round === 0 ? "" : roundLabel(layout, t.round, options.roundNames, v);
+    const roundText = t.third ? w.thirdPlace : t.playIn ? w.playIn : t.round === 0 ? "" : roundLabel(layout, t.round, options.roundNames, v);
     const date = dated ? `<td>${esc(v.date(t.date) ?? "")}</td>` : "";
-    return `<tr><th scope="row">${esc(roundText)}</th>${date}<td>${name(t, 0)}</td><td>${esc(score(t))}</td><td>${name(t, 1)}</td><td>${esc(noteLong(t, v).join(w.noteJoin))}</td></tr>`;
+    return `<tr><th scope="row">${esc(roundText)}</th>${date}<td>${name(t, 0)}</td><td>${esc(score(t))}</td><td>${name(t, 1)}</td><td>${esc([...noteLong(t, v), ...origins(t)].join(w.noteJoin))}</td></tr>`;
   });
   return [
     `<table class="${esc(options.className ?? "tb-table")}" lang="${esc(v.locale.code)}">`,

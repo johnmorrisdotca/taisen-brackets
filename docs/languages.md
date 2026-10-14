@@ -52,6 +52,8 @@ const spain = defineLocale("es-ES", { tag: "es-ES", words: { pens: "penaltis", p
 
 **The road to the final's words** (the keys that start `road`, added in 0.4.0) were written for the chart and read by the same reviewers on 2026-10-14; the Spanish and German were not read by a native speaker and, like the rest of those two tables, need one. French, the reviewer's changes: *Parcours vers la finale*; *t.r.*, *a.p.* and *t.a.b.* (one lowercase dotted form for each idea, the last two as the file already writes them); a no-break space before each colon; and a summary that gives the number of matches after a label, so that no plural is needed (*Matchs joués avant la finale : …*). Left as they are: *vs* between the two marks (the tie's sentence says *contre*) and *Phase de groupes*, which `groupLabel` replaces for a sport that has no groups; *t.r.* (regulation time) is the weakest, since French sports media rarely abbreviate it, and a Quebec reader will say *partie*, *ronde* and *tirs de barrage* for a hockey play-off. Japanese: *規定時間* for FT, which says "regulation time" for any sport (the first version said 90 minutes), and *PK戦 {a}–{b}* as the file's own `pensScore` writes it; *PK戦* is the football word, and an ice hockey reader may prefer *シュートアウト*. The English, Spanish and German summaries are written the same way as the French (a label, then each team and its number) so that one match is never "1 matches".
 
+**The layouts' words** (`vs`, `at`, `groupName`, the table heads `colPlayed` to `colPoints`, `playIn`, `playInWinner`, `playInLoser`, `seedSlot`, `winnerOf` and `loserOf`, added in 0.6.0) were read by the same French and Japanese reviewers on 2026-10-14; the Spanish and German were not read by a native speaker and need one. French, the reviewer's changes: *Play-in* in place of *Barrages* (which means a promotion play-off in France and *tirs de barrage* in Quebec), *Gagnant* and *Perdant* as a pair, *Gagnant du match {name}* so that no *de* meets a name that starts with a vowel, a no-break space in *N° {n}*, and the Canadian heads *PJ V N D* with *+/-* for the goal difference (France writes *J G N P*). Japanese: *試合* and *得失差* in full where *試* and *得失* alone are ambiguous, *勝点* for points (never *得点*, which is goals), and a plain ASCII *@* for "at": Japanese schedules write it as English ones do, and the full-width form looks like part of an address. *第{n}シード* shares *シード* with the word for a bye (*bye*); the number keeps them apart.
+
 ## What stays the same in every language
 
 - **Clubs and people** keep their names. A national team's name comes from `Intl.DisplayNames` by its ISO 3166 code (`countryName`), or from `Team.names`, or from a `teamName` function; the demo writes by hand only the two states that no longer exist (Czechoslovakia, the Dutch East Indies), after the form each language's Wikipedia gives, and the home nations are in `src/locales.ts`.
@@ -165,5 +167,20 @@ The English name is the key (a round the table does not name keeps its English n
 | `roadFinal` | `The final: {a} {score} {b} ({how}).` | `La finale␣: {a} {score} {b} ({how}).` | `決勝は{a} {score} {b}（{how}）でした。` | `La final: {a} {score} {b} ({how}).` | `Das Finale: {a} {score} {b} ({how}).` |
 | `roadChampion` | `{name} won the final.` | `{name} a remporté la finale.` | `{name}が優勝しました。` | `{name} ganó la final.` | `{name} gewann das Finale.` |
 | `roadToPlay` | `The final is still to be played.` | `La finale reste à jouer.` | `決勝はまだ行われていません。` | `La final aún no se ha jugado.` | `Das Finale steht noch aus.` |
+| `vs` | `vs` | `vs` | `対` | `vs.` | `vs.` |
+| `at` | `AT` | `À` | `@` | `EN` | `BEI` |
+| `groupName` | `Group {n}` | `Groupe {n}` | `グループ{n}` | `Grupo {n}` | `Gruppe {n}` |
+| `colPlayed` | `P` | `PJ` | `試合` | `PJ` | `Sp` |
+| `colWon` | `W` | `V` | `勝` | `G` | `S` |
+| `colDrawn` | `D` | `N` | `分` | `E` | `U` |
+| `colLost` | `L` | `D` | `敗` | `P` | `N` |
+| `colDiff` | `GD` | `+/-` | `得失差` | `DG` | `Diff.` |
+| `colPoints` | `Pts` | `Pts` | `勝点` | `Pts` | `Pkt` |
+| `playIn` | `Play-in` | `Play-in` | `プレイイン` | `Play-in` | `Play-in` |
+| `playInWinner` | `Winner {a}/{b}` | `Gagnant {a}/{b}` | `{a}/{b}の勝者` | `Ganador {a}/{b}` | `Sieger {a}/{b}` |
+| `playInLoser` | `Loser {a}/{b}` | `Perdant {a}/{b}` | `{a}/{b}の敗者` | `Perdedor {a}/{b}` | `Verlierer {a}/{b}` |
+| `seedSlot` | `Seed {n}` | `N°␣{n}` | `第{n}シード` | `Puesto {n}` | `Platz {n}` |
+| `winnerOf` | `Winner of {name}` | `Gagnant du match {name}` | `{name}の勝者` | `Ganador de {name}` | `Sieger von {name}` |
+| `loserOf` | `Loser of {name}` | `Perdant du match {name}` | `{name}の敗者` | `Perdedor de {name}` | `Verlierer von {name}` |
 
 Holes in a phrase are filled in (`{n}`, `{a}`, `{b}`, `{sa}`, `{sb}`, `{w}`, `{name}`, `{round}`, `{tie}`, `{notes}`); `␣` stands for a no-break space (the French writes one before a colon).

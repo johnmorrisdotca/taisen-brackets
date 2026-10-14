@@ -22,6 +22,8 @@ const EN: Words = {
   roadCaption: "{a} and {b}: every match on the way to the final. Scores are written with the team in the first column first.",
   roadName: "{a} and {b}: {title}", roadSummary: "Matches played before the final: {a} ({an}) and {b} ({bn}).",
   roadFinal: "The final: {a} {score} {b} ({how}).", roadChampion: "{name} won the final.", roadToPlay: "The final is still to be played.",
+  vs: "vs", at: "AT", groupName: "Group {n}", colPlayed: "P", colWon: "W", colDrawn: "D", colLost: "L", colDiff: "GD", colPoints: "Pts",
+  playIn: "Play-in", playInWinner: "Winner {a}/{b}", playInLoser: "Loser {a}/{b}", seedSlot: "Seed {n}", winnerOf: "Winner of {name}", loserOf: "Loser of {name}",
 };
 
 const FR: Words = {
@@ -38,6 +40,8 @@ const FR: Words = {
   roadCaption: "{a} et {b} : tous les matchs jusqu’à la finale. Chaque score commence par celui de l’équipe de la première colonne.",
   roadName: "{a} et {b} : {title}", roadSummary: "Matchs joués avant la finale : {a} ({an}) et {b} ({bn}).",
   roadFinal: "La finale : {a} {score} {b} ({how}).", roadChampion: "{name} a remporté la finale.", roadToPlay: "La finale reste à jouer.",
+  vs: "vs", at: "À", groupName: "Groupe {n}", colPlayed: "PJ", colWon: "V", colDrawn: "N", colLost: "D", colDiff: "+/-", colPoints: "Pts",
+  playIn: "Play-in", playInWinner: "Gagnant {a}/{b}", playInLoser: "Perdant {a}/{b}", seedSlot: "N°\u00a0{n}", winnerOf: "Gagnant du match {name}", loserOf: "Perdant du match {name}",
 };
 
 const JA: Words = {
@@ -54,6 +58,8 @@ const JA: Words = {
   roadCaption: "{a}と{b}：決勝までの全試合。スコアは「チーム」列のチームの得点を先に書いています。",
   roadName: "{a}と{b}：{title}", roadSummary: "{a}は決勝までに{an}試合、{b}は{bn}試合を戦いました。",
   roadFinal: "決勝は{a} {score} {b}（{how}）でした。", roadChampion: "{name}が優勝しました。", roadToPlay: "決勝はまだ行われていません。",
+  vs: "対", at: "@", groupName: "グループ{n}", colPlayed: "試合", colWon: "勝", colDrawn: "分", colLost: "敗", colDiff: "得失差", colPoints: "勝点",
+  playIn: "プレイイン", playInWinner: "{a}/{b}の勝者", playInLoser: "{a}/{b}の敗者", seedSlot: "第{n}シード", winnerOf: "{name}の勝者", loserOf: "{name}の敗者",
 };
 
 const ES: Words = {
@@ -70,6 +76,8 @@ const ES: Words = {
   roadCaption: "{a} y {b}: todos los partidos hasta la final. Los marcadores empiezan por el equipo de la primera columna.",
   roadName: "{a} y {b}: {title}", roadSummary: "Partidos jugados hasta la final: {a} ({an}) y {b} ({bn}).",
   roadFinal: "La final: {a} {score} {b} ({how}).", roadChampion: "{name} ganó la final.", roadToPlay: "La final aún no se ha jugado.",
+  vs: "vs.", at: "EN", groupName: "Grupo {n}", colPlayed: "PJ", colWon: "G", colDrawn: "E", colLost: "P", colDiff: "DG", colPoints: "Pts",
+  playIn: "Play-in", playInWinner: "Ganador {a}/{b}", playInLoser: "Perdedor {a}/{b}", seedSlot: "Puesto {n}", winnerOf: "Ganador de {name}", loserOf: "Perdedor de {name}",
 };
 
 const DE: Words = {
@@ -86,6 +94,8 @@ const DE: Words = {
   roadCaption: "{a} und {b}: alle Spiele auf dem Weg ins Finale. Die Ergebnisse beginnen mit dem Team der ersten Spalte.",
   roadName: "{a} und {b}: {title}", roadSummary: "Spiele bis zum Finale: {a} ({an}) und {b} ({bn}).",
   roadFinal: "Das Finale: {a} {score} {b} ({how}).", roadChampion: "{name} gewann das Finale.", roadToPlay: "Das Finale steht noch aus.",
+  vs: "vs.", at: "BEI", groupName: "Gruppe {n}", colPlayed: "Sp", colWon: "S", colDrawn: "U", colLost: "N", colDiff: "Diff.", colPoints: "Pkt",
+  playIn: "Play-in", playInWinner: "Sieger {a}/{b}", playInLoser: "Verlierer {a}/{b}", seedSlot: "Platz {n}", winnerOf: "Sieger von {name}", loserOf: "Verlierer von {name}",
 };
 
 /**

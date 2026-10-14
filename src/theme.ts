@@ -51,7 +51,12 @@ export interface StyleParts {
   follow?: boolean;
   /** A background with a light and a dark picture in one drawing: the one that does not fit the look is hidden. */
   bgAuto?: boolean;
+  /** The rules of the layouts of their own (slots, shields, conference colours, header tiles, arrows, group cards). */
+  layout?: boolean;
 }
+
+/** The colours of the two halves (conferences) of the layouts that colour them, each with white letters on it: `--tb-conf-a` and `--tb-conf-b`. Both read 5 to 1 or more against white. */
+export const CONFERENCE_COLORS: readonly [string, string] = Object.freeze(["#2457c5", "#b3261e"] as const);
 
 /** The colours a background says to draw in (`backgroundSvg`'s `ink`): what `styleFor` takes in place of a look's own palette. */
 export interface BackgroundInks {
@@ -122,6 +127,45 @@ function rules(p: Palette, r: RoadPalette, poster: boolean, withFont: boolean, p
       [[".tb-r-n.tb-r-low"], `fill:${v("muted")}`],
       [[".tb-r-dim"], "opacity:.5"],
       [["text"], "font-variant-numeric:tabular-nums"],
+    );
+  }
+  if (parts.layout === true) {
+    const [ca, cb] = CONFERENCE_COLORS;
+    list.push(
+      [[".tb-slot"], `fill:${v("plain")};fill-opacity:.55;stroke:${v("edge")};stroke-width:1`],
+      [[".tb-won .tb-slot"], `fill-opacity:.9;stroke:${v("win")};stroke-width:1.6`],
+      [[".tb-lost .tb-slot"], "fill-opacity:.35"],
+      [[".tb-emptybar"], `fill:${v("plain")};opacity:.8`],
+      [[".tb-seed"], "font-variant-numeric:tabular-nums"],
+      [[".tb-seedn"], `fill:${v("muted")};opacity:.85`],
+      [[".tb-shield"], `fill:none;stroke:${v("edge")};stroke-width:1.4`],
+      [[".tb-won .tb-shield"], `stroke:${v("win")};stroke-width:2.2`],
+      [[".tb-shield.tb-empty"], `fill:${v("plain")};fill-opacity:.5`],
+      [[".tb-vs", ".tb-code"], `fill:${v("muted")};font-weight:700`],
+      [[".tb-c0 .tb-box"], `stroke:var(--tb-conf-a, ${ca});stroke-width:1.6`],
+      [[".tb-c1 .tb-box"], `stroke:var(--tb-conf-b, ${cb});stroke-width:1.6`],
+      [[".tb-atag"], `fill:${v("ink")}`],
+      [[".tb-atag-t"], `fill:${v("bg")}`],
+      [[".tb-c0 .tb-atag"], `fill:var(--tb-conf-a, ${ca})`],
+      [[".tb-c1 .tb-atag"], `fill:var(--tb-conf-b, ${cb})`],
+      [[".tb-c0 .tb-atag-t", ".tb-c1 .tb-atag-t"], "fill:#fff"],
+      [[".tb-head"], `fill:${rv("panel", "panel")}`],
+      [[".tb-head.tb-c0"], `fill:var(--tb-conf-a, ${ca})`],
+      [[".tb-head.tb-c1"], `fill:var(--tb-conf-b, ${cb})`],
+      [[".tb-head-t"], `fill:${v("ink")};font-weight:800`],
+      [[".tb-head.tb-c0 + .tb-head-t", ".tb-head.tb-c1 + .tb-head-t"], "fill:#fff"],
+      [[".tb-arrow"], `stroke:${v("line")};stroke-width:1.6;fill:none;stroke-linecap:round;stroke-linejoin:round`],
+      [[".tb-arrow-loser"], "stroke-dasharray:5 4"],
+      [[".tb-arrowhead"], `fill:${v("line")};stroke:none`],
+      [[".tb-gcard"], `fill:${v("box")};stroke:${v("edge")};stroke-width:1`],
+      [[".tb-gtile"], `fill:var(--tb-conf-a, ${ca})`],
+      [[".tb-gtile-t"], "fill:#fff;font-weight:800"],
+      [[".tb-ghead"], `fill:${v("muted")};font-weight:700`],
+      [[".tb-gcell"], `fill:${v("ink")};font-variant-numeric:tabular-nums`],
+      [[".tb-gcell-p"], "font-weight:800"],
+      [[".tb-gname"], `fill:${v("ink")};font-weight:700`],
+      [[".tb-qual"], `fill:${v("win")};fill-opacity:.16`],
+      [[".tb-gsep"], `stroke:${v("edge")};stroke-width:1;stroke-opacity:.6`],
     );
   }
   if (parts.follow === true) {
