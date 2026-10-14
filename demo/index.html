@@ -20,13 +20,21 @@
         </div></div>
       <div class="fam-row"><span class="fam-label">Size</span>
         <div class="fam-seg" role="group" aria-label="Size" id="size" data-testid="size">
-          <button type="button" data-value="auto">Auto</button><button type="button" data-value="wide">Wide</button><button type="button" data-value="square">Square</button><button type="button" data-value="phone">Phone</button>
+          <button type="button" data-value="auto">Auto</button><button type="button" data-value="wide">Wide</button><button type="button" data-value="square">Square</button><button type="button" data-value="card">Card</button><button type="button" data-value="phone">Phone</button>
+        </div></div>
+      <div class="fam-row"><span class="fam-label">View</span>
+        <div class="fam-seg" role="group" aria-label="View" id="view" data-testid="view">
+          <button type="button" data-value="bracket">Bracket</button><button type="button" data-value="road">Road to the final</button>
+        </div></div>
+      <div class="fam-row"><span class="fam-label">Style</span>
+        <div class="fam-seg" role="group" aria-label="Style of the bracket" id="look" data-testid="look">
+          <button type="button" data-value="road">Road</button><button type="button" data-value="classic">Classic</button>
         </div></div>
       <div class="fam-row"><span class="fam-label">Look</span>
         <div class="fam-seg" role="group" aria-label="Look" id="theme" data-testid="theme">
           <button type="button" data-value="auto">Auto</button><button type="button" data-value="light">Light</button><button type="button" data-value="dark">Dark</button><button type="button" data-value="poster">Poster</button>
         </div></div>
-      <div class="fam-row"><span class="fam-label">Shape</span>
+      <div class="fam-row" id="shape-row"><span class="fam-label">Shape</span>
         <div class="fam-seg" role="group" aria-label="Shape" id="shape" data-testid="shape">
           <button type="button" data-value="auto">Halves</button><button type="button" data-value="ltr">Left to right</button>
         </div></div>
@@ -34,7 +42,7 @@
         <div class="fam-seg" role="group" aria-label="Trophy style" id="estyle" data-testid="estyle">
           <button type="button" data-value="metal">Metal</button><button type="button" data-value="line">Line</button><button type="button" data-value="color">Colour</button>
         </div></div>
-      <div class="fam-row"><span class="fam-label">Show</span>
+      <div class="fam-row" id="show-row"><span class="fam-label">Show</span>
         <div class="fam-actions" id="toggles">
           <button type="button" class="fam-chip" data-toggle="scores" aria-pressed="true">Scores</button>
           <button type="button" class="fam-chip" data-toggle="seeds" aria-pressed="false">Seeds</button>
@@ -42,6 +50,8 @@
           <button type="button" class="fam-chip" data-toggle="trophy" id="trophy-chip" aria-pressed="true">Trophy</button>
           <button type="button" class="fam-chip" data-toggle="third" aria-pressed="true">Third place</button>
           <button type="button" class="fam-chip" data-toggle="labels" aria-pressed="true">Round names</button>
+          <button type="button" class="fam-chip" data-toggle="path" aria-pressed="false">Champion's path</button>
+          <button type="button" class="fam-chip" data-toggle="links" aria-pressed="false">Links on the boxes</button>
         </div></div>
     </div>
     <p class="fam-panel note" id="note"></p>
@@ -52,6 +62,12 @@
     <h2 id="gallery-h">Gallery</h2>
     <p>Every example, in the language chosen above. Tap one to open it.</p>
     <ul class="gallery" id="gallery"></ul>
+  </section>
+
+  <section class="more" aria-labelledby="road-h">
+    <h2 id="road-h">The road to the final</h2>
+    <p>The two finalists of a tournament and the way each came, drawn by <code>roadToFinal</code> in four sizes and in the language chosen above. The nations, their flags and the results are made up: no nation in it exists, and every flag is a few shapes drawn in code.</p>
+    <div class="road-cards" id="road-cards" data-testid="road-cards"></div>
   </section>
 
   <section class="more">

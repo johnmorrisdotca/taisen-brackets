@@ -45,7 +45,7 @@ test("the table and the call are there, and 44 pixels is the least a control giv
   await expect(page.locator("#table table tbody tr")).toHaveCount(16);
   await page.locator("#code-box summary").click();
   await expect(page.locator("#code")).toContainText("drawBracket(wc2022");
-  for (const button of await page.locator("#sport button, #example button, #size button, #lang button, .fam-chip").all()) {
+  for (const button of await page.locator("#sport button, #example button, #size button, #view button, #look button, #lang button, .fam-chip").all()) {
     const box = await button.boundingBox();
     expect(box.height).toBeGreaterThanOrEqual(43.5);
   }

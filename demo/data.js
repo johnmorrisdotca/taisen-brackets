@@ -72,7 +72,7 @@ export function build(T, flags = {}) {
         if (!teams.has(id)) {
           const region = row[`${side}_flag`];
           // Names in other languages come from Intl by the region code (`countryName`); a state with no code today is named here.
-          teams.set(id, { id, name: row[side], abbr: CODE[row[side]], ...(region ? { region } : {}), ...(HISTORIC[row[side]] ? { names: HISTORIC[row[side]] } : {}), ...(flagged && flags[region] ? { mark: flags[region] } : {}) });
+          teams.set(id, { id, name: row[side], abbr: CODE[row[side]], ...(region ? { region } : {}), ...(HISTORIC[row[side]] ? { names: HISTORIC[row[side]] } : {}), ...(flagged && flags[region] ? { flag: region } : {}) });
         }
       }
     }

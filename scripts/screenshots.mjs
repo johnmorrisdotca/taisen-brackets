@@ -45,6 +45,13 @@ try {
   await shoot("cfl-desk-light", "ex=cfl2024", { width: 1280, height: 900 });
   await shoot("mls-desk-light", "ex=mls2024", { width: 1280, height: 900 });
   await shoot("nhl1984-desk-light", "ex=nhl1984", { width: 1280, height: 900 });
+  // The road look's own pictures: the classic look beside it, a card, one team's path, and the road to the final in three sizes.
+  await shoot("classic-desk-light", "ex=wc2022&look=classic", { width: 1280, height: 900 });
+  await shoot("card-light", "ex=wc2022&size=card", { width: 1280, height: 900 });
+  await shoot("path-desk-light", "ex=wc2022&path=1", { width: 1280, height: 900 });
+  await shoot("road-card-light", "ex=wc2022&view=road&size=card", { width: 1280, height: 900 });
+  await shoot("road-wide-nhl-light", "ex=nhl2024&view=road&size=wide", { width: 1280, height: 900 });
+  await shoot("road-phone-dark", "ex=wc2022&view=road&size=phone&theme=dark", { width: 390, height: 844, phone: true, scheme: "dark" });
   await shoot("poster-desk-ja", "ex=poster&lang=ja", { width: 1280, height: 900 });
   await shoot("hero-desk-fr", "ex=wc2022&lang=fr", { width: 1280, height: 900 });
   await shoot("phone-ja", "ex=wc2022&lang=ja", { width: 390, height: 844, phone: true });
