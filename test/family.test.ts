@@ -28,9 +28,9 @@ const sha = (path: string) => createHash("sha256").update(readFileSync(path)).di
 const pkg = JSON.parse(read("package.json")) as { name: string };
 const id = pkg.name.replace(/^@[^/]+\//, "");
 
-// The template of 2026-10-15b lists twenty-six packages. The family's list is swept again, in every repository at once, when
+// The template of 2026-10-15c lists twenty-eight packages. The family's list is swept again, in every repository at once, when
 // a package is added to it, and this hash is then the new one.
-const TEMPLATE = { version: "2026-10-15b", sha256: "34016d065f9e2231d3372dc35a39cd8f342f7749ab423ebe1d5c162c43637e4a" };
+const TEMPLATE = { version: "2026-10-15c", sha256: "6fd8dcbdf819abcaeec890f75ee77e553ffab4ea9b0e2df40674d9b99da4a906" };
 const WRITER_SHA256 = "6752eaa287a9007af87d9019e4cee4c36fe1d79b60bf24478e7851ebe75138c4";
 
 test("the family template is the one file, byte for byte, in every package", () => {
@@ -44,7 +44,7 @@ test("it lists every package of the family, in order, each with its Japanese nam
     template.FAMILY.map((one) => one.id),
     [
       "korokoro", "kyuubu", "hitotsu", "toranpu", "tane", "narabe", "tenka", "kumimoji", "tsunagi", "jarajara",
-      "suido", "domino", "kotoba", "sugoroku", "kazu", "meikyuu", "hikidashi", "chizu", "bushu", "tobiishi", "jirai", "gunjin", "karakuri", "houseki", "kyogijo-stadiums", "taisen-brackets",
+      "suido", "domino", "kotoba", "sugoroku", "kazu", "meikyuu", "hikidashi", "chizu", "bushu", "tobiishi", "jirai", "gunjin", "karakuri", "houseki", "kyogijo-stadiums", "taisen-brackets", "dougu-sports", "senshu-jerseys",
     ],
   );
   for (const one of template.FAMILY) {
