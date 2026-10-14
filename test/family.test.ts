@@ -28,9 +28,9 @@ const sha = (path: string) => createHash("sha256").update(readFileSync(path)).di
 const pkg = JSON.parse(read("package.json")) as { name: string };
 const id = pkg.name.replace(/^@[^/]+\//, "");
 
-// The template of 2026-10-15 lists twenty-six packages. The family's list is swept again, in every repository at once, when
+// The template of 2026-10-15b lists twenty-six packages. The family's list is swept again, in every repository at once, when
 // a package is added to it, and this hash is then the new one.
-const TEMPLATE = { version: "2026-10-15", sha256: "cee03de7990c262dddb11c080c893d7a53623c13188314bb23b6d60a086ae96c" };
+const TEMPLATE = { version: "2026-10-15b", sha256: "34016d065f9e2231d3372dc35a39cd8f342f7749ab423ebe1d5c162c43637e4a" };
 const WRITER_SHA256 = "6752eaa287a9007af87d9019e4cee4c36fe1d79b60bf24478e7851ebe75138c4";
 
 test("the family template is the one file, byte for byte, in every package", () => {
@@ -57,11 +57,11 @@ test("it lists every package of the family, in order, each with its Japanese nam
   assert.ok(template.FAMILY.some((one) => one.id === id));
 });
 
-test("this package is marked as not on npm yet: no npm pill, no install line", () => {
-  assert.ok(template.FAMILY_NOT_ON_NPM.includes(id), "remove this test, and the id from FAMILY_NOT_ON_NPM, the day the package is published");
-  assert.ok(!template.familyHeader({ id }).includes("npmjs.com"));
-  assert.ok(!template.familyFooter({ id }).includes("npm install"));
-  assert.ok(template.familyFooter({ id }).includes("Not on npm yet"));
+test("this package is on npm: the header has the npm pill and the footer the install line", () => {
+  assert.ok(!template.FAMILY_NOT_ON_NPM.includes(id));
+  assert.ok(template.familyHeader({ id }).includes(`https://www.npmjs.com/package/@johnmorrisdotca/${id}`));
+  assert.ok(template.familyFooter({ id }).includes(`npm install @johnmorrisdotca/${id}`));
+  assert.ok(!template.familyFooter({ id }).includes("Not on npm yet"));
 });
 
 test("the demo page is made with the family's header and footer", () => {
