@@ -1,3 +1,3 @@
 import type * as Taisen from "../src/index.ts";
 interface Example { teams: Taisen.Team[]; matchups: Taisen.Matchup[] }
-export function build(T: { matchupsFromGames: typeof Taisen.matchupsFromGames }, flags?: Record<string, string>): { nhl2024: Example; wc2022: Example; wc2026: Example; mlb2022: Example; wc1938: Example; twoLegs: Example };
+export function build(T: { matchupsFromGames: typeof Taisen.matchupsFromGames }, flags?: Record<string, string>): { nhl2024: Example; nba2024: Example; mlb2022: Example; nfl2024: Example; cfl2024: Example; nhl1984: Example; wc2022: Example; wc2026: Example; wc1938: Example; twoLegs: Example };

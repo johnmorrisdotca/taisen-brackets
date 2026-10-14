@@ -1,0 +1,55 @@
+// Made by scripts/fetch-demo-data.mjs from spxn.com's public API (games, alignment), retrieved 2026-10-14; do not edit.
+// Every game of the playoffs of the 2024 NFL season (played January and February 2025), with each team's conference. The games come
+// from nflverse (https://github.com/nflverse/nflverse-data), under CC BY 4.0 (https://creativecommons.org/licenses/by/4.0/).
+export const NFL_2024 = {
+ "retrieved": "2026-10-14",
+ "games": [
+  {"game_date":"2025-01-11","home":"Baltimore Ravens","home_f":1499,"home_score":28,"away":"Pittsburgh Steelers","away_f":1498,"away_score":14,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-01-11","home":"Houston Texans","home_f":1503,"home_score":32,"away":"Los Angeles Chargers","away_f":1507,"away_score":12,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-01-12","home":"Buffalo Bills","home_f":1492,"home_score":31,"away":"Denver Broncos","away_f":1504,"away_score":7,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-01-12","home":"Tampa Bay Buccaneers","home_f":1518,"home_score":20,"away":"Washington Commanders","away_f":1511,"away_score":23,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-01-12","home":"Philadelphia Eagles","home_f":1510,"home_score":22,"away":"Green Bay Packers","away_f":1514,"away_score":10,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-01-13","home":"Los Angeles Rams","home_f":1520,"home_score":27,"away":"Minnesota Vikings","away_f":1515,"away_score":9,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-01-18","home":"Kansas City Chiefs","home_f":1505,"home_score":23,"away":"Houston Texans","away_f":1503,"away_score":14,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-01-18","home":"Detroit Lions","home_f":1513,"home_score":31,"away":"Washington Commanders","away_f":1511,"away_score":45,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-01-19","home":"Buffalo Bills","home_f":1492,"home_score":27,"away":"Baltimore Ravens","away_f":1499,"away_score":25,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-01-19","home":"Philadelphia Eagles","home_f":1510,"home_score":28,"away":"Los Angeles Rams","away_f":1520,"away_score":22,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-01-26","home":"Kansas City Chiefs","home_f":1505,"home_score":32,"away":"Buffalo Bills","away_f":1492,"away_score":29,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-01-26","home":"Philadelphia Eagles","home_f":1510,"home_score":55,"away":"Washington Commanders","away_f":1511,"away_score":23,"overtime":false,"source":"nflverse"},
+  {"game_date":"2025-02-09","home":"Philadelphia Eagles","home_f":1510,"home_score":40,"away":"Kansas City Chiefs","away_f":1505,"away_score":22,"overtime":false,"source":"nflverse"}
+ ],
+ "alignment": [
+  {"team":"Buffalo Bills","franchise_id":1492,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Miami Dolphins","franchise_id":1493,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"New England Patriots","franchise_id":1494,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"New York Jets","franchise_id":1495,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Cincinnati Bengals","franchise_id":1496,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Cleveland Browns","franchise_id":1497,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Pittsburgh Steelers","franchise_id":1498,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Baltimore Ravens","franchise_id":1499,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Tennessee Titans","franchise_id":1500,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Indianapolis Colts","franchise_id":1501,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Jacksonville Jaguars","franchise_id":1502,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Houston Texans","franchise_id":1503,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Denver Broncos","franchise_id":1504,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Kansas City Chiefs","franchise_id":1505,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Las Vegas Raiders","franchise_id":1506,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Los Angeles Chargers","franchise_id":1507,"conference":"American Football Conference","conference_short":"AFC"},
+  {"team":"Dallas Cowboys","franchise_id":1508,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"New York Giants","franchise_id":1509,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Philadelphia Eagles","franchise_id":1510,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Washington Commanders","franchise_id":1511,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Chicago Bears","franchise_id":1512,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Detroit Lions","franchise_id":1513,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Green Bay Packers","franchise_id":1514,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Minnesota Vikings","franchise_id":1515,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Atlanta Falcons","franchise_id":1516,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"New Orleans Saints","franchise_id":1517,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Tampa Bay Buccaneers","franchise_id":1518,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Carolina Panthers","franchise_id":1519,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Los Angeles Rams","franchise_id":1520,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Arizona Cardinals","franchise_id":1521,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"San Francisco 49ers","franchise_id":1522,"conference":"National Football Conference","conference_short":"NFC"},
+  {"team":"Seattle Seahawks","franchise_id":1523,"conference":"National Football Conference","conference_short":"NFC"}
+ ]
+};

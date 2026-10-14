@@ -1,7 +1,11 @@
 // The demo's brackets, as the data a caller would pass to drawBracket. The results are real, read from spxn.com's public API by
 // scripts/fetch-demo-data.mjs into demo/data/ (their sources and terms are in NOTICE.md); this file only turns those rows into teams and matchups.
 // Two examples are made up and say so: the two-legged ties (the clubs do not exist) and the 32-team field.
+import { CFL_2024 } from "./data/cfl-2024.js";
 import { MLB_2022 } from "./data/mlb-2022.js";
+import { NBA_2024 } from "./data/nba-2024.js";
+import { NFL_2024 } from "./data/nfl-2024.js";
+import { NHL_1984 } from "./data/nhl-1984.js";
 import { NHL_2024 } from "./data/nhl-2024.js";
 import { WORLD_CUPS } from "./data/worldcup-1938-2022.js";
 import { WORLD_CUP_2026 } from "./data/worldcup-2026.js";
@@ -29,6 +33,23 @@ const CLUB = {
   "Houston Astros": ["HOU", "#eb6e1f"], "New York Yankees": ["NYY", "#0c2340"], "Cleveland Guardians": ["CLE", "#e31937"], "Seattle Mariners": ["SEA", "#005c5c"],
   "Toronto Blue Jays": ["TOR", "#134a8e"], "Tampa Bay Rays": ["TBR", "#092c5c"], "Los Angeles Dodgers": ["LAD", "#005a9c"], "Atlanta Braves": ["ATL", "#ce1141"],
   "St. Louis Cardinals": ["STL", "#c41e3a"], "San Diego Padres": ["SDP", "#2f241d"], "New York Mets": ["NYM", "#ff5910"], "Philadelphia Phillies": ["PHI", "#e81828"],
+  // NBA
+  "Cleveland Cavaliers": ["CLE", "#860038"], "Orlando Magic": ["ORL", "#0077c0"], "Denver Nuggets": ["DEN", "#0e2240"], "Los Angeles Lakers": ["LAL", "#552583"],
+  "Minnesota Timberwolves": ["MIN", "#0c2340"], "Phoenix Suns": ["PHX", "#1d1160"], "New York Knicks": ["NYK", "#006bb6"], "Philadelphia 76ers": ["PHI", "#006bb6"],
+  "Boston Celtics": ["BOS", "#007a33"], "Miami Heat": ["MIA", "#98002e"], "Dallas Mavericks": ["DAL", "#00538c"], "Los Angeles Clippers": ["LAC", "#c8102e"],
+  "Indiana Pacers": ["IND", "#002d62"], "Milwaukee Bucks": ["MIL", "#00471b"], "New Orleans Pelicans": ["NOP", "#0c2340"], "Oklahoma City Thunder": ["OKC", "#007ac1"],
+  // NFL
+  "Pittsburgh Steelers": ["PIT", "#101820"], "Baltimore Ravens": ["BAL", "#241773"], "Houston Texans": ["HOU", "#03202f"], "Los Angeles Chargers": ["LAC", "#0080c6"],
+  "Buffalo Bills": ["BUF", "#00338d"], "Denver Broncos": ["DEN", "#fb4f14"], "Washington Commanders": ["WAS", "#5a1414"], "Tampa Bay Buccaneers": ["TB", "#d50a0a"],
+  "Philadelphia Eagles": ["PHI", "#004c54"], "Green Bay Packers": ["GB", "#203731"], "Minnesota Vikings": ["MIN", "#4f2683"], "Los Angeles Rams": ["LAR", "#003594"],
+  "Kansas City Chiefs": ["KC", "#e31837"], "Detroit Lions": ["DET", "#0076b6"],
+  // CFL
+  "Saskatchewan Roughriders": ["SSK", "#1b7340"], "BC Lions": ["BC", "#ff6600"], "Toronto Argonauts": ["TOR", "#00467f"], "Ottawa Redblacks": ["OTT", "#c8102e"],
+  "Montreal Alouettes": ["MTL", "#0b3a6b"], "Winnipeg Blue Bombers": ["WPG", "#002b5c"],
+  // NHL, 1984
+  "Montréal Canadiens": ["MTL", "#af1e2d"], "Buffalo Sabres": ["BUF", "#002654"], "Quebec Nordiques": ["QUE", "#6cace4"], "Calgary Flames": ["CGY", "#c8102e"],
+  "Chicago Blackhawks": ["CHI", "#cf0a2c"], "Minnesota North Stars": ["MNS", "#154734"], "Detroit Red Wings": ["DET", "#ce1126"], "St. Louis Blues": ["STL", "#002f87"],
+  "Philadelphia Flyers": ["PHI", "#f74902"],
 };
 
 const g = (a, b, extra = {}) => ({ score: [a, b], ...extra });
@@ -84,6 +105,12 @@ export function build(T, flags = {}) {
   };
   const nhl2024 = playoff(NHL_2024, { 4: 7 });
   const mlb2022 = playoff(MLB_2022, { 2: 3, 3: 5, 4: 7 });
+  const nba2024 = playoff(NBA_2024, { 4: 7 });
+  // The NFL's and the CFL's rounds are single games: no `bestOf`, so a tie is a game and its score is drawn.
+  const nfl2024 = playoff(NFL_2024, {});
+  const cfl2024 = playoff(CFL_2024, {});
+  // 1984: the first round was best of five (three wins), the others best of seven.
+  const nhl1984 = playoff(NHL_1984, { 3: 5, 4: 7 });
 
   // ----- Made up: two-legged ties between clubs that do not exist.
   const clubs = ["Aurora", "Borealis", "Cascade", "Delta", "Ember", "Fjord", "Glacier", "Harbour"].map((name, i) => ({ id: name.slice(0, 3).toUpperCase(), name: `${name} FC`, abbr: name.slice(0, 3).toUpperCase(), seed: i + 1 }));
@@ -100,5 +127,5 @@ export function build(T, flags = {}) {
       { id: "F", sides: ["AUR", "CAS"], games: [g(2, 1, { date: "2026-05-30" })] },
     ],
   };
-  return { nhl2024, wc2022, wc2026, mlb2022, wc1938, twoLegs };
+  return { nhl2024, nba2024, mlb2022, nfl2024, cfl2024, nhl1984, wc2022, wc2026, wc1938, twoLegs };
 }
