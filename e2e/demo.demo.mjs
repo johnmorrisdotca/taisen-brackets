@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const examples = ["nhl2024", "nhl1984", "nba2024", "mlb2022", "nfl2024", "cfl2024", "mls2024", "poster", "wc2022", "wc1938", "generic32", "twoLegs"];
+const examples = ["nhl2024", "nhl1984", "nba2024", "nba2024playin", "mlb2022", "nfl2024", "cfl2024", "mls2024", "poster", "wc2022", "wc1938", "generic32", "twoLegs", "cupGroups", "softballGroups"];
 
 test("the demo draws a bracket and does not scroll sideways", async ({ page }) => {
   const errors = [];
@@ -45,7 +45,9 @@ test("the table and the call are there, and 44 pixels is the least a control giv
   await expect(page.locator("#table table tbody tr")).toHaveCount(16);
   await page.locator("#code-box summary").click();
   await expect(page.locator("#code")).toContainText("drawBracket(wc2022");
-  for (const button of await page.locator("#sport button, #example button, #size button, #view button, #look button, #lang button, #bg button, .fam-chip").all()) {
+  for (const button of await page.locator("#sport button, #example button, #size button, #view button, #look button, #layout button, #lang button, #bg button, .fam-chip").all()) {
+    // A control the example has no use for is hidden (the AT chip outside the columns layout).
+    if (!(await button.isVisible())) continue;
     const box = await button.boundingBox();
     expect(box.height).toBeGreaterThanOrEqual(43.5);
   }

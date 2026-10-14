@@ -30,6 +30,8 @@
         <div class="fam-seg" role="group" aria-label="Style of the bracket" id="look" data-testid="look">
           <button type="button" data-value="road">Road</button><button type="button" data-value="classic">Classic</button>
         </div></div>
+      <div class="fam-row" id="layout-row"><span class="fam-label">Layout</span>
+        <div class="fam-seg" role="group" aria-label="Layout" id="layout" data-testid="layout"></div></div>
       <div class="fam-row"><span class="fam-label">Look</span>
         <div class="fam-seg" role="group" aria-label="Look" id="theme" data-testid="theme">
           <button type="button" data-value="auto">Auto</button><button type="button" data-value="light">Light</button><button type="button" data-value="dark">Dark</button><button type="button" data-value="poster">Poster</button>
@@ -71,6 +73,8 @@
           <button type="button" class="fam-chip" data-toggle="links" aria-pressed="false">Links on the boxes</button>
           <button type="button" class="fam-chip" data-toggle="codes" aria-pressed="false">Codes</button>
           <button type="button" class="fam-chip" data-toggle="vs" aria-pressed="false">vs</button>
+          <button type="button" class="fam-chip" data-toggle="headers" id="headers-chip" aria-pressed="false">Headers</button>
+          <button type="button" class="fam-chip" data-toggle="at" id="at-chip" aria-pressed="false">AT</button>
         </div></div>
     </div>
     <p class="fam-panel note" id="note"></p>
@@ -81,6 +85,12 @@
     <h2 id="gallery-h">Gallery</h2>
     <p>Every example, in the language chosen above. Tap one to open it.</p>
     <ul class="gallery" id="gallery"></ul>
+  </section>
+
+  <section class="more" aria-labelledby="layouts-h">
+    <h2 id="layouts-h">Layouts</h2>
+    <p>The same ties drawn eight ways: the tree, rows, shields, a score-update card, tall columns, the NBA's play-in, a series card and the group tables. Each takes the backgrounds, both looks, the four sizes and the five languages. Tap one to open it above.</p>
+    <ul class="gallery" id="layout-gallery" data-testid="layout-gallery"></ul>
   </section>
 
   <section class="more" aria-labelledby="bgs-h">
@@ -103,7 +113,7 @@
   <div class="credits">
     <p class="fam-fine">Trophies in the demo are the generic emblems of <a href="https://github.com/johnmorrisdotca/dougu-sports">Dougu Sports</a> (MIT), drawn through the <code>emblems</code> option; Taisen does not depend on it.</p>
     <p class="fam-fine">Flags in the demo are drawn from <a href="https://github.com/johnmorrisdotca/hata">Hata</a>; the source and licence of each is in its manifest, and the codes used are listed in <a href="https://github.com/johnmorrisdotca/taisen-brackets/blob/main/NOTICE.md">NOTICE.md</a>.</p>
-    <p class="fam-fine credit">Results, read through <a href="https://spxn.com">spxn.com</a>: the World Cups of 1938 and 2022 from <a href="https://github.com/jfjelstul/worldcup">The Fjelstul World Cup Database</a> (<a href="https://creativecommons.org/licenses/by-sa/4.0/legalcode">CC BY-SA 4.0</a>); the World Cup of 2026 from <a href="https://github.com/openfootball/worldcup">openfootball</a> (CC0); the NHL playoffs of 1984 and 2024 from the NHL; the 2024 NBA playoffs and CFL playoffs from English Wikipedia (CC BY-SA 4.0); the 2024 MLS Cup Playoffs from <a href="https://github.com/openfootball/world">openfootball</a> (CC0) and English Wikipedia (CC BY-SA 4.0); the 2024 NFL playoffs from <a href="https://github.com/nflverse/nflverse-data">nflverse</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>); the MLB postseason: the information used here was obtained free of charge from and is copyrighted by Retrosheet. Interested parties may contact Retrosheet at <a href="https://www.retrosheet.org">www.retrosheet.org</a>.</p>
+    <p class="fam-fine credit">Results, read through <a href="https://spxn.com">spxn.com</a>: the World Cups of 1938 and 2022 from <a href="https://github.com/jfjelstul/worldcup">The Fjelstul World Cup Database</a> (<a href="https://creativecommons.org/licenses/by-sa/4.0/legalcode">CC BY-SA 4.0</a>); the World Cup of 2026 from <a href="https://github.com/openfootball/worldcup">openfootball</a> (CC0); the NHL playoffs of 1984 and 2024 from the NHL; the 2024 NBA playoffs, the NBA play-in of 2024 and the CFL playoffs from English Wikipedia (CC BY-SA 4.0); the 2024 MLS Cup Playoffs from <a href="https://github.com/openfootball/world">openfootball</a> (CC0) and English Wikipedia (CC BY-SA 4.0); the 2024 NFL playoffs from <a href="https://github.com/nflverse/nflverse-data">nflverse</a> (<a href="https://creativecommons.org/licenses/by/4.0/">CC BY 4.0</a>); the MLB postseason: the information used here was obtained free of charge from and is copyrighted by Retrosheet. Interested parties may contact Retrosheet at <a href="https://www.retrosheet.org">www.retrosheet.org</a>.</p>
   </div>
   <!--family:unreviewed-->
   <!--family:footer-->

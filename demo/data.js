@@ -5,6 +5,7 @@ import { CFL_2024 } from "./data/cfl-2024.js";
 import { MLB_2022 } from "./data/mlb-2022.js";
 import { MLS_2024 } from "./data/mls-2024.js";
 import { NBA_2024 } from "./data/nba-2024.js";
+import { NBA_2024_PLAYIN } from "./data/nba-2024-playin.js";
 import { NFL_2024 } from "./data/nfl-2024.js";
 import { NHL_1984 } from "./data/nhl-1984.js";
 import { NHL_2024 } from "./data/nhl-2024.js";
@@ -148,5 +149,47 @@ export function build(T, flags = {}) {
       { id: "F", sides: ["AUR", "CAS"], games: [g(2, 1, { date: "2026-05-30" })] },
     ],
   };
-  return { nhl2024, nba2024, mlb2022, nfl2024, cfl2024, mls2024, nhl1984, wc2022, wc2026, wc1938, twoLegs };
+  // ----- The NBA's 2024 playoffs with its play-in: the six play-in games are kept outside the rounds (`stage: "play-in"`), the 7/8 game's loser goes on to the decider with the 9/10 game's winner,
+  // and the first-round ties of the four teams that came through name the game they came from. Seeds are the playoff seeds.
+  const nba2024playin = (() => {
+    const seedOf = (id) => NBA_2024_PLAYIN.finalSeeds[id];
+    const teams = [...nba2024.teams, ...NBA_2024_PLAYIN.teams].map((t) => ({ ...t, ...(seedOf(t.id) !== undefined ? { seed: seedOf(t.id) } : {}) }));
+    const game = (row) => {
+      const base = { id: row.id, stage: "play-in", sides: row.sides, games: [g(row.score[0], row.score[1])], ...(row.seeds ? { seeds: row.seeds } : {}) };
+      return row.after ? { ...base, feeds: [{ tie: row.after[0], result: "loser" }, { tie: row.after[1], result: "winner" }] } : base;
+    };
+    const playIn = NBA_2024_PLAYIN.games.map(game);
+    // The tie each seed went on to: the 7th seed's from the 7/8 game, the 8th's from the decider.
+    const came = { 1450: "east-78", 1444: "east-8", 1443: "west-78", 1433: "west-8" };
+    const matchups = nba2024.matchups.map((m) => {
+      const k = m.sides.findIndex((id) => came[id] !== undefined);
+      if (k < 0 || m.games.length === 0) return m;
+      const feeds = [null, null];
+      feeds[k] = { tie: came[m.sides[k]], result: "winner" };
+      return { ...m, feeds };
+    });
+    return { teams, matchups: [...matchups, ...playIn] };
+  })();
+
+  // ----- Made up: the group stage of two cups of clubs that do not exist. The results come from a fixed recipe, so they are the same every time.
+  const lcg = (seed) => () => ((seed = (Math.imul(seed, 1664525) + 1013904223) >>> 0) / 4294967296);
+  const groupCup = (groups, score, seed) => {
+    const next = lcg(seed);
+    const teams = [];
+    const matchups = [];
+    groups.forEach((names, gi) => {
+      const letter = String.fromCharCode(65 + gi);
+      const ids = names.map((n, i) => `${letter}${i + 1}`);
+      names.forEach((name, i) => teams.push({ id: ids[i], name, abbr: name.slice(0, 3).toUpperCase(), group: letter, seed: i + 1, color: ["#1b6ca8", "#b3261e", "#2a7f3f", "#8a5a00", "#6b3fa0", "#00796b", "#c2185b", "#37474f"][(gi * 4 + i) % 8] }));
+      for (let i = 0; i < ids.length; i += 1) for (let j = i + 1; j < ids.length; j += 1) matchups.push({ id: `${letter}-${i + 1}${j + 1}`, round: 0, sides: [ids[i], ids[j]], score: score(next, i, j) });
+    });
+    return { teams, matchups };
+  };
+  // Football: low scores, draws allowed; the first-named club is a little the stronger.
+  const goals = (next, i, j) => { const a = Math.floor(next() * 3.4 - i * 0.2); const b = Math.floor(next() * 3 - j * 0.15 + 0.2); return [Math.max(a, 0), Math.max(b, 0)]; };
+  // Softball: runs, and no draws.
+  const runs = (next) => { const a = 1 + Math.floor(next() * 9); let b = Math.floor(next() * 9); if (b === a) b += 1; return [a, b]; };
+  const cupGroups = groupCup([["Northgate United", "Redcliff Rovers", "Bayport City", "Highmoor FC"], ["Ashford Athletic", "Seaview Town", "Ironvale SC", "Maplewood FC"], ["Stonebridge FC", "Lakeside Wanderers", "Fairhaven Albion", "Oakridge Rangers"], ["Crestfield Town", "Pinehurst FC", "Riverbend United", "Summerton City"]], goals, 2026);
+  const softballGroups = groupCup([["Kestrel Bay", "Granite Coast", "Maple Ridge", "Harbour Point"], ["Cedar Falls", "Prairie Gold", "Lakeview", "Iron Hills"], ["Silver Creek", "Sunfield", "Westmont", "Northshore"]], runs, 77);
+  return { nhl2024, nba2024, nba2024playin, mlb2022, nfl2024, cfl2024, mls2024, nhl1984, wc2022, wc2026, wc1938, twoLegs, cupGroups, softballGroups };
 }

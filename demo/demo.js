@@ -7,11 +7,16 @@ import { ROAD_FINAL, SERIES_EMBLEMS, roadFinalists, roadSeries } from "./road-da
 
 const ALL = examples(T);
 const $ = (id) => document.getElementById(id);
-const DEFAULTS = { size: "auto", theme: "auto", shape: "auto", look: "road", view: "bracket", estyle: "metal", bg: "auto", scores: true, seeds: false, champion: true, third: true, labels: true, trophy: true, path: false, links: false, codes: false, vs: false };
-const TOGGLES = ["scores", "seeds", "champion", "third", "labels", "trophy", "path", "links", "codes", "vs"];
-const GROUPS = ["size", "theme", "shape", "look", "view", "estyle"];
+const DEFAULTS = { size: "auto", theme: "auto", shape: "auto", look: "road", view: "bracket", estyle: "metal", bg: "auto", layout: "tree", scores: true, seeds: false, champion: true, third: true, labels: true, trophy: true, path: false, links: false, codes: false, vs: false, headers: false, at: false };
+const TOGGLES = ["scores", "seeds", "champion", "third", "labels", "trophy", "path", "links", "codes", "vs", "headers", "at"];
+const GROUPS = ["size", "theme", "shape", "look", "view", "estyle", "layout"];
+/** The layouts that show the seeds unless asked not to, and the names the buttons carry. */
+const SEEDED = ["rows", "update", "series", "columns"];
+const LAYOUT_NAMES = { tree: "Tree", rows: "Rows", shields: "Shields", update: "Update", columns: "Columns", playin: "Play-in", series: "Series", groups: "Groups" };
+/** The examples whose tournament has no road to the final to draw. */
+const NO_ROAD = new Set(["cupGroups", "softballGroups", "nba2024playin"]);
 /** The background each example opens with: the playing surface of its sport where there is one, else a poster background that suits it. "plain" is the look's flat colour. */
-const BG_OF = { nhl2024: "ice", nhl1984: "aurora", nba2024: "hardwood", mlb2022: "infield", nfl2024: "turf", cfl2024: "sunburst", mls2024: "waves", poster: "stardust", wc2022: "pitch", wc1938: "ball-panels", generic32: "halftone", twoLegs: "confetti" };
+const BG_OF = { nhl2024: "ice", nhl1984: "aurora", nba2024: "hardwood", mlb2022: "infield", nfl2024: "turf", cfl2024: "sunburst", mls2024: "waves", poster: "stardust", wc2022: "pitch", wc1938: "ball-panels", generic32: "halftone", twoLegs: "confetti", nba2024playin: "hardwood", cupGroups: "midnight", softballGroups: "royal" };
 const bgKey = (example) => BG_OF[example.key] ?? "midnight";
 /** The custom background's own settings, and the visitor's picture (a data address read in the browser; it never leaves the page). */
 const custom = { preset: "midnight", colors: ["#0b1230", "#1b2160", "#7f8cff", "#c7ceff"], angle: 160, intensity: 0.6, seed: 1 };
@@ -25,11 +30,12 @@ const keep = (code) => { try { localStorage.setItem(LANG_KEY, code); } catch { /
 
 const params = new URLSearchParams(location.search);
 const first = ALL.find((e) => e.key === params.get("ex")) ?? ALL[0];
-const own = (example) => ({ theme: example.theme ?? "auto", labels: example.options.roundLabels !== false, seeds: example.key === "nhl2024" });
+const own = (example) => ({ theme: example.theme ?? "auto", labels: example.options.roundLabels !== false, seeds: example.key === "nhl2024" || SEEDED.includes(example.layouts[0]), layout: example.layouts[0] });
 const lang = [params.get("lang"), kept()].find((code) => T.LOCALE_CODES.includes(code)) ?? "en";
 const state = { ex: first.key, lang, ...DEFAULTS, ...own(first) };
 for (const key of GROUPS) if (params.has(key)) state[key] = params.get(key);
 for (const key of TOGGLES) if (params.has(key)) state[key] = params.get(key) === "1";
+if (!first.layouts.includes(state.layout)) state.layout = first.layouts[0];
 if (params.has("bg") && (["plain", "custom"].includes(params.get("bg")) || T.BACKGROUND_PRESETS.includes(params.get("bg")))) state.bg = params.get("bg");
 if (params.get("bgp") && T.BACKGROUND_PRESETS.includes(params.get("bgp"))) custom.preset = params.get("bgp");
 if (/^(#[0-9a-f]{6}-?){1,4}$/i.test(params.get("bgc") ?? "")) params.get("bgc").split("-").forEach((c, i) => { custom.colors[i] = c.startsWith("#") ? c : `#${c}`; });
@@ -37,7 +43,7 @@ for (const [name, key] of [["bga", "angle"], ["bgi", "intensity"], ["bgs", "seed
 
 const narrow = matchMedia("(max-width: 640px)");
 const current = () => ALL.find((e) => e.key === state.ex);
-const sizeNow = () => (state.size === "auto" ? (narrow.matches ? "phone" : "wide") : state.size);
+const sizeNow = () => (state.size === "auto" ? (narrow.matches ? "phone" : state.layout === "series" ? "card" : "wide") : state.size);
 
 /** The names of countries in the chosen language, from Intl.DisplayNames by the ISO code a team carries: no list is written. Clubs have no code and keep their names. */
 const teamName = (team, locale) => (team.region ? T.countryName(team.region, locale) : undefined);
@@ -60,6 +66,9 @@ function optionsFor(example, size) {
   if (state.shape !== "auto") options.shape = state.shape;
   options.scores = state.scores;
   options.seeds = state.seeds;
+  if (state.layout !== "tree") options.layout = state.layout;
+  if (state.headers) options.headers = true;
+  if (state.at && state.layout === "columns") options.at = true;
   options.champion = state.champion;
   options.thirdPlace = state.third ? "below" : "hide";
   options.roundLabels = state.labels;
@@ -97,7 +106,8 @@ const defaultsFor = (example) => ({ ...DEFAULTS, ...own(example) });
 function draw() {
   const example = current();
   const size = sizeNow();
-  const road = state.view === "road";
+  const planned = state.layout === "groups" || state.layout === "playin";
+  const road = state.view === "road" && !NO_ROAD.has(example.key);
   const options = road ? roadOptionsFor(example, size) : optionsFor(example, size);
   const stage = $("stage");
   const chart = road ? T.roadToFinal(example.data, options) : null;
@@ -125,8 +135,14 @@ function draw() {
   const call = road ? `roadToFinal(${example.key}, ${withNames}).draw()` : `drawBracket(${example.key}, ${withNames})`;
   $("code").firstChild.textContent = `import { ${road ? "roadToFinal" : "drawBracket"}, countryName${champion ? ", layoutBracket" : ""}, playoffFormat${withEmblem ? ", LEAGUE_EMBLEMS" : ""} } from "@johnmorrisdotca/taisen-brackets";\n${emblemImport}\n// ${example.key}: { teams, matchups }; each national team carries its ISO code as \`region\` and \`flag\`\n${flagLine}${champion}const svg = ${call};\n`;
   const sport = SPORTS.find((s) => s.key === example.sport);
-  $("trophy-rows").hidden = $("trophy-chip").hidden = road || !emblemOf(example);
-  for (const id of ["shape-row", "show-row"]) $(id).hidden = road;
+  $("trophy-rows").hidden = $("trophy-chip").hidden = road || planned || !emblemOf(example);
+  for (const id of ["shape-row"]) $(id).hidden = road || state.layout !== "tree";
+  $("show-row").hidden = road || planned;
+  $("layout-row").hidden = road || example.layouts.length < 2;
+  $("layout").innerHTML = example.layouts.map((l) => `<button type="button" data-value="${l}" aria-pressed="${l === state.layout}">${LAYOUT_NAMES[l]}</button>`).join("");
+  $("headers-chip").hidden = !example.layouts.some((l) => l !== "groups" && l !== "playin") || planned;
+  $("at-chip").hidden = state.layout !== "columns";
+  $("view").parentElement.hidden = NO_ROAD.has(example.key);
   for (const group of [...GROUPS, "lang"]) for (const b of $(group).querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.value === state[group === "lang" ? "lang" : group]));
   for (const b of document.querySelectorAll("[data-toggle]")) b.setAttribute("aria-pressed", String(state[b.dataset.toggle]));
   for (const b of $("sport").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.value === sport.key));
@@ -156,17 +172,40 @@ function choose(key) {
   const example = ALL.find((e) => e.key === key);
   // The style, the view and the background are the visitor's own choices and stay when another example opens.
   const stay = { look: state.look, view: state.view, bg: state.bg };
-  Object.assign(state, defaultsFor(example), stay, { ex: key });
+  const layout = example.layouts.includes(state.layout) ? state.layout : example.layouts[0];
+  Object.assign(state, defaultsFor(example), stay, { ex: key, layout });
+  state.seeds = example.key === "nhl2024" || SEEDED.includes(layout);
   draw();
 }
 
 function gallery() {
   $("gallery").innerHTML = ALL.map((e) => {
     const emblem = emblemOf(e);
-    const svg = T.drawBracket(e.data, { ...e.options, ...(emblem && { emblems: renderEmblem, trophy: emblem }), look: "road", flags, size: "wide", id: `g-${e.key}`, locale: state.lang, teamName, title: titleOf(e), subtitle: e.subtitles?.[state.lang] ?? e.options.subtitle, background: bgKey(e), seeds: e.key === "nhl2024" });
+    const svg = T.drawBracket(e.data, { ...e.options, ...(emblem && { emblems: renderEmblem, trophy: emblem }), ...(e.layouts[0] !== "tree" && { layout: e.layouts[0] }), look: "road", flags, size: "wide", id: `g-${e.key}`, locale: state.lang, teamName, title: titleOf(e), subtitle: e.subtitles?.[state.lang] ?? e.options.subtitle, background: bgKey(e), seeds: e.key === "nhl2024" });
     return `<li><button type="button" data-value="${e.key}" aria-label="${e.title}"><span class="shot" aria-hidden="true">${svg.replace(' role="img"', "")}</span><b>${SPORTS.find((s) => s.key === e.sport).label}: ${e.label}</b></button></li>`;
   }).join("");
 }
+
+/** Each layout on a sport that suits it, with a background that suits both: [example, layout, background]. */
+const LAYOUT_TILES = [["wc2022", "tree", "pitch"], ["nhl2024", "rows", "ice"], ["nhl2024", "update", "aurora"], ["wc2022", "shields", "floodlights"], ["nfl2024", "columns", "turf"], ["nba2024playin", "playin", "hardwood"], ["nba2024", "series", "carbon"], ["cupGroups", "groups", "midnight"], ["softballGroups", "groups", "royal"]];
+function layoutGallery() {
+  $("layout-gallery").innerHTML = LAYOUT_TILES.map(([key, layout, bg]) => {
+    const e = ALL.find((x) => x.key === key);
+    const emblem = emblemOf(e);
+    const svg = T.drawBracket(e.data, { ...e.options, ...(emblem && { emblems: renderEmblem, trophy: emblem }), layout, look: "road", flags, size: layout === "series" ? "card" : "wide", id: `l-${key}-${layout}`, locale: state.lang, teamName, title: titleOf(e), subtitle: e.subtitles?.[state.lang] ?? e.options.subtitle, background: bg, seeds: SEEDED.includes(layout) || key === "nhl2024" });
+    return `<li><button type="button" data-value="${key}" data-layout="${layout}" data-bg="${bg}" aria-label="${LAYOUT_NAMES[layout]}: ${e.title}"><span class="shot" aria-hidden="true">${svg.replace(' role="img"', "")}</span><b>${LAYOUT_NAMES[layout]}: ${SPORTS.find((s) => s.key === e.sport).label} ${e.label}</b></button></li>`;
+  }).join("");
+}
+$("layout-gallery").addEventListener("click", (event) => {
+  const b = event.target.closest("button");
+  if (!b) return;
+  choose(b.dataset.value);
+  state.layout = b.dataset.layout;
+  state.bg = b.dataset.bg;
+  state.seeds = b.dataset.value === "nhl2024" || SEEDED.includes(state.layout);
+  draw();
+  $("stage").scrollIntoView({ behavior: "smooth", block: "start" });
+});
 
 /** The road to the final of made-up nations (a card, the wide card, a phone in the dark) and of a made-up play-off series, each with its table. */
 function roadCards() {
@@ -187,7 +226,13 @@ $("sport").innerHTML = SPORTS.map((s) => `<button type="button" data-value="${s.
 $("sport").addEventListener("click", (event) => { const b = event.target.closest("button"); if (b) choose(ALL.find((e) => e.sport === b.dataset.value).key); });
 $("example").addEventListener("click", (event) => { const b = event.target.closest("button"); if (b) choose(b.dataset.value); });
 for (const group of GROUPS) {
-  $(group).addEventListener("click", (event) => { const b = event.target.closest("button"); if (b) { state[group] = b.dataset.value; draw(); } });
+  $(group).addEventListener("click", (event) => {
+    const b = event.target.closest("button");
+    if (!b) return;
+    state[group] = b.dataset.value;
+    if (group === "layout") state.seeds = current().key === "nhl2024" || SEEDED.includes(state.layout);
+    draw();
+  });
 }
 $("lang").addEventListener("click", (event) => {
   const b = event.target.closest("button");
@@ -195,6 +240,7 @@ $("lang").addEventListener("click", (event) => {
   state.lang = b.dataset.value;
   keep(state.lang);
   gallery();
+  layoutGallery();
   roadCards();
   if (bgBuilt) backgroundGallery();
   draw();
@@ -294,5 +340,6 @@ matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => sync
 swatches();
 customControls();
 gallery();
+layoutGallery();
 roadCards();
 draw();
