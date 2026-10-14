@@ -80,6 +80,7 @@
     "test:readme": "pnpm build && node scripts/make-formats-doc.mjs --check && node scripts/check-readme-examples.mjs",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && node scripts/check-package.mjs",
     "prepublishOnly": "pnpm check",
+    "family:readme": "node scripts/family-readme.mjs",
     "dev": "pnpm build && node scripts/dev.mjs",
     "flags": "node scripts/make-flags.mjs",
     "site": "pnpm build && node scripts/site.mjs",
