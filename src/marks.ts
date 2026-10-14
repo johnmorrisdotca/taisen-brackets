@@ -26,6 +26,15 @@ export function cleanSvg(markup: string): { viewBox: string; inner: string } | n
   return { viewBox: box, inner };
 }
 
+/** Readable text on a team colour: white on a dark one, near-black on a light one; `null` when the colour is not a hex one this can read. */
+function inkOn(color: string): string | null {
+  const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(color.trim())?.[1];
+  if (!hex) return null;
+  const full = hex.length === 3 ? [...hex].map((c) => c + c).join("") : hex;
+  const [r, g, b] = [0, 2, 4].map((i) => parseInt(full.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.35 ? "#ffffff" : "#1f2320";
+}
+
 /** Whether an image address is one a drawing will load: http(s), a relative path, or a `data:image/`. */
 export function safeUrl(url: string): boolean {
   const u = url.trim();
@@ -75,5 +84,6 @@ export function drawMark(team: Team | null, cx: number, cy: number, size: number
   const text = (abbrText ?? team.abbr ?? abbreviate(team.name)).slice(0, 3);
   const fill = team.color ? ` style="fill:${esc(team.color)}"` : "";
   const shape = clip ? `<circle class="tb-plain" cx="${num(cx)}" cy="${num(cy)}" r="${num(r)}"${fill}/>` : `<rect class="tb-plain" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="2"${fill}/>`;
-  return `<g class="tb-mark">${shape}<text class="tb-initials" x="${num(cx)}" y="${num(cy + size * 0.12)}" font-size="${num(size * 0.36)}" font-weight="700" text-anchor="middle">${esc(text)}</text></g>${ring}`;
+  const ink = team.color ? inkOn(team.color) : null;
+  return `<g class="tb-mark">${shape}<text class="tb-initials" x="${num(cx)}" y="${num(cy + size * 0.12)}" font-size="${num(size * 0.36)}" font-weight="700" text-anchor="middle"${ink ? ` style="fill:${ink}"` : ""}>${esc(text)}</text></g>${ring}`;
 }

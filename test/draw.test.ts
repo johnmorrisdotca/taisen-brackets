@@ -1,15 +1,16 @@
 import assert from "node:assert/strict";
 import { test } from "node:test";
-import { mlb2022, nhl2024, twoLegs, wc1938, wc2022 } from "../demo/data.js";
+import { build } from "../demo/data.js";
 import * as T from "../src/index.ts";
 import type { Matchup, Team } from "../src/index.ts";
 import { finished, wellFormed } from "./helpers.ts";
 
+const { mlb2022, nhl2024, twoLegs, wc1938, wc2022, wc2026 } = build(T);
 const count = (text: string, part: string) => text.split(part).length - 1;
 const viewBox = (svg: string) => /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(svg)!.slice(1).map(Number);
 
 test("a drawing is well-formed SVG with a title, a description and no stray numbers", () => {
-  for (const ex of [nhl2024, wc2022, mlb2022, wc1938, twoLegs]) {
+  for (const ex of [nhl2024, wc2022, wc2026, mlb2022, wc1938, twoLegs]) {
     const svg = T.drawBracket(ex);
     assert.equal(wellFormed(svg), null);
     assert.match(svg, /^<svg xmlns="http:\/\/www\.w3\.org\/2000\/svg"/);
@@ -88,8 +89,9 @@ test("the champion is in the centre once the final is played, with an optional t
   assert.match(svg, /CHAMPION/);
   assert.match(svg, /Argentina<\/text>/);
   assert.ok(!/CHAMPION/.test(T.drawBracket(wc2022, { champion: false })));
-  const open = wc2022.matchups.filter((m: Matchup) => m.id !== "F");
-  assert.ok(!/CHAMPION/.test(T.drawBracket({ matchups: [...open, { id: "F", sides: ["ARG", "FRA"] }], teams: wc2022.teams })));
+  const last = wc2022.matchups.find((m: Matchup) => m.round === 4 && !m.third)!;
+  const open = wc2022.matchups.map((m: Matchup) => (m === last ? { id: last.id, sides: last.sides } : m));
+  assert.ok(!/CHAMPION/.test(T.drawBracket({ matchups: open, teams: wc2022.teams })));
   const trophy = '<svg viewBox="0 0 10 10"><path d="M1 1h8v3H1z"/></svg>';
   const withTrophy = T.drawBracket(wc2022, { trophy });
   assert.match(withTrophy, /class="tb-gold"[^>]*viewBox="0 0 10 10"/);
@@ -121,7 +123,8 @@ test("the winner is highlighted, the loser quiet, and scores, pens and notes are
 test("a series is drawn with its games won, and notes say how long it went", () => {
   const svg = T.drawBracket(nhl2024, { size: "square" });
   assert.match(svg, /Florida Panthers 4, Edmonton Oilers 3 \(in 7\)/);
-  assert.match(svg, /class="tb-half"[^>]*>Western<|>Eastern</);
+  assert.match(svg, /class="tb-half"[^>]*>Western Conference</);
+  assert.match(svg, /class="tb-half"[^>]*>Eastern Conference</);
 });
 
 test("round names: generic, from a format, from a list, or in the words you choose", () => {
@@ -220,10 +223,12 @@ test("the table lists every tie, with the winner in bold, and describes the brac
   assert.match(T.bracketTable(nhl2024, { caption: "NHL", roundNames: T.playoffFormat("nhl", 2024)! }), /Stanley Cup Final/);
 });
 
-test("replays are noted, and a walkover has no score", () => {
+test("replays are noted, and a team with no first-round match is drawn with a bye", () => {
   const svg = T.drawBracket(wc1938);
   assert.match(svg, /replay/);
-  assert.match(svg, /Sweden v Austria\. Winner: Sweden/);
+  const layout = T.layoutBracket(wc1938);
+  const withBye = layout.sides.flatMap((s) => s.boxes).filter((b) => b.bye !== null);
+  assert.deepEqual(withBye.map((b) => layout.ties[b.i].sides[b.bye!]!.name), ["Sweden"], "Austria withdrew: Sweden had no first-round tie");
 });
 
 test("no matchups draw an empty bracket, not an error", () => {
@@ -232,4 +237,11 @@ test("no matchups draw an empty bracket, not an error", () => {
   assert.ok(!/NaN|undefined/.test(svg));
   assert.match(svg, /Nothing yet/);
   assert.equal(T.bracketTable([]).includes("<tbody></tbody>"), true);
+});
+
+test("a side that had a bye says so beside its score", () => {
+  const svg = T.drawBracket(mlb2022);
+  assert.equal(count(svg, ">bye</text>"), 4, "the four teams that skipped the wild card series");
+  assert.equal(count(T.drawBracket(wc2022), ">bye</text>"), 0);
+  assert.match(T.drawBracket(mlb2022, { words: { bye: "exempt" } }), />exempt<\/text>/);
 });

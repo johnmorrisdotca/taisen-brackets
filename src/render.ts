@@ -447,20 +447,20 @@ function drawBox(p: Placed, plan: Plan, o: DrawOptions, words: Words, ctx: MarkC
       if (o.markShape !== "none") { rowParts.push(drawMark(team, x + 6 + md / 2, cy, md, ctx)); tx = x + 6 + md + 5; }
       const score = scoresOn && r.score ? String(r.score[k]) : "";
       const pensText = scoresOn && r.pens ? `(${r.pens[k]})` : "";
-      const bye = p.bye === k && !score;
+      const bye = p.bye === k;
       const right = x + w - 6;
       const scoreW = score ? textWidth(score, font + 1) : 0;
       const pensW = pensText ? textWidth(pensText, font - 2) + 3 : 0;
       const byeText = bye ? words.bye : "";
-      const byeW = byeText ? textWidth(byeText, font - 2) : 0;
-      const avail = right - tx - Math.max(scoreW + pensW, byeW) - 6;
+      const byeW = byeText ? textWidth(byeText, Math.max(font - 2, 8)) : 0;
+      const avail = right - tx - (scoreW + pensW) - (byeW ? byeW + 6 : 0) - 6;
       const seed = seedsOn && team?.seed !== undefined ? `${team.seed} ` : "";
       const nm = team ? (detail === "full" ? team.name : abbrOf(team, words)) : words.tbd;
       const text = fit(`${seed}${nm}`, font, Math.max(avail, 8));
       rowParts.push(`<text class="tb-name${team ? "" : " tb-muted"}" x="${num(tx)}" y="${num(cy + font * 0.35)}" font-size="${num(font)}">${esc(text)}</text>`);
       if (score) rowParts.push(`<text class="tb-score" x="${num(right)}" y="${num(cy + (font + 1) * 0.35)}" font-size="${num(font + 1)}" text-anchor="end" font-variant-numeric="tabular-nums">${esc(score)}</text>`);
       if (pensText) rowParts.push(`<text class="tb-muted" x="${num(right - scoreW - 3)}" y="${num(cy + (font - 2) * 0.35)}" font-size="${num(Math.max(font - 2, 8))}" text-anchor="end">${esc(pensText)}</text>`);
-      if (byeText) rowParts.push(`<text class="tb-muted" x="${num(right)}" y="${num(cy + (font - 2) * 0.35)}" font-size="${num(Math.max(font - 2, 8))}" font-style="italic" text-anchor="end">${esc(byeText)}</text>`);
+      if (byeText) rowParts.push(`<text class="tb-muted" x="${num(right - (scoreW + pensW) - (scoreW || pensW ? 6 : 0))}" y="${num(cy + (font - 2) * 0.35)}" font-size="${num(Math.max(font - 2, 8))}" font-style="italic" text-anchor="end">${esc(byeText)}</text>`);
       parts.push(`<g class="${cls(k)}">${rowParts.join("")}</g>`);
     });
     parts.push(`<line class="tb-line" x1="${num(x + 4)}" x2="${num(x + w - 4)}" y1="${num(y + rowH)}" y2="${num(y + rowH)}" stroke-opacity=".35"${o.theme === "none" ? ' stroke="currentColor"' : ""}/>`);
