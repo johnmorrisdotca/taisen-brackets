@@ -27,6 +27,11 @@ export interface Team {
   names?: Readonly<Record<string, string>>;
   /** An ISO 3166 region code (`DE`), for `countryName` and a `teamName` that uses it. */
   region?: string;
+  /**
+   * A country code (`ca`, `GB-ENG`) for a round flag drawn by the `flags` option's renderer (`@johnmorrisdotca/hata` has one). With no
+   * renderer, or one that has no flag for the code, the team's `mark` is drawn, or its initials: it never throws.
+   */
+  flag?: string;
 }
 
 /** One game of a tie: a match of a knockout, a game of a series, a leg of an aggregate, a replay. */
@@ -269,6 +274,33 @@ export interface Words {
   columnDate: string;
   /** The `<title>` of a drawing with no `title` option. */
   title: string;
+  /** The road-to-the-final chart (`roadToFinal`): its title, the "v" between two finalists, the group stage, FT, AET, `{a}`, `{b}` the shoot-out, and the results. */
+  roadTitle: string;
+  roadVs: string;
+  roadGroup: string;
+  roadFt: string;
+  roadAet: string;
+  roadPens: string;
+  roadWon: string;
+  roadLost: string;
+  roadDrew: string;
+  /** The names of the two rounds a road names one match of (the other rounds come from the round names of the language). */
+  roadQuarterFinal: string;
+  roadSemiFinal: string;
+  /** The road's table: the headings, the caption (`{a}`, `{b}`), the chart's name (`{a}`, `{b}`, `{title}`), the summary (`{a}`, `{b}`, `{an}`, `{bn}`) and its sentences. */
+  roadTableTeam: string;
+  roadTableOpponent: string;
+  roadTableScore: string;
+  roadTableDecided: string;
+  roadTableResult: string;
+  roadCaption: string;
+  roadName: string;
+  roadSummary: string;
+  /** `{a}`, `{b}`, `{score}`, `{how}`. */
+  roadFinal: string;
+  /** `{name}`. */
+  roadChampion: string;
+  roadToPlay: string;
 }
 
 /** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */
@@ -283,7 +315,7 @@ export interface Locale {
 
 export type ThemeName = "auto" | "light" | "dark" | "poster" | "none";
 
-export type SizeName = "wide" | "square" | "phone";
+export type SizeName = "wide" | "square" | "phone" | "card";
 
 export interface Size {
   /** The width of the drawing, in pixels. */
@@ -294,6 +326,28 @@ export interface Size {
 
 /** How much a box shows: both names and scores, an abbreviation and the score, or only the marks. */
 export type Detail = "auto" | "full" | "compact" | "mark";
+
+/** How a flag is framed: `round` in a circle, `square`, or `rect` in its own proportions. */
+export type FlagShape = "round" | "square" | "rect";
+
+/** What a drawing asks a `flags` renderer for. */
+export interface FlagRequest {
+  shape: FlagShape;
+  /** Width and height in pixels (the diameter, for a round flag). */
+  size: number;
+  /** `light` or `dark` for a drawing in that look (`poster` is dark); `inherit` for `auto` and `none`. */
+  theme: "inherit" | "light" | "dark";
+}
+
+/**
+ * A function from a country code and a request to an SVG string, or `null` or `undefined` for a code it has no flag for. It must be
+ * synchronous: a drawing is a pure function of its options. `@johnmorrisdotca/hata`'s `flag()` is asynchronous, so load the flags first
+ * (`await flag(code, { shape: "round" })` for each code) and pass `(code) => loaded[code]`.
+ */
+export type FlagRenderer = (code: string, request: FlagRequest) => string | null | undefined;
+
+/** How a bracket is drawn: `classic` (the default) or `road`, with large round marks, big scores and a dotted path. */
+export type Look = "classic" | "road";
 
 /** How an emblem is drawn; the names are those of `@johnmorrisdotca/dougu-sports`. */
 export type EmblemStyle = "metal" | "line" | "color";
@@ -313,7 +367,7 @@ export interface EmblemRequest {
 export type EmblemRenderer = (id: string, options: EmblemRequest) => string;
 
 export interface DrawOptions extends LayoutOptions {
-  /** `wide` 1200 by 675, `square` 1080 by 1080, `phone` 390 wide and as tall as it needs; or a size of your own. Default `wide`. */
+  /** `wide` 1200 by 675, `square` 1080 by 1080, `card` 1080 by 1350 (a tall post), `phone` 390 wide and as tall as it needs; or a size of your own. Default `wide`. */
   size?: SizeName | { width: number; height?: number | null };
   /** `horizontal`: the rounds are columns. `vertical`: the rounds are rows, for a tall page. Default horizontal; the phone's is vertical. */
   orientation?: "auto" | "horizontal" | "vertical";
@@ -351,6 +405,24 @@ export interface DrawOptions extends LayoutOptions {
   emblemStyle?: EmblemStyle;
   /** A colour for the emblem's main part (a hex colour or `rgb()`), passed to the renderer as `tint`. */
   emblemTint?: string;
+  /**
+   * Draws the flag a team's `flag` code names: a synchronous function from a code and `{ shape, size, theme }` to an SVG string, such as one
+   * made from `@johnmorrisdotca/hata`. With none, or when it returns nothing for a code, the team's `mark` or its initials are drawn.
+   */
+  flags?: FlagRenderer;
+  /**
+   * `classic` (the default) or `road`: the look of the road-to-the-final chart, with large round marks, big bold scores, the loser quiet, the
+   * rounds named on pills and a dotted path. Every other option works in both.
+   */
+  look?: Look;
+  /**
+   * A link for each tie's box, from the tie and, for a link on one team's row, its side (0 or 1). Called with the tie alone first: an address
+   * makes the whole box a link; when that gives none, each side is asked, and a row with an address is a link of its own. Each is a real
+   * `<a href>` in the SVG with an accessible name; an address that is not http(s), relative or a `#` fragment is refused. `undefined` is no link.
+   */
+  href?: (tie: Tie, side?: 0 | 1) => string | null | undefined;
+  /** The id of a team whose path to the final is drawn as a dotted line in the look's highlight, the rest quieter. */
+  highlightPath?: SideId;
   /** Where the third-place match goes: `below` the final (the default) or `hide`. */
   thirdPlace?: "below" | "hide";
   /** Highlight the side that went through. Default true. */

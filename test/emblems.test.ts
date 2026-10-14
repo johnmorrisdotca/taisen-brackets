@@ -136,6 +136,8 @@ test("the package stays dependency-free: nothing in src imports the emblems, and
   const manifest = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
   assert.equal(manifest.dependencies, undefined, "no runtime dependencies");
   assert.equal(manifest.peerDependenciesMeta["@johnmorrisdotca/dougu-sports"].optional, true);
-  assert.deepEqual(Object.keys(manifest.peerDependencies), ["@johnmorrisdotca/dougu-sports"]);
+  assert.deepEqual(Object.keys(manifest.peerDependencies), ["@johnmorrisdotca/dougu-sports", "@johnmorrisdotca/hata"]);
+  assert.equal(manifest.peerDependenciesMeta["@johnmorrisdotca/hata"].optional, true);
+  assert.match(manifest.devDependencies["@johnmorrisdotca/hata"], /^\d+\.\d+\.\d+$/, "the flags package is pinned to an exact version too");
   assert.match(manifest.devDependencies["@johnmorrisdotca/dougu-sports"], /^\d+\.\d+\.\d+$/, "pinned to an exact version");
 });

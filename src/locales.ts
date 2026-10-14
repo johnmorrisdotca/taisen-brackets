@@ -16,6 +16,12 @@ const EN: Words = {
   tieVs: "{a} v {b}", tieScore: "{a} {sa}, {b} {sb}", scoreText: "{a}–{b}", winnerIs: "Winner: {name}", championIs: "Champion: {name}", finalLine: "{round}: {tie}",
   summary: "{n} teams, {r} rounds", summaryOne: "{n} teams, 1 round", sep: ". ", end: ".", note: " ({notes})", noteJoin: ", ",
   columnRound: "Round", columnTie: "Tie", columnNote: "Note", columnDate: "Date", title: "Knockout bracket",
+  roadTitle: "Road to the final", roadVs: "v", roadGroup: "Group stage", roadFt: "FT", roadAet: "AET", roadPens: "{a}–{b} pens",
+  roadWon: "Won", roadLost: "Lost", roadDrew: "Drew", roadQuarterFinal: "Quarter-final", roadSemiFinal: "Semi-final",
+  roadTableTeam: "Team", roadTableOpponent: "Opponent", roadTableScore: "Score", roadTableDecided: "Decided", roadTableResult: "Result",
+  roadCaption: "{a} and {b}: every match on the way to the final. Scores are written with the team in the first column first.",
+  roadName: "{a} and {b}: {title}", roadSummary: "Matches played before the final: {a} ({an}) and {b} ({bn}).",
+  roadFinal: "The final: {a} {score} {b} ({how}).", roadChampion: "{name} won the final.", roadToPlay: "The final is still to be played.",
 };
 
 const FR: Words = {
@@ -26,6 +32,12 @@ const FR: Words = {
   tieVs: "{a} contre {b}", tieScore: "{a} {sa}, {b} {sb}", scoreText: "{a}–{b}", winnerIs: "Vainqueur : {name}", championIs: "Champion : {name}", finalLine: "{round} : {tie}",
   summary: "{n} équipes, {r} tours", summaryOne: "{n} équipes, 1 tour", sep: ". ", end: ".", note: " ({notes})", noteJoin: ", ",
   columnRound: "Tour", columnTie: "Rencontre", columnNote: "Note", columnDate: "Date", title: "Tableau à élimination directe",
+  roadTitle: "Parcours vers la finale", roadVs: "vs", roadGroup: "Phase de groupes", roadFt: "t.r.", roadAet: "a.p.", roadPens: "{a}–{b} t.a.b.",
+  roadWon: "Victoire", roadLost: "Défaite", roadDrew: "Nul", roadQuarterFinal: "Quart de finale", roadSemiFinal: "Demi-finale",
+  roadTableTeam: "Équipe", roadTableOpponent: "Adversaire", roadTableScore: "Score", roadTableDecided: "Décidé en", roadTableResult: "Résultat",
+  roadCaption: "{a} et {b} : tous les matchs jusqu’à la finale. Chaque score commence par celui de l’équipe de la première colonne.",
+  roadName: "{a} et {b} : {title}", roadSummary: "Matchs joués avant la finale : {a} ({an}) et {b} ({bn}).",
+  roadFinal: "La finale : {a} {score} {b} ({how}).", roadChampion: "{name} a remporté la finale.", roadToPlay: "La finale reste à jouer.",
 };
 
 const JA: Words = {
@@ -36,6 +48,12 @@ const JA: Words = {
   tieVs: "{a} 対 {b}", tieScore: "{a} {sa}–{sb} {b}", scoreText: "{a}–{b}", winnerIs: "勝者：{name}", championIs: "優勝：{name}", finalLine: "{round}：{tie}",
   summary: "{n}チーム、{r}ラウンド", summaryOne: "{n}チーム、1ラウンド", sep: "。", end: "。", note: "（{notes}）", noteJoin: "、",
   columnRound: "ラウンド", columnTie: "対戦", columnNote: "備考", columnDate: "日付", title: "トーナメント表",
+  roadTitle: "決勝への道", roadVs: "対", roadGroup: "グループステージ", roadFt: "規定時間", roadAet: "延長", roadPens: "PK戦 {a}–{b}",
+  roadWon: "勝ち", roadLost: "負け", roadDrew: "引き分け", roadQuarterFinal: "準々決勝", roadSemiFinal: "準決勝",
+  roadTableTeam: "チーム", roadTableOpponent: "対戦相手", roadTableScore: "スコア", roadTableDecided: "決着", roadTableResult: "結果",
+  roadCaption: "{a}と{b}：決勝までの全試合。スコアは「チーム」列のチームの得点を先に書いています。",
+  roadName: "{a}と{b}：{title}", roadSummary: "{a}は決勝までに{an}試合、{b}は{bn}試合を戦いました。",
+  roadFinal: "決勝は{a} {score} {b}（{how}）でした。", roadChampion: "{name}が優勝しました。", roadToPlay: "決勝はまだ行われていません。",
 };
 
 const ES: Words = {
@@ -46,6 +64,12 @@ const ES: Words = {
   tieVs: "{a} vs. {b}", tieScore: "{a} {sa}, {b} {sb}", scoreText: "{a}–{b}", winnerIs: "Ganador: {name}", championIs: "Campeón: {name}", finalLine: "{round}: {tie}",
   summary: "{n} equipos, {r} rondas", summaryOne: "{n} equipos, 1 ronda", sep: ". ", end: ".", note: " ({notes})", noteJoin: ", ",
   columnRound: "Ronda", columnTie: "Partido", columnNote: "Nota", columnDate: "Fecha", title: "Cuadro de eliminatorias",
+  roadTitle: "El camino a la final", roadVs: "vs.", roadGroup: "Fase de grupos", roadFt: "T. reg.", roadAet: "Prórroga", roadPens: "{a}–{b} en los penales",
+  roadWon: "Ganó", roadLost: "Perdió", roadDrew: "Empató", roadQuarterFinal: "Cuartos de final", roadSemiFinal: "Semifinal",
+  roadTableTeam: "Equipo", roadTableOpponent: "Rival", roadTableScore: "Marcador", roadTableDecided: "Decidido en", roadTableResult: "Resultado",
+  roadCaption: "{a} y {b}: todos los partidos hasta la final. Los marcadores empiezan por el equipo de la primera columna.",
+  roadName: "{a} y {b}: {title}", roadSummary: "Partidos jugados hasta la final: {a} ({an}) y {b} ({bn}).",
+  roadFinal: "La final: {a} {score} {b} ({how}).", roadChampion: "{name} ganó la final.", roadToPlay: "La final aún no se ha jugado.",
 };
 
 const DE: Words = {
@@ -56,6 +80,12 @@ const DE: Words = {
   tieVs: "{a} gegen {b}", tieScore: "{a} {sa}, {b} {sb}", scoreText: "{a}:{b}", winnerIs: "Sieger: {name}", championIs: "Turniersieger: {name}", finalLine: "{round}: {tie}",
   summary: "{n} Teams, {r} Runden", summaryOne: "{n} Teams, 1 Runde", sep: ". ", end: ".", note: " ({notes})", noteJoin: ", ",
   columnRound: "Runde", columnTie: "Begegnung", columnNote: "Hinweis", columnDate: "Datum", title: "Turnierbaum",
+  roadTitle: "Der Weg ins Finale", roadVs: "vs.", roadGroup: "Gruppenphase", roadFt: "reg. Zeit", roadAet: "n. V.", roadPens: "{a}:{b} i. E.",
+  roadWon: "Sieg", roadLost: "Niederlage", roadDrew: "Remis", roadQuarterFinal: "Viertelfinale", roadSemiFinal: "Halbfinale",
+  roadTableTeam: "Team", roadTableOpponent: "Gegner", roadTableScore: "Ergebnis", roadTableDecided: "Entschieden", roadTableResult: "Ausgang",
+  roadCaption: "{a} und {b}: alle Spiele auf dem Weg ins Finale. Die Ergebnisse beginnen mit dem Team der ersten Spalte.",
+  roadName: "{a} und {b}: {title}", roadSummary: "Spiele bis zum Finale: {a} ({an}) und {b} ({bn}).",
+  roadFinal: "Das Finale: {a} {score} {b} ({how}).", roadChampion: "{name} gewann das Finale.", roadToPlay: "Das Finale steht noch aus.",
 };
 
 /**

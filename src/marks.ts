@@ -1,4 +1,4 @@
-import type { DrawOptions, EmblemRequest, Team } from "./types.ts";
+import type { DrawOptions, EmblemRequest, FlagRenderer, FlagRequest, Team } from "./types.ts";
 import { abbreviate, esc, num } from "./text.ts";
 
 /**
@@ -81,6 +81,49 @@ export interface MarkContext {
   symbols: Map<string, { id: string; viewBox: string; inner: string }>;
   prefix: string;
   shape: "round" | "square" | "none";
+  /** The look: `road` draws a team's mark with a wide ring and a hairline outside it. */
+  look?: "classic" | "road";
+  /** Draws a team's `flag` code; with none a team's `mark` or initials are drawn. */
+  flags?: FlagRenderer;
+  /** The theme a flag renderer is told about. */
+  theme?: FlagRequest["theme"];
+  /** The flags already asked for, by code, shape and size, so that a renderer is called once for each. */
+  flagCache?: Map<string, { viewBox: string; inner: string } | null>;
+}
+
+/** Whether an address may be a link in a drawing: http(s), a relative path or a `#` fragment. `javascript:`, `data:` and every other scheme are refused. */
+export function safeHref(url: string): boolean {
+  const u = url.trim();
+  // eslint-disable-next-line no-control-regex
+  if (u.length === 0 || /[\u0000-\u001f\u007f]/.test(u)) return false;
+  if (/^https?:\/\//i.test(u)) return true;
+  return !/^[a-z][a-z0-9+.-]*:/i.test(u) && !u.startsWith("//");
+}
+
+/** The flag a renderer makes for a code, cleaned like any inline SVG, or `null` when there is no renderer, it has no flag for the code, it throws, or what it returns is not an `<svg>`. */
+function flagOf(code: string | undefined, size: number, ctx: MarkContext): { viewBox: string; inner: string } | null {
+  if (typeof ctx.flags !== "function" || typeof code !== "string" || code.trim() === "") return null;
+  const shape = ctx.shape === "square" ? "square" : "round";
+  const key = `${code.trim()}|${shape}|${Math.round(size)}`;
+  const cache = ctx.flagCache;
+  if (cache?.has(key)) return cache.get(key) ?? null;
+  let made: { viewBox: string; inner: string } | null = null;
+  try {
+    const markup: unknown = ctx.flags(code.trim(), { shape, size: Math.round(size), theme: ctx.theme ?? "inherit" });
+    if (typeof markup === "string") made = cleanSvg(markup);
+  } catch {
+    made = null;
+  }
+  cache?.set(key, made);
+  return made;
+}
+
+/** The `<defs>` content the marks drawn with a context need: a circular clip for each radius, and each inline mark or flag once as a `<symbol>`. Written after the marks are drawn. */
+export function markDefs(ctx: MarkContext): string {
+  return [
+    ...[...ctx.radii].sort((a, b) => a - b).map((r) => `<clipPath id="${clipId(ctx.prefix, r)}"><circle r="${num(r)}"/></clipPath>`),
+    ...[...ctx.symbols.values()].map((s) => `<symbol id="${s.id}" viewBox="${esc(s.viewBox)}" preserveAspectRatio="xMidYMid slice">${s.inner}</symbol>`),
+  ].join("");
 }
 
 /** The id of the circular clip for a radius. */
@@ -98,7 +141,23 @@ export function drawMark(team: Team | null, cx: number, cy: number, size: number
   if (clip) ctx.radii.add(r);
   const wrapOpen = clip ? `<g class="tb-mark" transform="translate(${num(cx)} ${num(cy)})" clip-path="url(#${clipId(ctx.prefix, r)})">` : `<g class="tb-mark">`;
   const ox = clip ? -r : x, oy = clip ? -r : y;
-  const ring = clip ? `<circle class="tb-ring" cx="${num(cx)}" cy="${num(cy)}" r="${num(r)}"/>` : `<rect class="tb-ring" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="2"/>`;
+  const road = ctx.look === "road";
+  const rw = Math.max(r * 0.09, 0.5);
+  const hair = num(Math.max(rw * 0.3, 0.3));
+  const ring = road
+    ? clip
+      ? `<circle class="tb-ring tb-ring-r" cx="${num(cx)}" cy="${num(cy)}" r="${num(r - rw / 2)}" stroke-width="${num(rw)}"/><circle class="tb-edge" cx="${num(cx)}" cy="${num(cy)}" r="${num(r)}" stroke-width="${hair}"/>`
+      : `<rect class="tb-ring tb-ring-r" x="${num(x + rw / 2)}" y="${num(y + rw / 2)}" width="${num(size - rw)}" height="${num(size - rw)}" rx="2" stroke-width="${num(rw)}"/><rect class="tb-edge" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="2" stroke-width="${hair}"/>`
+    : clip
+      ? `<circle class="tb-ring" cx="${num(cx)}" cy="${num(cy)}" r="${num(r)}"/>`
+      : `<rect class="tb-ring" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="2"/>`;
+  const flag = flagOf(team.flag, size, ctx);
+  if (flag) {
+    const key = `flag:${flag.viewBox}:${flag.inner}`;
+    let symbol = ctx.symbols.get(key);
+    if (!symbol) { symbol = { id: `${ctx.prefix}-m${ctx.symbols.size + 1}`, ...flag }; ctx.symbols.set(key, symbol); }
+    return `${wrapOpen}<use href="#${symbol.id}" x="${num(ox)}" y="${num(oy)}" width="${num(size)}" height="${num(size)}"/></g>${ring}`;
+  }
   const mark = team.mark?.trim();
   if (mark) {
     if (mark.startsWith("<")) {

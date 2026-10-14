@@ -52,6 +52,56 @@ export function hash(text: string): string {
   return h.toString(36);
 }
 
+const NARROW_B = new Set("iIjl!|.,:;'`");
+
+/** An estimate of the width of a string set in a bold face, in ems; full-width characters are one em. A little generous, so that a name stays inside its place whichever font the page falls back to. */
+export function emWidth(text: string, bold = true): number {
+  let width = 0;
+  for (const ch of text) {
+    const code = ch.codePointAt(0) ?? 0;
+    if (code >= 0x2e80) width += 1.02;
+    else if (ch === " ") width += 0.3;
+    else if (NARROW_B.has(ch)) width += 0.34;
+    else if (WIDE.has(ch)) width += 0.92;
+    else if (ch >= "0" && ch <= "9") width += 0.62;
+    else if (ch >= "A" && ch <= "Z") width += 0.7;
+    else if (ch === "-" || ch === "–" || ch === "—") width += 0.45;
+    else width += 0.58;
+  }
+  return bold ? width * 1.04 : width;
+}
+
+/** The text in capitals when it has Latin letters; any other text is left as it is. */
+export function capitals(text: string): string {
+  return /[a-z]/i.test(text) ? text.toLocaleUpperCase("en") : text;
+}
+
+/** The lines a name is set in, the font size that fits them, and the width and height they take. */
+export interface FittedLines {
+  lines: string[];
+  size: number;
+  width: number;
+  height: number;
+}
+
+const LINE_HEIGHT = 1.1;
+
+/** A name in the biggest size that fits a box, on one line or, at a space, on two (two only when that is clearly bigger). */
+export function fitLines(name: string, maxWidth: number, maxHeight: number, maxSize: number): FittedLines {
+  const w1 = emWidth(name);
+  const size1 = Math.max(0.1, Math.min(maxSize, maxHeight / LINE_HEIGHT, w1 === 0 ? maxSize : maxWidth / w1));
+  const single: FittedLines = { lines: [name], size: size1, width: w1 * size1, height: size1 * LINE_HEIGHT };
+  let two: FittedLines | undefined;
+  const words = name.split(" ");
+  for (let i = 1; i < words.length; i += 1) {
+    const a = words.slice(0, i).join(" "), b = words.slice(i).join(" ");
+    const w = Math.max(emWidth(a), emWidth(b));
+    const size = Math.max(0.1, Math.min(maxSize, maxHeight / (2 * LINE_HEIGHT), w === 0 ? maxSize : maxWidth / w));
+    if (two === undefined || size > two.size) two = { lines: [a, b], size, width: w * size, height: 2 * size * LINE_HEIGHT };
+  }
+  return two !== undefined && two.size > single.size * 1.18 ? two : single;
+}
+
 /** A number written without float noise: at most two decimals, no trailing zeros. */
 export function num(n: number): string {
   if (!Number.isFinite(n)) throw new Error(`taisen-brackets: cannot draw ${n}`);
