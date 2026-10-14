@@ -1,7 +1,7 @@
 {
   "name": "@johnmorrisdotca/taisen-brackets",
   "version": "0.1.0",
-  "description": "Taisen 対戦, knockout brackets as SVG: from a list of ties (games, best-of series, two legs, replays, byes, a third-place match) it works out the rounds and halves and draws the bracket with the halves meeting at the final, or left to right, wide, square or for a phone, in light, dark or a gold-on-navy poster look, with each team's logo or round flag, the champion in the centre, and an accessible table. NHL, NBA, MLB, NFL, CFL and World Cup formats by era. Zero dependencies.",
+  "description": "Taisen \u5bfe\u6226, knockout brackets as SVG: from a list of ties (games, best-of series, two legs, replays, byes, a third-place match) it works out the rounds and halves and draws the bracket with the halves meeting at the final, or left to right, wide, square or for a phone, in light, dark or a gold-on-navy poster look, with each team's logo or round flag, the champion in the centre, and an accessible table. NHL, NBA, MLB, NFL, CFL and World Cup formats by era. Zero dependencies.",
   "keywords": [
     "bracket",
     "tournament",
@@ -77,7 +77,7 @@
     "typecheck": "tsc -p tsconfig.check.json",
     "test": "node --test test/*.test.ts",
     "test:package": "pnpm build && node scripts/check-package.mjs",
-    "test:readme": "pnpm build && node scripts/check-readme-examples.mjs",
+    "test:readme": "pnpm build && node scripts/make-formats-doc.mjs --check && node scripts/check-readme-examples.mjs",
     "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && node scripts/check-package.mjs",
     "prepublishOnly": "pnpm check",
     "dev": "pnpm build && node scripts/dev.mjs",
