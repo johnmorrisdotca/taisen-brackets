@@ -1,0 +1,91 @@
+import assert from "node:assert/strict";
+import { test } from "node:test";
+import * as T from "../src/index.ts";
+import { mlb2022, nhl2024, wc1938, wc2022 } from "../demo/data.js";
+
+const names = (league: T.League, year: number) => T.playoffFormat(league, year)?.rounds.map((r) => r.name);
+const lengths = (league: T.League, year: number) => T.playoffFormat(league, year)?.rounds.map((r) => r.bestOf);
+
+test("the NHL's round names and lengths by era", () => {
+  assert.deepEqual(names("nhl", 2024), ["First Round", "Second Round", "Conference Finals", "Stanley Cup Final"]);
+  assert.deepEqual(lengths("nhl", 2024), [7, 7, 7, 7]);
+  assert.deepEqual(names("nhl", 1990), ["Division Semifinals", "Division Finals", "Conference Finals", "Stanley Cup Final"]);
+  assert.deepEqual(lengths("nhl", 1985), [5, 7, 7, 7]);
+  assert.deepEqual(lengths("nhl", 1987), [7, 7, 7, 7]);
+  assert.equal(T.playoffFormat("nhl", 2020)!.rounds[0].name, "Qualifying Round");
+  assert.equal(T.playoffFormat("nhl", 2020)!.teams, 24);
+  assert.equal(T.playoffFormat("nhl", 2021)!.groups, null);
+  assert.equal(names("nhl", 1980)![0], "Preliminary Round");
+  assert.equal(T.playoffFormat("nhl", 1950), null);
+  assert.equal(T.playoffFormat("nhl", 2024)!.year, 2024);
+});
+
+test("the NBA, MLB, NFL and CFL by era", () => {
+  assert.deepEqual(lengths("nba", 1990), [5, 7, 7, 7]);
+  assert.deepEqual(lengths("nba", 2010), [7, 7, 7, 7]);
+  assert.deepEqual(lengths("nba", 1980), [3, 7, 7, 7]);
+  assert.equal(T.playoffFormat("nba", 1960), null);
+  assert.deepEqual(names("mlb", 2022), ["Wild Card Series", "Division Series", "League Championship Series", "World Series"]);
+  assert.equal(T.playoffFormat("mlb", 2022)!.byes, 2);
+  assert.deepEqual(names("mlb", 2015), ["Wild Card Game", "Division Series", "League Championship Series", "World Series"]);
+  assert.deepEqual(names("mlb", 2000), ["Division Series", "League Championship Series", "World Series"]);
+  assert.deepEqual(names("mlb", 1990), ["League Championship Series", "World Series"]);
+  assert.equal(T.playoffFormat("mlb", 1994), null, "no postseason in 1994");
+  assert.equal(T.playoffFormat("mlb", 2020)!.teams, 16);
+  assert.deepEqual(names("nfl", 2023), ["Wild Card", "Divisional", "Conference Championship", "Super Bowl"]);
+  assert.deepEqual([1970, 1980, 1982, 1995, 2020].map((y) => T.playoffFormat("nfl", y)!.teams), [8, 10, 16, 12, 14]);
+  assert.deepEqual([1970, 1980, 1995, 2020].map((y) => T.playoffFormat("nfl", y)!.byes), [0, 3, 2, 1]);
+  assert.deepEqual(names("cfl", 2023), ["Division Semi-Final", "Division Final", "Grey Cup"]);
+  assert.throws(() => T.playoffFormat("xfl" as T.League, 2020), /no format/);
+});
+
+test("the World Cup's knockout by edition, and no format for a year with no tournament", () => {
+  assert.deepEqual(names("worldcup", 2022), ["Round of 16", "Quarter-finals", "Semi-finals", "Final"]);
+  assert.deepEqual(names("worldcup", 2026), ["Round of 32", "Round of 16", "Quarter-finals", "Semi-finals", "Final"]);
+  assert.deepEqual(names("worldcup", 1938), ["Round of 16", "Quarter-finals", "Semi-finals", "Final"]);
+  assert.deepEqual(names("worldcup", 1966), ["Quarter-finals", "Semi-finals", "Final"]);
+  assert.deepEqual(names("worldcup", 1982), ["Semi-finals", "Final"]);
+  assert.equal(T.playoffFormat("worldcup", 1950), null);
+  assert.equal(T.playoffFormat("worldcup", 2023), null);
+  assert.equal(T.playoffFormat("worldcup", 2022)!.teams, 16);
+});
+
+test("every era is listed oldest first, and names every round", () => {
+  for (const league of T.LEAGUES) {
+    const eras = T.playoffEras(league);
+    assert.ok(eras.length > 0);
+    for (const era of eras) assert.ok(era.rounds.length > 0 && era.rounds.every((r) => r.name.length > 0));
+  }
+});
+
+test("generic round names count back from the final", () => {
+  assert.deepEqual(T.roundNamesFor(4), ["Round of 16", "Quarter-finals", "Semi-finals", "Final"]);
+  assert.deepEqual(T.roundNamesFor(6), ["Round of 64", "Round of 32", "Round of 16", "Quarter-finals", "Semi-finals", "Final"]);
+  assert.equal(T.roundName(2), "Final");
+});
+
+test("a format's names agree with the demo brackets' rounds", () => {
+  for (const [league, year, ex] of [["nhl", 2024, nhl2024], ["mlb", 2022, mlb2022], ["worldcup", 2022, wc2022], ["worldcup", 1938, wc1938]] as const) {
+    const format = T.playoffFormat(league, year)!;
+    const layout = T.layoutBracket(ex);
+    assert.equal(layout.rounds, format.rounds.length, `${league} ${year}`);
+    assert.equal(layout.teams.length, format.teams, `${league} ${year}`);
+  }
+});
+
+test("the demo brackets lay out as played", () => {
+  const nhl = T.layoutBracket(nhl2024);
+  assert.equal(nhl.champion!.name, "Florida Panthers");
+  assert.deepEqual(nhl.sides.map((s) => s.label), ["Western", "Eastern"]);
+  const wc = T.layoutBracket(wc2022);
+  assert.equal(wc.champion!.id, "ARG");
+  assert.notEqual(wc.third, null);
+  assert.equal(wc.ties[wc.third!].sides[0]!.id, "CRO");
+  assert.equal(wc.ties.filter((t) => t.result.pens).length, 5);
+  const mlb = T.layoutBracket(mlb2022);
+  assert.equal(mlb.champion!.id, "HOU");
+  assert.equal(mlb.sides.flatMap((s) => s.boxes).filter((b) => b.bye !== null).length, 4, "four teams skipped the wild card series");
+  const old = T.layoutBracket(wc1938);
+  assert.equal(old.champion!.id, "ITA");
+  assert.equal(old.ties.filter((t) => t.result.kind === "replay").length, 3);
+});
