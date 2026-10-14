@@ -50,6 +50,8 @@ const spain = defineLocale("es-ES", { tag: "es-ES", words: { pens: "penaltis", p
 
 **Japanese, the reviewer's changes:** *予選ラウンド* for the preliminary round; *ワイルドカード・プレーオフ* for the NFL's first round; the MLB series without middle dots (*ワイルドカードシリーズ*, *ディビジョンシリーズ*, *リーグチャンピオンシップシリーズ*); the score is written between the teams (*アルゼンチン 3–3 フランス*). Left as they are: *シード* for a bye (it is the word a Japanese bracket uses, but it also means "seeded", which the `seeds` option shows: a native reader may prefer *免除*); *{n}戦* for "in 7"; *ラウンド16* and *ラウンド32* as Japanese Wikipedia writes them (NHK often says *決勝トーナメント1回戦* or *ベスト16*); *予選ラウンド* for both the preliminary and the qualifying rounds of the NHL (they never share a season).
 
+**The road to the final's words** (the keys that start `road`, added in 0.4.0) were written for the chart and read by the same reviewers on 2026-10-14; the Spanish and German were not read by a native speaker and, like the rest of those two tables, need one. French, the reviewer's changes: *Parcours vers la finale*; *t.r.*, *a.p.* and *t.a.b.* (one lowercase dotted form for each idea, the last two as the file already writes them); a no-break space before each colon; and a summary that gives the number of matches after a label, so that no plural is needed (*Matchs joués avant la finale : …*). Left as they are: *vs* between the two marks (the tie's sentence says *contre*) and *Phase de groupes*, which `groupLabel` replaces for a sport that has no groups; *t.r.* (regulation time) is the weakest, since French sports media rarely abbreviate it, and a Quebec reader will say *partie*, *ronde* and *tirs de barrage* for a hockey play-off. Japanese: *規定時間* for FT, which says "regulation time" for any sport (the first version said 90 minutes), and *PK戦 {a}–{b}* as the file's own `pensScore` writes it; *PK戦* is the football word, and an ice hockey reader may prefer *シュートアウト*. The English, Spanish and German summaries are written the same way as the French (a label, then each team and its number) so that one match is never "1 matches".
+
 ## What stays the same in every language
 
 - **Clubs and people** keep their names. A national team's name comes from `Intl.DisplayNames` by its ISO 3166 code (`countryName`), or from `Team.names`, or from a `teamName` function; the demo writes by hand only the two states that no longer exist (Czechoslovakia, the Dutch East Indies), after the form each language's Wikipedia gives, and the home nations are in `src/locales.ts`.
@@ -141,5 +143,27 @@ The English name is the key (a round the table does not name keeps its English n
 | `columnNote` | `Note` | `Note` | `備考` | `Nota` | `Hinweis` |
 | `columnDate` | `Date` | `Date` | `日付` | `Fecha` | `Datum` |
 | `title` | `Knockout bracket` | `Tableau à élimination directe` | `トーナメント表` | `Cuadro de eliminatorias` | `Turnierbaum` |
+| `roadTitle` | `Road to the final` | `Parcours vers la finale` | `決勝への道` | `El camino a la final` | `Der Weg ins Finale` |
+| `roadVs` | `v` | `vs` | `対` | `vs.` | `vs.` |
+| `roadGroup` | `Group stage` | `Phase de groupes` | `グループステージ` | `Fase de grupos` | `Gruppenphase` |
+| `roadFt` | `FT` | `t.r.` | `規定時間` | `T. reg.` | `reg. Zeit` |
+| `roadAet` | `AET` | `a.p.` | `延長` | `Prórroga` | `n. V.` |
+| `roadPens` | `{a}–{b} pens` | `{a}–{b}␣t.a.b.` | `PK戦 {a}–{b}` | `{a}–{b} en los penales` | `{a}:{b} i. E.` |
+| `roadWon` | `Won` | `Victoire` | `勝ち` | `Ganó` | `Sieg` |
+| `roadLost` | `Lost` | `Défaite` | `負け` | `Perdió` | `Niederlage` |
+| `roadDrew` | `Drew` | `Nul` | `引き分け` | `Empató` | `Remis` |
+| `roadQuarterFinal` | `Quarter-final` | `Quart de finale` | `準々決勝` | `Cuartos de final` | `Viertelfinale` |
+| `roadSemiFinal` | `Semi-final` | `Demi-finale` | `準決勝` | `Semifinal` | `Halbfinale` |
+| `roadTableTeam` | `Team` | `Équipe` | `チーム` | `Equipo` | `Team` |
+| `roadTableOpponent` | `Opponent` | `Adversaire` | `対戦相手` | `Rival` | `Gegner` |
+| `roadTableScore` | `Score` | `Score` | `スコア` | `Marcador` | `Ergebnis` |
+| `roadTableDecided` | `Decided` | `Décidé en` | `決着` | `Decidido en` | `Entschieden` |
+| `roadTableResult` | `Result` | `Résultat` | `結果` | `Resultado` | `Ausgang` |
+| `roadCaption` | `{a} and {b}: every match on the way to the final. Scores are written with the team in the first column first.` | `{a} et {b}␣: tous les matchs jusqu’à la finale. Chaque score commence par celui de l’équipe de la première colonne.` | `{a}と{b}：決勝までの全試合。スコアは「チーム」列のチームの得点を先に書いています。` | `{a} y {b}: todos los partidos hasta la final. Los marcadores empiezan por el equipo de la primera columna.` | `{a} und {b}: alle Spiele auf dem Weg ins Finale. Die Ergebnisse beginnen mit dem Team der ersten Spalte.` |
+| `roadName` | `{a} and {b}: {title}` | `{a} et {b}␣: {title}` | `{a}と{b}：{title}` | `{a} y {b}: {title}` | `{a} und {b}: {title}` |
+| `roadSummary` | `Matches played before the final: {a} ({an}) and {b} ({bn}).` | `Matchs joués avant la finale␣: {a} ({an}) et {b} ({bn}).` | `{a}は決勝までに{an}試合、{b}は{bn}試合を戦いました。` | `Partidos jugados hasta la final: {a} ({an}) y {b} ({bn}).` | `Spiele bis zum Finale: {a} ({an}) und {b} ({bn}).` |
+| `roadFinal` | `The final: {a} {score} {b} ({how}).` | `La finale␣: {a} {score} {b} ({how}).` | `決勝は{a} {score} {b}（{how}）でした。` | `La final: {a} {score} {b} ({how}).` | `Das Finale: {a} {score} {b} ({how}).` |
+| `roadChampion` | `{name} won the final.` | `{name} a remporté la finale.` | `{name}が優勝しました。` | `{name} ganó la final.` | `{name} gewann das Finale.` |
+| `roadToPlay` | `The final is still to be played.` | `La finale reste à jouer.` | `決勝はまだ行われていません。` | `La final aún no se ha jugado.` | `Das Finale steht noch aus.` |
 
 Holes in a phrase are filled in (`{n}`, `{a}`, `{b}`, `{sa}`, `{sb}`, `{w}`, `{name}`, `{round}`, `{tie}`, `{notes}`); `␣` stands for a no-break space (the French writes one before a colon).

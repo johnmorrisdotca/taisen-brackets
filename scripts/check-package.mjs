@@ -57,14 +57,18 @@ if (Object.keys(pkg.dependencies ?? {}).length > 0) {
   process.exit(1);
 }
 console.log("ok   no runtime dependencies");
-// The emblems package is an optional peer that the caller passes in as a function: nothing that ships may import it.
+// The emblems package and the flags package are optional peers that the caller passes in as functions: nothing that ships may import either.
 for (const file of inTarball) {
-  if (file.endsWith(".js") && /(?:from|import\()\s*["'][^"']*dougu-sports/.test(readFileSync(join(root, file), "utf8"))) {
-    console.error(`FAIL ${file} imports @johnmorrisdotca/dougu-sports; it is an optional peer, passed in by the caller`);
-    process.exit(1);
+  if (!file.endsWith(".js")) continue;
+  const text = readFileSync(join(root, file), "utf8");
+  for (const name of ["dougu-sports", "hata"]) {
+    if (new RegExp(`(?:from|import\\()\\s*["'][^"']*${name}`).test(text)) {
+      console.error(`FAIL ${file} imports @johnmorrisdotca/${name}; it is an optional peer, passed in by the caller`);
+      process.exit(1);
+    }
   }
 }
-console.log("ok   nothing in the tarball imports the emblems package");
+console.log("ok   nothing in the tarball imports the emblems or the flags package");
 
 // 3. Install it into an empty project.
 const project = join(scratch, "project");
@@ -82,6 +86,8 @@ const input = {
 const expected = local.drawBracket(input, { id: "pack" });
 const expectedPhone = local.drawBracket(input, { id: "pack", size: "phone", theme: "poster" });
 const expectedTable = local.bracketTable(input);
+const expectedRoad = local.roadToFinal(input, { id: "pack", size: "wide" }).draw();
+const expectedRoadLook = local.drawBracket(input, { id: "pack", look: "road", size: "card", href: () => "/x" });
 
 // 4. Every entry in `exports`, by ESM and by require.
 const entries = Object.keys(pkg.exports).map((key) => (key === "." ? pkg.name : `${pkg.name}/${key.slice(2)}`));
@@ -97,6 +103,8 @@ if (drawBracket(input, { id: "pack" }) !== ${JSON.stringify(expected)}) throw ne
 if (drawBracket(input, { id: "pack", size: "phone", theme: "poster" }) !== ${JSON.stringify(expectedPhone)}) throw new Error("the installed package drew another phone bracket");
 if (bracketTable(input) !== ${JSON.stringify(expectedTable)}) throw new Error("the installed package wrote another table");
 if (VERSION !== ${JSON.stringify(pkg.version)}) throw new Error("VERSION is " + VERSION);
+if (m3.roadToFinal(input, { id: "pack", size: "wide" }).draw() !== ${JSON.stringify(expectedRoad)} || m0.roadToFinal !== m3.roadToFinal && m0.roadToFinal(input, { id: "pack", size: "wide" }).draw() !== ${JSON.stringify(expectedRoad)}) throw new Error("the installed package drew another road to the final");
+if (drawBracket(input, { id: "pack", look: "road", size: "card", href: () => "/x" }) !== ${JSON.stringify(expectedRoadLook)}) throw new Error("the installed package drew another road look");
 if (layoutBracket(input).champion?.id !== "a") throw new Error("the layout is wrong");
 if (m1.layoutBracket !== layoutBracket && m1.layoutBracket(input).champion?.id !== "a") throw new Error("the layout entry is wrong");
 if (playoffFormat("nhl", 2024)?.rounds.length !== 4 || m2.playoffFormat("worldcup", 2026)?.rounds.length !== 5) throw new Error("the formats are wrong");

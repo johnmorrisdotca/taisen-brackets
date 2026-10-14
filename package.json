@@ -1,7 +1,7 @@
 {
   "name": "@johnmorrisdotca/taisen-brackets",
-  "version": "0.3.0",
-  "description": "Taisen Brackets 対戦, knockout brackets as SVG: from a list of ties (games, best-of series, two legs, replays, byes, a third-place match) it works out the rounds and halves and draws the bracket with the halves meeting at the final, or left to right, wide, square or for a phone, in light, dark or a gold-on-navy poster look, with each team's logo or round flag, the champion in the centre, and an accessible table. NHL, NBA, MLB, NFL, CFL, MLS and World Cup formats by era, in English, French, Japanese, Spanish and German. Zero dependencies.",
+  "version": "0.4.0",
+  "description": "Taisen Brackets 対戦, knockout brackets as SVG: from a list of ties (games, best-of series, two legs, replays, byes, a third-place match) it works out the rounds and halves and draws the bracket with the halves meeting at the final, or left to right, wide, square, as a tall card or for a phone, in a classic or a road look (large round flags, big scores, a team's dotted path, a link on every box), in light, dark or a gold-on-navy poster look, with each team's logo or round flag, the champion in the centre, and an accessible table; and the road to the final of either finalist. NHL, NBA, MLB, NFL, CFL, MLS and World Cup formats by era, in English, French, Japanese, Spanish and German. Zero dependencies.",
   "keywords": [
     "bracket",
     "tournament",
@@ -62,6 +62,11 @@
       "types": "./dist/presets-entry.d.ts",
       "import": "./dist/presets-entry.js",
       "default": "./dist/presets-entry.js"
+    },
+    "./road": {
+      "types": "./dist/road-entry.d.ts",
+      "import": "./dist/road-entry.js",
+      "default": "./dist/road-entry.js"
     }
   },
   "files": [
@@ -91,10 +96,14 @@
     "screenshots": "pnpm site && node scripts/screenshots.mjs"
   },
   "peerDependencies": {
-    "@johnmorrisdotca/dougu-sports": ">=0.1.0 <1"
+    "@johnmorrisdotca/dougu-sports": ">=0.1.0 <1",
+    "@johnmorrisdotca/hata": ">=1.5.0 <2"
   },
   "peerDependenciesMeta": {
     "@johnmorrisdotca/dougu-sports": {
+      "optional": true
+    },
+    "@johnmorrisdotca/hata": {
       "optional": true
     }
   },

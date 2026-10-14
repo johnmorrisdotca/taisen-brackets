@@ -6,6 +6,23 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.4.0] - 2026-10-14
+
+### Added
+
+- **`roadToFinal(input, options?)`**, also the one export of the new `/road` entry point: the road to the final. The two finalists of a tournament are drawn as large round marks with their names, each one's matches on its side as both teams' round marks with the score between them in large type and FT, AET or the shoot-out under it, the rounds named down the middle on a dotted road, and the group stage as a compact row at the foot, on a `card`, `square`, `wide` or `phone`. It takes what `drawBracket` takes (a list of matchups, `{ matchups, teams }` or a layout), so one tournament draws the bracket and either finalist's road (`team` puts it on the left; a round-robin game, `round: 0`, is the group stage); or the two finalists given with their `path` and `group`, a `logo` being another name for `mark`. It gives `{ options, title, summary, totals, draw(extra?), table(options?) }`. [docs/road.md](docs/road.md) has the fields and the options.
+- **`look: "road"`** for `drawBracket`: large round marks with a wide ring and a hairline, big bold scores in which the loser's is quiet, one size of mark and score in every box, the rounds named on pills, and boxes as high as their width lets the marks be. A box that cannot hold names is its abbreviations, and one that cannot hold those is two marks with each score under its mark. The classic look stays the default and is drawn as before; every option works in both. New custom properties `--tb-mark-ring`, `--tb-mark-edge`, `--tb-panel` and `--tb-spine`, and `ROAD_THEMES` for their fallbacks.
+- **`size: "card"`**, 1080 by 1350, a tall post: the rounds are rows, and in the road look the boxes are made lower, or the room left over is shared between the rounds, until the card is exactly that high.
+- **`highlightPath`**: a team's id; its path to the final is drawn as a dotted line in `--tb-win`, the ties on it ringed and the rest quieter.
+- **`href: (tie, side?) => address`**: a link on each tie's box, or, where that gives none, on each known team's row. Each is a real `<a class="tb-link" href aria-label>` in the SVG with an accessible name, a hit area, and a hover and focus ring. An address must be http(s), relative or a `#` fragment (`safeHref`, new): `javascript:`, `data:` and the rest give no link.
+- **`flags`** and `Team.flag`: a team's country code is drawn by a synchronous function you pass, `(code, { shape, size, theme }) => svg`, the same shape as `emblems`; `@johnmorrisdotca/hata`'s round flags are the one to use (load them first, since its `flag()` is asynchronous). It is an optional peer and a development dependency, never a runtime one. The flag is written once as a `<symbol>`; with no renderer, or one that returns nothing, throws or returns something that is not an `<svg>`, the team's `mark` or its initials are drawn. New types `FlagRenderer`, `FlagRequest`, `FlagShape`.
+- Words for the road in all five languages (the keys starting `road`): the French and Japanese were read by native-language reviewers; the Spanish and German need one (docs/languages.md).
+- The demo draws every sport in the road look with Hata's flags through `flags`, and has a size switcher with the card, a switch between the bracket and the road to the final, a Classic and Road style, the champion's path, and links on the boxes. The README's pictures show the road look.
+
+### Changed
+
+- The demo's flags are team `flag` codes drawn through the `flags` option, not marks baked into the data.
+
 ## [0.3.0] - 2026-10-14
 
 ### Added
@@ -69,7 +86,8 @@ First version.
 - A demo with real results read from spxn.com (the NHL 2024 playoffs, the World Cups of 2022, 1938 and 2026, the MLB 2022 postseason; sources and terms in NOTICE.md), two made-up examples (two-legged ties, a 32-team field) and a flags-only poster of the 2026 World Cup, in a playground that changes the size, look and shape.
 - Playoff formats checked against English Wikipedia, each era citing its articles (docs/formats.md). The year is the year the playoffs are played in.
 
-[Unreleased]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.4.0...HEAD
+[0.4.0]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.3.0...v0.4.0
 [0.3.0]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.2.1...v0.3.0
 [0.2.1]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.1.1...v0.2.0

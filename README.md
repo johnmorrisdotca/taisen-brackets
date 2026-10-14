@@ -11,7 +11,7 @@ Give it the games, series, two-legged ties or replays of a tournament and it wor
   <img alt="TypeScript" src="https://img.shields.io/badge/types-TypeScript-3178c6">
 </p>
 
-<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
+<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/road.md">Road to the final</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
 
 <p align="center">
 <picture>
@@ -58,6 +58,23 @@ One layout draws them all, each from real results: the demo has a picker for the
 </tr>
 </table>
 
+## The road look, and the road to the final
+
+`look: "road"` draws the bracket with large round flags, big bold scores and a team's path as a dotted line, and `roadToFinal` draws the way each finalist came from the same tournament.
+
+<table>
+<tr>
+<td align="center" valign="top"><img alt="The 2022 World Cup in the road look, wide: large round flags, big bold scores, the loser quiet, the rounds on pills, and Argentina's path to the final as a dotted line." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/path-desk-light.png" width="460"><br><em>The road look, wide, with Argentina's path.</em></td>
+<td align="center" valign="top"><img alt="The 2022 World Cup in the road look on a card, 1080 by 1350: the champion at the top, then the rounds as rows." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/card-light.png" width="260"><br><em>A card, 1080 by 1350.</em></td>
+<td align="center" valign="top"><img alt="The road to the final of the 2022 World Cup on a phone in the dark: Argentina and France as large flags, and each one's matches with the score between the two flags." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/road-phone-dark.png" width="190"><br><em>The road to the final, on a phone.</em></td>
+</tr>
+<tr>
+<td align="center" valign="top"><img alt="The same bracket in the classic look, which stays the default." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/classic-desk-light.png" width="460"><br><em>The classic look, still the default.</em></td>
+<td align="center" valign="top"><img alt="The road to the final of the 2024 Stanley Cup playoffs: Florida and Edmonton, each one's three series with the games won between the two logos." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/road-wide-nhl-light.png" width="460"><br><em>The road to the final, a play-off (NHL 2024).</em></td>
+<td align="center" valign="top"><img alt="The road to the final of the 2022 World Cup on a card." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/road-card-light.png" width="260"><br><em>The road to the final, a card.</em></td>
+</tr>
+</table>
+
 ## In 30 seconds
 
 ```sh
@@ -90,7 +107,11 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **Ties of every kind**: a single game (with extra time and a shoot-out), a best-of-N series (by games, or by games won), two or more legs added up, and a drawn game replayed. The winner is worked out from the games, or named.
 - **The layout is worked out**: rounds (from who plays whom, or given), which tie feeds which, two halves meeting at the final (named for the conferences when the groups split them cleanly) or one tree left to right, byes, seeds, a third-place match placed apart, and ties that lead nowhere drawn below.
 - **A bracket that is not played yet**: name the tree with `feeds`, or let `singleElimination` build it for any number of teams, seeded in the standard way, with byes; `advanceWinners` carries results forward.
-- **Wide, square, phone**: 1200 by 675, 1080 by 1080, or 390 wide and as tall as it needs; the rounds are columns, or rows on a phone. Boxes show names and scores, abbreviations, or only the marks, whichever fits.
+- **Wide, square, card, phone**: 1200 by 675, 1080 by 1080, 1080 by 1350 (a tall post), or 390 wide and as tall as it needs; the rounds are columns, or rows on a phone and a card. Boxes show names and scores, abbreviations, or only the marks, whichever fits.
+- **The road look**: `look: "road"` draws large round flags or crests, big bold scores with the loser's quiet, the rounds named on pills, and, for one team, its path through the bracket as a dotted line. It is the look of the road-to-the-final chart below, and every other option works with it.
+- **The road to the final**: `roadToFinal` draws the two finalists of the tournament you already have, with the ties each played on the way and the score between their flags, on a card, a square, wide or a phone.
+- **A link on every box**: `href: (tie, side?) => address` makes each tie's box (or each team's row) a real `<a>` in the SVG with an accessible name.
+- **Flags from a plug-in**: a team's `flag` code is drawn by the `flags` function you pass (Hata's round flags are one line), with no dependency added.
 - **Light, dark, poster**: every colour is a CSS custom property with a fallback, so the drawing follows the page's `prefers-color-scheme` or `data-theme` and can be restyled from outside.
 - **Team marks you supply**: a logo address or inline SVG, drawn round or square; a team with none is its initials on a colour. Round flags from [Hata](https://github.com/johnmorrisdotca/hata) go in as they are.
 - **The champion in the centre**, with a slot for your trophy: your own SVG or image, or an emblem from [Dougu Sports](https://github.com/johnmorrisdotca/dougu-sports) (a hockey cup, a basketball trophy, a globe) through an optional plug-in, with no dependency added.
@@ -98,7 +119,7 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **Formats by era**: NHL, NBA, MLB, NFL, CFL, MLS and FIFA World Cup round names, series lengths and byes.
 - **Five languages**: English, French, Japanese, Spanish and German, for every word the drawing, the tooltips, the description and the table write, with the football terms of each language; countries named by `Intl` from their ISO code; numbers and dates by `Intl`. Add a language of your own.
 - **Deterministic**: no clock, no random number, no counter; the same input gives the same string, and ids come from a hash of the input.
-- **No dependencies**, ESM with types, about 40 kB packed.
+- **No dependencies**, ESM with types, about 90 kB packed.
 
 ## Use it in your project
 
@@ -110,7 +131,7 @@ npm install @johnmorrisdotca/taisen-brackets
 # or: yarn add @johnmorrisdotca/taisen-brackets
 ```
 
-It is ESM, and `require` works on Node 22.12 and later. It needs no DOM: the functions return strings. Three entry points: `@johnmorrisdotca/taisen-brackets` (everything), `/layout` (the layout and the helpers, no drawing) and `/presets` (the formats).
+It is ESM, and `require` works on Node 22.12 and later. It needs no DOM: the functions return strings. Four entry points: `@johnmorrisdotca/taisen-brackets` (everything), `/layout` (the layout and the helpers, no drawing), `/presets` (the formats) and `/road` (the road to the final).
 
 ## Examples
 
@@ -238,6 +259,7 @@ const bracket = [
 
 drawBracket(bracket);                                   // wide: 1200 by 675
 drawBracket(bracket, { size: "square" });               // 1080 by 1080
+drawBracket(bracket, { size: "card" });                 // 1080 by 1350, a tall post, the rounds as rows
 drawBracket(bracket, { size: "phone" });                // 390 wide, the rounds as rows
 drawBracket(bracket, { size: { width: 800, height: 500 } });
 drawBracket(bracket, { shape: "ltr" });                 // one tree, left to right, the champion at the end
@@ -248,6 +270,46 @@ drawBracket(bracket, { theme: "none" });                // no <style>: your CSS 
 ```
 
 `detail` is `full` (names and scores), `compact` (abbreviations), `mark` (only the marks) or `auto`, which takes the fullest one that fits the box and the longest name.
+
+### The road look, and the path of a team
+
+`look: "road"` draws the bracket the way the road-to-the-final chart is drawn: large round marks with a wide ring, big bold scores in which the loser's is quiet, the rounds named on pills, and boxes as high as their width lets the marks be. A box that cannot hold names is its abbreviations, and one that cannot hold even those is two marks with each score under its mark. The classic look stays the default, and every option works in both looks. `highlightPath` takes a team's id and draws that team's way to the final as a dotted line, with the other ties quieter.
+
+```js
+import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const bracket = [
+  { sides: ["A", "B"], score: [1, 0], date: "1" }, { sides: ["C", "D"], score: [0, 2], date: "1" }, { sides: ["A", "D"], score: [2, 1], date: "2" },
+];
+
+const svg = drawBracket(bracket, { look: "road", size: "card", highlightPath: "A" });
+console.log(svg.includes("tb-look-road"));                     // true
+console.log(svg.includes('viewBox="0 0 1080 1350"'));          // true
+console.log((svg.match(/class="tb-line tb-path"/g) ?? []).length); // 1
+```
+
+A team that lost on the way has a path that ends where it lost, and the third-place match is never on a path. Colours are custom properties: `--tb-mark-ring`, `--tb-mark-edge`, `--tb-panel` and `--tb-spine` are the road look's own, over the ones in Theming.
+
+### A link on every box
+
+`href` is called for each tie with the tie alone. An address makes the whole box a link; with none, it is called for each side (`0` and `1`) and a team's row with an address is a link of its own. Each is a real `<a href>` in the SVG with an accessible name (the tooltip's sentence, "Argentina 3, France 3 (…). Winner: Argentina", or the team's name before it), a hover and a focus ring, and a hit area. An address must be `http(s)`, relative or a `#` fragment: `javascript:`, `data:` and the rest are refused (`safeHref`), and the tie is drawn with no link.
+
+```js
+import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const bracket = [
+  { sides: ["A", "B"], score: [1, 0], date: "1" }, { sides: ["C", "D"], score: [0, 2], date: "1" }, { sides: ["A", "D"], score: [2, 1], date: "2" },
+];
+
+// A link on each box, to the page of its series or match.
+const boxes = drawBracket(bracket, { href: (tie) => `/match/${tie.id}` });
+console.log(boxes.match(/<a /g).length); // 3
+console.log(boxes.includes('href="/match/m3"')); // true
+
+// Or a link on each team's row.
+const rows = drawBracket(bracket, { href: (tie, side) => (side === undefined ? undefined : `/team/${tie.sides[side]?.id}`) });
+console.log(rows.match(/<a /g).length); // 6
+```
 
 ### Team marks, and round flags
 
@@ -306,6 +368,72 @@ console.log(svg.includes('class="tb-emblem"')); // true
 - **Without a renderer** an emblem id draws nothing and takes no room, and nothing throws; a trophy that is inline SVG or an address is drawn exactly as before, whatever `emblems` is. A renderer that throws, or returns something that is not an `<svg>`, draws no trophy. What it returns is cleaned like any inline SVG, and the emblem's own `<title>` (English only) is left out; the drawing's description names the champion in the bracket's language. `isEmblemId(value)` tells an emblem id from SVG and from an address.
 - **No global switch.** There is no module-level setting: a drawing is a pure function of its options, so the renderer is passed to each call.
 
+### Flags from a plug-in
+
+A team can carry a country code, `flag: "ca"`, and the drawing asks the `flags` function you pass for its picture: any synchronous function from a code and a request (`{ shape, size, theme }`) to an SVG string, or to nothing for a code it has no flag for. `shape` is `"round"` (or `"square"` for `markShape: "square"`), `size` the diameter in pixels and `theme` `"light"` or `"dark"` in those looks (`"dark"` for `poster`), else `"inherit"`. [`@johnmorrisdotca/hata`](https://github.com/johnmorrisdotca/hata) has a proper round frame for every flag (`flag(code, { shape: "round" })`), and, like the emblems, it is an optional peer that Taisen never imports. Its `flag()` is asynchronous and a drawing is a pure function of its options, so load the flags first and pass a lookup.
+
+```js
+import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+import { flag } from "@johnmorrisdotca/hata/load";
+
+const loaded = { AR: await flag("AR", { shape: "round" }), FR: await flag("FR", { shape: "round" }) };
+const teams = [{ id: "ARG", name: "Argentina", flag: "AR" }, { id: "FRA", name: "France", flag: "FR" }];
+const matchups = [{ sides: ["ARG", "FRA"], score: [3, 3], extraTime: true, pens: [4, 2] }];
+
+const svg = drawBracket({ teams, matchups }, { flags: (code) => loaded[code], look: "road" });
+console.log(svg.includes("<symbol")); // true
+```
+
+- **Each flag is written once**, as a `<symbol>`, and used wherever the team appears; the renderer is called once for each code, shape and size.
+- **Without a renderer**, or when it returns nothing for a code, throws, or returns something that is not an `<svg>`, the team's `mark` is drawn, or its initials on its `color`. It never throws. What a renderer returns is cleaned like any inline SVG.
+- **`logo` and `mark`**: in the road chart's finalists `logo` is another name for `mark`.
+
+### The road to the final
+
+`roadToFinal` draws the two finalists of a tournament and the way each came: the two large round marks at the top with their names; down the middle the rounds, the last at the top; on each finalist's side its matches, each as the round mark of both teams with the score between them in large type and FT, AET or the shoot-out under it; and the group stage as a compact row of small marks, codes and scores at the foot. It is the kind of graphic sports sites post for a World Cup final, drawn from your data: the arrangement, the type and the code are the package's own. It takes the same input as `drawBracket`, so one tournament draws the bracket and the road, and `team` puts either finalist on the left.
+
+```js
+import { drawBracket, roadToFinal } from "@johnmorrisdotca/taisen-brackets";
+
+const teams = [
+  { id: "NED", name: "Netherlands" }, { id: "ARG", name: "Argentina" },
+  { id: "CRO", name: "Croatia" }, { id: "BRA", name: "Brazil" },
+];
+const matchups = [
+  { sides: ["NED", "ARG"], score: [2, 2], extraTime: true, pens: [3, 4], date: "2022-12-09" },
+  { sides: ["CRO", "BRA"], score: [1, 1], extraTime: true, pens: [4, 2], date: "2022-12-09" },
+  { sides: ["ARG", "CRO"], score: [3, 0], date: "2022-12-13" },
+];
+
+const bracket = drawBracket({ teams, matchups }, { look: "road" });
+const road = roadToFinal({ teams, matchups }, { title: "Qatar 2022", size: "wide" });
+console.log(road.totals.champion); // Argentina
+console.log(road.summary); // Matches played before the final: Argentina (1) and Croatia (1). The final: Argentina 3–0 Croatia (FT). Argentina won the final.
+console.log(roadToFinal({ teams, matchups }, { team: "CRO" }).totals.finalists[0].name); // Croatia
+console.log(road.draw({ size: "phone" }).startsWith("<svg"), bracket.startsWith("<svg")); // true true
+```
+
+A tournament's final names the finalists, each one's played ties are its road (a round-robin game, `round: 0`, is the group stage), and the final's score is written between the marks (a final not played yet says "v"). The rounds are named as the bracket names them (`roundNames`), in the language of `locale`. Or give the two finalists yourself, each a team with a `path` (the matches before the final, the earliest first) and, if you like, its `group`:
+
+```js
+import { roadToFinal } from "@johnmorrisdotca/taisen-brackets";
+
+const owls = { name: "Northern Owls", abbr: "NOW", color: "#3a2d6b", path: [
+  { round: "quarter-final", opponent: { name: "Coastal Pines", abbr: "CPN" }, score: [2, 0] },
+  { round: "semi-final", opponent: { name: "Valley Stars", abbr: "VAL" }, score: [1, 1], decidedBy: "pens", pens: [4, 3] },
+] };
+const gulls = { name: "Harbour City Gulls", abbr: "HCG", color: "#1d4f91", path: [
+  { round: "quarter-final", opponent: { name: "Summit Peaks", abbr: "SMT" }, score: [3, 1] },
+  { round: "semi-final", opponent: { name: "Metro Bolts", abbr: "MTB" }, score: [2, 1], decidedBy: "aet" },
+] };
+
+const chart = roadToFinal([owls, gulls], { title: "Northern Cup 2030", final: { score: [1, 2] }, size: "square" });
+console.log(chart.totals.rounds.join(" "), chart.totals.champion); // quarter-final semi-final Harbour City Gulls
+console.log(chart.table().includes("<td>Semi-final</td>")); // true
+```
+
+[docs/road.md](./docs/road.md) has the fields of a match, the options, the sizes and the table.
+
 ### A table for readers the picture does not serve
 
 ```js
@@ -337,7 +465,8 @@ The string is built from your data, with every name escaped; do not put untruste
 
 Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part from `/layout`, the formats from `/presets`. The types are in the package; each function's doc comment has its details.
 
-- `drawBracket(input, options?)`: the SVG string. `input` is a list of matchups, `{ matchups, teams }` or a layout. Options: `size`, `orientation`, `shape`, `detail`, `theme`, `background`, `title`, `subtitle`, `roundNames`, `roundLabels`, `scores`, `seeds`, `markShape`, `champion`, `trophy`, `emblems`, `emblemStyle`, `emblemTint`, `thirdPlace`, `winnerHighlight`, `locale`, `words`, `teamName`, `groupOrder`, `id`, `className`.
+- `drawBracket(input, options?)`: the SVG string. `input` is a list of matchups, `{ matchups, teams }` or a layout. Options: `size`, `orientation`, `shape`, `detail`, `theme`, `background`, `title`, `subtitle`, `roundNames`, `roundLabels`, `scores`, `seeds`, `markShape`, `champion`, `trophy`, `emblems`, `emblemStyle`, `emblemTint`, `thirdPlace`, `winnerHighlight`, `look`, `href`, `highlightPath`, `flags`, `locale`, `words`, `teamName`, `groupOrder`, `id`, `className`.
+- `roadToFinal(input, options?)`: the road to the final of a tournament or of two finalists: `{ options, title, summary, totals, draw(extra?), table(options?) }`. `input` is what `drawBracket` takes, or the two finalists with their paths. Options: `team`, `title`, `subtitle`, `final`, `labels`, `groupLabel`, `size`, `winner`, `codes`, `endnote`, and `locale`, `words`, `teamName`, `roundNames`, `markShape`, `flags`, `theme`, `background`, `id`, `className` as for `drawBracket`. The types `RoadChart`, `RoadFinalist`, `RoadMatch`, `RoadOptions` and the rest are exported too; it is also the one export of `/road`.
 - `layoutBracket(input, options?)`: the rounds, halves, rows, byes and results, without drawing. `shape: "ltr"` and `groupOrder` are its options.
 - `bracketTable(input, options?)`: the HTML table.
 - `describeBracket(input, options?)`: the sentence a screen reader gets.
@@ -348,8 +477,8 @@ Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part 
 - `isEmblemId(value)`, and the types `EmblemRenderer`, `EmblemRequest`, `EmblemStyle`: the trophy emblems (see "Emblems for the trophy").
 - `roundName(remaining)`, `roundNamesFor(count)`, `roundLabel(layout, round, names, words)`: round names.
 - `LOCALES`, `LOCALE_CODES`, `defineLocale`, `localeOf`, `voiceOf`, `countryName`: the languages (see Languages), a language of your own, the formats and the names of countries from `Intl`. `localizedLayout(layout, voice)` is a layout with the team names in a language.
-- `SIZES`, `THEMES`, `WORDS`, `VERSION`: the sizes, the looks' colours, the English words, the version.
-- `cleanSvg(markup)`, `safeUrl(url)`, `abbreviate(name)`: the rules for marks, and the short name made from a name.
+- `SIZES`, `THEMES`, `ROAD_THEMES`, `WORDS`, `VERSION`: the sizes (`wide`, `square`, `card`, `phone`), the looks' colours, the road look's extra colours, the English words, the version.
+- `cleanSvg(markup)`, `safeUrl(url)`, `safeHref(url)`, `abbreviate(name)`: the rules for marks and for the addresses of links, and the short name made from a name. The types `FlagRenderer`, `FlagRequest` and `FlagShape` are the flags plug-in's (see "Flags from a plug-in").
 
 ## Languages
 
