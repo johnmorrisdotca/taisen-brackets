@@ -89,3 +89,26 @@ test("the demo brackets lay out as played", () => {
   assert.equal(old.champion!.id, "ITA");
   assert.equal(old.ties.filter((t) => t.result.kind === "replay").length, 3);
 });
+
+const luminance = (hex: string) => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255).map((c) => (c <= 0.03928 ? c / 12.92 : ((c + 0.055) / 1.055) ** 2.4));
+  return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+};
+const contrast = (a: string, b: string) => { const [hi, lo] = [luminance(a), luminance(b)].sort((x, y) => y - x); return (hi + 0.05) / (lo + 0.05); };
+
+test("the looks' text is held to WCAG AA on its boxes and its background", () => {
+  for (const [name, p] of Object.entries(T.THEMES)) {
+    assert.ok(contrast(p.ink, p.box) >= 4.5, `${name}: ink on box ${contrast(p.ink, p.box).toFixed(2)}`);
+    assert.ok(contrast(p.muted, p.box) >= 4.5, `${name}: muted on box ${contrast(p.muted, p.box).toFixed(2)}`);
+    assert.ok(contrast(p.ink, p.bg) >= 4.5, `${name}: ink on background ${contrast(p.ink, p.bg).toFixed(2)}`);
+    assert.ok(contrast(p.muted, p.bg) >= 4.5, `${name}: muted on background ${contrast(p.muted, p.bg).toFixed(2)}`);
+    assert.ok(contrast(p.gold, p.bg) >= 4.5, `${name}: gold on background ${contrast(p.gold, p.bg).toFixed(2)}`);
+    assert.ok(contrast(p.win, p.box) >= 3, `${name}: highlight on box ${contrast(p.win, p.box).toFixed(2)}`);
+  }
+});
+
+test("the version in the source is the version in package.json", async () => {
+  const { readFileSync } = await import("node:fs");
+  const pkg = JSON.parse(readFileSync(new URL("../package.json", import.meta.url), "utf8"));
+  assert.equal(T.VERSION, pkg.version);
+});

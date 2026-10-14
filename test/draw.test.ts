@@ -148,7 +148,9 @@ test("a team's mark: a logo address, inline SVG, or initials; unsafe things are 
   const matchups: Matchup[] = [{ sides: ["A", "B"], score: [1, 0], date: "1" }, { sides: ["C", "D"], score: [0, 1], date: "1" }, { sides: ["A", "D"], score: [2, 0], date: "2" }];
   const svg = T.drawBracket({ matchups, teams });
   assert.match(svg, /<image href="https:\/\/example\.com\/a\.png"/);
-  assert.match(svg, /<svg x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*" viewBox="0 0 4 3"/);
+  assert.match(svg, /<symbol id="[^"]+" viewBox="0 0 4 3" preserveAspectRatio="xMidYMid slice">/);
+  assert.match(svg, /<use href="#[^"]+-m1" x="[^"]*" y="[^"]*" width="[^"]*" height="[^"]*"\/>/);
+  assert.equal(count(svg, "<symbol "), 1, "a mark used in several places is written once");
   assert.ok(!/alert|onclick|<script/.test(svg));
   assert.match(svg, /class="tb-initials"[^>]*>GAM</);
   assert.equal(wellFormed(svg), null);
