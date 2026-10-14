@@ -2,7 +2,7 @@
  * Playoff formats by era: the round names, the length of each round's series and who has a bye, for the five North
  * American leagues and the FIFA World Cup. Data only; nothing here draws. Each era was checked against the English
  * Wikipedia articles in its `sources` (2026-10-13); where a season did something of its own (a strike, a pandemic) it has
- * its own entry. The year is the year the playoffs are played in: the NHL's 2024 is the 2023-24 season.
+ * its own entry. The year is the year the playoffs are played in (the NHL's and the NBA's 2024 are the 2024 playoffs, of the 2023-24 season), except for the NFL, whose year is its season's: 2024 is the season played in 2024, with playoffs in January and February 2025.
  */
 
 export type League = "nhl" | "nba" | "mlb" | "nfl" | "cfl" | "worldcup";

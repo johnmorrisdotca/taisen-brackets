@@ -20,9 +20,9 @@ const EN: Words = {
 
 const FR: Words = {
   tbd: "À déterminer", bye: "exempt", walkover: "forfait", champion: "Champion", thirdPlace: "Match pour la troisième place", other: "Autres rencontres",
-  aet: "a.p.", pens: "t.a.b.", aggregate: "cumul", replay: "rejoué",
+  aet: "a.p.", pens: "t.a.b.", aggregate: "cumulé", replay: "match rejoué",
   aetLong: "après prolongation", pensScore: "{a}–{b} aux tirs au but", aggregateLong: "au cumul",
-  inGames: "en {n}", bestOf: "au meilleur des {n}", round: "Tour {n}", roundOf: "Tour de {n}",
+  inGames: "en {n}", bestOf: "au meilleur des {n}", round: "Tour {n}", roundOf: "Tour à {n} équipes",
   tieVs: "{a} contre {b}", tieScore: "{a} {sa}, {b} {sb}", scoreText: "{a}–{b}", winnerIs: "Vainqueur : {name}", championIs: "Champion : {name}", finalLine: "{round} : {tie}",
   summary: "{n} équipes, {r} tours", summaryOne: "{n} équipes, 1 tour", sep: ". ", end: ".", note: " ({notes})", noteJoin: ", ",
   columnRound: "Tour", columnTie: "Rencontre", columnNote: "Note", columnDate: "Date", title: "Tableau à élimination directe",
@@ -33,7 +33,7 @@ const JA: Words = {
   aet: "延長", pens: "PK戦", aggregate: "合計", replay: "再試合",
   aetLong: "延長戦", pensScore: "PK戦 {a}–{b}", aggregateLong: "合計スコア",
   inGames: "{n}戦", bestOf: "{n}戦{w}勝制", round: "第{n}ラウンド", roundOf: "ラウンド{n}",
-  tieVs: "{a} 対 {b}", tieScore: "{a} {sa}、{b} {sb}", scoreText: "{a}–{b}", winnerIs: "勝者：{name}", championIs: "優勝：{name}", finalLine: "{round}：{tie}",
+  tieVs: "{a} 対 {b}", tieScore: "{a} {sa}–{sb} {b}", scoreText: "{a}–{b}", winnerIs: "勝者：{name}", championIs: "優勝：{name}", finalLine: "{round}：{tie}",
   summary: "{n}チーム、{r}ラウンド", summaryOne: "{n}チーム、1ラウンド", sep: "。", end: "。", note: "（{notes}）", noteJoin: "、",
   columnRound: "ラウンド", columnTie: "対戦", columnNote: "備考", columnDate: "日付", title: "トーナメント表",
 };
@@ -49,11 +49,11 @@ const ES: Words = {
 };
 
 const DE: Words = {
-  tbd: "offen", bye: "Freilos", walkover: "kampflos", champion: "Sieger", thirdPlace: "Spiel um Platz 3", other: "Weitere Begegnungen",
+  tbd: "offen", bye: "Freilos", walkover: "kampflos", champion: "Turniersieger", thirdPlace: "Spiel um Platz 3", other: "Weitere Begegnungen",
   aet: "n. V.", pens: "i. E.", aggregate: "ges.", replay: "Wiederholungsspiel",
   aetLong: "nach Verlängerung", pensScore: "{a}:{b} im Elfmeterschießen", aggregateLong: "im Gesamtergebnis",
   inGames: "in {n}", bestOf: "Best of {n}", round: "Runde {n}", roundOf: "Runde der letzten {n}",
-  tieVs: "{a} gegen {b}", tieScore: "{a} {sa}, {b} {sb}", scoreText: "{a}:{b}", winnerIs: "Sieger: {name}", championIs: "Sieger: {name}", finalLine: "{round}: {tie}",
+  tieVs: "{a} gegen {b}", tieScore: "{a} {sa}, {b} {sb}", scoreText: "{a}:{b}", winnerIs: "Sieger: {name}", championIs: "Turniersieger: {name}", finalLine: "{round}: {tie}",
   summary: "{n} Teams, {r} Runden", summaryOne: "{n} Teams, 1 Runde", sep: ". ", end: ".", note: " ({notes})", noteJoin: ", ",
   columnRound: "Runde", columnTie: "Begegnung", columnNote: "Hinweis", columnDate: "Datum", title: "Turnierbaum",
 };
@@ -70,7 +70,7 @@ const ROUNDS: Record<string, readonly [fr: string, ja: string, es: string, de: s
   "Semi-finals": ["Demi-finales", "準決勝", "Semifinales", "Halbfinale"],
   "Semifinals": ["Demi-finales", "準決勝", "Semifinales", "Halbfinale"],
   "Final": ["Finale", "決勝", "Final", "Finale"],
-  "Preliminary Round": ["Tour préliminaire", "予備ラウンド", "Ronda preliminar", "Vorrunde"],
+  "Preliminary Round": ["Tour préliminaire", "予選ラウンド", "Ronda preliminar", "Vorrunde"],
   "Qualifying Round": ["Tour de qualification", "予選ラウンド", "Ronda de clasificación", "Qualifikationsrunde"],
   "First Round": ["Premier tour", "1回戦", "Primera ronda", "Erste Runde"],
   "Second Round": ["Deuxième tour", "2回戦", "Segunda ronda", "Zweite Runde"],
@@ -81,13 +81,13 @@ const ROUNDS: Record<string, readonly [fr: string, ja: string, es: string, de: s
   "Conference Finals": ["Finales de conférence", "カンファレンス決勝", "Finales de conferencia", "Conference-Finale"],
   "Stanley Cup Semifinals": ["Demi-finales de la Coupe Stanley", "スタンレー・カップ準決勝", "Semifinales de la Stanley Cup", "Stanley-Cup-Halbfinale"],
   "Stanley Cup Final": ["Finale de la Coupe Stanley", "スタンレー・カップ・ファイナル", "Final de la Stanley Cup", "Stanley-Cup-Finale"],
-  "NBA Finals": ["Finales NBA", "NBAファイナル", "Finales de la NBA", "NBA-Finale"],
+  "NBA Finals": ["Finale de la NBA", "NBAファイナル", "Finales de la NBA", "NBA-Finale"],
   "Wild Card Game": ["Match de wild card", "ワイルドカードゲーム", "Juego de comodín", "Wild-Card-Spiel"],
-  "Wild Card Series": ["Série de wild card", "ワイルドカード・シリーズ", "Serie de comodín", "Wild-Card-Serie"],
+  "Wild Card Series": ["Série de wild card", "ワイルドカードシリーズ", "Serie de comodín", "Wild-Card-Serie"],
   "Division Series": ["Série de division", "ディビジョンシリーズ", "Serie divisional", "Division Series"],
-  "League Championship Series": ["Série de championnat de la Ligue", "リーグ・チャンピオンシップ・シリーズ", "Serie de Campeonato de Liga", "League Championship Series"],
+  "League Championship Series": ["Série de championnat", "リーグチャンピオンシップシリーズ", "Serie de Campeonato de Liga", "League Championship Series"],
   "World Series": ["Série mondiale", "ワールドシリーズ", "Serie Mundial", "World Series"],
-  "Wild Card": ["Wild card", "ワイルドカード", "Comodín", "Wild-Card-Runde"],
+  "Wild Card": ["Wild card", "ワイルドカード・プレーオフ", "Comodín", "Wild-Card-Runde"],
   "Divisional": ["Ronde divisionnaire", "ディビジョナル・プレーオフ", "Ronda divisional", "Divisional Round"],
   "Divisional Playoffs": ["Ronde divisionnaire", "ディビジョナル・プレーオフ", "Ronda divisional", "Divisional Round"],
   "Conference Championship": ["Finale de conférence", "カンファレンス・チャンピオンシップ", "Campeonato de conferencia", "Conference Championship"],
@@ -139,7 +139,7 @@ export interface Voice {
   words: Words;
   /** A number in the language's own digits and separators. */
   number(n: number): string;
-  /** A date as the language writes it ("Dec 18, 2022", "2022年12月18日"), or `null` when `iso` does not start with a date. */
+  /** A date as the language writes it ("Dec 18, 2022", "2022/12/18"), or `null` when `iso` does not start with a date. */
   date(iso: string): string | null;
   /** Capitals, by the language's own rules (not for Japanese). */
   upper(text: string): string;
@@ -181,7 +181,7 @@ export function fill(phrase: string, values: Record<string, string | number>): s
 const SUBDIVISIONS: Readonly<Record<string, Readonly<Record<string, string>>>> = {
   "GB-ENG": { en: "England", fr: "Angleterre", ja: "イングランド", es: "Inglaterra", de: "England" },
   "GB-SCT": { en: "Scotland", fr: "Écosse", ja: "スコットランド", es: "Escocia", de: "Schottland" },
-  "GB-WLS": { en: "Wales", fr: "pays de Galles", ja: "ウェールズ", es: "Gales", de: "Wales" },
+  "GB-WLS": { en: "Wales", fr: "Pays de Galles", ja: "ウェールズ", es: "Gales", de: "Wales" },
   "GB-NIR": { en: "Northern Ireland", fr: "Irlande du Nord", ja: "北アイルランド", es: "Irlanda del Norte", de: "Nordirland" },
 };
 

@@ -67,7 +67,7 @@ test("the football terms of each language are the ones of its Wikipedia articles
 
 test("a round the language has no word of its own for is 'round of N'", () => {
   const fr = T.voiceOf({ locale: "fr" });
-  assert.equal(fr.round("Round of 64"), "Tour de 64");
+  assert.equal(fr.round("Round of 64"), "Tour à 64 équipes");
   assert.equal(T.voiceOf({ locale: "ja" }).round("Round of 128"), "ラウンド128");
   assert.equal(T.voiceOf({ locale: "de" }).round("Qualifier"), "Qualifier", "a name that is not known is kept");
 });
@@ -127,7 +127,7 @@ test("team names: a map on the team, or a function that gives one; clubs keep th
   const teams: Team[] = [{ id: "a", name: "Germany", names: { fr: "Allemagne", ja: "ドイツ" } }, { id: "b", name: "Spain", region: "ES" }];
   const matchups = [{ sides: ["a", "b"] as const, score: [1, 0] as const }];
   assert.match(T.drawBracket({ matchups, teams }, { locale: "fr" }), /Allemagne 1, Spain 0/);
-  assert.match(T.drawBracket({ matchups, teams }, { locale: "ja" }), /ドイツ 1、Spain 0/);
+  assert.match(T.drawBracket({ matchups, teams }, { locale: "ja" }), /ドイツ 1–0 Spain/);
   assert.match(T.drawBracket({ matchups, teams }, { locale: "es" }), /Germany 1, Spain 0/);
   const viaIntl = { teamName: (team: Team, locale: Locale) => (team.region ? T.countryName(team.region, locale) : undefined) };
   assert.match(T.drawBracket({ matchups, teams }, { locale: "de", ...viaIntl }), /Germany 1, Spanien 0/);

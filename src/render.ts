@@ -247,7 +247,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
         if (!sd.label) return;
         const ks = layout.columns.map((_, ci) => slotOfColumn(sd.key, ci));
         const x0 = Math.min(...ks.map((k) => starts[k])), x1 = Math.max(...ks.map((k) => starts[k] + D));
-        texts.push(`<text class="tb-half" x="${num((x0 + x1) / 2)}" y="${num(top - (showLabels ? 36 : 14))}" font-size="${poster ? 16 : 15}" font-weight="700" letter-spacing=".1em" text-anchor="middle">${esc(poster ? sd.label.toUpperCase() : sd.label)}</text>`);
+        texts.push(`<text class="tb-half" x="${num((x0 + x1) / 2)}" y="${num(top - (showLabels ? 36 : 14))}" font-size="${poster ? 16 : 15}" font-weight="700" letter-spacing=".1em" text-anchor="middle">${esc(poster ? v.upper(sd.label) : sd.label)}</text>`);
       });
     }
     // lines
@@ -264,7 +264,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     }
     if (bottomThird) thirdAtFoot(layout, height - pad - extraH0 + 6, width / 2, ow, OTHER_H, v, boxes, texts);
     othersBlock(layout, others, height - pad - extraH0 + thirdBlock + 6, width, pad, ow, OTHER_H, v, boxes, texts);
-    texts.push(...headings(o, width, pad, poster));
+    texts.push(...headings(v, o, width, pad, poster));
     return { width, height, boxes, links, texts, extras, detail, vertical };
   }
 
@@ -321,7 +321,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     layout.sides.forEach((sd) => {
       if (!sd.label) return;
       const y = sd.key === "l" ? pad + titleH + champTop + 16 : totalT - pad - 2;
-      texts.push(`<text class="tb-half" x="${num(midX)}" y="${num(y)}" font-size="14" font-weight="700" letter-spacing=".1em" text-anchor="middle">${esc(sd.label.toUpperCase())}</text>`);
+      texts.push(`<text class="tb-half" x="${num(midX)}" y="${num(y)}" font-size="14" font-weight="700" letter-spacing=".1em" text-anchor="middle">${esc(v.upper(sd.label))}</text>`);
     });
   }
   for (const t of layout.ties) {
@@ -337,7 +337,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
   }
   if (bottomThird) thirdAtFoot(layout, totalT - pad + 6, W0 / 2, Math.min(W0 - 2 * pad, 200), 52, v, boxes, texts);
   othersBlock(layout, others, totalT - pad + thirdBlock + 6, W0, pad, ow, OTHER_H, v, boxes, texts);
-  texts.push(...headings(o, W0, pad, poster));
+  texts.push(...headings(v, o, W0, pad, poster));
   return { width: W0, height, boxes, links, texts, extras, detail, vertical };
 }
 
@@ -352,11 +352,11 @@ function label(v: Voice, text: string, x: number, y: number, anchor: "start" | "
   return `<text class="tb-round" x="${num(x)}" y="${num(y)}" font-size="11" font-weight="600" letter-spacing=".08em" text-anchor="${anchor}">${esc(fit(v.upper(text), 11 * 1.18, maxWidth))}</text>`;
 }
 
-function headings(o: DrawOptions, width: number, pad: number, poster: boolean): string[] {
+function headings(v: Voice, o: DrawOptions, width: number, pad: number, poster: boolean): string[] {
   const out: string[] = [];
   let y = pad + 24;
   if (o.title) {
-    const text = poster ? o.title.toUpperCase() : o.title;
+    const text = poster ? v.upper(o.title) : o.title;
     out.push(`<text class="tb-title" x="${num(width / 2)}" y="${num(y)}" font-size="${poster ? 26 : 24}" font-weight="800" ${poster ? 'letter-spacing=".14em" ' : ""}text-anchor="middle">${esc(text)}</text>`);
     y += poster ? 24 : 22;
   }
@@ -379,7 +379,7 @@ function championBlock(team: Team, cx: number, top: number, mark: number, trophy
   const name = fit(team.name, nameFont, 200);
   if (ctx.shape !== "none") out.push(`<g class="tb-champ">${drawMark(team, cx, cy, mark, ctx)}</g>`);
   const nameY = cy + mark / 2 + 8 + nameFont * 0.8;
-  out.push(`<text class="tb-name" x="${num(cx)}" y="${num(nameY)}" font-size="${num(nameFont)}" font-weight="800" text-anchor="middle">${esc(poster ? name.toUpperCase() : name)}</text>`);
+  out.push(`<text class="tb-name" x="${num(cx)}" y="${num(nameY)}" font-size="${num(nameFont)}" font-weight="800" text-anchor="middle">${esc(poster ? v.upper(name) : name)}</text>`);
   out.push(`<text class="tb-champ-label" x="${num(cx)}" y="${num(nameY + 6 + 11)}" font-size="11" font-weight="700" letter-spacing=".16em" text-anchor="middle">${esc(v.upper(v.words.champion))}</text>`);
   return out;
 }
