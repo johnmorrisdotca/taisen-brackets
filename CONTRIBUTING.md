@@ -14,6 +14,7 @@ Bug reports and ideas go in the
 - **Anything from outside is made safe.** Text is escaped, an image address passes `safeUrl`, inline SVG passes `cleanSvg`. A
   new option that reaches the markup has a test with a hostile value.
 - **Test what you change.** Tests sit in `test/`. A rule you change has a test that would have caught it.
+- **Docs pages are single-language.** Every page of the README and of `docs/` is in one language: one page per language, made from one source where that is practical, a Japanese one named `<name>.ja.md`, and the two linked at the top with a line such as `日本語 · English`. No page mixes English and Japanese in a table or in its prose, and a demo switches language with a control. Proper nouns and code identifiers (an id or a constant) stay as they are on both pages, and a Japanese term that is itself the subject (the package's own name) may appear once on an English page as a quoted name. The exception is a page about the translations themselves (`docs/languages.md`, which lists every word and round name of every language), which may show both languages side by side. A test, `docs-language.test`, holds the docs to this and lists each exception with its reason.
 - **A README table, example or count that a test holds to the code** changes together with the code: `pnpm test:readme` runs
   every example of the README and of `docs/`, and checks that the README names every export.
 - **`docs/formats.md` is made from the data**: `node scripts/make-formats-doc.mjs` rewrites it from `src/presets.ts`. A format

@@ -6,6 +6,10 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- Docs pages are single-language (`CONTRIBUTING.md`), held by a new test, `docs-language.test`, which lists each exception with its reason; two changelog entries that had Japanese in English prose are now in English.
+
 ## [0.6.0] - 2026-10-14
 
 ### Added
@@ -111,7 +115,7 @@ All notable changes to this project are written here. The format follows
 - **Team names in a language.** `Team.names` (by locale code), the `teamName(team, locale)` option, and `countryName(isoCode, locale)`, which asks `Intl.DisplayNames` (the home nations too), so a World Cup shows every country in the chosen language with no list written. `Team.region` carries the ISO code.
 - A tie can be a `walkover`; a side that had a bye says so beside its score in the language.
 - **A real example for every sport**, read from spxn.com like the others: the 2024 NBA playoffs, the playoffs of the 2024 NFL season (byes, the Super Bowl at the centre), the 2024 CFL playoffs (byes, the Grey Cup), and the 1984 Stanley Cup playoffs (the Campbell and Wales conferences, a best-of-five first round), beside the NHL 2024, MLB 2022 and the World Cups. Each has its source in NOTICE.md and the demo's footer, and a test that pins its champion and final score.
-- **The demo** has a sport picker with its editions, a language switcher (EN, FR, 日本語, ES, DE) that drives every example, the poster included, remembered in `localStorage`, and the shared family header and footer (the family template of 2026-10-15b, `scripts/page.mjs`, the family block of the README).
+- **The demo** has a sport picker with its editions, a language switcher (EN, FR, JA, ES, DE) that drives every example, the poster included, remembered in `localStorage`, and the shared family header and footer (the family template of 2026-10-15b, `scripts/page.mjs`, the family block of the README).
 - docs/languages.md: every term of every language, what it was checked against, and what still needs a native reader. The README has a "Languages" section and a gallery of the sports.
 
 ### Changed
@@ -121,7 +125,7 @@ All notable changes to this project are written here. The format follows
 
 ## [0.1.1] - 2026-10-14
 
-- The title is now "Taisen Brackets 対戦" in the README, the demo and the package description, matching the package name.
+- The title now carries the package name's Japanese form beside "Taisen Brackets" in the README, the demo and the package description, matching the package name.
 
 ## [0.1.0] - 2026-10-14
 
