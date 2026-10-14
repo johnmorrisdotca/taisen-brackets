@@ -122,6 +122,12 @@ test("a series is decided when a side has won most of the games, and only then",
   assert.equal(byGames.result.played, 4);
 });
 
+test("a series counts a game level at the end of play as won by the side that won the shoot-out", () => {
+  const tie = T.resolveMatchup({ sides: ["A", "B"], bestOf: 3, games: [{ score: [0, 0], pens: [5, 4] }, { score: [1, 1], pens: [3, 6] }, { score: [2, 1] }] }, 0, new Map());
+  assert.deepEqual(tie.result.score, [2, 1]);
+  assert.equal(tie.winner, 0);
+});
+
 test("two legs are added up, and a shoot-out settles a level aggregate", () => {
   const sum = T.resolveMatchup({ sides: ["A", "B"], kind: "aggregate", legs: [{ score: [2, 0] }, { score: [0, 1] }] }, 0, new Map());
   assert.deepEqual(sum.result.score, [2, 1]);

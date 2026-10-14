@@ -43,6 +43,9 @@ test("the NBA, MLB, NFL and CFL by era", () => {
   assert.deepEqual([1970, 1980, 1982, 1995, 2020].map((y) => T.playoffFormat("nfl", y)!.teams), [8, 10, 16, 12, 14]);
   assert.deepEqual([1970, 1980, 1995, 2020].map((y) => T.playoffFormat("nfl", y)!.byes), [0, 3, 2, 1]);
   assert.deepEqual(names("cfl", 2023), ["Division Semi-Final", "Division Final", "Grey Cup"]);
+  assert.deepEqual(names("mls", 2024), ["Wild Card Round", "Round One", "Conference Semifinals", "Conference Finals", "MLS Cup"]);
+  assert.deepEqual(lengths("mls", 2024), [1, 3, 1, 1, 1]);
+  assert.equal(T.playoffFormat("mls", 2022), null, "earlier formats are not covered");
   assert.deepEqual([1996, 2012, 2019].map((y) => T.playoffFormat("cfl", y)!.teams), [6, 6, 6]);
   assert.throws(() => T.playoffFormat("xfl" as T.League, 2020), /no format/);
 });

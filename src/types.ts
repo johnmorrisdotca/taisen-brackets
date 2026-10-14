@@ -156,6 +156,8 @@ export interface LayoutBox {
   order: readonly [0 | 1, 0 | 1];
   /** The side that had a bye (it came from no tie, though the other did), or `null`. */
   bye: 0 | 1 | null;
+  /** Every side that skipped the earlier rounds: the `bye` side, and both sides of a tie of a later round that no tie feeds (MLS's round one, where seven teams of nine skip the wild card round). */
+  byes: readonly (0 | 1)[];
 }
 
 export interface LayoutSide {

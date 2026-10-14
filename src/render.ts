@@ -18,7 +18,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 const isLayout = (x: unknown): x is BracketLayout => typeof x === "object" && x !== null && "ties" in x && "sides" in x && "rounds" in x;
 
 interface Rect { x: number; y: number; w: number; h: number }
-interface Placed { rect: Rect; tie: Tie; order: readonly [0 | 1, 0 | 1]; bye: 0 | 1 | null; final: boolean; champion: boolean }
+interface Placed { rect: Rect; tie: Tie; order: readonly [0 | 1, 0 | 1]; bye: 0 | 1 | null; byes: readonly (0 | 1)[]; final: boolean; champion: boolean }
 
 /** What a drawing is made of before it is written out: the boxes, the lines, the labels. */
 interface Plan {
@@ -159,7 +159,11 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     const rowH = h / 2;
     const font = clamp(rowH * 0.5, 8.5, 16);
     const md = clamp(rowH * 0.7, 10, 28);
-    const needed = 6 + md + 5 + longest * (font / 13) + 8 + textWidth("00", font + 1) + 14;
+    // Room for the score, and for the words some boxes carry beside it: a bye, a shoot-out's score.
+    const anyBye = layout.sides.some((sd) => sd.boxes.some((b) => b.byes.length > 0));
+    const anyPens = layout.ties.some((t) => t.result.pens !== null);
+    const extra = (anyBye ? textWidth(v.words.bye, Math.max(font - 2, 8)) + 8 : 0) + (anyPens ? textWidth("(00)", Math.max(font - 2, 8)) + 3 : 0);
+    const needed = 6 + md + 5 + longest * (font / 13) + 8 + textWidth("00", font + 1) + extra + 14;
     const named = o.detail && o.detail !== "auto" ? o.detail : w >= needed && h >= 36 ? "full" : w >= 76 && h >= 28 ? "compact" : "mark";
     return named === "mark" && o.markShape === "none" ? "compact" : named;
   };
@@ -206,14 +210,14 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     for (const sd of layout.sides) for (const b of sd.boxes) {
       const rect = place(sd.key, b);
       rects.set(b.i, rect);
-      boxes.push({ rect, tie: layout.ties[b.i], order: b.order, bye: b.bye, final: false, champion: false });
+      boxes.push({ rect, tie: layout.ties[b.i], order: b.order, bye: b.bye, byes: b.byes, final: false, champion: false });
     }
     const midX = (halves ? starts[nc] : starts[nc] ?? 0) + (halves ? centreT : 0) / 2;
     if (halves && layout.final) {
       const fy = treeY0 + layout.final.y * rowStep + rowStep / 2;
       const rect = { x: midX - finalW / 2, y: fy - finalH / 2, w: finalW, h: finalH };
       rects.set(layout.final.i, rect);
-      boxes.push({ rect, tie: layout.ties[layout.final.i], order: layout.final.order, bye: null, final: true, champion: champ });
+      boxes.push({ rect, tie: layout.ties[layout.final.i], order: layout.final.order, bye: null, byes: [], final: true, champion: champ });
       if (showLabels) texts.push(label(v, roundLabel(layout, layout.rounds, o.roundNames, v), midX, rect.y - 7, "middle"));
       if (champ) extras.push(...championBlock(layout.champion!, midX, rect.y - 22 - champH, champMark, trophyH, nameFont, o, v, ctx, poster));
       if (withThird) {
@@ -221,7 +225,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
         const r3 = { x: midX - finalW / 2, y: rect.y + rect.h + 14 + 18, w: finalW, h: boxH };
         rects.set(layout.third!, r3);
         texts.push(label(v, v.words.thirdPlace, midX, r3.y - 6, "middle"));
-        boxes.push({ rect: r3, tie: t3, order: [0, 1], bye: null, final: false, champion: false });
+        boxes.push({ rect: r3, tie: t3, order: [0, 1], bye: null, byes: [], final: false, champion: false });
       }
     } else if (!halves) {
       const k = nc;
@@ -295,7 +299,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     const c = layout.columns.indexOf(b.round);
     const rect = { x: xOf(b.y), y: bandStart(sd.key, c), w: S, h: D };
     rects.set(b.i, rect);
-    boxes.push({ rect, tie: layout.ties[b.i], order: b.order, bye: b.bye, final: false, champion: false });
+    boxes.push({ rect, tie: layout.ties[b.i], order: b.order, bye: b.bye, byes: b.byes, final: false, champion: false });
   }
   const midX = W0 / 2;
   if (halves && layout.final) {
@@ -305,7 +309,7 @@ function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size
     if (showLabels) { texts.push(label(v, roundLabel(layout, layout.rounds, o.roundNames, v), midX, y + 12, "middle")); y += 16; }
     const rect = { x: midX - finalW / 2, y: y + 6, w: finalW, h: finalH };
     rects.set(layout.final.i, rect);
-    boxes.push({ rect, tie: layout.ties[layout.final.i], order: layout.final.order, bye: null, final: true, champion: champ });
+    boxes.push({ rect, tie: layout.ties[layout.final.i], order: layout.final.order, bye: null, byes: [], final: true, champion: champ });
   } else if (!halves && champ && layout.finalIndex !== null) {
     const fr = rects.get(layout.finalIndex)!;
     extras.push(...championBlock(layout.champion!, fr.x + fr.w / 2, fr.y + fr.h + 12, champMark, trophyH, nameFont, o, v, ctx, poster));
@@ -402,14 +406,14 @@ function othersBlock(layout: BracketLayout, list: number[], y0: number, width: n
   texts.push(label(v, v.words.other, width / 2, y0 + 12, "middle"));
   list.forEach((i, n) => {
     const rect = { x: x0 + (n % cols) * (ow + 10), y: y0 + 24 + Math.floor(n / cols) * (oh + 10), w: ow, h: oh };
-    boxes.push({ rect, tie: layout.ties[i], order: [0, 1], bye: null, final: false, champion: false });
+    boxes.push({ rect, tie: layout.ties[i], order: [0, 1], bye: null, byes: [], final: false, champion: false });
   });
 }
 
 /** The third-place match with its label, centred on `cx`, its label at `y0`. */
 function thirdAtFoot(layout: BracketLayout, y0: number, cx: number, w: number, h: number, v: Voice, boxes: Placed[], texts: string[]): void {
   texts.push(label(v, v.words.thirdPlace, cx, y0 + 12, "middle"));
-  boxes.push({ rect: { x: cx - w / 2, y: y0 + 18, w, h }, tie: layout.ties[layout.third!], order: [0, 1], bye: null, final: false, champion: false });
+  boxes.push({ rect: { x: cx - w / 2, y: y0 + 18, w, h }, tie: layout.ties[layout.third!], order: [0, 1], bye: null, byes: [], final: false, champion: false });
 }
 
 // ---------------------------------------------------------------------------------------------- one box
@@ -453,17 +457,22 @@ function drawBox(p: Placed, plan: Plan, o: DrawOptions, v: Voice, ctx: MarkConte
       if (o.markShape !== "none") { rowParts.push(drawMark(team, x + 6 + md / 2, cy, md, ctx)); tx = x + 6 + md + 5; }
       const score = scoresOn && r.score ? v.number(r.score[k]) : "";
       const pensText = scoresOn && r.pens ? `(${v.number(r.pens[k])})` : "";
-      const bye = p.bye === k;
+      const bye = p.byes.includes(k);
       const right = x + w - 6;
       const scoreW = score ? textWidth(score, font + 1) : 0;
       const pensW = pensText ? textWidth(pensText, font - 2) + 3 : 0;
-      const byeText = bye ? v.words.bye : "";
-      const byeW = byeText ? textWidth(byeText, Math.max(font - 2, 8)) : 0;
-      const avail = right - tx - (scoreW + pensW) - (byeW ? byeW + 6 : 0) - 6;
       const seed = seedsOn && team?.seed !== undefined ? `${v.number(team.seed)} ` : "";
       const nm = team ? (detail === "full" ? team.name : abbrOf(team, v)) : v.words.tbd;
-      const text = fit(`${seed}${nm}`, font, Math.max(avail, 8));
-      rowParts.push(`<text class="tb-name${team ? "" : " tb-muted"}" x="${num(tx)}" y="${num(cy + font * 0.35)}" font-size="${num(font)}">${esc(text)}</text>`);
+      // The word for a bye goes beside the score only where the name still fits beside it.
+      const byeFits = bye && right - tx - (scoreW + pensW) - (textWidth(v.words.bye, Math.max(font - 2, 8)) + 6) - 6 >= textWidth(`${seed}${nm}`, font);
+      const byeText = byeFits ? v.words.bye : "";
+      const byeW = byeText ? textWidth(byeText, Math.max(font - 2, 8)) : 0;
+      const avail = right - tx - (scoreW + pensW) - (byeW ? byeW + 6 : 0) - 6;
+      // A name that does not fit is set a little smaller before it is cut.
+      let nameFont = font;
+      while (nameFont > 9.5 && textWidth(`${seed}${nm}`, nameFont) > avail) nameFont -= 0.5;
+      const text = fit(`${seed}${nm}`, nameFont, Math.max(avail, 8));
+      rowParts.push(`<text class="tb-name${team ? "" : " tb-muted"}" x="${num(tx)}" y="${num(cy + nameFont * 0.35)}" font-size="${num(nameFont)}">${esc(text)}</text>`);
       if (score) rowParts.push(`<text class="tb-score" x="${num(right)}" y="${num(cy + (font + 1) * 0.35)}" font-size="${num(font + 1)}" text-anchor="end" font-variant-numeric="tabular-nums">${esc(score)}</text>`);
       if (pensText) rowParts.push(`<text class="tb-muted" x="${num(right - scoreW - 3)}" y="${num(cy + (font - 2) * 0.35)}" font-size="${num(Math.max(font - 2, 8))}" text-anchor="end">${esc(pensText)}</text>`);
       if (byeText) rowParts.push(`<text class="tb-muted" x="${num(right - (scoreW + pensW) - (scoreW || pensW ? 6 : 0))}" y="${num(cy + (font - 2) * 0.35)}" font-size="${num(Math.max(font - 2, 8))}" font-style="italic" text-anchor="end">${esc(byeText)}</text>`);

@@ -125,6 +125,15 @@ export function layoutBracket(input: readonly Matchup[] | BracketInput, options:
     return ties[i].sides[other] ? other : null;
   };
 
+  /** Every side that skipped the rounds before this tie's: the bye side, or both sides of a later-round tie that nothing feeds. */
+  const byesOf = (i: number): readonly (0 | 1)[] => {
+    const one = byeOf(i);
+    if (one !== null) return [one];
+    const ch = children.get(i) ?? [];
+    if (round[i] <= 1 || ch.length > 0) return [];
+    return ([0, 1] as const).filter((k) => ties[i].sides[k] !== null);
+  };
+
   /** Lays one tree out: leaves take the next rows, a tie sits at the middle of the ones that feed it. */
   const lay = (root: number, mark: "l" | "r"): { boxes: LayoutBox[]; rows: number } => {
     const boxes: LayoutBox[] = [];
@@ -133,7 +142,7 @@ export function layoutBracket(input: readonly Matchup[] | BracketInput, options:
       const ch = children.get(i) ?? [];
       const ys = ch.map(go);
       const y = ys.length ? ys.reduce((a, b) => a + b, 0) / ys.length : next++;
-      boxes.push({ i, round: round[i], y, to: null, fed: ch.length > 0, order: orderOf(i), bye: byeOf(i) });
+      boxes.push({ i, round: round[i], y, to: null, fed: ch.length > 0, order: orderOf(i), bye: byeOf(i), byes: byesOf(i) });
       place[i] = mark;
       return y;
     };

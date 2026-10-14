@@ -5,7 +5,7 @@ import * as T from "../src/index.ts";
 import type { Matchup, Team } from "../src/index.ts";
 import { finished, wellFormed } from "./helpers.ts";
 
-const { mlb2022, nhl2024, twoLegs, wc1938, wc2022, wc2026 } = build(T);
+const { mlb2022, mls2024, nhl2024, twoLegs, wc1938, wc2022, wc2026 } = build(T);
 const count = (text: string, part: string) => text.split(part).length - 1;
 const viewBox = (svg: string) => /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(svg)!.slice(1).map(Number);
 
@@ -243,5 +243,8 @@ test("a side that had a bye says so beside its score", () => {
   const svg = T.drawBracket(mlb2022);
   assert.equal(count(svg, ">bye</text>"), 4, "the four teams that skipped the wild card series");
   assert.equal(count(T.drawBracket(wc2022), ">bye</text>"), 0);
-  assert.match(T.drawBracket(mlb2022, { words: { bye: "exempt" } }), />exempt<\/text>/);
+  assert.match(T.drawBracket(mlb2022, { words: { bye: "pass" } }), />pass<\/text>/);
+  // Where a box is too narrow for the name and the word, the word is left out rather than the name cut.
+  assert.ok(!T.drawBracket(mls2024).includes(">bye</text>"), "MLS round one boxes are too narrow for the name and the word");
+  assert.ok(T.drawBracket(mls2024, { size: { width: 2600, height: 900 } }).includes(">bye</text>"), "and have room for both when the drawing is wider");
 });

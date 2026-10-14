@@ -34,7 +34,9 @@ function settle(m: Matchup, kind: MatchupKind): { result: Result; winner: 0 | 1 
 
   if (kind === "series") {
     let wins: readonly [number, number] | null = null;
-    if (games.length) wins = [games.filter((g) => g.score[0] > g.score[1]).length, games.filter((g) => g.score[1] > g.score[0]).length];
+    // A game level at the end of play but settled by a shoot-out is won by the side that won the shoot-out (MLS's best-of-three round).
+    const won = (g: Game): 0 | 1 | null => byScore(g.score[0], g.score[1]) ?? byPens(g.pens ?? null);
+    if (games.length) wins = [games.filter((g) => won(g) === 0).length, games.filter((g) => won(g) === 1).length];
     else if (m.score) wins = m.score;
     const need = bestOf ? Math.ceil(bestOf / 2) : null;
     const winner = wins && need ? (wins[0] >= need ? 0 : wins[1] >= need ? 1 : null) : null;

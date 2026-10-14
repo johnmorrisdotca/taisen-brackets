@@ -5,7 +5,7 @@
  * its own entry. The year is the year the playoffs are played in (the NHL's and the NBA's 2024 are the 2024 playoffs, of the 2023-24 season), except for the NFL, whose year is its season's: 2024 is the season played in 2024, with playoffs in January and February 2025.
  */
 
-export type League = "nhl" | "nba" | "mlb" | "nfl" | "cfl" | "worldcup";
+export type League = "nhl" | "nba" | "mlb" | "nfl" | "cfl" | "mls" | "worldcup";
 
 export interface PlayoffRound {
   /** The round's name as the league calls it. */
@@ -81,6 +81,9 @@ const ERAS: Record<League, readonly Era[]> = {
   ],
   cfl: [
     { league: "cfl", from: 1996, to: 2026, label: "division semi-finals and finals, with a crossover", teams: 6, byes: 1, groups: ["West", "East"], rounds: [r("Division Semi-Final", 1), r("Division Final", 1), r("Grey Cup", 1)], note: "Three teams of each division qualify and the first-placed team has a bye. A fourth-placed team with a better record than the third-placed team of the other division takes that place (the crossover, since 1996). The league has announced an eight-team format from 2027.", sources: wiki("1996 CFL season", "2012 CFL season", "2019 CFL season", "CFL playoffs") },
+  ],
+  mls: [
+    { league: "mls", from: 2023, to: null, label: "18 teams, nine a conference: a wild card match, then best of three", teams: 18, byes: 7, groups: WEST_EAST, rounds: [r("Wild Card Round", 1), r("Round One", 3), r("Conference Semifinals", 1), r("Conference Finals", 1), r("MLS Cup", 1)], note: "The teams ranked 8th and 9th of each conference play one wild card match (settled by a shoot-out if level); the other seven teams skip it. Round One is a best-of-three series (a game level after play is settled by a shoot-out, and counts as a win); the rest are single matches. Earlier seasons had other formats and are not covered.", sources: wiki("MLS Cup Playoffs", "2024 MLS Cup Playoffs") },
   ],
   worldcup: [
     { league: "worldcup", from: 1930, to: 1930, label: "four group winners, straight to the semi-finals", teams: 4, byes: 0, groups: null, rounds: [r("Semi-finals", 1), r("Final", 1)], years: [1930], sources: wiki("1930 FIFA World Cup") },

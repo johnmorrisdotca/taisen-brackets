@@ -170,7 +170,7 @@ test("a walkover is a note in the language, and a bye has its word", () => {
     assert.ok(T.drawBracket(withWalkover, { locale: code }).includes(w.walkover), code);
     assert.ok(T.bracketTable(withWalkover, { locale: code }).includes(w.walkover));
   }
-  assert.ok(T.drawBracket(build(T).mlb2022, { locale: "de" }).includes(">Freilos</text>"));
+  assert.ok(T.drawBracket(build(T).mlb2022, { locale: "de", size: { width: 2400, height: 900 } }).includes(">Freilos</text>"));
 });
 
 test("each language writes a tie, a series and an aggregate in its own words", () => {
