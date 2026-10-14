@@ -85,6 +85,8 @@ test("the language switcher changes the rounds, the notes and the countries, and
 });
 
 test("every example follows the language, and none overflows the page", async ({ page }) => {
+  // Forty-eight page loads: a slow runner needs more than the default thirty seconds.
+  test.setTimeout(240_000);
   for (const code of ["fr", "ja", "es", "de"]) {
     for (const key of examples) {
       await page.goto(`/?ex=${key}&lang=${code}`);
