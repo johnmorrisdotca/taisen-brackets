@@ -18,6 +18,7 @@ Bug reports and ideas go in the
   every example of the README and of `docs/`, and checks that the README names every export.
 - **`docs/formats.md` is made from the data**: `node scripts/make-formats-doc.mjs` rewrites it from `src/presets.ts`. A format
   you add cites its source in the pull request and in `NOTICE.md`.
+- **The demo's results are read, not typed**: `SPXN_PUBLISHABLE_KEY=… node scripts/fetch-demo-data.mjs` rewrites `demo/data/` from spxn.com's public API, and `pnpm flags` the flags. The data's sources and terms are in `NOTICE.md`; the World Cup 1938 and 2022 file is CC BY-SA 4.0.
 - **Option values and names are kebab case where they are words** (`"poster"`, `"ltr"`).
 - **Art and data are shipped only when their licence lets them be**, with the notice kept in `NOTICE.md`. No GPL or LGPL code.
   The demo's flags are made with `pnpm flags` from Hata, and the package ships none.

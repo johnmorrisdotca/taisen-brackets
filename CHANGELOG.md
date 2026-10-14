@@ -18,7 +18,8 @@ First version.
 - **`singleElimination`**, **`advanceWinners`**, **`standardSeeds`** and **`matchupsFromGames`**: brackets for any number of teams, seeded in the standard way with byes, results carried forward, and matchups from a flat list of games.
 - **`playoffFormat`** and **`playoffEras`**: round names, series lengths, byes and teams by era for the NHL, NBA, MLB, NFL, CFL and the FIFA World Cup.
 - Entry points `/layout` and `/presets`; no dependencies.
-- A demo with the NHL 2024 playoffs, the World Cup of 2022 and 1938, MLB 2022 (byes), two-legged ties, a 32-team field and a flags-only poster, in a playground that changes the size, look and shape.
+- A demo with real results read from spxn.com (the NHL 2024 playoffs, the World Cups of 2022, 1938 and 2026, the MLB 2022 postseason; sources and terms in NOTICE.md), two made-up examples (two-legged ties, a 32-team field) and a flags-only poster of the 2026 World Cup, in a playground that changes the size, look and shape.
+- Playoff formats checked against English Wikipedia, each era citing its articles (docs/formats.md). The year is the year the playoffs are played in.
 
 [Unreleased]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.1.0...HEAD
 [0.1.0]: https://github.com/johnmorrisdotca/taisen-brackets/releases/tag/v0.1.0

@@ -1,15 +1,19 @@
 # Notice: where the facts and the pictures come from
 
-The code of this package is under the MIT licence (see [LICENSE](LICENSE)). The package draws what it is given and carries no data except the formats below; the demo and the docs carry some facts and some pictures, listed here.
+The code of this package is under the MIT licence (see [LICENSE](LICENSE)). The package draws what it is given and carries no data except the formats below. The demo, the docs and the README's pictures carry results and flags, listed here with their terms.
 
 | What | Made from | Terms |
 | --- | --- | --- |
-| `playoffFormat`: round names, series lengths, byes and teams by era | The leagues' published histories of their playoffs (the NHL, NBA, MLB, NFL, CFL and FIFA, read in English Wikipedia's articles on each playoff, 2026-10-13) | Facts: no text or table is copied |
-| The demo's results: NHL 2024, World Cup 2022 and 1938, MLB 2022 | The published results of those events | Facts |
-| The demo's two-legged ties, its 32-team field and its poster field | Made up for the demo: the clubs do not exist, and the poster's nations and results are illustrative, not the real draw or results | Not real |
+| `playoffFormat`: round names, series lengths, byes and teams by era | Facts (years, round names, series lengths, numbers of teams, byes) read on 2026-10-13 from English Wikipedia's articles on each playoff and tournament; the articles are cited era by era in [docs/formats.md](docs/formats.md). The MediaWiki API was read one request at a time, a second or more apart, with a User-Agent naming this project | Wikipedia's text is CC BY-SA 4.0 (https://creativecommons.org/licenses/by-sa/4.0/). Only facts are taken, no sentence or table, and the articles are credited in docs/formats.md |
+| The demo's World Cup results of 1938 and 2022 (`demo/data/worldcup-1938-2022.js`) | The Fjelstul World Cup Database, https://github.com/jfjelstul/worldcup, © 2023 Joshua C. Fjelstul, Ph.D., read through the public API of [spxn.com](https://spxn.com), which holds it as the source of those matches | **CC BY-SA 4.0** (https://creativecommons.org/licenses/by-sa/4.0/legalcode). That file is a selection of the database's fields and is shared under the same licence, with this credit. The pictures in `docs/images` that draw these results (the World Cup 2022 and 1938 brackets, and the phone pictures) are adaptations of it and carry the same licence and credit. The package, which has no data in it, is MIT |
+| The demo's World Cup results of 2026 (`demo/data/worldcup-2026.js`) | openfootball/worldcup, https://github.com/openfootball/worldcup, read through spxn.com | CC0 |
+| The demo's NHL results (`demo/data/nhl-2024.js`) | Every game of the 2024 Stanley Cup playoffs and each team's conference, from the NHL ("NHL", as spxn.com credits it), read through spxn.com | Facts; credited to the NHL |
+| The demo's MLB results (`demo/data/mlb-2022.js`) | Every game of the 2022 MLB postseason, read through spxn.com. The information used here was obtained free of charge from and is copyrighted by Retrosheet. Interested parties may contact Retrosheet at www.retrosheet.org | Retrosheet's notice, kept as it asks |
+| How the results were read | spxn.com's public API (a PostgREST service whose `api` schema is readable with a publishable key; the key is not kept in this repository), by `scripts/fetch-demo-data.mjs`, one request at a time, a second apart, retrieved 2026-10-14 | spxn.com is the same owner's site |
+| The demo's two-legged ties and its 32-team generic bracket | Made up for the demo: the clubs do not exist and the teams are "Team 1" to "Team 32" | Not real |
 | The demo's national flags (in `demo/flags-data.js`) | [Hata](https://github.com/johnmorrisdotca/hata) 1.5.0 (MIT code), a development dependency used only by `scripts/make-flags.mjs`. Each flag is a Wikimedia Commons file that Hata ships only when Commons states it public domain, CC0 or CC BY; the file, author and licence of each are in `FLAG_CREDITS` in that file and in Hata's manifest and NOTICE | Each flag's own licence; none of the flags used asks for a credit. Commons marks flags as official insignia, whose use some countries restrict independently of copyright |
 | The demo's page | Written for this package, with the family stylesheet `demo/family.css` | MIT |
 
-The flags in the demo are for the codes `AR AT AU BE BR CA CH CO DE DZ EC EG ES FR GB-ENG HR IR JP KR MA MX NL NO PL PT PY QA SA SN TN US UY UZ`. The package itself ships no flag, no logo and no data of the leagues.
+The flags in the demo are for the nations of the World Cups of 2022 and 2026: `AR AT AU BA BE BR CA CD CH CI CO CV DE DZ EC EG ES FR GB-ENG GH HR JP KR MA MX NL NO PL PT PY SE SN US ZA`. The package itself ships no flag, no logo and no data of the leagues.
 
 No code, text or picture was taken from the bracket libraries compared in [docs/compare.md](docs/compare.md); that page records what each says of itself.

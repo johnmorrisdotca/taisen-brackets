@@ -23,7 +23,7 @@ Give it the games, series, two-legged ties or replays of a tournament and it wor
 <table align="center">
 <tr>
 <td align="center" valign="top">
-<img alt="The poster look: a made-up knockout of 32 nations as round flags on dark navy joined by gold lines, a flag in the centre above the word Champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/poster-desk.png" width="470"><br><em>The poster look: flags only, gold on navy (a made-up field).</em>
+<img alt="The poster look: the 2026 World Cup knockout of 32 nations as round flags on dark navy joined by gold lines, Spain's flag in the centre above the word Champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/poster-desk.png" width="470"><br><em>The poster look: flags only, gold on navy (the 2026 World Cup).</em>
 </td>
 <td align="center" valign="top">
 <img alt="The 2022 World Cup on a phone: the champion at the top, then the rounds as rows, the first round at the top and at the bottom, the final in the middle, and the third-place match at the foot." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/phone-light.png" width="190"><br><em>On a phone the rounds are rows.</em>
@@ -309,7 +309,7 @@ Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part 
 
 | League | Covered | Rounds in the latest era |
 | --- | --- | --- |
-| NHL | 1975 on, with 1980–81, 1982–86, 1987–93, 1994 on, 2020 and 2021 as their own eras | First Round, Second Round, Conference Finals, Stanley Cup Final |
+| NHL | 1975 on (no playoffs in 2005), with 1980–81, 1982–86, 1987–93, 1994–2013, 2014 on, 2020 and 2021 as their own eras | First Round, Second Round, Conference Finals, Stanley Cup Final |
 | NBA | 1977 on | First Round, Conference Semifinals, Conference Finals, NBA Finals |
 | MLB | 1969 on (no postseason in 1994) | Wild Card Series, Division Series, League Championship Series, World Series |
 | NFL | 1970 on, with 1982 as its own | Wild Card, Divisional, Conference Championship, Super Bowl |
@@ -317,7 +317,7 @@ Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part 
 | FIFA World Cup | every edition with a knockout, 1930 to 2026 (1950 had none) | Round of 32 (2026), Round of 16, Quarter-finals, Semi-finals, Final |
 | Any other | single elimination for any number of teams | Round of N … Final |
 
-The eras were written from the leagues' published histories. Where a season did something of its own, it has its own entry; check the rules of the season you print.
+Each era was checked against English Wikipedia (facts only; the articles are cited in [docs/formats.md](./docs/formats.md)). The year is the year the playoffs are played in: the NHL's 2024 is the 2023-24 season. A season did something of its own (a strike, a pandemic) has its own entry, and a later one is not covered until it is checked.
 
 ## Theming
 
@@ -354,7 +354,7 @@ Any current browser, and Node 22 or later. The package makes no network request 
 
 ## The name
 
-*Taisen* (対戦, たいせん) is Japanese for a matchup, a contest between two sides: 対 is "against" or "pair" and 戦 is "fight" or "match". A bracket is a tree of taisen.
+*Taisen* (対戦, たいせん) is Japanese for a matchup, a contest between two sides: 対 is "against" or "facing" and 戦 is "fight" or "match". On a fixture list the word is 対戦カード. A bracket is a tree of taisen.
 
 ## How it compares
 
@@ -383,6 +383,10 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) and the [code of conduct](./CODE_OF_CON
 ## Changes
 
 [CHANGELOG.md](./CHANGELOG.md).
+
+## Credits
+
+The demo's results are real and are credited in [NOTICE.md](./NOTICE.md), which is also where their terms are. The World Cups of 1938 and 2022 are from [The Fjelstul World Cup Database](https://github.com/jfjelstul/worldcup) (© 2023 Joshua C. Fjelstul, Ph.D., [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/legalcode); the demo's extract and the pictures of those two brackets carry the same licence). The World Cup of 2026 is from [openfootball](https://github.com/openfootball/worldcup) (CC0). The NHL playoffs are from the NHL. The information used for the MLB postseason was obtained free of charge from and is copyrighted by Retrosheet. Interested parties may contact Retrosheet at [www.retrosheet.org](https://www.retrosheet.org). All were read through [spxn.com](https://spxn.com). The round flags are drawn by [Hata](https://github.com/johnmorrisdotca/hata). The formats by era were checked against English Wikipedia (CC BY-SA 4.0; facts only; see [docs/formats.md](./docs/formats.md)).
 
 ## Licence
 
