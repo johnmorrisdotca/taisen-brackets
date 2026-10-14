@@ -1,0 +1,102 @@
+{
+  "name": "@johnmorrisdotca/taisen-brackets",
+  "version": "0.1.0",
+  "description": "Taisen 対戦, knockout brackets as SVG: from a list of ties (games, best-of series, two legs, replays, byes, a third-place match) it works out the rounds and halves and draws the bracket with the halves meeting at the final, or left to right, wide, square or for a phone, in light, dark or a gold-on-navy poster look, with each team's logo or round flag, the champion in the centre, and an accessible table. NHL, NBA, MLB, NFL, CFL and World Cup formats by era. Zero dependencies.",
+  "keywords": [
+    "bracket",
+    "tournament",
+    "knockout",
+    "playoffs",
+    "single-elimination",
+    "tournament-bracket",
+    "svg",
+    "world-cup",
+    "stanley-cup",
+    "nhl",
+    "nba",
+    "mlb",
+    "nfl",
+    "cfl",
+    "soccer",
+    "sports",
+    "visualization",
+    "accessible",
+    "dark-mode",
+    "typescript",
+    "javascript",
+    "zero-dependencies",
+    "browser",
+    "node",
+    "itsutsu"
+  ],
+  "homepage": "https://johnmorrisdotca.github.io/taisen-brackets/",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/johnmorrisdotca/taisen-brackets.git"
+  },
+  "bugs": {
+    "url": "https://github.com/johnmorrisdotca/taisen-brackets/issues"
+  },
+  "author": "John Morris",
+  "license": "MIT",
+  "type": "module",
+  "sideEffects": false,
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./layout": {
+      "types": "./dist/layout-entry.d.ts",
+      "import": "./dist/layout-entry.js",
+      "default": "./dist/layout-entry.js"
+    },
+    "./presets": {
+      "types": "./dist/presets-entry.d.ts",
+      "import": "./dist/presets-entry.js",
+      "default": "./dist/presets-entry.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE",
+    "NOTICE.md",
+    "CHANGELOG.md"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "node -e \"require('node:fs').rmSync('dist', { recursive: true, force: true })\" && tsc -p tsconfig.json",
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.check.json",
+    "test": "node --test test/*.test.ts",
+    "test:package": "pnpm build && node scripts/check-package.mjs",
+    "test:readme": "pnpm build && node scripts/check-readme-examples.mjs",
+    "check": "pnpm lint && pnpm typecheck && pnpm test && pnpm build && node scripts/check-package.mjs",
+    "prepublishOnly": "pnpm check",
+    "dev": "pnpm build && node scripts/dev.mjs",
+    "flags": "node scripts/make-flags.mjs",
+    "site": "pnpm build && node scripts/site.mjs",
+    "test:demo": "pnpm site && playwright test",
+    "screenshots": "pnpm site && node scripts/screenshots.mjs"
+  },
+  "devDependencies": {
+    "@eslint/js": "^9.0.0",
+    "@johnmorrisdotca/hata": "1.5.0",
+    "@playwright/test": "^1.63.0",
+    "@types/node": "^24.0.0",
+    "eslint": "^9.0.0",
+    "typescript": "^5.9.0",
+    "typescript-eslint": "^8.0.0"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "packageManager": "pnpm@10.11.0"
+}
