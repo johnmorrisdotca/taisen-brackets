@@ -38,7 +38,8 @@ pnpm check          # lint, types, tests, the build and the packed package
 pnpm test:package   # pack it as npm does, install it in an empty project, import every entry
 pnpm test:demo      # build the demo and play it in a real browser at a phone's width and a desk's
 pnpm test:readme    # run the examples of the README and of docs/ against the built package
-pnpm screenshots    # the README's pictures, into docs/images
+pnpm images         # every picture of docs/images, in one command (JPEG; the same as pnpm screenshots)
+pnpm screenshots    # the same, with `-- --extra <folder>` for review shots too
 pnpm dev            # the demo on http://127.0.0.1:7100/
 ```
 

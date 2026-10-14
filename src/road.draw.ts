@@ -1,6 +1,7 @@
 // The road chart, drawn: the two finalists' big round marks with their names, the round names down the middle on a dotted road, each finalist's matches on its side as
 // the round marks of both teams with the score between them, and the group stage as a compact row at the foot. Each size has its own arrangement: `card`, `square` and
 // `phone` stack the finalists over the rounds; `wide` puts them at the two ends. Nothing is measured in a browser: type is set by estimates (`emWidth`).
+import { resolveBackground } from "./background.ts";
 import { drawMark, markDefs, type MarkContext } from "./marks.ts";
 import { codeOf, decidedWords, nameOf, summaryOf, type MatchView, type Model } from "./road.model.ts";
 import { SIZES } from "./render.ts";
@@ -49,6 +50,7 @@ export function drawRoad(model: Model, o: RoadOptions, gid: string): string {
     shape: o.markShape === "square" ? "square" : "round",
     look: "road",
     flags: o.flags,
+    flagHref: o.flagHref,
     theme: theme === "light" ? "light" : theme === "dark" || theme === "poster" ? "dark" : "inherit",
     flagCache: new Map(),
   };
@@ -251,9 +253,10 @@ export function drawRoad(model: Model, o: RoadOptions, gid: string): string {
   if (model.subtitle !== undefined) head += text("tb-r-s", cx, pad + titleFit.height + subSize * 0.7, subSize, model.subtitle);
   const foot = endSize === 0 ? "" : text("tb-r-e", cx, H - pad - endSize * 0.2, endSize, note);
 
-  const defs = markDefs(ctx);
-  const style = theme === "none" ? "" : `<style>${styleFor(`.${gid}`, theme, { chart: true })}</style>`;
-  const bg = o.background === false ? "" : `<rect class="tb-bg" x="0" y="0" width="${num(W)}" height="${num(H)}"${theme === "none" ? ' fill="none"' : ""}/>`;
+  const picture = resolveBackground(o.background, theme, W, H, gid);
+  const defs = markDefs(ctx) + (picture?.defs ?? "");
+  const style = theme === "none" ? "" : `<style>${styleFor(`.${gid}`, theme, { chart: true, bgAuto: picture?.auto }, picture?.inks)}</style>`;
+  const bg = o.background === false ? "" : `<rect class="tb-bg" x="0" y="0" width="${num(W)}" height="${num(H)}"${theme === "none" ? ' fill="none"' : ""}/>${picture?.body ?? ""}`;
   const extra = o.className ? ` ${esc(o.className)}` : "";
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" lang="${esc(model.voice.locale.code)}" class="taisen tb-road ${gid}${extra}" viewBox="0 0 ${num(W)} ${num(H)}" width="${num(W)}" height="${num(H)}" style="max-width:100%;height:auto" role="img" aria-labelledby="${gid}-t ${gid}-d" data-size="${size}">`,

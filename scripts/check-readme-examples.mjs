@@ -5,7 +5,7 @@
 // Flags on the fence: `no-run` does not run the block, `no-check` skips it (an excerpt). Every export of the package must be
 // named in the README. A block that fails is named by its page and line.
 import { spawnSync } from "node:child_process";
-import { mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { dirname, join } from "node:path";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
@@ -71,4 +71,15 @@ if (missing.length > 0) {
   failed++;
   console.error(`FAIL the README does not name these exports: ${missing.join(", ")}`);
 } else console.log(`ok   the README names every export (${Object.keys(lib).length})`);
+
+// Every picture the README and the docs name is in docs/images (`pnpm images` makes them all).
+const pictures = new Set();
+for (const [file, text] of pages) {
+  for (const m of text.matchAll(/(?:docs\/images\/|\.\/images\/|\(images\/)([\w.-]+\.(?:png|jpe?g|webp|gif|svg))/g)) pictures.add(`${file}: ${m[1]}`);
+}
+const absent = [...pictures].filter((entry) => !existsSync(join(root, "docs", "images", entry.split(": ")[1])));
+if (absent.length > 0) {
+  failed++;
+  console.error(`FAIL these pictures are named but are not in docs/images (run pnpm images):\n  ${absent.join("\n  ")}`);
+} else console.log(`ok   every picture the README and the docs name exists (${new Set([...pictures].map((e) => e.split(": ")[1])).size})`);
 process.exit(failed > 0 ? 1 : 0);

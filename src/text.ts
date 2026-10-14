@@ -27,11 +27,11 @@ export function textWidth(text: string, size: number): number {
 }
 
 /** The text cut to fit a width, with an ellipsis where it was cut. */
-export function fit(text: string, size: number, width: number): string {
-  if (textWidth(text, size) <= width) return text;
+export function fit(text: string, size: number, width: number, measure: (text: string, size: number) => number = textWidth): string {
+  if (measure(text, size) <= width) return text;
   const chars = [...text];
-  while (chars.length > 1 && textWidth(`${chars.join("")}…`, size) > width) chars.pop();
-  return chars.length <= 1 && textWidth(text, size) > width * 2 ? "…" : `${chars.join("").trimEnd()}…`;
+  while (chars.length > 1 && measure(`${chars.join("")}…`, size) > width) chars.pop();
+  return chars.length <= 1 && measure(text, size) > width * 2 ? "…" : `${chars.join("").trimEnd()}…`;
 }
 
 /** A short name for a small box: the initials of a name of several words ("NYR"), else its first three letters; capitals. */

@@ -57,7 +57,7 @@ export interface RoadFinal {
 export type RoadSize = SizeName;
 
 /** What `roadToFinal` takes besides the finalists or the tournament. */
-export interface RoadOptions extends Pick<DrawOptions, "locale" | "words" | "teamName" | "roundNames" | "markShape" | "flags" | "theme" | "background" | "id" | "className"> {
+export interface RoadOptions extends Pick<DrawOptions, "locale" | "words" | "teamName" | "roundNames" | "markShape" | "flags" | "flagHref" | "theme" | "background" | "id" | "className"> {
   /** With a tournament: the finalist whose road is on the left (by team id); the other finalist is its opponent in the final. Left out, the first side of the final. */
   team?: SideId;
   /** The tournament, set large at the top. The language's "Road to the final" when missing. */

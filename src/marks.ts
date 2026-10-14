@@ -85,6 +85,8 @@ export interface MarkContext {
   look?: "classic" | "road";
   /** Draws a team's `flag` code; with none a team's `mark` or initials are drawn. */
   flags?: FlagRenderer;
+  /** The address of a team's flag by its `flag` code, for a flag that is a picture to load and not markup to inline; tried where `flags` gives none. */
+  flagHref?: (code: string) => string | null | undefined;
   /** The theme a flag renderer is told about. */
   theme?: FlagRequest["theme"];
   /** The flags already asked for, by code, shape and size, so that a renderer is called once for each. */
@@ -158,7 +160,17 @@ export function drawMark(team: Team | null, cx: number, cy: number, size: number
     if (!symbol) { symbol = { id: `${ctx.prefix}-m${ctx.symbols.size + 1}`, ...flag }; ctx.symbols.set(key, symbol); }
     return `${wrapOpen}<use href="#${symbol.id}" x="${num(ox)}" y="${num(oy)}" width="${num(size)}" height="${num(size)}"/></g>${ring}`;
   }
-  const mark = team.mark?.trim();
+  // A flag that is an address (`flagHref`) is the mark in place of the team's own, and, like every picture address, is written once.
+  let fromCode: string | undefined;
+  if (typeof ctx.flagHref === "function" && typeof team.flag === "string" && team.flag.trim() !== "") {
+    try {
+      const href: unknown = ctx.flagHref(team.flag.trim());
+      if (typeof href === "string" && !href.trim().startsWith("<") && safeUrl(href)) fromCode = href;
+    } catch {
+      fromCode = undefined;
+    }
+  }
+  const mark = (fromCode ?? team.mark)?.trim();
   if (mark) {
     if (mark.startsWith("<")) {
       const svg = cleanSvg(mark);
@@ -168,10 +180,27 @@ export function drawMark(team: Team | null, cx: number, cy: number, size: number
         return `${wrapOpen}<use href="#${symbol.id}" x="${num(ox)}" y="${num(oy)}" width="${num(size)}" height="${num(size)}"/></g>${ring}`;
       }
     } else if (safeUrl(mark)) {
-      return `${wrapOpen}<image href="${esc(mark)}" x="${num(ox)}" y="${num(oy)}" width="${num(size)}" height="${num(size)}" preserveAspectRatio="xMidYMid slice"/></g>${ring}`;
+      // Each distinct address is written once, as a symbol that holds the image, and used wherever the team appears: a long data address or a URL repeated per use would be written again and again.
+      const key = `url:${mark}`;
+      let symbol = ctx.symbols.get(key);
+      if (!symbol) {
+        symbol = { id: `${ctx.prefix}-m${ctx.symbols.size + 1}`, viewBox: "0 0 100 100", inner: `<image href="${esc(mark)}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice"/>` };
+        ctx.symbols.set(key, symbol);
+      }
+      return `${wrapOpen}<use href="#${symbol.id}" x="${num(ox)}" y="${num(oy)}" width="${num(size)}" height="${num(size)}"/></g>${ring}`;
     }
   }
   const text = (abbrText ?? team.abbr ?? abbreviate(team.name)).slice(0, 3);
+  if (road) {
+    // No flag or logo: the road look draws a tile with the abbreviation on it, so that a team without a picture looks meant. A team colour fills the tile (the letters are white or
+    // near-black, whichever reads on it); with none the tile is neutral.
+    const rx = size * 0.24;
+    const tile = `<rect class="tb-plain tb-tile" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="${num(rx)}"${team.color ? ` style="fill:${esc(team.color)}"` : ""}/>`;
+    const tileInk = team.color ? inkOn(team.color) : null;
+    const tileRing = `<rect class="tb-ring tb-ring-r" x="${num(x + rw / 2)}" y="${num(y + rw / 2)}" width="${num(size - rw)}" height="${num(size - rw)}" rx="${num(Math.max(rx - rw / 2, 1))}" stroke-width="${num(rw)}"/><rect class="tb-edge" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="${num(rx)}" stroke-width="${hair}"/>`;
+    const letters = [...text].length;
+    return `<g class="tb-mark">${tile}<text class="tb-initials" x="${num(cx)}" y="${num(cy + size * 0.13)}" font-size="${num(size * (letters <= 2 ? 0.4 : 0.31))}" font-weight="800" letter-spacing=".02em" text-anchor="middle"${tileInk ? ` style="fill:${tileInk}"` : ""}>${esc(text)}</text></g>${tileRing}`;
+  }
   const fill = team.color ? ` style="fill:${esc(team.color)}"` : "";
   const shape = clip ? `<circle class="tb-plain" cx="${num(cx)}" cy="${num(cy)}" r="${num(r)}"${fill}/>` : `<rect class="tb-plain" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="2"${fill}/>`;
   const ink = team.color ? inkOn(team.color) : null;

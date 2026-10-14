@@ -92,6 +92,7 @@ export function resolveMatchup(m: Matchup, index: number, teams: ReadonlyMap<Sid
     third: !!m.third,
     walkover: !!m.walkover,
     note: m.note ?? null,
+    ...(m.seeds ? { seeds: m.seeds } : {}),
   };
 }
 

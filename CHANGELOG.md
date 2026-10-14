@@ -6,6 +6,33 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.5.0] - 2026-10-14
+
+### Added
+
+- **`background`**: a poster background under a bracket or a road chart. A preset's name draws one of **twenty-five**, each drawn in code (gradients, radial glows, patterns, bezier bands, markings) in a dark and a light variant, deterministic and at most 6 kB: `midnight`, `crimson`, `royal`, `emerald`, `pitch`, `ice`, `hardwood`, `infield`, `turf`, `ball-panels`, `swirl`, `waves`, `glow`, `floodlights`, `confetti`, `carbon`, `aurora`, `sunburst`, `chevrons`, `halftone`, `argyle`, `contour`, `stardust`, `mesh` and `spotlight`. Five read as the sport's playing surface: soccer's mowing stripes and markings, hockey's scratched ice with its centre circle, lines and faceoff spots, basketball's planks and court, baseball's grass, dirt and base paths, football's turf, yard lines and end zones. The text, lines, boxes, marks and accent take the colours that read over each (4.5 to 1 against the background's dominant colours, a test over every preset, both variants and every size, and over colours of your own, with a veil where a mid-tone ground needs one). With `theme: "auto"` both variants are drawn and the stylesheet shows the one that fits the page. [docs/backgrounds.md](docs/backgrounds.md).
+- **`background: { preset, colors, angle, intensity, seed, theme }`** tunes a preset, and **`background: { image, fit, dim, theme }`** draws a picture of your own as an `<image>` under a veil (`cover` or `contain`, 0 to 1 deep); the address must be http(s), relative or `data:image/…` (anything else throws), and is escaped. An unknown preset or a bad value throws a `RangeError` that names it. `roadToFinal` takes the same option. The default, the look's plain colour, is drawn exactly as before.
+- **`src/family-backgrounds.ts`**, the drawing of the twenty-five as one dependency-free file that other packages of the family copy byte for byte: `backgroundSvg(preset, { width, height, theme, colors, angle, intensity, seed, id }) => { defs, body, ink }`, `BACKGROUND_PRESETS`, `contrastRatio`, `FAMILY_BACKGROUNDS_VERSION`. Its sha256 and version are held by `test/family-backgrounds.test.ts`; it is also the `/backgrounds` entry point. The copy rule is in docs/backgrounds.md.
+- **Seed tags**: `seeds: true` in the road look writes a small tag (`C1`, `WC2`, `P3`) beside each mark, from the new `Matchup.seeds`, else the new `Team.tag`, else the number `Team.seed`; in a box of marks alone it sits above the mark.
+- **`codes`** and **`vs`** for a bracket's road look: a team's three letters under its mark, and a "v" between the two marks of a box of marks alone.
+- **A team with no flag or logo is a tile** in the road look: a rounded square with its abbreviation, filled with the team's `color` (white or near-black letters, whichever reads) or neutral.
+- **`flagHref(code)`**: a flag as an address to load, for pages that cannot afford an inline flag of 80 kB twice; tried where `flags` gives none, written once as a symbol. **Every `mark` address** is now written once as a symbol and used wherever the team appears, instead of a long `<image href>` per use.
+- **`tieClass(tie)`**: a class word for a tie's group, so that a page's own style can highlight or dim ties (a division); only words of letters, digits, `-` and `_` are kept.
+- The demo has a background picker (all twenty-five as swatches, your own colours, an image read in the browser and never uploaded), a gallery of the twenty-five on the sports they suit, and opens every example on the background of its sport. NHL 2024 carries its seed tags.
+- `pnpm images` redoes every picture of `docs/images` in one command, the two grids of the twenty-five included; `pnpm test:readme` checks that every picture the README and the docs name exists. [docs/roadmap.md](docs/roadmap.md) and [docs/references.md](docs/references.md): what is planned (new layouts and a group-stage table for 0.6.0) and the pictures that prompted it, as mood only.
+
+### Fixed
+
+- **Marks, text and round names stuck out of their boxes**, in every size and both looks: in a tall bracket's boxes of marks the score under the marks was not counted when the marks were sized, so the flags crossed the box's top and bottom (Croatia and Japan in the round of 16 on a phone); a shoot-out's score ("1 (3)") crowded the next team's, and now sits beside the score where it fits the column, or under it. A box of marks is laid out as a stack (tag, mark, letters, score, shoot-out) and the marks are made as large as the whole stack allows. Bold text was measured as regular; it is now measured bold, so a name no longer runs under a score or the word "bye".
+- **The names of the rounds met the connector lines.** In a tall bracket the lines now turn at the edge of the box they leave and the names stand on their own strip between the rounds, each moved along it to a place the lines do not cross, set a little smaller and on a snugger pill where the room is tight. (On a phone a round of eight or more boxes across leaves no room: the name then stands over the lines on its own pill.)
+- **Round names were cut with an ellipsis** in a wide column ("Conference Quarterfi…"): a name is set smaller, down to 8, and then on two lines, on a taller pill (road) or two lines of text (classic), and the strip over the boxes grows to hold them. A name is cut only as a last resort.
+- `test/geometry.test.ts` measures every drawing's marks, text, pills and lines from the markup and asserts all of this for every example, size and look.
+
+### Changed
+
+- The demo's default view is the road look on the background that suits each sport. A bracket's classic look is unchanged apart from the fixes above.
+- The README's pictures are regenerated (JPEG, to keep the repository small) with the new backgrounds and the fixed boxes.
+
 ## [0.4.0] - 2026-10-14
 
 ### Added

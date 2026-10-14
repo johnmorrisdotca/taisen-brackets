@@ -25,3 +25,5 @@ The code of this package is under the MIT licence (see [LICENSE](LICENSE)). The 
 The flags in the demo are for the nations of the World Cups of 2022 and 2026: `AR AT AU BA BE BR CA CD CH CI CO CV DE DZ EC EG ES FR GB-ENG GH HR JP KR MA MX NL NO PL PT PY SE SN US ZA`. The package itself ships no flag, no logo and no data of the leagues.
 
 No code, text or picture was taken from the bracket libraries compared in [docs/compare.md](docs/compare.md); that page records what each says of itself.
+
+**Backgrounds.** The twenty-five backgrounds (`src/family-backgrounds.ts`) are drawn in code from gradients, patterns and paths and are original work, MIT-licensed with the package; none is traced from, or copies, anyone's artwork, logo, trophy or photograph, and no image file is used. The pictures of other brackets that inspired the design are listed, as mood only, in docs/references.md; nothing of them is in the package. The NHL 2024 seed tags in the demo (C1, WC2, P3, A1, M2 and so on) are the divisional places and wild cards of that season's playoff field, as the league names them.

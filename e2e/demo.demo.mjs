@@ -45,7 +45,7 @@ test("the table and the call are there, and 44 pixels is the least a control giv
   await expect(page.locator("#table table tbody tr")).toHaveCount(16);
   await page.locator("#code-box summary").click();
   await expect(page.locator("#code")).toContainText("drawBracket(wc2022");
-  for (const button of await page.locator("#sport button, #example button, #size button, #view button, #look button, #lang button, .fam-chip").all()) {
+  for (const button of await page.locator("#sport button, #example button, #size button, #view button, #look button, #lang button, #bg button, .fam-chip").all()) {
     const box = await button.boundingBox();
     expect(box.height).toBeGreaterThanOrEqual(43.5);
   }
@@ -104,6 +104,49 @@ test("a league's champion gets its emblem, which the Trophy switch and style cho
   await expect(page.locator("#stage > svg")).toBeVisible();
   await expect(page.locator("#stage > svg .tb-emblem")).toHaveCount(0);
   await expect(page.locator("#trophy-chip")).toBeHidden();
+  expect(errors).toEqual([]);
+});
+
+// A one-pixel PNG, the picture a visitor "uploads" below.
+const PIXEL = Buffer.from("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNkYPhfDwAChwGA60e6kgAAAABJRU5ErkJggg==", "base64");
+
+test("the background picker: every example opens on its own, twenty-five presets, custom colours, and a picture read in the browser", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  await page.goto("/?ex=nhl2024");
+  const svg = page.locator("#stage > svg");
+  await expect(page.locator("#bg .swatch:not(.swatch-text)")).toHaveCount(25);
+  await expect(page.locator("#bg button[data-value=auto]")).toHaveAttribute("aria-pressed", "true");
+  await expect(svg.locator("g[clip-path]").first()).toBeAttached();
+  await expect(page.locator("#code")).toContainText('"background": "ice"');
+  for (const name of ["hardwood", "pitch", "carbon"]) {
+    await page.locator(`#bg button[data-value=${name}]`).click();
+    await expect(page.locator(`#bg button[data-value=${name}]`)).toHaveAttribute("aria-pressed", "true");
+    expect(page.url()).toContain(`bg=${name}`);
+    await expect(page.locator("#code")).toContainText(`"background": "${name}"`);
+  }
+  await page.locator("#bg button[data-value=plain]").click();
+  await expect(svg.locator("g[clip-path]")).toHaveCount(0);
+  await expect(page.locator("#bg-custom")).toBeHidden();
+  await page.locator("#bg button[data-value=custom]").click();
+  await expect(page.locator("#bg-custom")).toBeVisible();
+  await page.locator("#bg-c0").fill("#112233");
+  await expect(svg).toContainText("");
+  expect(await svg.evaluate((el) => el.outerHTML.includes("#112233"))).toBe(true);
+  expect(page.url()).toContain("bg=custom");
+  await page.locator("#bg button[data-value=image]").click();
+  await expect(page.locator("#bg-image")).toBeVisible();
+  await page.locator("#bg-file").setInputFiles({ name: "pixel.png", mimeType: "image/png", buffer: PIXEL });
+  await expect(svg.locator("image[href^='data:image/png']").first()).toBeAttached();
+  await expect(page.locator("#bg-file-note")).toContainText("not uploaded");
+  await page.locator("#bg-fit").selectOption("contain");
+  await expect(svg.locator("image").first()).toHaveAttribute("preserveAspectRatio", /meet/);
+  // The gallery of all twenty-five is drawn when it comes into view.
+  await page.locator("#bg-gallery").scrollIntoViewIfNeeded();
+  await expect(page.locator("#bg-gallery button")).toHaveCount(25);
+  await page.locator("#bg-gallery button[data-value=ice]").click();
+  await expect(page.locator("#bg button[data-value=ice]")).toHaveAttribute("aria-pressed", "true");
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
   expect(errors).toEqual([]);
 });
 

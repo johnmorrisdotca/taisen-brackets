@@ -51,7 +51,7 @@ for (const size of SIZES) {
 }
 
 test("the road look draws larger marks and a heavier score than the classic one, the same size in every box", () => {
-  const radii = (svg: string, cls: string) => withClass(parseXml(svg), cls).map((n) => Number(n.attrs.r));
+  const radii = (svg: string, cls: string) => withClass(parseXml(svg), cls).map((n) => Number(n.attrs.r ?? Number(n.attrs.width) / 2));
   const classic = T.drawBracket(nhl2024, { size: "wide" });
   const road = T.drawBracket(nhl2024, { size: "wide", look: "road" });
   assert.ok(Math.max(...radii(road, "tb-edge")) > Math.max(...radii(classic, "tb-ring")), "the marks are larger");

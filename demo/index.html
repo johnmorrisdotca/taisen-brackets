@@ -34,6 +34,23 @@
         <div class="fam-seg" role="group" aria-label="Look" id="theme" data-testid="theme">
           <button type="button" data-value="auto">Auto</button><button type="button" data-value="light">Light</button><button type="button" data-value="dark">Dark</button><button type="button" data-value="poster">Poster</button>
         </div></div>
+      <div class="fam-row"><span class="fam-label">Background</span>
+        <div class="swatches" role="group" aria-label="Background" id="bg" data-testid="bg"></div></div>
+      <div class="fam-row" id="bg-custom" hidden><span class="fam-label">Custom</span>
+        <div class="custom">
+          <label>Preset <select id="bg-preset" data-testid="bg-preset"></select></label>
+          <label>Colours <span class="colours"><input type="color" id="bg-c0" aria-label="Ground, first colour" /><input type="color" id="bg-c1" aria-label="Ground, second colour" /><input type="color" id="bg-c2" aria-label="Glow colour" /><input type="color" id="bg-c3" aria-label="Pattern colour" /></span></label>
+          <label>Angle <input type="range" id="bg-angle" min="0" max="360" step="5" /></label>
+          <label>Intensity <input type="range" id="bg-intensity" min="0" max="1" step="0.05" /></label>
+          <label>Seed <input type="number" id="bg-seed" min="1" max="99" step="1" /></label>
+        </div></div>
+      <div class="fam-row" id="bg-image" hidden><span class="fam-label">Picture</span>
+        <div class="custom">
+          <label>Image <input type="file" id="bg-file" accept="image/*" data-testid="bg-file" /></label>
+          <label>Fit <select id="bg-fit"><option value="cover">Cover</option><option value="contain">Contain</option></select></label>
+          <label>Dim <input type="range" id="bg-dim" min="0" max="1" step="0.05" value="0.5" /></label>
+          <span class="fam-fine" id="bg-file-note" role="status"></span>
+        </div></div>
       <div class="fam-row" id="shape-row"><span class="fam-label">Shape</span>
         <div class="fam-seg" role="group" aria-label="Shape" id="shape" data-testid="shape">
           <button type="button" data-value="auto">Halves</button><button type="button" data-value="ltr">Left to right</button>
@@ -52,6 +69,8 @@
           <button type="button" class="fam-chip" data-toggle="labels" aria-pressed="true">Round names</button>
           <button type="button" class="fam-chip" data-toggle="path" aria-pressed="false">Champion's path</button>
           <button type="button" class="fam-chip" data-toggle="links" aria-pressed="false">Links on the boxes</button>
+          <button type="button" class="fam-chip" data-toggle="codes" aria-pressed="false">Codes</button>
+          <button type="button" class="fam-chip" data-toggle="vs" aria-pressed="false">vs</button>
         </div></div>
     </div>
     <p class="fam-panel note" id="note"></p>
@@ -62,6 +81,12 @@
     <h2 id="gallery-h">Gallery</h2>
     <p>Every example, in the language chosen above. Tap one to open it.</p>
     <ul class="gallery" id="gallery"></ul>
+  </section>
+
+  <section class="more" aria-labelledby="bgs-h">
+    <h2 id="bgs-h">Backgrounds</h2>
+    <p>Twenty-five backgrounds, each drawn in code and each in a dark and a light variant, on the sport it suits: ice, hardwood, an infield, turf and a pitch among them. The text, lines and boxes take the colours that read over each. Tap one to use it above; the picker above also takes your own colours and a picture of your own, which stays in your browser.</p>
+    <ul class="gallery" id="bg-gallery" data-testid="bg-gallery"></ul>
   </section>
 
   <section class="more" aria-labelledby="road-h">

@@ -119,6 +119,12 @@ export function build(T, flags = {}) {
     return { teams: [...teams.values()], matchups };
   };
   const nhl2024 = playoff(NHL_2024, { 4: 7 });
+  // How the 2024 field was seeded, as the NHL names it: a division's place (A1 to A3 and M1 to M3 in the East, C1 to C3 and P1 to P3 in the West) or the wild card (WC1, WC2). They are `Team.tag`s, drawn as seed tags.
+  const SEEDS_2024 = {
+    "Florida Panthers": "A1", "Boston Bruins": "A2", "Toronto Maple Leafs": "A3", "New York Rangers": "M1", "Carolina Hurricanes": "M2", "New York Islanders": "M3", "Tampa Bay Lightning": "WC1", "Washington Capitals": "WC2",
+    "Dallas Stars": "C1", "Winnipeg Jets": "C2", "Colorado Avalanche": "C3", "Vancouver Canucks": "P1", "Edmonton Oilers": "P2", "Los Angeles Kings": "P3", "Vegas Golden Knights": "WC1", "Nashville Predators": "WC2",
+  };
+  nhl2024.teams = nhl2024.teams.map((t) => (SEEDS_2024[t.name] ? { ...t, tag: SEEDS_2024[t.name] } : t));
   const mlb2022 = playoff(MLB_2022, { 2: 3, 3: 5, 4: 7 });
   const nba2024 = playoff(NBA_2024, { 4: 7 });
   // The NFL's and the CFL's rounds are single games: no `bestOf`, so a tie is a game and its score is drawn.

@@ -1,3 +1,4 @@
+import type { BackgroundInk } from "./family-backgrounds.ts";
 import type { ThemeName } from "./types.ts";
 
 /** The colours of one look. Each is the fallback of a CSS custom property of the same name: `--tb-ink` and so on. */
@@ -48,10 +49,26 @@ export interface StyleParts {
   links?: boolean;
   /** A team's path is highlighted: the other ties are quieter and the path is dotted. */
   follow?: boolean;
+  /** A background with a light and a dark picture in one drawing: the one that does not fit the look is hidden. */
+  bgAuto?: boolean;
+}
+
+/** The colours a background says to draw in (`backgroundSvg`'s `ink`): what `styleFor` takes in place of a look's own palette. */
+export interface BackgroundInks {
+  light?: BackgroundInk;
+  dark?: BackgroundInk;
+}
+
+/** A palette and a road palette from a background's ink. */
+function fromInk(ink: BackgroundInk): [Palette, RoadPalette] {
+  return [
+    { bg: ink.base, ink: ink.text, muted: ink.muted, line: ink.line, box: ink.box, edge: ink.edge, win: ink.accent, gold: ink.accent, plain: ink.plain },
+    { ring: ink.ring, edge: ink.dark ? "rgba(0,0,0,.55)" : "rgba(0,0,0,.35)", panel: ink.panel, spine: ink.spine },
+  ];
 }
 
 /** The rules for one palette, each colour read from its custom property with the palette's value as the fallback. */
-function rules(p: Palette, r: RoadPalette, poster: boolean, withFont: boolean, parts: StyleParts): Rule[] {
+function rules(p: Palette, r: RoadPalette, poster: boolean, withFont: boolean, parts: StyleParts, side?: "light" | "dark"): Rule[] {
   const v = (name: keyof Palette) => `var(--tb-${name}, ${p[name]})`;
   const rv = (name: keyof RoadPalette, css: string) => `var(--tb-${css}, ${r[name]})`;
   const road = parts.road === true || parts.chart === true;
@@ -84,6 +101,9 @@ function rules(p: Palette, r: RoadPalette, poster: boolean, withFont: boolean, p
       [[".tb-panel"], `fill:${rv("panel", "panel")}`],
       [[".tb-lab"], `fill:${v("ink")};font-weight:700`],
       [[".tb-spine"], `stroke:${rv("spine", "spine")};fill:none;stroke-linecap:round`],
+      [[".tb-tagbox"], `fill:${rv("panel", "panel")}`],
+      [[".tb-tag"], `fill:${v("ink")};font-weight:700`],
+      [[".tb-code", ".tb-vs"], `fill:${v("muted")};font-weight:700`],
     );
   }
   if (parts.road === true) {
@@ -121,6 +141,8 @@ function rules(p: Palette, r: RoadPalette, poster: boolean, withFont: boolean, p
       [[".tb-link:focus-visible"], `outline:2px solid ${v("win")};outline-offset:2px`],
     );
   }
+  if (parts.bgAuto === true) list.push(side === "dark" ? [[".tb-bgl"], "display:none"] : [[".tb-bgd"], "display:none"]);
+  if (parts.bgAuto === true && side === "dark") list.push([[".tb-bgd"], "display:inline"]);
   if (withFont) list.push([["text"], `font-family:var(--tb-font, ${FONT})`]);
   return list;
 }
@@ -132,13 +154,17 @@ const write = (scope: string, list: readonly Rule[], before = "") => list.map(([
  * `data-theme="dark"` on `<html>`, the dark one; `light`, `dark` and `poster` are one look always. Every colour can be
  * set from the page with a `--tb-*` custom property. `parts` adds the rules the road look, the road chart, links and a highlighted path need.
  */
-export function styleFor(scope: string, theme: Exclude<ThemeName, "none">, parts: StyleParts = {}): string {
-  if (theme === "light") return write(scope, rules(THEMES.light, ROAD_THEMES.light, false, true, parts));
-  if (theme === "dark") return write(scope, rules(THEMES.dark, ROAD_THEMES.dark, false, true, parts));
-  if (theme === "poster") return write(scope, rules(THEMES.poster, ROAD_THEMES.poster, true, true, parts));
-  const dark = rules(THEMES.dark, ROAD_THEMES.dark, false, false, parts);
+export function styleFor(scope: string, theme: Exclude<ThemeName, "none">, parts: StyleParts = {}, inks: BackgroundInks = {}): string {
+  // A look takes the ink of the picture drawn for it; a picture asked for in the other variant (`background.theme`) gives its ink to both.
+  const only = inks.light ?? inks.dark;
+  const [lp, lr] = (inks.light ?? only) ? fromInk((inks.light ?? only)!) : [THEMES.light, ROAD_THEMES.light];
+  const [dp, dr] = (inks.dark ?? only) ? fromInk((inks.dark ?? only)!) : [THEMES.dark, ROAD_THEMES.dark];
+  if (theme === "light") return write(scope, rules(lp, lr, false, true, parts, "light"));
+  if (theme === "dark") return write(scope, rules(dp, dr, false, true, parts, "dark"));
+  if (theme === "poster") return write(scope, only ? rules(dp, dr, true, true, parts, "dark") : rules(THEMES.poster, ROAD_THEMES.poster, true, true, parts, "dark"));
+  const dark = rules(dp, dr, false, false, parts, "dark");
   return [
-    write(scope, rules(THEMES.light, ROAD_THEMES.light, false, true, parts)),
+    write(scope, rules(lp, lr, false, true, parts, "light")),
     `@media (prefers-color-scheme: dark){\n${write(scope, dark, ':root:not([data-theme="light"]) ')}\n}`,
     write(scope, dark, ':root[data-theme="dark"] '),
   ].join("\n");

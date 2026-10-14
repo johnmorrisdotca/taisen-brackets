@@ -14,6 +14,8 @@ export interface Team {
   abbr?: string;
   /** The seed, shown beside the name when `seeds` is on. */
   seed?: number;
+  /** A tag for the road look's seed tags (`C1`, `WC2`, `M3`): written small beside the mark when `seeds` is on, in place of the number. A tie's `seeds` win over it. */
+  tag?: string;
   /**
    * The team's mark: a logo or a flag. Either the address of an image (`https://`, `data:image/…`, or a relative
    * path) or inline SVG markup (`<svg …>`; a round flag from `@johnmorrisdotca/hata` goes here as it is).
@@ -105,6 +107,8 @@ export interface Matchup {
   /** This is the third-place match: it leads nowhere and is drawn apart. */
   third?: boolean;
   note?: string;
+  /** The seed tags of the two sides for this tie (`["C1", "WC2"]`), written beside the marks in the road look when `seeds` is on; a side's `Team.tag` is used where this has none. */
+  seeds?: readonly [string | number | null, string | number | null];
 }
 
 /** What a tie came to, worked out from its games. */
@@ -141,6 +145,8 @@ export interface Tie {
   third: boolean;
   walkover: boolean;
   note: string | null;
+  /** The seed tags given for the tie's sides (`Matchup.seeds`). */
+  seeds?: readonly [string | number | null, string | number | null];
 }
 
 /** Where the layout put a tie. */
@@ -366,6 +372,32 @@ export interface EmblemRequest {
 /** A function from an emblem id and a request to an SVG string; `renderEmblem` of `@johnmorrisdotca/dougu-sports/emblems` is one. */
 export type EmblemRenderer = (id: string, options: EmblemRequest) => string;
 
+/** A background preset's name. */
+export type { BackgroundPresetName } from "./family-backgrounds.ts";
+import type { BackgroundPresetName } from "./family-backgrounds.ts";
+
+/** A preset, tuned: your own colours (hex or `rgb()`, the first two the ground), the gradient's angle, how strong the pattern is (0 to 1, default 0.6), a seed for the scattered parts, and which of its two variants. */
+export interface BackgroundOptions {
+  /** Default `midnight`. */
+  preset?: BackgroundPresetName;
+  colors?: readonly string[];
+  angle?: number;
+  intensity?: number;
+  seed?: number;
+  /** `light` or `dark`: the variant to draw. By default the one of the drawing's look. */
+  theme?: "light" | "dark";
+}
+
+/** Your own picture as the background: an image address (http(s), relative or `data:image/…`; anything else is refused), laid under a veil so the text reads. */
+export interface BackgroundImageOptions {
+  image: string;
+  /** `cover` (the default) fills the drawing; `contain` shows all of the picture. */
+  fit?: "cover" | "contain";
+  /** How dark (or, in a light look, how pale) the veil is, 0 to 1. Default 0.5. */
+  dim?: number;
+  theme?: "light" | "dark";
+}
+
 export interface DrawOptions extends LayoutOptions {
   /** `wide` 1200 by 675, `square` 1080 by 1080, `card` 1080 by 1350 (a tall post), `phone` 390 wide and as tall as it needs; or a size of your own. Default `wide`. */
   size?: SizeName | { width: number; height?: number | null };
@@ -374,8 +406,16 @@ export interface DrawOptions extends LayoutOptions {
   detail?: Detail;
   /** `auto` follows the page's light or dark; `poster` is dark with gold lines; `none` writes no style, for your own CSS. Default `auto`. */
   theme?: ThemeName;
-  /** Draw a background. Default true; false for a transparent drawing. */
-  background?: boolean;
+  /**
+   * The background. `true` (the default) is the look's plain colour and `false` a transparent drawing. A preset's name (`"midnight"`, `"ice"`, see `BACKGROUND_PRESETS`) draws that
+   * poster background in the look's light or dark variant (`auto` draws both and shows the one that fits the page), and the text, lines, boxes and marks take the colours that
+   * read over it. An object tunes a preset (`{ preset, colors, angle, intensity, seed }`) or draws your own picture (`{ image, fit, dim }`).
+   */
+  background?: boolean | BackgroundPresetName | BackgroundOptions | BackgroundImageOptions;
+  /** In the road look, write a small `vs` between the two marks of a box of marks alone. Default false. */
+  vs?: boolean;
+  /** In the road look, write each team's three-letter code under its mark in a box of marks alone. Default false for a bracket (a chart's `codes` is on by default). */
+  codes?: boolean;
   title?: string;
   subtitle?: string;
   /** Names of the rounds, first round first (or just the last ones). Default: Final, Semi-finals, Quarter-finals, Round of 16… */
@@ -384,7 +424,7 @@ export interface DrawOptions extends LayoutOptions {
   roundLabels?: boolean;
   /** Show the scores. Default true. */
   scores?: boolean;
-  /** Show seeds before names. Default false. */
+  /** Show seeds: the number before the name in the classic look, and in the road look a small tag (`C1`, `WC2`: `Matchup.seeds`, else `Team.tag`, else `Team.seed`) beside each mark. Default false. */
   seeds?: boolean;
   /** `round` (the default), `square`, or `none` (names only). */
   markShape?: "round" | "square" | "none";
@@ -410,6 +450,16 @@ export interface DrawOptions extends LayoutOptions {
    * made from `@johnmorrisdotca/hata`. With none, or when it returns nothing for a code, the team's `mark` or its initials are drawn.
    */
   flags?: FlagRenderer;
+  /**
+   * The address of the flag a team's `flag` code names, for a flag that is a picture to load (a file on your own server) and not SVG to inline, which can be 80 kB for one flag. Tried where `flags` gives
+   * none; the address must be http(s), relative or `data:image/…`, and is written once as a symbol however many times the flag appears.
+   */
+  flagHref?: (code: string) => string | null | undefined;
+  /**
+   * A class for each tie's group, from the tie: `(tie) => tie.sides.some(inDivision) ? "mine" : "other"`. A word of letters, digits, `-` and `_` is added to the group's classes (anything else is left out),
+   * so that a page's own style can highlight or dim ties: `.mine .tb-box { stroke: … }`. `undefined` or an empty text adds none.
+   */
+  tieClass?: (tie: Tie) => string | null | undefined;
   /**
    * `classic` (the default) or `road`: the look of the road-to-the-final chart, with large round marks, big bold scores, the loser quiet, the
    * rounds named on pills and a dotted path. Every other option works in both.
