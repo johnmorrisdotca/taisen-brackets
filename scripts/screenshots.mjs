@@ -1,11 +1,12 @@
 // Takes the README's pictures of the demo into docs/images, all of them in one command (`pnpm images`): a desk and a phone, light and dark, the poster, every sport on the background that
-// suits it, the road look and the road to the final, the classic look beside it, the languages, and the twenty-five backgrounds as two grids (dark and light).
+// suits it, the road look and the road to the final, the classic look beside it, the languages, the twenty-five backgrounds as two grids (dark and light), and every layout.
+// The pictures are WebP, made in the browser (no tool beyond Chromium): at the quality used here they are 2 to 3 times smaller than the JPEG they replaced, with no loss anyone can see.
 // It serves the demo on port 7101 (this package's own block, tests and tools from 7101 up) and stops the server it started.
 //
 //   node scripts/screenshots.mjs                   every picture of docs/images
-//   node scripts/screenshots.mjs --extra <folder>  also the review shots (taisen-bg-*.png) into <folder>
+//   node scripts/screenshots.mjs --extra <folder>  also the review shots (taisen-bg-*.png, taisen-layout-*.png) into <folder>
 import { spawn } from "node:child_process";
-import { mkdirSync } from "node:fs";
+import { mkdirSync, writeFileSync } from "node:fs";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { chromium } from "@playwright/test";
@@ -29,6 +30,25 @@ try {
     poll();
   });
   const browser = await chromium.launch();
+  /** A PNG as a WebP, made by the browser's own encoder. */
+  const webpPage = await browser.newPage();
+  const toWebp = async (png) => {
+    const base64 = await webpPage.evaluate(async (data) => {
+      const image = new globalThis.Image();
+      image.src = `data:image/png;base64,${data}`;
+      await image.decode();
+      const canvas = document.createElement("canvas");
+      canvas.width = image.width;
+      canvas.height = image.height;
+      canvas.getContext("2d").drawImage(image, 0, 0);
+      const blob = await new Promise((done) => canvas.toBlob(done, "image/webp", 0.86));
+      const reader = new globalThis.FileReader();
+      reader.readAsDataURL(blob);
+      await new Promise((done) => { reader.onloadend = done; });
+      return String(reader.result).split(",")[1];
+    }, png.toString("base64"));
+    return Buffer.from(base64, "base64");
+  };
   const open = async (query, { width, height, scheme = "light", phone = false, scale = 2 }) => {
     const context = await browser.newContext({ viewport: { width, height }, colorScheme: scheme, hasTouch: phone, isMobile: phone, deviceScaleFactor: scale, reducedMotion: "reduce" });
     const page = await context.newPage();
@@ -36,10 +56,12 @@ try {
     await page.waitForSelector("#stage svg");
     return { page, context };
   };
-  // The README pictures are JPEG (a gradient and a pattern are far smaller so); the review shots in `--extra` are PNG.
+  // The README pictures are WebP (a gradient and a pattern are far smaller so); the review shots in `--extra` are PNG.
   const shoot = async (name, query, options, dir = out) => {
     const { page, context } = await open(query, options);
-    await (await page.$("#stage svg")).screenshot(dir === out ? { path: `${dir}/${name}.jpg`, type: "jpeg", quality: 86 } : { path: `${dir}/${name}.png` });
+    const element = await page.$("#stage svg");
+    if (dir === out) writeFileSync(`${dir}/${name}.webp`, await toWebp(await element.screenshot({ type: "png" })));
+    else await element.screenshot({ path: `${dir}/${name}.png` });
     await context.close();
   };
   // Each example opens on the background that suits its sport (the demo's default), so the pictures show the range: ice, hardwood, an infield, turf, a pitch, waves, a sunburst...
@@ -83,7 +105,7 @@ try {
       box.innerHTML = T.LOCALE_CODES.map((code) => `<figure style="margin:0;width:390px"><figcaption style="padding:0 0 8px">${names[code]}</figcaption>${T.drawBracket(example.data, { ...example.options, size: "phone", locale: code, teamName, id: `l-${code}`, title: example.titles?.[code] ?? example.options.title, background: false })}</figure>`).join("");
       document.body.replaceChildren(box);
     });
-    await (await page.$("#languages")).screenshot({ path: `${out}/languages-wc2022.png` });
+    writeFileSync(`${out}/languages-wc2022.webp`, await toWebp(await (await page.$("#languages")).screenshot({ type: "png" })));
     await context.close();
   }
   // The twenty-five backgrounds, each on the sport it suits, in the dark and in the light variant: two grids of five by five.
@@ -108,11 +130,42 @@ try {
       }).join("");
       document.body.replaceChildren(box);
     }, scheme);
-    await (await page.$("#grid")).screenshot({ path: `${out}/backgrounds-${scheme}.jpg`, type: "jpeg", quality: 86 });
+    writeFileSync(`${out}/backgrounds-${scheme}.webp`, await toWebp(await (await page.$("#grid")).screenshot({ type: "png" })));
+    await context.close();
+  }
+  // Every layout, on the sport that suits it, on its own background; the playground opens each from the address.
+  const LAYOUT_SHOTS = [
+    ["layout-rows-nhl", "rows", "ex=nhl2024&layout=rows&bg=ice", { width: 1280, height: 900 }],
+    ["layout-update-nhl", "update", "ex=nhl2024&layout=update&bg=aurora", { width: 1280, height: 900 }],
+    ["layout-shields-wc2022", "shields", "ex=wc2022&layout=shields&bg=floodlights", { width: 1280, height: 900 }],
+    ["layout-columns-nfl", "columns", "ex=nfl2024&layout=columns&bg=turf&headers=1", { width: 1280, height: 900 }],
+    ["layout-playin-nba", "playin", "ex=nba2024playin&bg=hardwood", { width: 1280, height: 900 }],
+    ["layout-series-nba", "series", "ex=nba2024&layout=series&bg=carbon&size=card&headers=1", { width: 1280, height: 900 }],
+    ["layout-groups-cup", "groups", "ex=cupGroups&bg=midnight", { width: 1280, height: 900 }],
+    ["layout-groups-softball", "groups", "ex=softballGroups&bg=royal&size=phone", { width: 390, height: 844, phone: true }],
+    ["layout-columns-phone", "columns", "ex=wc2022&layout=columns&bg=pitch&size=phone", { width: 390, height: 844, phone: true }],
+  ];
+  for (const [name, , query, options] of LAYOUT_SHOTS) await shoot(name, query, options);
+  // A final alone, with its third-place match, centred (the World Cups of 1974 and 1978 ended so): drawn by the package itself in the demo's page.
+  {
+    const { page, context } = await open("ex=wc2022", { width: 1280, height: 900 });
+    await page.evaluate(async () => {
+      const T = await import("/dist/index.js");
+      const { FLAGS } = await import("/flags-data.js");
+      const { renderEmblem } = await import("/emblems.js");
+      const teams = [{ id: "NED", name: "Netherlands", flag: "NL", abbr: "NED" }, { id: "GER", name: "West Germany", flag: "DE", abbr: "FRG" }, { id: "POL", name: "Poland", flag: "PL", abbr: "POL" }, { id: "BRA", name: "Brazil", flag: "BR", abbr: "BRA" }];
+      const matchups = [{ id: "F", sides: ["NED", "GER"], round: 1, score: [1, 2] }, { id: "T", sides: ["POL", "BRA"], third: true, score: [1, 0] }];
+      document.getElementById("stage").innerHTML = T.drawBracket({ teams, matchups }, { look: "road", flags: (c) => FLAGS[c], background: "pitch", title: "FIFA World Cup 1974", subtitle: "The final and the third-place match", emblems: renderEmblem, trophy: T.LEAGUE_EMBLEMS.worldcup, id: "lone" });
+    });
+    writeFileSync(`${out}/layout-lone-final.webp`, await toWebp(await (await page.$("#stage svg")).screenshot({ type: "png" })));
     await context.close();
   }
   // The review shots, when asked for: the World Cup 2022 card on four backgrounds, the NHL wide, a phone in the dark, and a picture of your own.
   if (extra) {
+    // One picture of each layout, for review.
+    await shoot("taisen-layout-tree", "ex=wc2022&bg=pitch", { width: 1280, height: 900 }, extra);
+    for (const [, layout, query, options] of LAYOUT_SHOTS.slice(0, 7)) await shoot(`taisen-layout-${layout}`, query, options, extra);
+    await shoot("taisen-layout-groups-softball", "ex=softballGroups&bg=royal", { width: 1280, height: 900 }, extra);
     for (const bg of ["pitch", "royal", "crimson", "aurora"]) await shoot(`taisen-bg-wc2022-card-${bg}`, `ex=wc2022&size=card&bg=${bg}`, { width: 1280, height: 900 }, extra);
     await shoot("taisen-bg-nhl-wide", "ex=nhl2024&size=wide", { width: 1280, height: 900 }, extra);
     await shoot("taisen-bg-phone-dark", "ex=wc2022&size=phone&theme=dark", { width: 390, height: 844, phone: true, scheme: "dark" }, extra);

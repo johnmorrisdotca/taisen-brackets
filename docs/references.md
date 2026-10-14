@@ -48,4 +48,4 @@ Pictures John Morris sent as inspiration for the road look, the backgrounds and 
 
 ## Asked for
 
-- A group-stage table drawing, from the group cards above (62, 63, 65): groups with flags and wins and losses or points. John Morris asked for it on 2026-10-14. See the [roadmap](./roadmap.md).
+- A group-stage table drawing, from the group cards above (62, 63, 65): groups with flags and wins and losses or points. John Morris asked for it on 2026-10-14. Built in 0.6.0 as the `groups` layout; the other layouts above (rows, shields, update, columns, play-in, the series card, headers) are 0.6.0 too. See the [roadmap](./roadmap.md) and [layouts](./layouts.md).

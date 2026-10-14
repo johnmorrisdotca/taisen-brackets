@@ -6,6 +6,31 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.6.0] - 2026-10-14
+
+### Added
+
+- **`layout`**: the same ties drawn eight ways. `"tree"` (the default) is the bracket as ever, drawn exactly as before; the rest take the tree's places, lines and round names or plan their own, and all work with `background`, both looks, the four sizes, the five languages, `href` links, seeds, codes, `flags` and `flagHref`, marks and tiles. [docs/layouts.md](docs/layouts.md).
+  - **`rows`**: each team a row, its name left and its mark right, a seed tag at the outer corner and a result slot (empty until played) at the end facing the centre.
+  - **`shields`**: marks in shield shapes with "vs" between, the matchups on both sides of the trophy, no lines.
+  - **`update`**: a compact score-update card: abbreviation, seed and series score a side, the rounds to come empty.
+  - **`columns`**: tall slots that grow toward the centre, the two halves in two colours (`--tb-conf-a`, `--tb-conf-b`, `CONFERENCE_COLORS`), "VS" tags, big seed numbers, the final as two tall slots. `at: true` writes "AT" in place of "VS" (a word in each language), the home side drawn second; `Matchup.home` names it.
+  - **`playin`**: the NBA's play-in: tiles for the seeds that need no game, the games in columns, a solid arrow for a winner and a dashed one for a loser, "Winner 9/10" and "Loser 7/8" until they are played, the seeds earned at the end.
+  - **`series`**: a tall card (1080 by 1350 unless a `size` is asked for) of one line a series, "BOS 4–0 MIA", the winner bold, the east above the west with the final between.
+  - **`groups`**: one card a group, a title tile and a row a team with its mark, name and record or points, the places that go through marked (`qualify`). `standings: "points"` (played, won, drawn, lost, goal difference, points) or `"record"` (won, lost, softball's). New `groupStandings(input)` (the tables as data) and `groupsTable(input)` (as HTML).
+  - A box too small for everything leaves out the seed tag, then the length of the names, then the score's slot; a geometry test over every layout, size and look holds that nothing sticks out.
+- **Loser edges**: a `feeds` entry can be `{ tie, result: "winner" | "loser" }` (a string is still a winner), `Tie.from` says where each side comes from (`Source = { tie, result }`), and `Matchup.stage: "play-in"` keeps a game out of the tree (`layout.playIn`, `Tie.playIn`). A bracket with none of it is drawn exactly as before. A circle of feeds, or a tie that feeds itself, throws an error naming the ties. `advanceWinners` fills a side from a loser, `bracketTable` calls the games "Play-in" and says "Loser of A v B".
+- **`headers: true`**: a big title tile over each half (West and East, AFC and NFC) in the colour of that half, in any layout.
+- **A lone final is centred.** A tournament whose tree is a final alone with a third-place match (the World Cups of 1974 and 1978) is drawn with the final centred, the champion over it and the third place under it, in every layout, size and look, not off to one side.
+- **One stylesheet for several drawings**: `styleScope` (a class that carries the rules in place of the drawing's own), `style: false` (leave the `<style>` out of a second drawing) and `bracketStyle(options)` (the rules, for a page that writes them once). The ids of the drawings stay apart.
+- New words in the five languages: `vs`, `at`, `groupName`, `colPlayed` to `colPoints`, `playIn`, `playInWinner`, `playInLoser`, `seedSlot`, `winnerOf`, `loserOf`. The French and Japanese were read by native-language reviewers; the Spanish and German need one (docs/languages.md).
+- The demo has a layout switcher on each sport (NHL rows and update, NFL columns, NBA play-in and series, World Cup shields, made-up groups, softball groups), "Headers" and "AT" chips, and a gallery of the layouts on their backgrounds. New demo data: the 2024 NBA play-in (typed from English Wikipedia, CC BY-SA 4.0) and two made-up group stages.
+
+### Changed
+
+- The README's pictures are **WebP**, made in the browser by `pnpm images` (no tool beyond Chromium), two to three times smaller than the JPEG they replaced at no visible loss; the repository's `docs/images` shrinks with them.
+- The README, docs/roadmap.md and docs/references.md say what 0.6.0 built and what is left.
+
 ## [0.5.0] - 2026-10-14
 
 ### Added

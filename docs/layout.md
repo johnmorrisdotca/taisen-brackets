@@ -77,4 +77,4 @@ A tie in a later round with only one tie feeding it has a bye on the other side:
 
 ## Errors
 
-A duplicate `id`, a `winner` that is not one of the sides, a team against itself, a `feeds` that names nothing, and a tie that feeds two ties each throw an error that says which matchup.
+A duplicate `id`, a `winner` that is not one of the sides, a team against itself, a `feeds` that names nothing, a tie that feeds two ties, a tie that feeds itself, and a circle of feeds each throw an error that says which matchup. A `feeds` entry can also be `{ tie, result: "winner" | "loser" }`: a loser that goes on is kept in `Tie.from`, outside the tree; see [layouts](./layouts.md).

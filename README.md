@@ -11,22 +11,22 @@ Give it the games, series, two-legged ties or replays of a tournament and it wor
   <img alt="TypeScript" src="https://img.shields.io/badge/types-TypeScript-3178c6">
 </p>
 
-<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/road.md">Road to the final</a> · <a href="./docs/backgrounds.md">Backgrounds</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
+<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/layouts.md">Layouts</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/road.md">Road to the final</a> · <a href="./docs/backgrounds.md">Backgrounds</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
 
 <p align="center">
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-dark.jpg">
-<img alt="The 2022 World Cup knockout: two halves of eight teams meeting at the final in the centre, with Argentina's round flag and the word Champion above it and the third-place match below. Each box has both teams' round flags, abbreviations and scores, with penalties in brackets." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-light.jpg" width="720">
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-dark.webp">
+<img alt="The 2022 World Cup knockout: two halves of eight teams meeting at the final in the centre, with Argentina's round flag and the word Champion above it and the third-place match below. Each box has both teams' round flags, abbreviations and scores, with penalties in brackets." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-light.webp" width="720">
 </picture>
 </p>
 
 <table align="center">
 <tr>
 <td align="center" valign="top">
-<img alt="The poster look: the 2026 World Cup knockout of 32 nations as round flags on dark navy joined by gold lines, Spain's flag in the centre above the word Champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/poster-desk.jpg" width="470"><br><em>The poster look: flags only, gold on navy (the 2026 World Cup).</em>
+<img alt="The poster look: the 2026 World Cup knockout of 32 nations as round flags on dark navy joined by gold lines, Spain's flag in the centre above the word Champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/poster-desk.webp" width="470"><br><em>The poster look: flags only, gold on navy (the 2026 World Cup).</em>
 </td>
 <td align="center" valign="top">
-<img alt="The 2022 World Cup on a phone: the champion at the top, then the rounds as rows, the first round at the top and at the bottom, the final in the middle, and the third-place match at the foot." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/phone-light.jpg" width="190"><br><em>On a phone the rounds are rows.</em>
+<img alt="The 2022 World Cup on a phone: the champion at the top, then the rounds as rows, the first round at the top and at the bottom, the final in the middle, and the third-place match at the foot." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/phone-light.webp" width="190"><br><em>On a phone the rounds are rows.</em>
 </td>
 </tr>
 </table>
@@ -37,22 +37,22 @@ One layout draws them all, each from real results: the demo has a picker for the
 
 <table>
 <tr>
-<td align="center" valign="top"><img alt="The 2024 NHL playoffs: Western and Eastern conferences, best-of-seven series, Florida Panthers as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nhl-desk-light.jpg" width="360"><br><em>NHL 2024, series</em></td>
-<td align="center" valign="top"><img alt="The 1984 Stanley Cup playoffs: the Campbell and Wales conferences, a best-of-five first round, Edmonton Oilers as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nhl1984-desk-light.jpg" width="360"><br><em>NHL 1984, an older era</em></td>
-<td align="center" valign="top"><img alt="The 2024 NBA playoffs: sixteen teams in two conferences, Boston Celtics as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nba-desk-light.jpg" width="360"><br><em>NBA 2024</em></td>
+<td align="center" valign="top"><img alt="The 2024 NHL playoffs: Western and Eastern conferences, best-of-seven series, Florida Panthers as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nhl-desk-light.webp" width="360"><br><em>NHL 2024, series</em></td>
+<td align="center" valign="top"><img alt="The 1984 Stanley Cup playoffs: the Campbell and Wales conferences, a best-of-five first round, Edmonton Oilers as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nhl1984-desk-light.webp" width="360"><br><em>NHL 1984, an older era</em></td>
+<td align="center" valign="top"><img alt="The 2024 NBA playoffs: sixteen teams in two conferences, Boston Celtics as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nba-desk-light.webp" width="360"><br><em>NBA 2024</em></td>
 </tr>
 <tr>
-<td align="center" valign="top"><img alt="The 2022 MLB postseason: byes for the top two seeds of each league, Houston Astros as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/byes-desk-light.jpg" width="360"><br><em>MLB 2022, byes</em></td>
-<td align="center" valign="top"><img alt="The playoffs of the 2024 NFL season: single games, byes for the top seed of each conference, the Super Bowl at the centre, Philadelphia Eagles as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nfl-desk-light.jpg" width="360"><br><em>NFL 2024 season, the Super Bowl</em></td>
-<td align="center" valign="top"><img alt="The 2024 CFL playoffs: division semi-finals and finals, byes, the Grey Cup at the centre, Toronto Argonauts as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/cfl-desk-light.jpg" width="360"><br><em>CFL 2024, the Grey Cup</em></td>
+<td align="center" valign="top"><img alt="The 2022 MLB postseason: byes for the top two seeds of each league, Houston Astros as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/byes-desk-light.webp" width="360"><br><em>MLB 2022, byes</em></td>
+<td align="center" valign="top"><img alt="The playoffs of the 2024 NFL season: single games, byes for the top seed of each conference, the Super Bowl at the centre, Philadelphia Eagles as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nfl-desk-light.webp" width="360"><br><em>NFL 2024 season, the Super Bowl</em></td>
+<td align="center" valign="top"><img alt="The 2024 CFL playoffs: division semi-finals and finals, byes, the Grey Cup at the centre, Toronto Argonauts as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/cfl-desk-light.webp" width="360"><br><em>CFL 2024, the Grey Cup</em></td>
 </tr>
 <tr>
-<td align="center" valign="top"><img alt="The 2022 World Cup knockout stage." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-light.jpg" width="360"><br><em>World Cup 2022</em></td>
-<td align="center" valign="top"><img alt="The 1938 World Cup: replays." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/replays-desk-light.jpg" width="360"><br><em>World Cup 1938, replays</em></td>
-<td align="center" valign="top"><img alt="The 2026 World Cup as a flags-only poster, in Japanese." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/poster-desk-ja.jpg" width="360"><br><em>World Cup 2026 poster, in Japanese</em></td>
+<td align="center" valign="top"><img alt="The 2022 World Cup knockout stage." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-light.webp" width="360"><br><em>World Cup 2022</em></td>
+<td align="center" valign="top"><img alt="The 1938 World Cup: replays." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/replays-desk-light.webp" width="360"><br><em>World Cup 1938, replays</em></td>
+<td align="center" valign="top"><img alt="The 2026 World Cup as a flags-only poster, in Japanese." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/poster-desk-ja.webp" width="360"><br><em>World Cup 2026 poster, in Japanese</em></td>
 </tr>
 <tr>
-<td align="center" valign="top"><img alt="The 2024 MLS Cup Playoffs: a wild card match, a best-of-three round one, then single matches to the MLS Cup, LA Galaxy as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/mls-desk-light.jpg" width="360"><br><em>MLS 2024, best of three</em></td>
+<td align="center" valign="top"><img alt="The 2024 MLS Cup Playoffs: a wild card match, a best-of-three round one, then single matches to the MLS Cup, LA Galaxy as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/mls-desk-light.webp" width="360"><br><em>MLS 2024, best of three</em></td>
 <td></td>
 <td></td>
 </tr>
@@ -64,16 +64,143 @@ One layout draws them all, each from real results: the demo has a picker for the
 
 <table>
 <tr>
-<td align="center" valign="top"><img alt="The 2022 World Cup in the road look, wide: large round flags, big bold scores, the loser quiet, the rounds on pills, and Argentina's path to the final as a dotted line." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/path-desk-light.jpg" width="460"><br><em>The road look, wide, with Argentina's path.</em></td>
-<td align="center" valign="top"><img alt="The 2022 World Cup in the road look on a card, 1080 by 1350: the champion at the top, then the rounds as rows." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/card-light.jpg" width="260"><br><em>A card, 1080 by 1350.</em></td>
-<td align="center" valign="top"><img alt="The road to the final of the 2022 World Cup on a phone in the dark: Argentina and France as large flags, and each one's matches with the score between the two flags." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/road-phone-dark.jpg" width="190"><br><em>The road to the final, on a phone.</em></td>
+<td align="center" valign="top"><img alt="The 2022 World Cup in the road look, wide: large round flags, big bold scores, the loser quiet, the rounds on pills, and Argentina's path to the final as a dotted line." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/path-desk-light.webp" width="460"><br><em>The road look, wide, with Argentina's path.</em></td>
+<td align="center" valign="top"><img alt="The 2022 World Cup in the road look on a card, 1080 by 1350: the champion at the top, then the rounds as rows." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/card-light.webp" width="260"><br><em>A card, 1080 by 1350.</em></td>
+<td align="center" valign="top"><img alt="The road to the final of the 2022 World Cup on a phone in the dark: Argentina and France as large flags, and each one's matches with the score between the two flags." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/road-phone-dark.webp" width="190"><br><em>The road to the final, on a phone.</em></td>
 </tr>
 <tr>
-<td align="center" valign="top"><img alt="The same bracket in the classic look, which stays the default." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/classic-desk-light.jpg" width="460"><br><em>The classic look, still the default.</em></td>
-<td align="center" valign="top"><img alt="The road to the final of the 2024 Stanley Cup playoffs: Florida and Edmonton, each one's three series with the games won between the two logos." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/road-wide-nhl-light.jpg" width="460"><br><em>The road to the final, a play-off (NHL 2024).</em></td>
-<td align="center" valign="top"><img alt="The road to the final of the 2022 World Cup on a card." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/road-card-light.jpg" width="260"><br><em>The road to the final, a card.</em></td>
+<td align="center" valign="top"><img alt="The same bracket in the classic look, which stays the default." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/classic-desk-light.webp" width="460"><br><em>The classic look, still the default.</em></td>
+<td align="center" valign="top"><img alt="The road to the final of the 2024 Stanley Cup playoffs: Florida and Edmonton, each one's three series with the games won between the two logos." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/road-wide-nhl-light.webp" width="460"><br><em>The road to the final, a play-off (NHL 2024).</em></td>
+<td align="center" valign="top"><img alt="The road to the final of the 2022 World Cup on a card." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/road-card-light.webp" width="260"><br><em>The road to the final, a card.</em></td>
 </tr>
 </table>
+
+## Layouts
+
+`layout` draws the same ties another way: the default, `"tree"`, is the bracket above; the others are `"rows"`, `"shields"`, `"update"`, `"columns"`, `"playin"`, `"series"` and `"groups"`. Each takes the `background`, both looks, the four sizes, the five languages, `href` links, seeds, codes, flags and logos, and a team with no picture is its tile. [docs/layouts.md](./docs/layouts.md) has the options and what each needs.
+
+### rows
+
+Each team a row, its name on the left and its mark on the right, its seed tag at the outer corner, and a slot for the result at the end that faces the centre (empty until the tie is played): the NHL poster's style.
+
+<p align="center"><img alt="The 2024 NHL playoffs as rows: each team's abbreviation and seed tag, its logo tile and a slot with the games won, on an ice background." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-rows-nhl.webp" width="640"></p>
+
+```js
+import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const ties = [
+  { id: "a", sides: ["BOS", "MIA"], round: 1, bestOf: 7, score: [4, 1] },
+  { id: "b", sides: ["NYK", "IND"], round: 1, bestOf: 7, score: [4, 3] },
+  { id: "c", sides: ["BOS", "NYK"], round: 2, bestOf: 7, score: [2, 1] },
+];
+const svg = drawBracket(ties, { layout: "rows", look: "road", seeds: true });
+console.log(svg.includes("tb-slot")); // true
+```
+
+### shields
+
+Marks in shield shapes with "vs" between the two of a tie, the matchups listed down both sides of the trophy; no connector lines.
+
+<p align="center"><img alt="The 2022 World Cup as shields: each tie two round flags in shields with vs between them and the score under each, the final under the trophy." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-shields-wc2022.webp" width="640"></p>
+
+```js
+import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const svg = drawBracket([{ sides: ["ARG", "FRA"], score: [3, 3], pens: [4, 2] }], { layout: "shields" });
+console.log(svg.includes("tb-shield"), svg.includes(">vs<")); // true true
+```
+
+### update
+
+A compact score-update card: each side's abbreviation, seed and series score, and empty cards for the rounds still to come, the final in the centre. Put the "as of" date in `subtitle`.
+
+<p align="center"><img alt="A score-update card of the 2024 NHL playoffs: abbreviations with seeds and the games won in a cell on the right, on an aurora background." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-update-nhl.webp" width="640"></p>
+
+```js
+import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const teams = [{ id: "A", name: "Alpha", abbr: "ALP", seed: 1 }, { id: "B", name: "Beta", abbr: "BET", seed: 8 }];
+const svg = drawBracket({ teams, matchups: [{ sides: ["A", "B"], round: 1, bestOf: 7, score: [4, 2] }] }, { layout: "update", subtitle: "as of May 1" });
+console.log(svg.includes(">ALP<"), svg.includes(">as of May 1<")); // true true
+```
+
+### columns
+
+The NFL poster's style: each round a column of tall slots that get taller toward the centre, one conference in each of two colours, a "VS" tag between the two slots of a tie, a big seed number beside a team that has a `seed`, and the final as two tall slots side by side. `at: true` writes the language's "AT" in place of "VS", the second side being the one at home (or the side `Matchup.home` names). `headers: true` adds the conference tiles.
+
+<p align="center"><img alt="The 2024 NFL playoffs as columns: tall slots growing toward the centre, the AFC in blue and the NFC in red, VS tags between the slots, the Super Bowl as two tall slots, with a title tile over each half." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-columns-nfl.webp" width="640"></p>
+
+```js
+import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const ties = [{ sides: ["KC", "BUF"], round: 1, score: [27, 24], home: 0 }, { sides: ["PHI", "WAS"], round: 1, score: [28, 23] }];
+const svg = drawBracket(ties, { layout: "columns", at: true });
+console.log(svg.includes(">AT<"), svg.includes(">VS<")); // true false
+```
+
+### playin
+
+The NBA's play-in: the games of each half (a `stage: "play-in"` tie), with a **winner's arrow solid and a loser's dashed**, into the game that takes it ("Winner 9/10", "Loser 7/8") or the seed it earns, and the seeds that need no game as tiles. A tie says where a side comes from with `feeds`, whose entries can now be `{ tie, result: "winner" | "loser" }`; `Tie.from` has it back.
+
+<p align="center"><img alt="The 2024 NBA play-in: for each conference the 7 v 8 and 9 v 10 games, a dashed arrow for the 7 v 8 loser into the decider with the 9 v 10 winner, and a solid arrow into the 7th and 8th seed slots, beside tiles for seeds 1 to 6." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-playin-nba.webp" width="640"></p>
+
+```js
+import { drawBracket, layoutBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const matchups = [
+  { id: "p78", stage: "play-in", sides: ["T7", "T8"], score: [105, 104], seeds: [7, 8] },
+  { id: "p910", stage: "play-in", sides: ["T9", "T10"], score: [131, 116], seeds: [9, 10] },
+  { id: "dec", stage: "play-in", sides: ["T8", "T9"], score: [112, 91], feeds: [{ tie: "p78", result: "loser" }, { tie: "p910", result: "winner" }] },
+];
+console.log(JSON.stringify(layoutBracket({ matchups }).ties[2].from)); // [{"tie":0,"result":"loser"},{"tie":1,"result":"winner"}]
+console.log(drawBracket({ matchups }, { layout: "playin" }).includes("tb-arrow-loser")); // true
+```
+
+### series
+
+A tall card of one line a series, "BOS 4–0 MIA", the winner bold, the seeds at the line's ends, the east on top and the west below with the final in the middle. It is a card (1080 by 1350) unless a `size` is asked for.
+
+<p align="center"><img alt="The 2024 NBA playoffs as a series card: the Eastern Conference on top, one line a series such as BOS 4-1 MIA, the final in the middle and the Western Conference below, on a carbon background." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-series-nba.webp" width="360"></p>
+
+```js
+import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const svg = drawBracket([{ sides: ["BOS", "MIA"], round: 1, bestOf: 7, score: [4, 0] }], { layout: "series" });
+console.log(svg.includes('viewBox="0 0 1080 1350"'), svg.includes(">4–0<")); // true true
+```
+
+### groups
+
+The group stage as one card a group: a title tile ("Group A"), a row a team with its flag or mark, its name and its record, the places that go through marked. The standings are worked out from the round-robin games (`round: 0`); `standings: "record"` is wins and losses (softball's), and `"points"` (the default) played, won, drawn, lost, goal difference and points. `qualify: 2` marks the top two of each group.
+
+<p align="center"><img alt="The group stage of a made-up cup: four cards, each with a title tile and four teams with their marks and played, won, drawn, lost, goal difference and points, the top two of each marked." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-groups-cup.webp" width="640"></p>
+
+<p align="center"><img alt="Softball pool play on a phone: three cards of four teams with their wins and losses, the top two of each marked, on a royal background." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-groups-softball.webp" width="260"></p>
+
+```js
+import { drawBracket, groupStandings } from "@johnmorrisdotca/taisen-brackets";
+
+const games = [
+  { sides: ["A", "B"], round: 0, score: [2, 0] }, { sides: ["A", "C"], round: 0, score: [1, 1] }, { sides: ["B", "C"], round: 0, score: [0, 3] },
+];
+console.log(groupStandings({ matchups: games })[0].rows.map((r) => `${r.team.id} ${r.points}`).join(", ")); // C 4, A 4, B 0
+console.log(drawBracket({ matchups: games }, { layout: "groups", qualify: 2 }).includes("Group A")); // true
+```
+
+### Conference headers, a lone final, one stylesheet
+
+`headers: true` puts a big title tile over each half (West and East, AFC and NFC) in the colour of that half, in any layout. A tournament that ended with a lone final and a third-place match (the World Cups of 1974 and 1978) is drawn with them centred, the champion over the final. And two sizes of the same bracket on one page can share one stylesheet: `styleScope` names the class that carries the rules, `style: false` leaves the `<style>` out of the second drawing, and `bracketStyle(options)` is the stylesheet for a page that writes it once itself.
+
+<p align="center"><img alt="A lone final and a third-place match, centred: the champion above the final, the third place under it, on a pitch background." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-lone-final.webp" width="560"></p>
+
+```js
+import { bracketStyle, drawBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const ties = [{ sides: ["A", "B"], round: 1, score: [2, 1] }];
+const desk = drawBracket(ties, { styleScope: "mine", size: "wide" });
+const phone = drawBracket(ties, { styleScope: "mine", size: "phone", style: false });
+console.log(desk.includes("<style>"), phone.includes("<style>"), desk.includes(bracketStyle({ styleScope: "mine" }))); // true false true
+```
 
 ## Backgrounds
 
@@ -81,8 +208,8 @@ One layout draws them all, each from real results: the demo has a picker for the
 
 <p align="center">
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/backgrounds-dark.jpg">
-<img alt="The twenty-five backgrounds in a grid of five by five, each behind a different bracket: midnight, crimson, royal, emerald, pitch, ice, hardwood, infield, turf, ball-panels, swirl, waves, glow, floodlights, confetti, carbon, aurora, sunburst, chevrons, halftone, argyle, contour, stardust, mesh and spotlight." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/backgrounds-light.jpg" width="900">
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/backgrounds-dark.webp">
+<img alt="The twenty-five backgrounds in a grid of five by five, each behind a different bracket: midnight, crimson, royal, emerald, pitch, ice, hardwood, infield, turf, ball-panels, swirl, waves, glow, floodlights, confetti, carbon, aurora, sunburst, chevrons, halftone, argyle, contour, stardust, mesh and spotlight." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/backgrounds-light.webp" width="900">
 </picture>
 </p>
 
@@ -148,6 +275,7 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **The road to the final**: `roadToFinal` draws the two finalists of the tournament you already have, with the ties each played on the way and the score between their flags, on a card, a square, wide or a phone.
 - **Poster backgrounds**: twenty-five, drawn in code, each in a dark and a light variant, among them the playing surfaces of hockey, basketball, baseball, football and soccer; your own colours, or your own picture; and the text, lines and boxes take the colours that read over them (4.5 to 1, held by a test).
 - **Seed tags, codes and a "vs"** in the road look, and a team with no picture drawn as a tile with its letters, so that nothing looks missing.
+- **Eight layouts**: `layout` draws the same ties as the tree, as `rows` (a name, a mark and a result slot a team), `shields`, a score-`update` card, tall `columns` in two conference colours, the NBA's `playin` with winners' and losers' arrows, a `series` card, or the `groups` tables; with big conference `headers` over each half in any of them, a lone final centred, and one stylesheet for several drawings (`styleScope`, `style: false`).
 - **Nothing sticks out**: marks, text and round names stay inside their boxes and off the connector lines, in every size and both looks, held by a geometry test.
 - **A link on every box**: `href: (tie, side?) => address` makes each tie's box (or each team's row) a real `<a>` in the SVG with an accessible name.
 - **Flags from a plug-in**: a team's `flag` code is drawn by the `flags` function you pass (Hata's round flags are one line), with no dependency added.
@@ -158,7 +286,7 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **Formats by era**: NHL, NBA, MLB, NFL, CFL, MLS and FIFA World Cup round names, series lengths and byes.
 - **Five languages**: English, French, Japanese, Spanish and German, for every word the drawing, the tooltips, the description and the table write, with the football terms of each language; countries named by `Intl` from their ISO code; numbers and dates by `Intl`. Add a language of your own.
 - **Deterministic**: no clock, no random number, no counter; the same input gives the same string, and ids come from a hash of the input.
-- **No dependencies**, ESM with types, about 90 kB packed.
+- **No dependencies**, ESM with types, about 140 kB packed.
 
 ## Use it in your project
 
@@ -504,8 +632,10 @@ The string is built from your data, with every name escaped; do not put untruste
 
 Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part from `/layout`, the formats from `/presets`. The types are in the package; each function's doc comment has its details.
 
-- `drawBracket(input, options?)`: the SVG string. `input` is a list of matchups, `{ matchups, teams }` or a layout. Options: `size`, `orientation`, `shape`, `detail`, `theme`, `background` (a preset's name, a tuned preset or your own picture), `vs`, `codes`, `title`, `subtitle`, `roundNames`, `roundLabels`, `scores`, `seeds`, `markShape`, `champion`, `trophy`, `emblems`, `emblemStyle`, `emblemTint`, `thirdPlace`, `winnerHighlight`, `look`, `href`, `tieClass`, `highlightPath`, `flags`, `flagHref`, `locale`, `words`, `teamName`, `groupOrder`, `id`, `className`.
+- `drawBracket(input, options?)`: the SVG string. `input` is a list of matchups, `{ matchups, teams }` or a layout. Options: `layout`, `headers`, `at`, `standings`, `qualify`, `style`, `styleScope`, `size`, `orientation`, `shape`, `detail`, `theme`, `background` (a preset's name, a tuned preset or your own picture), `vs`, `codes`, `title`, `subtitle`, `roundNames`, `roundLabels`, `scores`, `seeds`, `markShape`, `champion`, `trophy`, `emblems`, `emblemStyle`, `emblemTint`, `thirdPlace`, `winnerHighlight`, `look`, `href`, `tieClass`, `highlightPath`, `flags`, `flagHref`, `locale`, `words`, `teamName`, `groupOrder`, `id`, `className`.
 - `roadToFinal(input, options?)`: the road to the final of a tournament or of two finalists: `{ options, title, summary, totals, draw(extra?), table(options?) }`. `input` is what `drawBracket` takes, or the two finalists with their paths. Options: `team`, `title`, `subtitle`, `final`, `labels`, `groupLabel`, `size`, `winner`, `codes`, `endnote`, and `locale`, `words`, `teamName`, `roundNames`, `markShape`, `flags`, `theme`, `background`, `id`, `className` as for `drawBracket`. The types `RoadChart`, `RoadFinalist`, `RoadMatch`, `RoadOptions` and the rest are exported too; it is also the one export of `/road`.
+- `groupStandings(input, options?)`, `groupsTable(input, options?)`: the group stage's tables as data (`GroupTable`, `GroupRow`) and as HTML, from the round-robin games.
+- `bracketStyle(options)`: the stylesheet of a drawing with those options and a `styleScope`, for a page that draws a bracket twice. `LAYOUTS` lists the layouts, `CONFERENCE_COLORS` the two half colours of the layouts that colour them (`--tb-conf-a` and `--tb-conf-b`).
 - `layoutBracket(input, options?)`: the rounds, halves, rows, byes and results, without drawing. `shape: "ltr"` and `groupOrder` are its options.
 - `bracketTable(input, options?)`: the HTML table.
 - `describeBracket(input, options?)`: the sentence a screen reader gets.
@@ -540,7 +670,7 @@ for (const locale of ["en", "fr", "ja", "es", "de"]) console.log(describeBracket
 // 2 Teams, 1 Runde. Finale: Argentinien 3, Frankreich 3 (nach Verlängerung, 4:2 im Elfmeterschießen). Sieger: Argentinien. Turniersieger: Argentinien.
 ```
 
-<p align="center"><img alt="The same bracket, the World Cup of 2022 on a phone's layout, in English, French, Japanese, Spanish and German side by side: the rounds, the notes, the label under the champion and the names of the countries are each in their language." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/languages-wc2022.png" width="900"></p>
+<p align="center"><img alt="The same bracket, the World Cup of 2022 on a phone's layout, in English, French, Japanese, Spanish and German side by side: the rounds, the notes, the label under the champion and the names of the countries are each in their language." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/languages-wc2022.webp" width="900"></p>
 
 - `locale` is `"en"` (the default), `"fr"`, `"ja"`, `"es"`, `"de"`, or a `Locale` you made with `defineLocale`. It sets the words, the names of the rounds, the `lang` of the `<svg>` and of the `<table>`, the digits and the dates (`Intl`), and capitals by the language's rules (not for Japanese). `LOCALES` holds the tables and `LOCALE_CODES` lists the codes.
 - **Round names** are the football terms of each language's Wikipedia article on the World Cup: *Huitièmes de finale*, *Octavos de final*, *Achtelfinale*, ラウンド16; the leagues' rounds (NHL, NBA, MLB, NFL, CFL) are the generic words translated, and a league's own name is kept in the form the language uses (*Finale de la Coupe Stanley*, *Stanley-Cup-Finale*, *Coupe Grey*, *Super Bowl*, スーパーボウル). [docs/languages.md](./docs/languages.md) lists every term, what it was checked against, and what still needs a native reader (Spanish and German).
@@ -586,7 +716,7 @@ The names are `bg`, `ink`, `muted`, `line`, `box`, `edge`, `win`, `gold`, `plain
 
 ## Limits
 
-- A bracket is a tree: every tie feeds one tie. Double elimination and round-robin groups are not drawn (a round-robin game, `round: 0`, is kept out of the tree and drawn below).
+- A bracket is a tree: every tie feeds one tie. Double elimination is not drawn. A loser can go on to another tie (`feeds: [{ tie, result: "loser" }]`), but only the play-in layout draws that edge; round-robin games (`round: 0`) are drawn as group tables by the `groups` layout, and below the tree by the others.
 - Text is measured by an estimate from character classes, not a font file, so that the string is the same on every machine; a long name is cut with an ellipsis a few percent early or late.
 - A series with no `bestOf` and no winner is not decided, whatever the games won say.
 - On a phone the champion is at the top and the third-place match at the foot; in a wide bracket of two halves they are in the centre.
@@ -602,11 +732,11 @@ Any current browser, and Node 22 or later. The package makes no network request 
 
 ## Roadmap
 
-- Double elimination, and round-robin groups beside a knockout.
+- Double elimination, and the group tables on one page with the knockout they lead to.
 - More languages (Portuguese, Italian, Korean, Chinese), and native review of the Spanish and German words.
 - A custom element and a React helper, as in the other packages of the family.
 - A PNG renderer (through an optional peer).
-- Planned for 0.6.0: new layouts (`rows`, `shields`, `update`, `columns`, `play-in`, a series card, conference headers) and a group-stage table drawing, which John Morris asked for; and a lone final centred, and one stylesheet for several drawings. See [docs/roadmap.md](./docs/roadmap.md); the pictures that prompted them are listed in [docs/references.md](./docs/references.md).
+- See [docs/roadmap.md](./docs/roadmap.md) for what is planned; the pictures that prompted the layouts of 0.6.0 are listed in [docs/references.md](./docs/references.md).
 
 ## The name
 
