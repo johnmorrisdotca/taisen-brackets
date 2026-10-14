@@ -1,6 +1,6 @@
-import type { Game, Matchup, MatchupKind, Result, SideId, Team, Tie, Words } from "./types.ts";
+import type { Game, Matchup, MatchupKind, Result, SideId, Team, Tie } from "./types.ts";
 import { abbreviate } from "./text.ts";
-import { fill } from "./words.ts";
+import { fill, type Voice } from "./locales.ts";
 
 /** A bracket's teams: the list given, plus a team made from every id that a matchup names and the list does not. */
 export function collectTeams(matchups: readonly Matchup[], given: readonly Team[] = []): Map<SideId, Team> {
@@ -88,42 +88,63 @@ export function resolveMatchup(m: Matchup, index: number, teams: ReadonlyMap<Sid
     date: m.date ?? m.games?.[0]?.date ?? m.legs?.[0]?.date ?? "",
     no: m.no ?? null,
     third: !!m.third,
+    walkover: !!m.walkover,
     note: m.note ?? null,
   };
 }
 
 /** The short name of a team for a small box. */
-export const abbrOf = (team: Team | null, words: Words): string => (team ? team.abbr ?? abbreviate(team.name) : words.tbd);
+export const abbrOf = (team: Team | null, v: Voice): string => (team ? team.abbr ?? abbreviate(v.team(team)) : v.words.tbd);
 
-/** The pieces of a note under a tie's score: "a.e.t.", "pens", "in 7", "agg.". */
-export function noteParts(tie: Tie, words: Words): string[] {
+/** The pieces of a note under a tie's score, short: "a.e.t.", "pens", "in 7", "agg.". */
+export function noteParts(tie: Tie, v: Voice): string[] {
   const r = tie.result;
+  const w = v.words;
   const out: string[] = [];
   if (r.kind === "series") {
-    if (r.decided && r.played > 0) out.push(fill(words.inGames, { n: r.played }));
-    else if (r.bestOf) out.push(fill(words.bestOf, { n: r.bestOf }));
+    if (r.decided && r.played > 0) out.push(fill(w.inGames, { n: v.number(r.played) }));
+    else if (r.bestOf) out.push(fill(w.bestOf, { n: v.number(r.bestOf), w: v.number(Math.ceil(r.bestOf / 2)) }));
   } else {
-    if (r.kind === "aggregate") out.push(words.aggregate);
-    if (r.kind === "replay") out.push(words.replay);
-    if (r.extraTime) out.push(words.aet);
-    if (r.pens) out.push(words.pens);
+    if (r.kind === "aggregate") out.push(w.aggregate);
+    if (r.kind === "replay") out.push(w.replay);
+    if (r.extraTime) out.push(w.aet);
+    if (r.pens) out.push(w.pens);
   }
+  if (tie.walkover) out.push(w.walkover);
   if (tie.note) out.push(tie.note);
   return out;
 }
 
-/** A tie in a sentence, for a tooltip, a table and a description: "Argentina 3, France 3 (a.e.t., pens 4-2). Winner: Argentina". */
-export function describeTie(tie: Tie, words: Words): string {
-  const name = (t: Team | null) => (t ? t.name : words.tbd);
+/** The notes of a tie written out, for a sentence or a table: "after extra time", "4–2 on penalties". */
+export function noteLong(tie: Tie, v: Voice): string[] {
+  const r = tie.result;
+  const w = v.words;
+  const out: string[] = [];
+  if (r.kind === "series") {
+    if (r.decided && r.played > 0) out.push(fill(w.inGames, { n: v.number(r.played) }));
+    else if (r.bestOf) out.push(fill(w.bestOf, { n: v.number(r.bestOf), w: v.number(Math.ceil(r.bestOf / 2)) }));
+  } else {
+    if (r.kind === "aggregate") out.push(w.aggregateLong);
+    if (r.kind === "replay") out.push(w.replay);
+    if (r.extraTime) out.push(w.aetLong);
+    if (r.pens) out.push(fill(w.pensScore, { a: v.number(r.pens[0]), b: v.number(r.pens[1]) }));
+  }
+  if (tie.walkover) out.push(w.walkover);
+  if (tie.note) out.push(tie.note);
+  return out;
+}
+
+/** A tie in a sentence, for a tooltip, a table and a description: "Argentina 3, France 3 (after extra time, 4–2 on penalties). Winner: Argentina". */
+export function describeTie(tie: Tie, v: Voice): string {
+  const w = v.words;
+  const name = (t: Team | null) => (t ? v.team(t) : w.tbd);
   const [a, b] = tie.sides;
   const r = tie.result;
-  let text: string;
-  if (!r.score) text = `${name(a)} ${words.versus} ${name(b)}`;
-  else {
-    text = `${name(a)} ${r.score[0]}, ${name(b)} ${r.score[1]}`;
-    const extra = noteParts(tie, words).map((part) => (part === words.pens && r.pens ? `${words.pens} ${r.pens[0]}-${r.pens[1]}` : part));
-    if (extra.length) text += ` (${extra.join(", ")})`;
-  }
-  if (tie.winner !== null) text += `. ${words.winner}: ${name(tie.sides[tie.winner])}`;
+  let text = r.score
+    ? fill(w.tieScore, { a: name(a), b: name(b), sa: v.number(r.score[0]), sb: v.number(r.score[1]) })
+    : fill(w.tieVs, { a: name(a), b: name(b) });
+  const notes = noteLong(tie, v);
+  if (notes.length) text += fill(w.note, { notes: notes.join(w.noteJoin) });
+  if (tie.winner !== null) text += `${w.sep}${fill(w.winnerIs, { name: name(tie.sides[tie.winner]) })}`;
   return text;
 }

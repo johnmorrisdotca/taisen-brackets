@@ -1,6 +1,5 @@
 import type { BracketLayout, DrawOptions } from "./types.ts";
-import { fill } from "./words.ts";
-import type { Words } from "./types.ts";
+import { fill, type Voice } from "./locales.ts";
 
 /** The name of a round that has `remaining` teams left in it, counting from the final: Final, Semi-finals, Quarter-finals, Round of 16… */
 export function roundName(remaining: number): string {
@@ -16,12 +15,12 @@ export function roundNamesFor(count: number): string[] {
 }
 
 /** The name of round `round` (1 is the first) of a layout, from the names given (which may be only the last rounds) or the generic ones. */
-export function roundLabel(layout: BracketLayout, round: number, names: DrawOptions["roundNames"], words: Words): string {
+export function roundLabel(layout: BracketLayout, round: number, names: DrawOptions["roundNames"], v: Voice): string {
   const list = names ? ("rounds" in names ? names.rounds.map((r) => r.name) : names) : null;
   const from = layout.rounds - round; // 0 for the final
   const named = list?.[list.length - 1 - from];
-  if (named) return named;
+  if (named) return v.round(named);
   const generic = 2 ** (from + 1);
   const remaining = layout.rounds > 7 ? 0 : generic;
-  return remaining ? roundName(remaining) : fill(words.round, { n: round });
+  return remaining ? v.round(roundName(remaining)) : fill(v.words.round, { n: v.number(round) });
 }

@@ -1,11 +1,11 @@
-import type { BracketInput, BracketLayout, Detail, DrawOptions, LayoutBox, Matchup, Size, SizeName, Team, ThemeName, Tie, Words } from "./types.ts";
+import type { BracketInput, BracketLayout, Detail, DrawOptions, LayoutBox, Matchup, Size, SizeName, Team, ThemeName, Tie } from "./types.ts";
 import { layoutBracket } from "./layout.ts";
 import { abbrOf, describeTie, noteParts } from "./matchup.ts";
 import { cleanSvg, clipId, drawMark, safeUrl, type MarkContext } from "./marks.ts";
 import { roundLabel } from "./rounds.ts";
 import { styleFor } from "./theme.ts";
 import { esc, fit, hash, num, textWidth } from "./text.ts";
-import { fill, wordsWith } from "./words.ts";
+import { fill, voiceOf, type Voice } from "./locales.ts";
 
 /** The sizes by name. A phone's drawing is 390 wide and as tall as the bracket needs. */
 export const SIZES: Readonly<Record<SizeName, Size>> = Object.freeze({
@@ -32,15 +32,23 @@ interface Plan {
   vertical: boolean;
 }
 
-/** The text a screen reader gets for the drawing as a whole. */
-export function describeBracket(input: BracketLayout | readonly Matchup[] | BracketInput, options: { words?: Partial<Words>; roundNames?: DrawOptions["roundNames"] } = {}): string {
-  const layout = isLayout(input) ? input : layoutBracket(input);
-  const words = wordsWith(options.words);
-  const parts = [fill(layout.rounds === 1 ? words.summaryOne : words.summary, { n: layout.teams.length, r: layout.rounds })];
+/** The layout with each team's name in the language: what the drawing, the table and the description are written from. */
+export function localizedLayout(layout: BracketLayout, v: Voice): BracketLayout {
+  const named = new Map(layout.teams.map((t) => [t.id, { ...t, name: v.team(t) }]));
+  const swap = <T extends Team | null>(t: T): T => (t ? ((named.get(t.id) ?? t) as T) : t);
+  return { ...layout, ties: layout.ties.map((t) => ({ ...t, sides: [swap(t.sides[0]), swap(t.sides[1])] as const })), champion: swap(layout.champion), teams: [...named.values()] };
+}
+
+/** The text a screen reader gets for the drawing as a whole, in the language of `locale`. */
+export function describeBracket(input: BracketLayout | readonly Matchup[] | BracketInput, options: Pick<DrawOptions, "locale" | "words" | "teamName" | "roundNames"> = {}): string {
+  const v = voiceOf(options);
+  const layout = localizedLayout(isLayout(input) ? input : layoutBracket(input), v);
+  const w = v.words;
+  const parts = [fill(layout.rounds === 1 ? w.summaryOne : w.summary, { n: v.number(layout.teams.length), r: v.number(layout.rounds) })];
   const finalTie = layout.finalIndex !== null ? layout.ties[layout.finalIndex] : null;
-  if (finalTie) parts.push(`${roundLabel(layout, layout.rounds, options.roundNames, words)}: ${describeTie(finalTie, words)}`);
-  if (layout.champion) parts.push(`${words.champion}: ${layout.champion.name}`);
-  return `${parts.join(". ")}.`;
+  if (finalTie) parts.push(fill(w.finalLine, { round: roundLabel(layout, layout.rounds, options.roundNames, v), tie: describeTie(finalTie, v) }));
+  if (layout.champion) parts.push(fill(w.championIs, { name: layout.champion.name }));
+  return `${parts.join(w.sep)}${w.end}`;
 }
 
 /**
@@ -48,18 +56,18 @@ export function describeBracket(input: BracketLayout | readonly Matchup[] | Brac
  * The same input and options always give the same string: no clock, no random number, no counter.
  */
 export function drawBracket(input: BracketLayout | readonly Matchup[] | BracketInput, options: DrawOptions = {}): string {
-  const layout = isLayout(input) ? input : layoutBracket(input, options);
-  const words = wordsWith(options.words);
+  const v = voiceOf(options);
+  const layout = localizedLayout(isLayout(input) ? input : layoutBracket(input, options), v);
   const theme: ThemeName = options.theme ?? "auto";
   const sizeName = typeof options.size === "string" || options.size === undefined ? options.size ?? "wide" : null;
   const size: Size = sizeName ? SIZES[sizeName] : { width: (options.size as { width: number }).width, height: (options.size as { height?: number | null }).height ?? null };
   const orientation = options.orientation && options.orientation !== "auto" ? options.orientation : sizeName === "phone" || (size.height !== null && size.width < size.height * 0.8) ? "vertical" : "horizontal";
-  const prefix = options.id ?? `tb-${hash(JSON.stringify([layout.ties.map((t) => [t.id, t.sides.map((s) => s?.id ?? null), t.winner, t.result.score, t.round]), options.size, orientation, options.detail, theme, options.title, options.subtitle, options.seeds, options.scores, options.champion, options.markShape, options.roundLabels, options.thirdPlace, options.trophy ? 1 : 0]))}`;
+  const prefix = options.id ?? `tb-${hash(JSON.stringify([v.locale.code, layout.teams.map((t) => t.name), layout.ties.map((t) => [t.id, t.sides.map((s) => s?.id ?? null), t.winner, t.result.score, t.round]), options.size, orientation, options.detail, theme, options.title, options.subtitle, options.seeds, options.scores, options.champion, options.markShape, options.roundLabels, options.thirdPlace, options.trophy ? 1 : 0]))}`;
   const ctx: MarkContext = { radii: new Set(), symbols: new Map(), prefix, shape: options.markShape ?? "round" };
-  const plan = planBracket(layout, options, words, size, orientation === "vertical", ctx);
+  const plan = planBracket(layout, options, v, size, orientation === "vertical", ctx);
 
-  const drawn = plan.boxes.map((b) => drawBox(b, plan, options, words, ctx)); // draws the marks, so before the defs are written
-  const title = options.title ?? words.title;
+  const drawn = plan.boxes.map((b) => drawBox(b, plan, options, v, ctx)); // draws the marks, so before the defs are written
+  const title = options.title ?? v.words.title;
   const desc = describeBracket(layout, options);
   const defs = [
     ...[...ctx.radii].sort((a, b) => a - b).map((r) => `<clipPath id="${clipId(prefix, r)}"><circle r="${num(r)}"/></clipPath>`),
@@ -68,7 +76,7 @@ export function drawBracket(input: BracketLayout | readonly Matchup[] | BracketI
   const style = theme === "none" ? "" : `<style>${styleFor(`.${prefix}`, theme)}</style>`;
   const bg = options.background === false ? "" : `<rect class="tb-bg" width="${num(plan.width)}" height="${num(plan.height)}"${theme === "none" ? ' fill="none"' : ""}/>`;
   return [
-    `<svg xmlns="http://www.w3.org/2000/svg" class="taisen ${prefix}${options.className ? ` ${esc(options.className)}` : ""}" viewBox="0 0 ${num(plan.width)} ${num(plan.height)}" width="${num(plan.width)}" height="${num(plan.height)}" style="max-width:100%;height:auto" role="img" aria-labelledby="${prefix}-t ${prefix}-d">`,
+    `<svg xmlns="http://www.w3.org/2000/svg" lang="${esc(v.locale.code)}" class="taisen ${prefix}${options.className ? ` ${esc(options.className)}` : ""}" viewBox="0 0 ${num(plan.width)} ${num(plan.height)}" width="${num(plan.width)}" height="${num(plan.height)}" style="max-width:100%;height:auto" role="img" aria-labelledby="${prefix}-t ${prefix}-d">`,
     `<title id="${prefix}-t">${esc(title)}</title><desc id="${prefix}-d">${esc(desc)}</desc>`,
     style,
     defs ? `<defs>${defs}</defs>` : "",
@@ -83,7 +91,7 @@ export function drawBracket(input: BracketLayout | readonly Matchup[] | BracketI
 
 // ---------------------------------------------------------------------------------------------- the plan
 
-function planBracket(layout: BracketLayout, o: DrawOptions, words: Words, size: Size, vertical: boolean, ctx: MarkContext): Plan {
+function planBracket(layout: BracketLayout, o: DrawOptions, v: Voice, size: Size, vertical: boolean, ctx: MarkContext): Plan {
   const pad = vertical ? 14 : 22;
   const showLabels = o.roundLabels ?? true;
   const poster = o.theme === "poster";
@@ -206,13 +214,13 @@ function planBracket(layout: BracketLayout, o: DrawOptions, words: Words, size: 
       const rect = { x: midX - finalW / 2, y: fy - finalH / 2, w: finalW, h: finalH };
       rects.set(layout.final.i, rect);
       boxes.push({ rect, tie: layout.ties[layout.final.i], order: layout.final.order, bye: null, final: true, champion: champ });
-      if (showLabels) texts.push(label(roundLabel(layout, layout.rounds, o.roundNames, words), midX, rect.y - 7, poster, "middle"));
-      if (champ) extras.push(...championBlock(layout.champion!, midX, rect.y - 22 - champH, champMark, trophyH, nameFont, o, words, ctx, poster));
+      if (showLabels) texts.push(label(v, roundLabel(layout, layout.rounds, o.roundNames, v), midX, rect.y - 7, "middle"));
+      if (champ) extras.push(...championBlock(layout.champion!, midX, rect.y - 22 - champH, champMark, trophyH, nameFont, o, v, ctx, poster));
       if (withThird) {
         const t3 = layout.ties[layout.third!];
         const r3 = { x: midX - finalW / 2, y: rect.y + rect.h + 14 + 18, w: finalW, h: boxH };
         rects.set(layout.third!, r3);
-        texts.push(label(words.thirdPlace, midX, r3.y - 6, poster, "middle"));
+        texts.push(label(v, v.words.thirdPlace, midX, r3.y - 6, "middle"));
         boxes.push({ rect: r3, tie: t3, order: [0, 1], bye: null, final: false, champion: false });
       }
     } else if (!halves) {
@@ -222,16 +230,16 @@ function planBracket(layout: BracketLayout, o: DrawOptions, words: Words, size: 
       if (fb && champ) {
         const cx = starts[k] + sizes[k] / 2;
         const fy = rects.get(fi!)!.y + S / 2;
-        extras.push(...championBlock(layout.champion!, cx, fy - champH / 2, champMark, trophyH, nameFont, o, words, ctx, poster));
+        extras.push(...championBlock(layout.champion!, cx, fy - champH / 2, champMark, trophyH, nameFont, o, v, ctx, poster));
       }
     }
     if (showLabels) {
       for (const c of layout.columns) {
-        const name = roundLabel(layout, c, o.roundNames, words);
+        const name = roundLabel(layout, c, o.roundNames, v);
         const ci = layout.columns.indexOf(c);
         const ks = halves ? [slotOfColumn("l", ci), slotOfColumn("r", ci)] : [ci];
         const used = layout.sides.length > 1 || !halves ? (halves ? [0, 1] : [0]) : [0];
-        ks.forEach((k, n) => { if (used.includes(n) && (!halves || n < layout.sides.length)) texts.push(label(name, starts[k] + D / 2, top - 9, poster, "middle", D + gapT * 0.8)); });
+        ks.forEach((k, n) => { if (used.includes(n) && (!halves || n < layout.sides.length)) texts.push(label(v, name, starts[k] + D / 2, top - 9, "middle", D + gapT * 0.8)); });
       }
     }
     if (hasGroups) {
@@ -254,8 +262,8 @@ function planBracket(layout: BracketLayout, o: DrawOptions, words: Words, size: 
       const xm = (x0 + x1) / 2;
       links.push(`<path class="tb-line" d="M${num(x0)} ${num(y0)}H${num(xm)}V${num(y1)}H${num(x1)}"${lineAttrs(o)}/>`);
     }
-    if (bottomThird) thirdAtFoot(layout, height - pad - extraH0 + 6, width / 2, ow, OTHER_H, words, poster, boxes, texts);
-    othersBlock(layout, others, height - pad - extraH0 + thirdBlock + 6, width, pad, ow, OTHER_H, words, poster, boxes, texts);
+    if (bottomThird) thirdAtFoot(layout, height - pad - extraH0 + 6, width / 2, ow, OTHER_H, v, boxes, texts);
+    othersBlock(layout, others, height - pad - extraH0 + thirdBlock + 6, width, pad, ow, OTHER_H, v, boxes, texts);
     texts.push(...headings(o, width, pad, poster));
     return { width, height, boxes, links, texts, extras, detail, vertical };
   }
@@ -293,20 +301,20 @@ function planBracket(layout: BracketLayout, o: DrawOptions, words: Words, size: 
   if (halves && layout.final) {
     const cy0 = topT + bandsPerSide * bandT;
     let y = cy0;
-    if (champ) extras.push(...championBlock(layout.champion!, midX, pad + titleH + 4, champMark, trophyH, nameFont, o, words, ctx, poster));
-    if (showLabels) { texts.push(label(roundLabel(layout, layout.rounds, o.roundNames, words), midX, y + 12, poster, "middle")); y += 16; }
+    if (champ) extras.push(...championBlock(layout.champion!, midX, pad + titleH + 4, champMark, trophyH, nameFont, o, v, ctx, poster));
+    if (showLabels) { texts.push(label(v, roundLabel(layout, layout.rounds, o.roundNames, v), midX, y + 12, "middle")); y += 16; }
     const rect = { x: midX - finalW / 2, y: y + 6, w: finalW, h: finalH };
     rects.set(layout.final.i, rect);
     boxes.push({ rect, tie: layout.ties[layout.final.i], order: layout.final.order, bye: null, final: true, champion: champ });
   } else if (!halves && champ && layout.finalIndex !== null) {
     const fr = rects.get(layout.finalIndex)!;
-    extras.push(...championBlock(layout.champion!, fr.x + fr.w / 2, fr.y + fr.h + 12, champMark, trophyH, nameFont, o, words, ctx, poster));
+    extras.push(...championBlock(layout.champion!, fr.x + fr.w / 2, fr.y + fr.h + 12, champMark, trophyH, nameFont, o, v, ctx, poster));
   }
   if (showLabels) {
     layout.columns.forEach((c, ci) => {
-      const name = roundLabel(layout, c, o.roundNames, words);
+      const name = roundLabel(layout, c, o.roundNames, v);
       const sides: ("l" | "r")[] = halves ? (layout.sides.length > 1 ? ["l", "r"] : ["l"]) : ["l"];
-      for (const sd of sides) texts.push(`<text class="tb-round tb-halo" x="${num(pad)}" y="${num(bandStart(sd, ci) - 8)}" font-size="11" font-weight="600" letter-spacing=".08em">${esc(poster ? name.toUpperCase() : name.toUpperCase())}</text>`);
+      for (const sd of sides) texts.push(`<text class="tb-round tb-halo" x="${num(pad)}" y="${num(bandStart(sd, ci) - 8)}" font-size="11" font-weight="600" letter-spacing=".08em">${esc(v.upper(name))}</text>`);
     });
   }
   if (hasGroups) {
@@ -327,8 +335,8 @@ function planBracket(layout: BracketLayout, o: DrawOptions, words: Words, size: 
     const ym = down ? y0 + gapT * 0.4 : y0 - gapT * 0.4;
     links.push(`<path class="tb-line" d="M${num(x0c)} ${num(y0)}V${num(ym)}H${num(x1c)}V${num(y1)}"${lineAttrs(o)}/>`);
   }
-  if (bottomThird) thirdAtFoot(layout, totalT - pad + 6, W0 / 2, Math.min(W0 - 2 * pad, 200), 52, words, poster, boxes, texts);
-  othersBlock(layout, others, totalT - pad + thirdBlock + 6, W0, pad, ow, OTHER_H, words, poster, boxes, texts);
+  if (bottomThird) thirdAtFoot(layout, totalT - pad + 6, W0 / 2, Math.min(W0 - 2 * pad, 200), 52, v, boxes, texts);
+  othersBlock(layout, others, totalT - pad + thirdBlock + 6, W0, pad, ow, OTHER_H, v, boxes, texts);
   texts.push(...headings(o, W0, pad, poster));
   return { width: W0, height, boxes, links, texts, extras, detail, vertical };
 }
@@ -340,10 +348,8 @@ function lineAttrs(o: DrawOptions): string {
   return o.theme === "none" ? ' fill="none" stroke="currentColor" stroke-opacity=".5"' : "";
 }
 
-function label(text: string, x: number, y: number, poster: boolean, anchor: "start" | "middle", maxWidth = 1e9): string {
-  void poster;
-  const up = text.toUpperCase();
-  return `<text class="tb-round" x="${num(x)}" y="${num(y)}" font-size="11" font-weight="600" letter-spacing=".08em" text-anchor="${anchor}">${esc(fit(up, 11 * 1.18, maxWidth))}</text>`;
+function label(v: Voice, text: string, x: number, y: number, anchor: "start" | "middle", maxWidth = 1e9): string {
+  return `<text class="tb-round" x="${num(x)}" y="${num(y)}" font-size="11" font-weight="600" letter-spacing=".08em" text-anchor="${anchor}">${esc(fit(v.upper(text), 11 * 1.18, maxWidth))}</text>`;
 }
 
 function headings(o: DrawOptions, width: number, pad: number, poster: boolean): string[] {
@@ -359,7 +365,7 @@ function headings(o: DrawOptions, width: number, pad: number, poster: boolean): 
 }
 
 /** The champion, centred on `cx`, its top at `top`: a trophy if there is one, a large mark, the name and the word. */
-function championBlock(team: Team, cx: number, top: number, mark: number, trophyH: number, nameFont: number, o: DrawOptions, words: Words, ctx: MarkContext, poster: boolean): string[] {
+function championBlock(team: Team, cx: number, top: number, mark: number, trophyH: number, nameFont: number, o: DrawOptions, v: Voice, ctx: MarkContext, poster: boolean): string[] {
   const out: string[] = [];
   let y = top;
   if (o.trophy && trophyH) {
@@ -374,7 +380,7 @@ function championBlock(team: Team, cx: number, top: number, mark: number, trophy
   if (ctx.shape !== "none") out.push(`<g class="tb-champ">${drawMark(team, cx, cy, mark, ctx)}</g>`);
   const nameY = cy + mark / 2 + 8 + nameFont * 0.8;
   out.push(`<text class="tb-name" x="${num(cx)}" y="${num(nameY)}" font-size="${num(nameFont)}" font-weight="800" text-anchor="middle">${esc(poster ? name.toUpperCase() : name)}</text>`);
-  out.push(`<text class="tb-champ-label" x="${num(cx)}" y="${num(nameY + 6 + 11)}" font-size="11" font-weight="700" letter-spacing=".16em" text-anchor="middle">${esc(words.champion.toUpperCase())}</text>`);
+  out.push(`<text class="tb-champ-label" x="${num(cx)}" y="${num(nameY + 6 + 11)}" font-size="11" font-weight="700" letter-spacing=".16em" text-anchor="middle">${esc(v.upper(v.words.champion))}</text>`);
   return out;
 }
 
@@ -389,11 +395,11 @@ function othersHeight(count: number, width: number, pad: number, ow: number, oh:
   return 26 + Math.ceil(count / cols) * (oh + 10) + 6;
 }
 
-function othersBlock(layout: BracketLayout, list: number[], y0: number, width: number, pad: number, ow: number, oh: number, words: Words, poster: boolean, boxes: Placed[], texts: string[]): void {
+function othersBlock(layout: BracketLayout, list: number[], y0: number, width: number, pad: number, ow: number, oh: number, v: Voice, boxes: Placed[], texts: string[]): void {
   if (!list.length) return;
   const cols = Math.max(1, Math.floor((width - 2 * pad + 10) / (ow + 10)));
   const x0 = pad + (width - 2 * pad - (Math.min(cols, list.length) * (ow + 10) - 10)) / 2;
-  texts.push(label(words.other, width / 2, y0 + 12, poster, "middle"));
+  texts.push(label(v, v.words.other, width / 2, y0 + 12, "middle"));
   list.forEach((i, n) => {
     const rect = { x: x0 + (n % cols) * (ow + 10), y: y0 + 24 + Math.floor(n / cols) * (oh + 10), w: ow, h: oh };
     boxes.push({ rect, tie: layout.ties[i], order: [0, 1], bye: null, final: false, champion: false });
@@ -401,14 +407,14 @@ function othersBlock(layout: BracketLayout, list: number[], y0: number, width: n
 }
 
 /** The third-place match with its label, centred on `cx`, its label at `y0`. */
-function thirdAtFoot(layout: BracketLayout, y0: number, cx: number, w: number, h: number, words: Words, poster: boolean, boxes: Placed[], texts: string[]): void {
-  texts.push(label(words.thirdPlace, cx, y0 + 12, poster, "middle"));
+function thirdAtFoot(layout: BracketLayout, y0: number, cx: number, w: number, h: number, v: Voice, boxes: Placed[], texts: string[]): void {
+  texts.push(label(v, v.words.thirdPlace, cx, y0 + 12, "middle"));
   boxes.push({ rect: { x: cx - w / 2, y: y0 + 18, w, h }, tie: layout.ties[layout.third!], order: [0, 1], bye: null, final: false, champion: false });
 }
 
 // ---------------------------------------------------------------------------------------------- one box
 
-function drawBox(p: Placed, plan: Plan, o: DrawOptions, words: Words, ctx: MarkContext): string {
+function drawBox(p: Placed, plan: Plan, o: DrawOptions, v: Voice, ctx: MarkContext): string {
   const { rect, tie } = p;
   const { x, y, w, h } = rect;
   const detail = plan.detail;
@@ -418,7 +424,7 @@ function drawBox(p: Placed, plan: Plan, o: DrawOptions, words: Words, ctx: MarkC
   const parts: string[] = [];
   parts.push(`<rect class="tb-box" x="${num(x)}" y="${num(y)}" width="${num(w)}" height="${num(h)}" rx="${num(Math.min(7, h / 4))}"${o.theme === "none" ? ' fill="none" stroke="currentColor" stroke-opacity=".4"' : ""}/>`);
   const r = tie.result;
-  const notes = noteParts(tie, words);
+  const notes = noteParts(tie, v);
   const noteH = detail !== "mark" && h >= 50 && notes.length ? 13 : 0;
   const rowH = (h - noteH) / 2;
   const rowsOrder = p.order;
@@ -445,17 +451,17 @@ function drawBox(p: Placed, plan: Plan, o: DrawOptions, words: Words, ctx: MarkC
       const rowParts: string[] = [];
       let tx = x + 6;
       if (o.markShape !== "none") { rowParts.push(drawMark(team, x + 6 + md / 2, cy, md, ctx)); tx = x + 6 + md + 5; }
-      const score = scoresOn && r.score ? String(r.score[k]) : "";
-      const pensText = scoresOn && r.pens ? `(${r.pens[k]})` : "";
+      const score = scoresOn && r.score ? v.number(r.score[k]) : "";
+      const pensText = scoresOn && r.pens ? `(${v.number(r.pens[k])})` : "";
       const bye = p.bye === k;
       const right = x + w - 6;
       const scoreW = score ? textWidth(score, font + 1) : 0;
       const pensW = pensText ? textWidth(pensText, font - 2) + 3 : 0;
-      const byeText = bye ? words.bye : "";
+      const byeText = bye ? v.words.bye : "";
       const byeW = byeText ? textWidth(byeText, Math.max(font - 2, 8)) : 0;
       const avail = right - tx - (scoreW + pensW) - (byeW ? byeW + 6 : 0) - 6;
-      const seed = seedsOn && team?.seed !== undefined ? `${team.seed} ` : "";
-      const nm = team ? (detail === "full" ? team.name : abbrOf(team, words)) : words.tbd;
+      const seed = seedsOn && team?.seed !== undefined ? `${v.number(team.seed)} ` : "";
+      const nm = team ? (detail === "full" ? team.name : abbrOf(team, v)) : v.words.tbd;
       const text = fit(`${seed}${nm}`, font, Math.max(avail, 8));
       rowParts.push(`<text class="tb-name${team ? "" : " tb-muted"}" x="${num(tx)}" y="${num(cy + font * 0.35)}" font-size="${num(font)}">${esc(text)}</text>`);
       if (score) rowParts.push(`<text class="tb-score" x="${num(right)}" y="${num(cy + (font + 1) * 0.35)}" font-size="${num(font + 1)}" text-anchor="end" font-variant-numeric="tabular-nums">${esc(score)}</text>`);
@@ -470,5 +476,5 @@ function drawBox(p: Placed, plan: Plan, o: DrawOptions, words: Words, ctx: MarkC
     }
   }
   const cls2 = `tb-tie${p.final ? " tb-final" : ""}${p.champion ? " tb-has-champ" : ""}`;
-  return `<g class="${cls2}"><title>${esc(describeTie(tie, words))}</title>${parts.join("")}</g>`;
+  return `<g class="${cls2}"><title>${esc(describeTie(tie, v))}</title>${parts.join("")}</g>`;
 }

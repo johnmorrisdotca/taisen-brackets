@@ -14,6 +14,12 @@ const CODE = {
   Algeria: "ALG", "Cape Verde": "CPV", Colombia: "COL", Ghana: "GHA", Italy: "ITA", Cuba: "CUB", Romania: "ROU", Hungary: "HUN", "Dutch East Indies": "DEI", Czechoslovakia: "TCH",
 };
 
+/** States that no longer exist have no region code, so their names in other languages are written here. */
+const HISTORIC = {
+  Czechoslovakia: { fr: "Tchécoslovaquie", ja: "チェコスロバキア", es: "Checoslovaquia", de: "Tschechoslowakei" },
+  "Dutch East Indies": { fr: "Indes orientales néerlandaises", ja: "オランダ領東インド", es: "Indias Orientales Neerlandesas", de: "Niederländisch-Indien" },
+};
+
 /** The clubs' short names and colours (a colour is only for the initials of a team with no logo). */
 const CLUB = {
   "Florida Panthers": ["FLA", "#c8102e"], "Tampa Bay Lightning": ["TBL", "#00205b"], "Boston Bruins": ["BOS", "#fcb514"], "Toronto Maple Leafs": ["TOR", "#00205b"],
@@ -35,7 +41,11 @@ export function build(T, flags = {}) {
     for (const row of rows) {
       for (const side of ["home", "away"]) {
         const id = row[`${side}_team_id`];
-        if (!teams.has(id)) teams.set(id, { id, name: row[side], abbr: CODE[row[side]], ...(flagged && flags[row[`${side}_flag`]] ? { mark: flags[row[`${side}_flag`]] } : {}) });
+        if (!teams.has(id)) {
+          const region = row[`${side}_flag`];
+          // Names in other languages come from Intl by the region code (`countryName`); a state with no code today is named here.
+          teams.set(id, { id, name: row[side], abbr: CODE[row[side]], ...(region ? { region } : {}), ...(HISTORIC[row[side]] ? { names: HISTORIC[row[side]] } : {}), ...(flagged && flags[region] ? { mark: flags[region] } : {}) });
+        }
       }
     }
     const games = rows.map((row) => ({

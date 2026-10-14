@@ -1,10 +1,9 @@
 export * from "./layout-entry.ts";
-export { drawBracket, describeBracket, SIZES } from "./render.ts";
+export { drawBracket, describeBracket, localizedLayout, SIZES } from "./render.ts";
 export { bracketTable } from "./table.ts";
 export type { TableOptions } from "./table.ts";
 export { THEMES } from "./theme.ts";
 export type { Palette } from "./theme.ts";
-export { WORDS } from "./words.ts";
 export { cleanSvg, safeUrl } from "./marks.ts";
 export { abbreviate } from "./text.ts";
 export { VERSION } from "./version.ts";

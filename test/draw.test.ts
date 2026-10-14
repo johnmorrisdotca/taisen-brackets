@@ -113,7 +113,7 @@ test("the winner is highlighted, the loser quiet, and scores, pens and notes are
   const svg = T.drawBracket(wc2022);
   assert.ok(count(svg, 'class="tb-won"') >= 15);
   assert.ok(count(svg, 'class="tb-lost"') >= 15);
-  assert.match(svg, /Argentina 3, France 3 \(a\.e\.t\., pens 4-2\)\. Winner: Argentina/);
+  assert.match(svg, /Argentina 3, France 3 \(after extra time, 4–2 on penalties\)\. Winner: Argentina/);
   assert.match(svg, /\(4\)/);
   const plain = T.drawBracket(wc2022, { winnerHighlight: false, scores: false });
   assert.ok(!/class="tb-won"/.test(plain));
@@ -216,10 +216,10 @@ test("the table lists every tie, with the winner in bold, and describes the brac
   assert.equal(wellFormed(html), null);
   assert.match(html, /<caption>16 teams, 4 rounds<\/caption>/);
   assert.equal(count(html, "<tr>"), 17, "a header row and a row for each of 16 ties");
-  assert.match(html, /<th scope="row">Round of 16<\/th><td><strong>Netherlands<\/strong><\/td><td>3–1<\/td><td>United States<\/td>/);
+  assert.match(html, /<th scope="row">Round of 16<\/th><td>Dec 3, 2022<\/td><td><strong>Netherlands<\/strong><\/td><td>3–1<\/td><td>United States<\/td>/);
   assert.match(html, /<th scope="row">Third place<\/th>/);
-  assert.match(html, /a\.e\.t\., pens 4–2/);
-  assert.equal(T.describeBracket(wc2022), "16 teams, 4 rounds. Final: Argentina 3, France 3 (a.e.t., pens 4-2). Winner: Argentina. Champion: Argentina.");
+  assert.match(html, /after extra time, 4–2 on penalties/);
+  assert.equal(T.describeBracket(wc2022), "16 teams, 4 rounds. Final: Argentina 3, France 3 (after extra time, 4–2 on penalties). Winner: Argentina. Champion: Argentina.");
   assert.match(T.bracketTable(nhl2024, { caption: "NHL", roundNames: T.playoffFormat("nhl", 2024)! }), /Stanley Cup Final/);
 });
 

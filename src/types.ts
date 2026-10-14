@@ -23,6 +23,10 @@ export interface Team {
   group?: string;
   /** A colour for the team's initials when it has no mark, any CSS colour. */
   color?: string;
+  /** The name in other languages, by locale code: `{ fr: "Allemagne", ja: "ドイツ" }`. The language of a drawing picks its own, else `name`. */
+  names?: Readonly<Record<string, string>>;
+  /** An ISO 3166 region code (`DE`), for `countryName` and a `teamName` that uses it. */
+  region?: string;
 }
 
 /** One game of a tie: a match of a knockout, a game of a series, a leg of an aggregate, a replay. */
@@ -91,6 +95,8 @@ export interface Matchup {
   pens?: readonly [number, number];
   /** The game with no `games` list went to extra time. */
   extraTime?: boolean;
+  /** The tie was settled without a game (a side withdrew): the note says so. */
+  walkover?: boolean;
   /** This is the third-place match: it leads nowhere and is drawn apart. */
   third?: boolean;
   note?: string;
@@ -128,6 +134,7 @@ export interface Tie {
   date: string;
   no: number | null;
   third: boolean;
+  walkover: boolean;
   note: string | null;
 }
 
@@ -203,37 +210,73 @@ export interface LayoutOptions {
   groupOrder?: readonly string[];
 }
 
-/** The words a drawing and a table use. Every one can be replaced (`words`). */
+/** The words a drawing and a table use, in one language. Every one can be replaced (`words`), and a language can be added (`defineLocale`). Phrases take `{name}`-style holes. */
 export interface Words {
+  /** A side not known yet. */
   tbd: string;
+  /** The word beside the score of a side that had a bye. */
   bye: string;
+  /** A tie decided without a game (`Matchup.walkover`). */
+  walkover: string;
+  /** The label under the champion. */
   champion: string;
   thirdPlace: string;
   /** The heading over ties that lead nowhere near the final. */
   other: string;
-  final: string;
+  /** Short notes in a box: after extra time, penalties, aggregate, replay. */
   aet: string;
   pens: string;
   aggregate: string;
   replay: string;
-  /** `{n}` is the number of games: "in 7". */
+  /** The same in a sentence (tooltip, table, description). */
+  aetLong: string;
+  /** `{a}`, `{b}`: the shoot-out's score. */
+  pensScore: string;
+  aggregateLong: string;
+  /** `{n}`: "in 7" (games). */
   inGames: string;
-  /** `{n}`: "Best of 7". */
+  /** `{n}` games, `{w}` wins that settle it: "best of 7". */
   bestOf: string;
-  /** `{n}`: "Round 3" for a round with no name. */
+  /** `{n}`: a round with no name. */
   round: string;
-  winner: string;
-  versus: string;
-  /** The table's column titles. */
-  columnRound: string;
-  columnTie: string;
-  columnResult: string;
-  columnNote: string;
+  /** `{n}`: "Round of 64", for a round the language has no word of its own for. */
+  roundOf: string;
+  /** `{a}`, `{b}`: an undecided tie. */
+  tieVs: string;
+  /** `{a}`, `{b}` the names, `{sa}`, `{sb}` the scores. */
+  tieScore: string;
+  /** `{a}`, `{b}`: a score as written ("3–1"). */
+  scoreText: string;
+  /** `{name}`. */
+  winnerIs: string;
+  championIs: string;
+  /** `{round}`, `{tie}`. */
+  finalLine: string;
   /** `{n}` teams, `{r}` rounds. */
   summary: string;
-  /** The same for a bracket of one round. */
   summaryOne: string;
+  /** Joins the sentences of a description, and ends it. */
+  sep: string;
+  end: string;
+  /** `{notes}`: the notes after a tie in a sentence; and what joins several notes. */
+  note: string;
+  noteJoin: string;
+  columnRound: string;
+  columnTie: string;
+  columnNote: string;
+  columnDate: string;
+  /** The `<title>` of a drawing with no `title` option. */
   title: string;
+}
+
+/** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */
+export interface Locale {
+  /** The code (`fr`) and the tag (`fr-CA`, `ja-JP`) used for numbers, dates and capitals. */
+  code: string;
+  tag: string;
+  words: Words;
+  /** Round names by their English name: `{ "Round of 16": "Huitièmes de finale" }`. A round with no entry keeps its name (or `roundOf`). */
+  rounds: Readonly<Record<string, string>>;
 }
 
 export type ThemeName = "auto" | "light" | "dark" | "poster" | "none";
@@ -280,8 +323,12 @@ export interface DrawOptions extends LayoutOptions {
   thirdPlace?: "below" | "hide";
   /** Highlight the side that went through. Default true. */
   winnerHighlight?: boolean;
-  /** The words, in another language or your own. */
+  /** The language: `en` (the default), `fr`, `ja`, `es`, `de`, or a `Locale` you made with `defineLocale`. Sets the words, the round names, the number and date formats and the `lang` of the drawing. */
+  locale?: string | Locale;
+  /** Replace any of the language's words. */
   words?: Partial<Words>;
+  /** The name to draw for a team in this language: `undefined` keeps `Team.names[locale]` or `Team.name`. `countryName(team.region, locale)` makes a country's name from Intl, with no list of your own. */
+  teamName?: (team: Team, locale: Locale) => string | undefined;
   /** Prefix for the drawing's ids. Default: a hash of the bracket and the options. */
   id?: string;
   /** Extra class names for the root `<svg>`. */
