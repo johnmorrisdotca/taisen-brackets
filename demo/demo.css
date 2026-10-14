@@ -1,0 +1,22 @@
+/* Taisen's own part of the demo: the stage, the gallery and the code. family.css is the shared look. */
+.controls { padding-bottom: 10px; }
+.note { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--rule); padding-top: 12px; }
+.stage { border-top: 1px solid var(--rule); padding: 12px; overflow-x: auto; display: grid; justify-items: center; min-height: 240px; }
+.stage svg { display: block; width: 100%; height: auto; max-width: 1200px; border-radius: 10px; }
+.stage[data-size="phone"] svg { max-width: 390px; }
+.stage[data-size="square"] svg { max-width: 820px; }
+.gallery { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.gallery button { display: grid; gap: 8px; width: 100%; padding: 8px; text-align: left; background: var(--surface); border: 1px solid var(--rule); border-radius: 12px; min-height: 44px; }
+.gallery button:hover, .gallery button[aria-current="true"] { border-color: var(--ink); }
+.gallery .shot { border-radius: 8px; overflow: hidden; display: block; }
+.gallery .shot svg { width: 100%; height: auto; display: block; }
+.gallery b { font-size: .9rem; }
+details { margin: 10px 0; border: 1px solid var(--rule); border-radius: 12px; background: var(--surface); }
+summary { cursor: pointer; padding: 12px 14px; min-height: 44px; font-weight: 600; }
+details > div, details > pre { margin: 0; padding: 0 14px 14px; }
+pre { overflow-x: auto; font-family: var(--mono); font-size: .8rem; }
+.table-wrap { overflow-x: auto; }
+.table-wrap table { border-collapse: collapse; width: 100%; font-size: .85rem; }
+.table-wrap caption { text-align: left; color: var(--muted); padding-bottom: 6px; }
+.table-wrap th, .table-wrap td { border-bottom: 1px solid var(--rule); padding: 6px 8px; text-align: left; }
+.table-wrap td:nth-child(3) { text-align: center; font-variant-numeric: tabular-nums; }

@@ -1,0 +1,72 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Taisen 対戦: knockout brackets as SVG</title>
+  <meta name="description" content="Knockout brackets as SVG strings: halves that meet at the final, series, two legs, replays, byes, a third-place match, light, dark and a gold-on-navy poster look. Zero dependencies." />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='20' fill='%230a1130'/%3E%3Cpath d='M20 25h22v18H58M20 75h22V57H58M58 43v14M58 50h22' fill='none' stroke='%23f0c64a' stroke-width='6' stroke-linejoin='round'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="family.css" />
+  <link rel="stylesheet" href="demo.css" />
+</head>
+<body>
+<main>
+  <header>
+    <div class="intro">
+      <h1>Taisen <span>対戦</span></h1>
+      <p>Knockout brackets as SVG, from a list of ties.</p>
+      <p class="name">Taisen (対戦, たいせん) is Japanese for a matchup: two sides facing each other.</p>
+    </div>
+    <nav aria-label="Links">
+      <a href="https://github.com/johnmorrisdotca/taisen-brackets">GitHub</a>
+      <a href="https://www.npmjs.com/package/@johnmorrisdotca/taisen-brackets">npm</a>
+    </nav>
+  </header>
+
+  <section class="fam-panels" aria-label="Playground">
+    <div class="fam-panel controls">
+      <div class="fam-row"><span class="fam-label">Example</span><div class="fam-seg" role="group" aria-label="Example" id="example" data-testid="example"></div></div>
+      <div class="fam-row"><span class="fam-label">Size</span>
+        <div class="fam-seg" role="group" aria-label="Size" id="size" data-testid="size">
+          <button type="button" data-value="auto">Auto</button><button type="button" data-value="wide">Wide</button><button type="button" data-value="square">Square</button><button type="button" data-value="phone">Phone</button>
+        </div></div>
+      <div class="fam-row"><span class="fam-label">Look</span>
+        <div class="fam-seg" role="group" aria-label="Look" id="theme" data-testid="theme">
+          <button type="button" data-value="auto">Auto</button><button type="button" data-value="light">Light</button><button type="button" data-value="dark">Dark</button><button type="button" data-value="poster">Poster</button>
+        </div></div>
+      <div class="fam-row"><span class="fam-label">Shape</span>
+        <div class="fam-seg" role="group" aria-label="Shape" id="shape" data-testid="shape">
+          <button type="button" data-value="auto">Halves</button><button type="button" data-value="ltr">Left to right</button>
+        </div></div>
+      <div class="fam-row"><span class="fam-label">Show</span>
+        <div class="fam-actions" id="toggles">
+          <button type="button" class="fam-chip" data-toggle="scores" aria-pressed="true">Scores</button>
+          <button type="button" class="fam-chip" data-toggle="seeds" aria-pressed="false">Seeds</button>
+          <button type="button" class="fam-chip" data-toggle="champion" aria-pressed="true">Champion</button>
+          <button type="button" class="fam-chip" data-toggle="third" aria-pressed="true">Third place</button>
+          <button type="button" class="fam-chip" data-toggle="labels" aria-pressed="true">Round names</button>
+        </div></div>
+    </div>
+    <p class="fam-panel note" id="note"></p>
+    <div class="stage" id="stage" data-testid="stage" role="region" aria-label="The bracket"></div>
+  </section>
+
+  <section class="more" aria-labelledby="gallery-h">
+    <h2 id="gallery-h">Gallery</h2>
+    <p>Every example at its default. Tap one to open it above.</p>
+    <ul class="gallery" id="gallery"></ul>
+  </section>
+
+  <section class="more">
+    <details id="table-box"><summary>The same bracket as a table (for a screen reader, a search engine, or print)</summary><div id="table" class="table-wrap"></div></details>
+    <details id="code-box"><summary>The call that draws it</summary><pre id="code"><code></code></pre></details>
+  </section>
+
+  <footer>
+    <span>MIT. <code>npm install @johnmorrisdotca/taisen-brackets</code></span>
+    <span>Flags in the demo are drawn from <a href="https://github.com/johnmorrisdotca/hata">Hata</a>; the source and licence of each is in its manifest, and the codes used are listed in <a href="https://github.com/johnmorrisdotca/taisen-brackets/blob/main/NOTICE.md">NOTICE.md</a>.</span>
+  </footer>
+</main>
+<script type="module" src="demo.js"></script>
+</body>
+</html>
