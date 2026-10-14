@@ -1,7 +1,7 @@
 <h1 align="center">Taisen Brackets <sub>対戦</sub></h1>
 
 <p align="center"><strong>Knockout brackets as SVG, from a list of ties.</strong><br>
-Give it the games, series, two-legged ties or replays of a tournament and it works out the rounds, the halves, the byes and who feeds whom, then draws the bracket: two halves that meet at the final, or one tree left to right, wide, square or tall for a phone, in light, dark or a gold-on-navy poster look, with each team's logo or round flag, the champion in the centre, and a table for readers the drawing does not serve. NHL, NBA, MLB, NFL, CFL and World Cup formats by era. One function, no dependencies.</p>
+Give it the games, series, two-legged ties or replays of a tournament and it works out the rounds, the halves, the byes and who feeds whom, then draws the bracket: two halves that meet at the final, or one tree left to right, wide, square or tall for a phone, in light, dark or a gold-on-navy poster look, with each team's logo or round flag, the champion in the centre, and a table for readers the drawing does not serve. NHL, NBA, MLB, NFL, CFL and World Cup formats by era, in English, French, Japanese, Spanish and German. One function, no dependencies.</p>
 
 <p align="center">
   <a href="https://github.com/johnmorrisdotca/taisen-brackets/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/johnmorrisdotca/taisen-brackets/actions/workflows/ci.yml/badge.svg"></a>
@@ -28,6 +28,28 @@ Give it the games, series, two-legged ties or replays of a tournament and it wor
 <td align="center" valign="top">
 <img alt="The 2022 World Cup on a phone: the champion at the top, then the rounds as rows, the first round at the top and at the bottom, the final in the middle, and the third-place match at the foot." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/phone-light.png" width="190"><br><em>On a phone the rounds are rows.</em>
 </td>
+</tr>
+</table>
+
+## Every sport
+
+One layout draws them all, each from real results: the demo has a picker for the sport and, under it, the editions. [docs/formats.md](./docs/formats.md) has the rounds by era.
+
+<table>
+<tr>
+<td align="center" valign="top"><img alt="The 2024 NHL playoffs: Western and Eastern conferences, best-of-seven series, Florida Panthers as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nhl-desk-light.png" width="360"><br><em>NHL 2024, series</em></td>
+<td align="center" valign="top"><img alt="The 1984 Stanley Cup playoffs: the Campbell and Wales conferences, a best-of-five first round, Edmonton Oilers as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nhl1984-desk-light.png" width="360"><br><em>NHL 1984, an older era</em></td>
+<td align="center" valign="top"><img alt="The 2024 NBA playoffs: sixteen teams in two conferences, Boston Celtics as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nba-desk-light.png" width="360"><br><em>NBA 2024</em></td>
+</tr>
+<tr>
+<td align="center" valign="top"><img alt="The 2022 MLB postseason: byes for the top two seeds of each league, Houston Astros as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/byes-desk-light.png" width="360"><br><em>MLB 2022, byes</em></td>
+<td align="center" valign="top"><img alt="The playoffs of the 2024 NFL season: single games, byes for the top seed of each conference, the Super Bowl at the centre, Philadelphia Eagles as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nfl-desk-light.png" width="360"><br><em>NFL 2024 season, the Super Bowl</em></td>
+<td align="center" valign="top"><img alt="The 2024 CFL playoffs: division semi-finals and finals, byes, the Grey Cup at the centre, Toronto Argonauts as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/cfl-desk-light.png" width="360"><br><em>CFL 2024, the Grey Cup</em></td>
+</tr>
+<tr>
+<td align="center" valign="top"><img alt="The 2022 World Cup knockout stage." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-light.png" width="360"><br><em>World Cup 2022</em></td>
+<td align="center" valign="top"><img alt="The 1938 World Cup: replays." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/replays-desk-light.png" width="360"><br><em>World Cup 1938, replays</em></td>
+<td align="center" valign="top"><img alt="The 2026 World Cup as a flags-only poster, in Japanese." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/poster-desk-ja.png" width="360"><br><em>World Cup 2026 poster, in Japanese</em></td>
 </tr>
 </table>
 
@@ -69,6 +91,7 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **The champion in the centre**, with a slot for your trophy.
 - **Accessible**: `role="img"` with a title and a description, a tooltip sentence on every tie, and `bracketTable`.
 - **Formats by era**: NHL, NBA, MLB, NFL, CFL and FIFA World Cup round names, series lengths and byes.
+- **Five languages**: English, French, Japanese, Spanish and German, for every word the drawing, the tooltips, the description and the table write, with the football terms of each language; countries named by `Intl` from their ISO code; numbers and dates by `Intl`. Add a language of your own.
 - **Deterministic**: no clock, no random number, no counter; the same input gives the same string, and ids come from a hash of the input.
 - **No dependencies**, ESM with types, about 40 kB packed.
 
@@ -274,7 +297,7 @@ console.log(bracketTable(bracket).startsWith("<table")); // true
 
 ### Your own words
 
-Every word the package writes is in `WORDS`; pass `words` to replace any: `{ champion: "Vainqueur", thirdPlace: "Match pour la 3e place", tbd: "À déterminer" }`. Round names come from `roundNames`: a list, or a format from `playoffFormat`.
+Every word the package writes is in `WORDS` (English; see Languages for the others); pass `words` to replace any: `{ champion: "Vainqueur", thirdPlace: "Match pour la 3e place", tbd: "À déterminer" }`. Round names come from `roundNames`: a list, or a format from `playoffFormat`.
 
 ### In React, Vue and the rest
 
@@ -291,17 +314,55 @@ The string is built from your data, with every name escaped; do not put untruste
 
 Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part from `/layout`, the formats from `/presets`. The types are in the package; each function's doc comment has its details.
 
-- `drawBracket(input, options?)`: the SVG string. `input` is a list of matchups, `{ matchups, teams }` or a layout. Options: `size`, `orientation`, `shape`, `detail`, `theme`, `background`, `title`, `subtitle`, `roundNames`, `roundLabels`, `scores`, `seeds`, `markShape`, `champion`, `trophy`, `thirdPlace`, `winnerHighlight`, `words`, `groupOrder`, `id`, `className`.
+- `drawBracket(input, options?)`: the SVG string. `input` is a list of matchups, `{ matchups, teams }` or a layout. Options: `size`, `orientation`, `shape`, `detail`, `theme`, `background`, `title`, `subtitle`, `roundNames`, `roundLabels`, `scores`, `seeds`, `markShape`, `champion`, `trophy`, `thirdPlace`, `winnerHighlight`, `locale`, `words`, `teamName`, `groupOrder`, `id`, `className`.
 - `layoutBracket(input, options?)`: the rounds, halves, rows, byes and results, without drawing. `shape: "ltr"` and `groupOrder` are its options.
 - `bracketTable(input, options?)`: the HTML table.
 - `describeBracket(input, options?)`: the sentence a screen reader gets.
 - `singleElimination(teams, options?)`, `advanceWinners(matchups)`, `standardSeeds(size)`: brackets for any number of teams.
 - `matchupsFromGames(games, options)`: matchups from a flat list of games.
-- `resolveMatchup`, `collectTeams`, `describeTie`, `noteParts`: one tie's result, the teams of a bracket, a tie in a sentence.
+- `resolveMatchup`, `collectTeams`, `describeTie`, `noteParts`, `noteLong`: one tie's result, the teams of a bracket, a tie in a sentence.
 - `playoffFormat(league, year)`, `playoffEras(league)`, `LEAGUES`: the formats by era (`nhl`, `nba`, `mlb`, `nfl`, `cfl`, `worldcup`).
 - `roundName(remaining)`, `roundNamesFor(count)`, `roundLabel(layout, round, names, words)`: round names.
-- `SIZES`, `THEMES`, `WORDS`, `VERSION`: the sizes, the looks' colours, the words, the version.
+- `LOCALES`, `LOCALE_CODES`, `defineLocale`, `localeOf`, `voiceOf`, `countryName`: the languages (see Languages), a language of your own, the formats and the names of countries from `Intl`. `localizedLayout(layout, voice)` is a layout with the team names in a language.
+- `SIZES`, `THEMES`, `WORDS`, `VERSION`: the sizes, the looks' colours, the English words, the version.
 - `cleanSvg(markup)`, `safeUrl(url)`, `abbreviate(name)`: the rules for marks, and the short name made from a name.
+
+## Languages
+
+A World Cup is read in many languages, so every text the package writes (the round names, the notes, the champion's label, the table's headers, the accessible description, the numbers and the dates) has a table of words in English, French, Japanese, Spanish and German. Pass `locale`:
+
+```js
+import { countryName, describeBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const teams = [{ id: "ARG", name: "Argentina", region: "AR" }, { id: "FRA", name: "France", region: "FR" }];
+const matchups = [{ sides: ["ARG", "FRA"], score: [3, 3], extraTime: true, pens: [4, 2], date: "2022-12-18" }];
+// A country's name in the language comes from Intl, by its ISO code: no list of names to write.
+const teamName = (team, locale) => team.region && countryName(team.region, locale);
+
+for (const locale of ["en", "fr", "ja", "es", "de"]) console.log(describeBracket({ matchups, teams }, { locale, teamName }));
+// 2 teams, 1 round. Final: Argentina 3, France 3 (after extra time, 4–2 on penalties). Winner: Argentina. Champion: Argentina.
+// 2 équipes, 1 tour. Finale : Argentine 3, France 3 (après prolongation, 4–2 aux tirs au but). Vainqueur : Argentine. Champion : Argentine.
+// 2チーム、1ラウンド。決勝：アルゼンチン 3–3 フランス（延長戦、PK戦 4–2）。勝者：アルゼンチン。優勝：アルゼンチン。
+// 2 equipos, 1 ronda. Final: Argentina 3, Francia 3 (tras la prórroga, 4–2 en los penales). Ganador: Argentina. Campeón: Argentina.
+// 2 Teams, 1 Runde. Finale: Argentinien 3, Frankreich 3 (nach Verlängerung, 4:2 im Elfmeterschießen). Sieger: Argentinien. Turniersieger: Argentinien.
+```
+
+<p align="center"><img alt="The same bracket, the World Cup of 2022 on a phone's layout, in English, French, Japanese, Spanish and German side by side: the rounds, the notes, the label under the champion and the names of the countries are each in their language." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/languages-wc2022.png" width="900"></p>
+
+- `locale` is `"en"` (the default), `"fr"`, `"ja"`, `"es"`, `"de"`, or a `Locale` you made with `defineLocale`. It sets the words, the names of the rounds, the `lang` of the `<svg>` and of the `<table>`, the digits and the dates (`Intl`), and capitals by the language's rules (not for Japanese). `LOCALES` holds the tables and `LOCALE_CODES` lists the codes.
+- **Round names** are the football terms of each language's Wikipedia article on the World Cup: *Huitièmes de finale*, *Octavos de final*, *Achtelfinale*, ラウンド16; the leagues' rounds (NHL, NBA, MLB, NFL, CFL) are the generic words translated, and a league's own name is kept in the form the language uses (*Finale de la Coupe Stanley*, *Stanley-Cup-Finale*, *Coupe Grey*, *Super Bowl*, スーパーボウル). [docs/languages.md](./docs/languages.md) lists every term, what it was checked against, and what still needs a native reader (Spanish and German).
+- **Team names**: a team can carry its names (`names: { fr: "Allemagne", ja: "ドイツ" }`), the option `teamName(team, locale)` can give one, and `countryName("DE", locale)` makes a country's name from `Intl.DisplayNames` (the home nations `GB-ENG`, `GB-SCT`, `GB-WLS` and `GB-NIR` too). A club keeps its name, and a team's short name (`NED`, `ARG`) stays the FIFA code in every language.
+- **`words`** still replaces any string of any language: `{ locale: "fr", words: { champion: "Vainqueur" } }`.
+- **A language of your own**: `defineLocale("nl", { words: { champion: "Kampioen" }, rounds: { "Quarter-finals": "Kwartfinales" } })` fills what you leave out from English; pass the result as `locale`.
+
+```js
+import { defineLocale, drawBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const dutch = defineLocale("nl", { words: { champion: "Kampioen" }, rounds: { Final: "Finale" } });
+const svg = drawBracket([{ sides: ["A", "B"], score: [2, 1] }], { locale: dutch });
+console.log(svg.includes("KAMPIOEN")); // true
+console.log(svg.includes('lang="nl"')); // true
+```
 
 ## Sports covered
 
@@ -317,7 +378,7 @@ Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part 
 | FIFA World Cup | every edition with a knockout, 1930 to 2026 (1950 had none) | Round of 32 (2026), Round of 16, Quarter-finals, Semi-finals, Final |
 | Any other | single elimination for any number of teams | Round of N … Final |
 
-Each era was checked against English Wikipedia (facts only; the articles are cited in [docs/formats.md](./docs/formats.md)). The year is the year the playoffs are played in: the NHL's 2024 is the 2023-24 season. A season did something of its own (a strike, a pandemic) has its own entry, and a later one is not covered until it is checked.
+Each era was checked against English Wikipedia (facts only; the articles are cited in [docs/formats.md](./docs/formats.md)). The year is the year the playoffs are played in, except for the NFL, whose year is its season's, so 2024 is the season whose playoffs were played in January and February 2025. A season did something of its own (a strike, a pandemic) has its own entry, and a later one is not covered until it is checked.
 
 ## Theming
 
@@ -335,7 +396,7 @@ The names are `bg`, `ink`, `muted`, `line`, `box`, `edge`, `win`, `gold`, `plain
 - Text is measured by an estimate from character classes, not a font file, so that the string is the same on every machine; a long name is cut with an ellipsis a few percent early or late.
 - A series with no `bestOf` and no winner is not decided, whatever the games won say.
 - On a phone the champion is at the top and the third-place match at the foot; in a wide bracket of two halves they are in the centre.
-- Names, round names and the words are English; pass `words` and `roundNames` for another language. Japanese words are on the roadmap.
+- The built-in languages are English, French, Japanese, Spanish and German; the Spanish and German words were checked against Wikipedia only and need a native reader (docs/languages.md). A club or a person is not translated, and a team's short name is the same in every language.
 
 ## Accessibility
 
@@ -348,7 +409,7 @@ Any current browser, and Node 22 or later. The package makes no network request 
 ## Roadmap
 
 - Double elimination, and round-robin groups beside a knockout.
-- Japanese words.
+- More languages (Portuguese, Italian, Korean, Chinese), and native review of the Spanish and German words.
 - A custom element and a React helper, as in the other packages of the family.
 - A PNG renderer (through an optional peer).
 

@@ -19,6 +19,7 @@ Bug reports and ideas go in the
 - **`docs/formats.md` is made from the data**: `node scripts/make-formats-doc.mjs` rewrites it from `src/presets.ts`. A format
   you add cites its source in the pull request and in `NOTICE.md`.
 - **The demo's results are read, not typed**: `SPXN_PUBLISHABLE_KEY=… node scripts/fetch-demo-data.mjs` rewrites `demo/data/` from spxn.com's public API, and `pnpm flags` the flags. The data's sources and terms are in `NOTICE.md`; the World Cup 1938 and 2022 file is CC BY-SA 4.0.
+- **`docs/languages.md` is made from the tables**: `node scripts/make-languages-doc.mjs` rewrites it from `src/locales.ts`. A word or a round name in a language cites what it was checked against (a Wikipedia article in that language), and a language needs a key for every word of English and a name for every round of every era (a test holds both).
 - **Option values and names are kebab case where they are words** (`"poster"`, `"ltr"`).
 - **Art and data are shipped only when their licence lets them be**, with the notice kept in `NOTICE.md`. No GPL or LGPL code.
   The demo's flags are made with `pnpm flags` from Hata, and the package ships none.
