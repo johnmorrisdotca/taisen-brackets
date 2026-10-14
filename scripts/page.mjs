@@ -6,7 +6,7 @@ import { readFileSync } from "node:fs";
 import { FAMILY_SCRIPT, familyFooter, familyHead, familyHeader, familyUnreviewed } from "./family-template.mjs";
 
 const id = "taisen-brackets";
-const TITLE = "Taisen 対戦: knockout brackets as SVG";
+const TITLE = "Taisen Brackets 対戦: knockout brackets as SVG";
 const DESCRIPTION = "Knockout brackets as SVG strings: halves that meet at the final, series, two legs, replays, byes, a third-place match, light, dark and a gold-on-navy poster look. Zero dependencies.";
 
 /** The words the shared header and footer say for this page, in both languages. The playground below them is English. */

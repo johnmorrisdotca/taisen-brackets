@@ -40,6 +40,34 @@ try {
   await shoot("byes-desk-light", "ex=mlb2022", { width: 1280, height: 900 });
   await shoot("replays-desk-light", "ex=wc1938", { width: 1280, height: 900 });
   await shoot("generic32-desk-light", "ex=generic32", { width: 1280, height: 900 });
+  await shoot("nba-desk-light", "ex=nba2024", { width: 1280, height: 900 });
+  await shoot("nfl-desk-light", "ex=nfl2024", { width: 1280, height: 900 });
+  await shoot("cfl-desk-light", "ex=cfl2024", { width: 1280, height: 900 });
+  await shoot("nhl1984-desk-light", "ex=nhl1984", { width: 1280, height: 900 });
+  await shoot("poster-desk-ja", "ex=poster&lang=ja", { width: 1280, height: 900 });
+  await shoot("hero-desk-fr", "ex=wc2022&lang=fr", { width: 1280, height: 900 });
+  await shoot("phone-ja", "ex=wc2022&lang=ja", { width: 390, height: 844, phone: true });
+  // The same bracket in all five languages, side by side: the World Cup of 2022 on a phone's layout, drawn by the package itself in the demo's page.
+  {
+    const context = await browser.newContext({ viewport: { width: 2000, height: 1200 }, deviceScaleFactor: 1.5, colorScheme: "light", reducedMotion: "reduce" });
+    const page = await context.newPage();
+    await page.goto(`http://127.0.0.1:${port}/?ex=wc2022`);
+    await page.waitForSelector("#stage svg");
+    await page.evaluate(async () => {
+      const T = await import("/dist/index.js");
+      const { examples } = await import("/examples.js");
+      const example = examples(T).find((e) => e.key === "wc2022");
+      const teamName = (team, locale) => (team.region ? T.countryName(team.region, locale) : undefined);
+      const names = { en: "English", fr: "Français", ja: "日本語", es: "Español", de: "Deutsch" };
+      const box = document.createElement("div");
+      box.id = "languages";
+      box.style.cssText = "display:flex;gap:14px;align-items:flex-start;padding:14px;background:#f4efe4;width:max-content;font:700 15px system-ui,sans-serif;color:#1f2320";
+      box.innerHTML = T.LOCALE_CODES.map((code) => `<figure style="margin:0;width:390px"><figcaption style="padding:0 0 8px">${names[code]}</figcaption>${T.drawBracket(example.data, { ...example.options, size: "phone", locale: code, teamName, id: `l-${code}`, title: example.titles?.[code] ?? example.options.title, background: false })}</figure>`).join("");
+      document.body.replaceChildren(box);
+    });
+    await (await page.$("#languages")).screenshot({ path: `${out}/languages-wc2022.png` });
+    await context.close();
+  }
   await browser.close();
   console.log(`pictures written to ${out}`);
 } finally {

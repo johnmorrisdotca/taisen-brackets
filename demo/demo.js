@@ -1,15 +1,20 @@
-// The playground: choose an example and how to draw it; the bracket, its table and the call that makes it are redrawn.
+// The playground: choose a sport, an example, a language and how to draw it; the bracket, its table and the call that makes it are redrawn.
 import * as T from "./dist/index.js";
-import { examples } from "./examples.js";
+import { examples, SPORTS } from "./examples.js";
 
 const ALL = examples(T);
 const $ = (id) => document.getElementById(id);
 const DEFAULTS = { size: "auto", theme: "auto", shape: "auto", scores: true, seeds: false, champion: true, third: true, labels: true };
+const LANG_KEY = "taisen-brackets.locale";
+
+const kept = () => { try { return localStorage.getItem(LANG_KEY); } catch { return null; } };
+const keep = (code) => { try { localStorage.setItem(LANG_KEY, code); } catch { /* Not remembered; still switched. */ } };
 
 const params = new URLSearchParams(location.search);
 const first = ALL.find((e) => e.key === params.get("ex")) ?? ALL[0];
 const own = (example) => ({ theme: example.theme ?? "auto", labels: example.options.roundLabels !== false });
-const state = { ex: first.key, ...DEFAULTS, ...own(first) };
+const lang = [params.get("lang"), kept()].find((code) => T.LOCALE_CODES.includes(code)) ?? "en";
+const state = { ex: first.key, lang, ...DEFAULTS, ...own(first) };
 for (const key of ["size", "theme", "shape"]) if (params.has(key)) state[key] = params.get(key);
 for (const key of ["scores", "seeds", "champion", "third", "labels"]) if (params.has(key)) state[key] = params.get(key) === "1";
 
@@ -17,9 +22,17 @@ const narrow = matchMedia("(max-width: 640px)");
 const current = () => ALL.find((e) => e.key === state.ex);
 const sizeNow = () => (state.size === "auto" ? (narrow.matches ? "phone" : "wide") : state.size);
 
+/** The names of countries in the chosen language, from Intl.DisplayNames by the ISO code a team carries: no list is written. Clubs have no code and keep their names. */
+const teamName = (team, locale) => (team.region ? T.countryName(team.region, locale) : undefined);
+
 /** The options for the drawing: the example's own, then what the controls say. */
 function optionsFor(example, size) {
-  const options = { ...example.options, size };
+  const options = { ...example.options, size, locale: state.lang, teamName };
+  // A title is the caller's text, so the demo gives each language its own for the World Cups, and a name that needs none (NHL 2024) for the leagues.
+  const title = example.titles?.[state.lang] ?? (state.lang === "en" || !example.neutral ? options.title : example.neutral);
+  if (title !== undefined) options.title = title;
+  const subtitle = example.subtitles?.[state.lang];
+  if (subtitle) options.subtitle = subtitle;
   if (state.theme !== "auto" || !example.theme) options.theme = state.theme;
   if (state.shape !== "auto") options.shape = state.shape;
   options.scores = state.scores;
@@ -30,47 +43,71 @@ function optionsFor(example, size) {
   return options;
 }
 
+const defaultsFor = (example) => ({ ...DEFAULTS, ...own(example) });
+
 function draw() {
   const example = current();
   const size = sizeNow();
   const options = optionsFor(example, size);
-  $("stage").innerHTML = T.drawBracket(example.data, options);
-  $("stage").dataset.size = size;
+  const stage = $("stage");
+  stage.innerHTML = T.drawBracket(example.data, options);
+  stage.dataset.size = size;
+  stage.dataset.lang = state.lang;
   $("note").textContent = example.note;
-  $("table").innerHTML = T.bracketTable(example.data, { roundNames: options.roundNames });
+  $("table").innerHTML = T.bracketTable(example.data, { roundNames: options.roundNames, locale: state.lang, teamName });
   const shown = { ...options };
+  delete shown.teamName;
   if (shown.roundNames) shown.roundNames = example.roundNamesCode ? `@@${example.roundNamesCode}@@` : shown.roundNames;
   const json = JSON.stringify(shown, null, 2).replace(/"@@(.*)@@"/, "$1");
-  $("code").firstChild.textContent = `import { drawBracket, playoffFormat } from "@johnmorrisdotca/taisen-brackets";\n\n// ${example.key}: { teams, matchups }\nconst svg = drawBracket(${example.key}, ${json});\n`;
-  for (const group of ["size", "theme", "shape"]) for (const b of $(group).querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.value === state[group]));
+  const withNames = json.replace(/\n}$/, ",\n  teamName: (team, locale) => team.region && countryName(team.region, locale)\n}");
+  $("code").firstChild.textContent = `import { drawBracket, countryName, playoffFormat } from "@johnmorrisdotca/taisen-brackets";\n\n// ${example.key}: { teams, matchups }; each national team carries its ISO code as \`region\`\nconst svg = drawBracket(${example.key}, ${withNames});\n`;
+  const sport = SPORTS.find((s) => s.key === example.sport);
+  for (const group of ["size", "theme", "shape", "lang"]) for (const b of $(group).querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.value === state[group === "lang" ? "lang" : group]));
   for (const b of document.querySelectorAll("[data-toggle]")) b.setAttribute("aria-pressed", String(state[b.dataset.toggle]));
-  for (const b of $("example").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.value === state.ex));
+  for (const b of $("sport").querySelectorAll("button")) b.setAttribute("aria-pressed", String(b.dataset.value === sport.key));
+  const siblings = ALL.filter((e) => e.sport === example.sport);
+  $("example").innerHTML = siblings.map((e) => `<button type="button" data-value="${e.key}" aria-pressed="${e.key === example.key}">${e.label}</button>`).join("");
+  $("example-row").hidden = siblings.length < 2;
   for (const b of $("gallery").querySelectorAll("button")) b.setAttribute("aria-current", String(b.dataset.value === state.ex));
   const next = new URLSearchParams();
   next.set("ex", state.ex);
-  for (const key of ["size", "theme", "shape"]) if (state[key] !== { ...DEFAULTS, ...own(example) }[key]) next.set(key, state[key]);
-  for (const key of ["scores", "seeds", "champion", "third", "labels"]) if (state[key] !== { ...DEFAULTS, ...own(example) }[key]) next.set(key, state[key] ? "1" : "0");
+  const base = defaultsFor(example);
+  for (const key of ["size", "theme", "shape"]) if (state[key] !== base[key]) next.set(key, state[key]);
+  for (const key of ["scores", "seeds", "champion", "third", "labels"]) if (state[key] !== base[key]) next.set(key, state[key] ? "1" : "0");
+  if (state.lang !== "en") next.set("lang", state.lang);
   history.replaceState(null, "", `?${next}`);
 }
 
 function choose(key) {
   const example = ALL.find((e) => e.key === key);
-  Object.assign(state, DEFAULTS, own(example), { ex: key });
+  Object.assign(state, defaultsFor(example), { ex: key });
   draw();
 }
 
-$("example").innerHTML = ALL.map((e) => `<button type="button" data-value="${e.key}">${e.label}</button>`).join("");
+function gallery() {
+  $("gallery").innerHTML = ALL.map((e) => {
+    const svg = T.drawBracket(e.data, { ...e.options, size: "wide", id: `g-${e.key}`, locale: state.lang, teamName, title: e.titles?.[state.lang] ?? (state.lang === "en" || !e.neutral ? e.options.title : e.neutral), subtitle: e.subtitles?.[state.lang] ?? e.options.subtitle });
+    return `<li><button type="button" data-value="${e.key}" aria-label="${e.title}"><span class="shot" aria-hidden="true">${svg.replace(' role="img"', "")}</span><b>${SPORTS.find((s) => s.key === e.sport).label}: ${e.label}</b></button></li>`;
+  }).join("");
+}
+
+$("sport").innerHTML = SPORTS.map((s) => `<button type="button" data-value="${s.key}">${s.label}</button>`).join("");
+$("sport").addEventListener("click", (event) => { const b = event.target.closest("button"); if (b) choose(ALL.find((e) => e.sport === b.dataset.value).key); });
 $("example").addEventListener("click", (event) => { const b = event.target.closest("button"); if (b) choose(b.dataset.value); });
 for (const group of ["size", "theme", "shape"]) {
   $(group).addEventListener("click", (event) => { const b = event.target.closest("button"); if (b) { state[group] = b.dataset.value; draw(); } });
 }
+$("lang").addEventListener("click", (event) => {
+  const b = event.target.closest("button");
+  if (!b) return;
+  state.lang = b.dataset.value;
+  keep(state.lang);
+  gallery();
+  draw();
+});
 $("toggles").addEventListener("click", (event) => { const b = event.target.closest("[data-toggle]"); if (b) { state[b.dataset.toggle] = !state[b.dataset.toggle]; draw(); } });
 narrow.addEventListener("change", () => { if (state.size === "auto") draw(); });
-
-$("gallery").innerHTML = ALL.map((e) => {
-  const svg = T.drawBracket(e.data, { ...e.options, size: "wide", id: `g-${e.key}` });
-  return `<li><button type="button" data-value="${e.key}" aria-label="Open ${e.title}"><span class="shot" aria-hidden="true">${svg.replace(' role="img"', "")}</span><b>${e.label}</b></button></li>`;
-}).join("");
 $("gallery").addEventListener("click", (event) => { const b = event.target.closest("button"); if (b) { choose(b.dataset.value); $("stage").scrollIntoView({ behavior: "smooth", block: "start" }); } });
 
+gallery();
 draw();
