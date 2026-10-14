@@ -1,7 +1,7 @@
 <h1 align="center">Taisen Brackets <sub>対戦</sub></h1>
 
 <p align="center"><strong>Knockout brackets as SVG, from a list of ties.</strong><br>
-Give it the games, series, two-legged ties or replays of a tournament and it works out the rounds, the halves, the byes and who feeds whom, then draws the bracket: two halves that meet at the final, or one tree left to right, wide, square or tall for a phone, in light, dark or a gold-on-navy poster look, with each team's logo or round flag, the champion in the centre, and a table for readers the drawing does not serve. NHL, NBA, MLB, NFL, CFL and World Cup formats by era, in English, French, Japanese, Spanish and German. One function, no dependencies.</p>
+Give it the games, series, two-legged ties or replays of a tournament and it works out the rounds, the halves, the byes and who feeds whom, then draws the bracket: two halves that meet at the final, or one tree left to right, wide, square or tall for a phone, in light, dark or a gold-on-navy poster look, with each team's logo or round flag, the champion in the centre, and a table for readers the drawing does not serve. NHL, NBA, MLB, NFL, CFL, MLS and World Cup formats by era, in English, French, Japanese, Spanish and German. One function, no dependencies.</p>
 
 <p align="center">
   <a href="https://github.com/johnmorrisdotca/taisen-brackets/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/johnmorrisdotca/taisen-brackets/actions/workflows/ci.yml/badge.svg"></a>
@@ -51,6 +51,11 @@ One layout draws them all, each from real results: the demo has a picker for the
 <td align="center" valign="top"><img alt="The 1938 World Cup: replays." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/replays-desk-light.png" width="360"><br><em>World Cup 1938, replays</em></td>
 <td align="center" valign="top"><img alt="The 2026 World Cup as a flags-only poster, in Japanese." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/poster-desk-ja.png" width="360"><br><em>World Cup 2026 poster, in Japanese</em></td>
 </tr>
+<tr>
+<td align="center" valign="top"><img alt="The 2024 MLS Cup Playoffs: a wild card match, a best-of-three round one, then single matches to the MLS Cup, LA Galaxy as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/mls-desk-light.png" width="360"><br><em>MLS 2024, best of three</em></td>
+<td></td>
+<td></td>
+</tr>
 </table>
 
 ## In 30 seconds
@@ -90,7 +95,7 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **Team marks you supply**: a logo address or inline SVG, drawn round or square; a team with none is its initials on a colour. Round flags from [Hata](https://github.com/johnmorrisdotca/hata) go in as they are.
 - **The champion in the centre**, with a slot for your trophy.
 - **Accessible**: `role="img"` with a title and a description, a tooltip sentence on every tie, and `bracketTable`.
-- **Formats by era**: NHL, NBA, MLB, NFL, CFL and FIFA World Cup round names, series lengths and byes.
+- **Formats by era**: NHL, NBA, MLB, NFL, CFL, MLS and FIFA World Cup round names, series lengths and byes.
 - **Five languages**: English, French, Japanese, Spanish and German, for every word the drawing, the tooltips, the description and the table write, with the football terms of each language; countries named by `Intl` from their ISO code; numbers and dates by `Intl`. Add a language of your own.
 - **Deterministic**: no clock, no random number, no counter; the same input gives the same string, and ids come from a hash of the input.
 - **No dependencies**, ESM with types, about 40 kB packed.
@@ -321,7 +326,7 @@ Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part 
 - `singleElimination(teams, options?)`, `advanceWinners(matchups)`, `standardSeeds(size)`: brackets for any number of teams.
 - `matchupsFromGames(games, options)`: matchups from a flat list of games.
 - `resolveMatchup`, `collectTeams`, `describeTie`, `noteParts`, `noteLong`: one tie's result, the teams of a bracket, a tie in a sentence.
-- `playoffFormat(league, year)`, `playoffEras(league)`, `LEAGUES`: the formats by era (`nhl`, `nba`, `mlb`, `nfl`, `cfl`, `worldcup`).
+- `playoffFormat(league, year)`, `playoffEras(league)`, `LEAGUES`: the formats by era (`nhl`, `nba`, `mlb`, `nfl`, `cfl`, `mls`, `worldcup`).
 - `roundName(remaining)`, `roundNamesFor(count)`, `roundLabel(layout, round, names, words)`: round names.
 - `LOCALES`, `LOCALE_CODES`, `defineLocale`, `localeOf`, `voiceOf`, `countryName`: the languages (see Languages), a language of your own, the formats and the names of countries from `Intl`. `localizedLayout(layout, voice)` is a layout with the team names in a language.
 - `SIZES`, `THEMES`, `WORDS`, `VERSION`: the sizes, the looks' colours, the English words, the version.
@@ -375,6 +380,7 @@ console.log(svg.includes('lang="nl"')); // true
 | MLB | 1969 on (no postseason in 1994) | Wild Card Series, Division Series, League Championship Series, World Series |
 | NFL | 1970 on, with 1982 as its own | Wild Card, Divisional, Conference Championship, Super Bowl |
 | CFL | 1996 on | Division Semi-Final, Division Final, Grey Cup |
+| MLS | 2023 on | Wild Card Round, Round One (best of three), Conference Semifinals, Conference Finals, MLS Cup |
 | FIFA World Cup | every edition with a knockout, 1930 to 2026 (1950 had none) | Round of 32 (2026), Round of 16, Quarter-finals, Semi-finals, Final |
 | Any other | single elimination for any number of teams | Round of N … Final |
 

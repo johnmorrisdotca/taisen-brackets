@@ -89,6 +89,9 @@ The English name is the key (a round the table does not name keeps its English n
 | Division Series | `Série de division` | `ディビジョンシリーズ` | `Serie divisional` | `Division Series` |
 | League Championship Series | `Série de championnat` | `リーグチャンピオンシップシリーズ` | `Serie de Campeonato de Liga` | `League Championship Series` |
 | World Series | `Série mondiale` | `ワールドシリーズ` | `Serie Mundial` | `World Series` |
+| Wild Card Round | `Tour de wild card` | `ワイルドカードラウンド` | `Ronda de comodín` | `Wild-Card-Runde` |
+| Round One | `Premier tour` | `1回戦` | `Primera ronda` | `Erste Runde` |
+| MLS Cup | `Coupe MLS` | `MLSカップ` | `Copa MLS` | `MLS Cup` |
 | Wild Card | `Wild card` | `ワイルドカード・プレーオフ` | `Comodín` | `Wild-Card-Runde` |
 | Divisional | `Ronde divisionnaire` | `ディビジョナル・プレーオフ` | `Ronda divisional` | `Divisional Round` |
 | Divisional Playoffs | `Ronde divisionnaire` | `ディビジョナル・プレーオフ` | `Ronda divisional` | `Divisional Round` |

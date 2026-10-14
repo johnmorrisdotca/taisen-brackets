@@ -6,6 +6,17 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.2.1] - 2026-10-14
+
+### Added
+
+- **MLS**: `playoffFormat("mls", year)` for the format since 2023 (18 teams, nine a conference; a wild card match, a best-of-three round one, then single matches to the MLS Cup; seven teams of each conference skip the wild card match), checked against English Wikipedia, with the round names in all five languages. A demo example, the 2024 MLS Cup Playoffs, read from spxn.com's MLS data (openfootball, CC0, checked against English Wikipedia, CC BY-SA 4.0), with a test that pins its champion (LA Galaxy) and final (2–1) and a picture.
+- `LayoutBox.byes`: every side that skipped the earlier rounds, which includes both sides of a later-round tie that no tie feeds (MLS's round one); each such side says "bye" beside its score.
+
+### Fixed
+
+- A series counts a game level at the end of play as won by the side that won the shoot-out (MLS's best-of-three round one), so its score and winner are right.
+
 ## [0.2.0] - 2026-10-14
 
 ### Added
@@ -41,7 +52,8 @@ First version.
 - A demo with real results read from spxn.com (the NHL 2024 playoffs, the World Cups of 2022, 1938 and 2026, the MLB 2022 postseason; sources and terms in NOTICE.md), two made-up examples (two-legged ties, a 32-team field) and a flags-only poster of the 2026 World Cup, in a playground that changes the size, look and shape.
 - Playoff formats checked against English Wikipedia, each era citing its articles (docs/formats.md). The year is the year the playoffs are played in.
 
-[Unreleased]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.2.1...HEAD
+[0.2.1]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.2.0...v0.2.1
 [0.2.0]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.1.1...v0.2.0
 [0.1.1]: https://github.com/johnmorrisdotca/taisen-brackets/compare/v0.1.0...v0.1.1
 [0.1.0]: https://github.com/johnmorrisdotca/taisen-brackets/releases/tag/v0.1.0

@@ -64,6 +64,12 @@ A round's `bestOf` is the length of the series, 1 for a single game. `byes` is t
 | --- | --- | --- | --- | --- | --- | --- |
 | 1996–2026 | 6 | 1 | West / East | Division Semi-Final (1), Division Final (1), Grey Cup (1) | division semi-finals and finals, with a crossover. Three teams of each division qualify and the first-placed team has a bye. A fourth-placed team with a better record than the third-placed team of the other division takes that place (the crossover, since 1996). The league has announced an eight-team format from 2027. | [1996 CFL season](https://en.wikipedia.org/wiki/1996_CFL_season), [2012 CFL season](https://en.wikipedia.org/wiki/2012_CFL_season), [2019 CFL season](https://en.wikipedia.org/wiki/2019_CFL_season), [CFL playoffs](https://en.wikipedia.org/wiki/CFL_playoffs) |
 
+## undefined
+
+| Years | Teams | Byes | Halves | Rounds (series length) | Note | Checked against |
+| --- | --- | --- | --- | --- | --- | --- |
+| 2023 on | 18 | 7 | Western / Eastern | Wild Card Round (1), Round One (3), Conference Semifinals (1), Conference Finals (1), MLS Cup (1) | 18 teams, nine a conference: a wild card match, then best of three. The teams ranked 8th and 9th of each conference play one wild card match (settled by a shoot-out if level); the other seven teams skip it. Round One is a best-of-three series (a game level after play is settled by a shoot-out, and counts as a win); the rest are single matches. Earlier seasons had other formats and are not covered. | [MLS Cup Playoffs](https://en.wikipedia.org/wiki/MLS_Cup_Playoffs), [2024 MLS Cup Playoffs](https://en.wikipedia.org/wiki/2024_MLS_Cup_Playoffs) |
+
 ## FIFA World Cup
 
 | Years | Teams | Byes | Halves | Rounds (series length) | Note | Checked against |
