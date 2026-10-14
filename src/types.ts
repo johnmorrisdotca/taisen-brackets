@@ -231,6 +231,8 @@ export interface Words {
   columnNote: string;
   /** `{n}` teams, `{r}` rounds. */
   summary: string;
+  /** The same for a bracket of one round. */
+  summaryOne: string;
   title: string;
 }
 

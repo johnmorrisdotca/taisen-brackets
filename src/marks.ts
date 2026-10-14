@@ -37,6 +37,8 @@ export function safeUrl(url: string): boolean {
 export interface MarkContext {
   /** Collects the radii that need a round clip; the drawing writes `<clipPath>` for each. */
   radii: Set<number>;
+  /** Inline SVG marks, each written once as a `<symbol>` and used wherever the team appears. Keyed by the markup. */
+  symbols: Map<string, { id: string; viewBox: string; inner: string }>;
   prefix: string;
   shape: "round" | "square" | "none";
 }
@@ -61,7 +63,11 @@ export function drawMark(team: Team | null, cx: number, cy: number, size: number
   if (mark) {
     if (mark.startsWith("<")) {
       const svg = cleanSvg(mark);
-      if (svg) return `${wrapOpen}<svg x="${num(ox)}" y="${num(oy)}" width="${num(size)}" height="${num(size)}" viewBox="${esc(svg.viewBox)}" preserveAspectRatio="xMidYMid slice">${svg.inner}</svg></g>${ring}`;
+      if (svg) {
+        let symbol = ctx.symbols.get(mark);
+        if (!symbol) { symbol = { id: `${ctx.prefix}-m${ctx.symbols.size + 1}`, ...svg }; ctx.symbols.set(mark, symbol); }
+        return `${wrapOpen}<use href="#${symbol.id}" x="${num(ox)}" y="${num(oy)}" width="${num(size)}" height="${num(size)}"/></g>${ring}`;
+      }
     } else if (safeUrl(mark)) {
       return `${wrapOpen}<image href="${esc(mark)}" x="${num(ox)}" y="${num(oy)}" width="${num(size)}" height="${num(size)}" preserveAspectRatio="xMidYMid slice"/></g>${ring}`;
     }

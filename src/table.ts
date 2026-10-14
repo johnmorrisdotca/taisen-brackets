@@ -21,7 +21,7 @@ export interface TableOptions {
 export function bracketTable(input: BracketLayout | readonly Matchup[] | BracketInput, options: TableOptions = {}): string {
   const layout = "ties" in (input as object) && "rounds" in (input as object) ? (input as BracketLayout) : layoutBracket(input as readonly Matchup[] | BracketInput);
   const words = wordsWith(options.words);
-  const caption = options.caption ?? fill(words.summary, { n: layout.teams.length, r: layout.rounds });
+  const caption = options.caption ?? fill(layout.rounds === 1 ? words.summaryOne : words.summary, { n: layout.teams.length, r: layout.rounds });
   const order = layout.ties
     .filter((t) => t.round > 0 || layout.robin.includes(t.index))
     .sort((a, b) => Number(a.third) - Number(b.third) || a.round - b.round || (a.date < b.date ? -1 : a.date > b.date ? 1 : a.index - b.index));

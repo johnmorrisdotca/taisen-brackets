@@ -15,7 +15,7 @@ export interface Palette {
 
 /** The looks. Every colour is the fallback for a custom property, so a page can restyle a drawing with `--tb-ink: …` and nothing else. */
 export const THEMES: Readonly<Record<"light" | "dark" | "poster", Palette>> = Object.freeze({
-  light: { bg: "#f4efe4", ink: "#1f2320", muted: "#6b6f68", line: "#8d9087", box: "#fbf8f1", edge: "#cfc7b3", win: "#b5452c", gold: "#b58a14", plain: "#d9d3c2" },
+  light: { bg: "#f4efe4", ink: "#1f2320", muted: "#62665f", line: "#8d9087", box: "#fbf8f1", edge: "#cfc7b3", win: "#b5452c", gold: "#845f06", plain: "#d9d3c2" },
   dark: { bg: "#141614", ink: "#ece8dc", muted: "#9aa095", line: "#6c7168", box: "#1e211d", edge: "#3b403a", win: "#e0705a", gold: "#e0b43b", plain: "#3b403a" },
   poster: { bg: "#0a1130", ink: "#f6f1e3", muted: "#a9b2d3", line: "#d9b24c", box: "#111b47", edge: "#8e7632", win: "#f0c64a", gold: "#f0c64a", plain: "#26336b" },
 });

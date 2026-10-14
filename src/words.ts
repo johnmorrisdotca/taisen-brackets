@@ -22,6 +22,7 @@ export const WORDS: Readonly<Words> = Object.freeze({
   columnResult: "Result",
   columnNote: "Note",
   summary: "{n} teams, {r} rounds",
+  summaryOne: "{n} teams, 1 round",
   title: "Knockout bracket",
 });
 
