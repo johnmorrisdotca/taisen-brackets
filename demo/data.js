@@ -13,11 +13,11 @@ import { WORLD_CUPS } from "./data/worldcup-1938-2022.js";
 import { WORLD_CUP_2026 } from "./data/worldcup-2026.js";
 
 /** The three-letter codes of the nations the demo draws (FIFA's), by the name spxn.com gives them. */
-const CODE = {
+export const CODE = {
   Netherlands: "NED", "United States": "USA", Argentina: "ARG", Australia: "AUS", France: "FRA", Poland: "POL", England: "ENG", Senegal: "SEN", Japan: "JPN", Croatia: "CRO",
   Brazil: "BRA", "South Korea": "KOR", Morocco: "MAR", Spain: "ESP", Portugal: "POR", Switzerland: "SUI", Germany: "GER", Paraguay: "PAR", "South Africa": "RSA", Canada: "CAN",
   Sweden: "SWE", "Ivory Coast": "CIV", Norway: "NOR", Mexico: "MEX", Ecuador: "ECU", "DR Congo": "COD", "Bosnia and Herzegovina": "BIH", Belgium: "BEL", Austria: "AUT",
-  Algeria: "ALG", "Cape Verde": "CPV", Colombia: "COL", Ghana: "GHA", Italy: "ITA", Cuba: "CUB", Romania: "ROU", Hungary: "HUN", "Dutch East Indies": "DEI", Czechoslovakia: "TCH",
+  Algeria: "ALG", Egypt: "EGY", "Cape Verde": "CPV", Colombia: "COL", Ghana: "GHA", Italy: "ITA", Cuba: "CUB", Romania: "ROU", Hungary: "HUN", "Dutch East Indies": "DEI", Czechoslovakia: "TCH",
 };
 
 /** States that no longer exist have no region code, so their names in other languages are written here. */

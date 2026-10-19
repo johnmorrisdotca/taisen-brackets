@@ -3,7 +3,7 @@ import * as T from "./dist/index.js";
 import { examples, SPORTS } from "./examples.js";
 import { renderEmblem } from "./emblems.js";
 import { FLAGS } from "./flags-data.js";
-import { ROAD_FINAL, SERIES_EMBLEMS, roadFinalists, roadSeries } from "./road-data.js";
+import { ROAD_CARDS } from "./road-data.js";
 
 const ALL = examples(T);
 const $ = (id) => document.getElementById(id);
@@ -207,20 +207,15 @@ $("layout-gallery").addEventListener("click", (event) => {
   $("stage").scrollIntoView({ behavior: "smooth", block: "start" });
 });
 
-/** The road to the final of made-up nations (a card, the wide card, a phone in the dark) and of a made-up play-off series, each with its table. */
+/** The road to the final of three real tournaments (the World Cups of 2022 and 2026, with Hata's round flags, and the 2024 Stanley Cup playoffs, each team its initials on its colour): a card, the wide card, a phone in the dark and a square, each with its table. */
 function roadCards() {
-  const rounds = T.LOCALES[state.lang].rounds;
-  const series = { "first-round": rounds["First Round"] ?? "First round", "second-round": rounds["Second Round"] ?? "Second round", "conference-final": rounds["Conference Finals"] ?? "Conference final", final: rounds.Final ?? "Cup final" };
-  const common = { locale: state.lang, teamName };
-  const cards = [
-    ["card", roadToFinalOf(roadFinalists(), { ...common, title: "Northern Cup 2030", final: ROAD_FINAL, endnote: "Made-up results", id: "road-card", background: "royal" })],
-    ["wide", roadToFinalOf(roadFinalists(), { ...common, title: "Northern Cup 2030", size: "wide", id: "road-wide", background: "floodlights" })],
-    ["phone", roadToFinalOf(roadFinalists(), { ...common, title: "Northern Cup 2030", final: ROAD_FINAL, size: "phone", theme: "dark", id: "road-phone", background: "aurora" })],
-    ["series", roadToFinalOf(roadSeries(SERIES_EMBLEMS), { ...common, title: "Cup play-offs", labels: series, size: "square", final: { score: "4-2", note: "Game 6" }, id: "road-series", background: "carbon" })],
-  ];
-  $("road-cards").innerHTML = cards.map(([key, chart]) => `<figure data-road="${key}">${chart.draw()}<details data-testid="road-table-${key}"><summary>Table</summary><div class="table-wrap">${chart.table()}</div></details></figure>`).join("");
+  const common = { locale: state.lang, teamName, flags };
+  $("road-cards").innerHTML = ROAD_CARDS.map((card) => {
+    const example = ALL.find((e) => e.key === card.example);
+    const chart = T.roadToFinal(example.data, { ...common, size: card.size, background: card.background, endnote: card.endnote, ...(card.theme && { theme: card.theme }), title: titleOf(example), ...(example.options.roundNames && { roundNames: example.options.roundNames }), id: `road-${card.key}` });
+    return `<figure data-road="${card.key}">${chart.draw()}<details data-testid="road-table-${card.key}"><summary>Table</summary><div class="table-wrap">${chart.table()}</div></details></figure>`;
+  }).join("");
 }
-const roadToFinalOf = (finalists, options) => T.roadToFinal(finalists, options);
 
 $("sport").innerHTML = SPORTS.map((s) => `<button type="button" data-value="${s.key}">${s.label}</button>`).join("");
 $("sport").addEventListener("click", (event) => { const b = event.target.closest("button"); if (b) choose(ALL.find((e) => e.sport === b.dataset.value).key); });

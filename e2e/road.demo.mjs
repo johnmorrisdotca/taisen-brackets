@@ -77,7 +77,7 @@ test("the champion's path is dotted and the other ties are quieter; the boxes ca
   expect(page.url()).toContain("links=1");
 });
 
-test("the section of made-up roads draws four roads with a title, a description and a table that opens", async ({ page }) => {
+test("the section of real roads draws four roads with a title, a description and a table that opens", async ({ page }) => {
   await page.goto("/?ex=wc2022");
   const figures = page.locator('[data-testid="road-cards"] figure');
   await expect(figures).toHaveCount(4);
@@ -93,7 +93,7 @@ test("the section of made-up roads draws four roads with a title, a description 
     await details.locator("summary").click();
     await expect(details.locator("table[data-kind='road']")).toBeVisible();
   }
-  expect(await figures.nth(0).locator("g.tb-r-fin").count()).toBeGreaterThan(8);
+  expect(await figures.nth(0).locator("g.tb-r-fin").count()).toBe(8); // Argentina and France: four knockout matches each
   expect(await noSidewaysScroll(page)).toBe(true);
   await page.locator("#lang button[data-value=ja]").click();
   expect(await figures.nth(0).locator("text.tb-lab").first().textContent()).toBe("準決勝");

@@ -3,7 +3,7 @@ import assert from "node:assert/strict";
 import { test } from "node:test";
 import { build } from "../demo/data.js";
 import { FLAGS } from "../demo/flags-data.js";
-import { roadFinalists } from "../demo/road-data.js";
+import { WORLD_CUP_ROWS, roadFinalists } from "../demo/road-data.js";
 import * as T from "../src/index.ts";
 import type { Matchup } from "../src/index.ts";
 import { problems } from "./geometry.ts";
@@ -85,13 +85,16 @@ test("your own image: under a veil, fit and dim, and only an address that is htt
 });
 
 test("the road to the final takes a background the same way", () => {
-  const chart = T.roadToFinal(roadFinalists(), { size: "card", theme: "dark", background: "aurora", id: "r" });
+  // Argentina and France of 2022, as the data gives them.
+  const { finalists } = roadFinalists(WORLD_CUP_ROWS.wc2022);
+  assert.deepEqual(finalists.map((f) => f.name), ["Argentina", "France"]);
+  const chart = T.roadToFinal(finalists, { size: "card", theme: "dark", background: "aurora", id: "r" });
   const svg = chart.draw();
   assert.equal(wellFormed(svg), null);
   assert.match(svg, /<g clip-path="url\(#rbc\)">/);
   assert.notEqual(svg, chart.draw({ background: "swirl" }));
   assert.ok(!chart.draw({ background: false }).includes('class="tb-bg"'));
-  assert.equal(chart.draw({ background: true }), T.roadToFinal(roadFinalists(), { size: "card", theme: "dark", id: "r" }).draw());
+  assert.equal(chart.draw({ background: true }), T.roadToFinal(finalists, { size: "card", theme: "dark", id: "r" }).draw());
   assert.throws(() => chart.draw({ background: { image: "javascript:x" } }), /background\.image/);
 });
 
@@ -183,7 +186,7 @@ test("an address as a flag or a logo is written once as a symbol, however many t
   assert.equal(logos.split("<image ").length - 1, 2);
   assert.equal(wellFormed(logos), null);
   // The road chart takes it too.
-  const [fa, fb] = roadFinalists();
+  const [fa, fb] = roadFinalists(WORLD_CUP_ROWS.wc2022).finalists;
   const chart = T.roadToFinal([{ ...fa, flag: "ES", mark: undefined }, { ...fb, flag: "ES", mark: undefined }], { flagHref }).draw();
   assert.ok(chart.includes('<image href="/flags/ES.png"') && wellFormed(chart) === null);
 });
