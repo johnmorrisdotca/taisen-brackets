@@ -12,6 +12,8 @@ test("the demo draws a bracket and does not scroll sideways", async ({ page }) =
 });
 
 test("every example draws, and at the width of the page: a phone gets the tall drawing", async ({ page }, info) => {
+  // Fifteen page loads: about 11 s alone, over 30 s in CI with three browsers at once.
+  test.setTimeout(120_000);
   const phone = info.project.name.includes("phone");
   for (const key of examples) {
     await page.goto(`/?ex=${key}`);
