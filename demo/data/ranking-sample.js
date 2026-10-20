@@ -44,4 +44,35 @@ export const RANKING_SAMPLE = {
       ],
     },
   },
+  // The number one of each senior men's weight class.
+  numberOnes: [
+    { category: "-60 kg", entry: { name: { surname: "Nakamura", given: "Kenji" }, club: "Coastal Pine Judo", flag: "CA-BC", points: 1240 } },
+    { category: "-66 kg", entry: { name: { surname: "Leclerc", given: "Mathieu" }, club: "Kestrel Valley Judo", flag: "CA-QC", points: 1175 } },
+    { category: "-73 kg", entry: { name: { surname: "Brar", given: "Harpreet" }, club: "Salmonberry Judo Club", flag: "CA-BC", points: 1098 } },
+    { category: "-81 kg", entry: { name: { surname: "Whitehorse", given: "Eli" }, club: "Driftwood Judo Academy", flag: "CA-AB", points: 1066 } },
+    { category: "-90 kg", entry: { name: { surname: "Lindqvist", given: "Oskar" }, club: "Harbour Lights Judo", flag: "CA-BC", points: 1012 } },
+    { category: "+100 kg", entry: { name: { surname: "Okafor", given: "Daniel" }, club: "Thornwood Judo Club", flag: "CA-BC", points: 985 } },
+  ],
+  // An event's entry list in the order of the draw, with each athlete's ranking (none: not ranked).
+  entryList: {
+    event: "Invitational",
+    entries: [
+      { name: { surname: "Hoshino", given: "Daiki" }, code: "JPN", flag: "JP", rank: 3 },
+      { name: { surname: "Roussel", given: "Mathis" }, code: "FRA", flag: "FR", rank: 9 },
+      { name: { surname: "Mtchedlishvili", given: "Levan" }, code: "GEO", flag: "GE", rank: 1 },
+      { name: { surname: "Seong", given: "Min-jae" }, code: "KOR", flag: "KR", rank: 12 },
+      { name: { surname: "Tavares", given: "Rafael" }, code: "BRA", flag: "BR", rank: 17 },
+      { name: { surname: "Rakhimov", given: "Jasur" }, code: "UZB", flag: "UZ", rank: 4 },
+      { name: { surname: "Zaldívar", given: "Tomás" }, code: "CUB", flag: "CU", rank: 25 },
+      { name: { surname: "van Dijk", given: "Joris" }, code: "NED", flag: "NL", rank: 31 },
+      { name: { surname: "Hartmann", given: "Emil" }, code: "GER", flag: "DE", rank: 8 },
+      { name: { surname: "Caballero", given: "Alonso" }, code: "ESP", flag: "ES", rank: 14 },
+      { name: { surname: "Ferraro", given: "Gianluca" }, code: "ITA", flag: "IT", rank: 21 },
+      { name: { surname: "Qasimov", given: "Elnur" }, code: "AZE", flag: "AZ", rank: 6 },
+      { name: { surname: "Batsaikhan", given: "Temuulen" }, code: "MGL", flag: "MN", rank: 11 },
+      { name: { surname: "Callahan", given: "Owen" }, code: "CAN", flag: "CA", rank: 18 },
+      { name: { surname: "Whitfield", given: "Marcus" }, code: "USA", flag: "US" },
+      { name: { surname: "Kertész", given: "Balázs" }, code: "HUN", flag: "HU", rank: 27 },
+    ],
+  },
 };

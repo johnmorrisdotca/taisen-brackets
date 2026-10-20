@@ -53,3 +53,28 @@ test("the ranking list follows the language of the page", async ({ page }) => {
   await page.goto("/?lang=ja");
   await expect(list(page).locator("text", { hasText: /^ランキング$/ })).toBeVisible();
 });
+
+test("the number ones and the entry list draw from the address for each size, and the controls follow the view", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  for (const size of ["tv", "tablet-tall", "phone", "square"]) {
+    await page.goto(`/?kview=numbers&ksize=${size}`);
+    await expect(list(page).locator(".rk-card")).toHaveCount(6);
+    expect(await noSidewaysScroll(page)).toBe(true);
+    await page.goto(`/?kview=entries&ksize=${size}`);
+    await expect(list(page).locator(".rk-entry")).toHaveCount(16);
+    expect(await noSidewaysScroll(page)).toBe(true);
+  }
+  await page.goto("/?kview=entries");
+  await expect(page.locator("#ranking-controls").getByRole("button", { name: "By ranking", exact: true })).toBeVisible();
+  await expect(page.locator("#ranking-controls").getByRole("button", { name: "Podium", exact: true })).toBeHidden();
+  await page.locator("#ranking-controls").getByRole("button", { name: "By ranking", exact: true }).click();
+  expect(page.url()).toContain("ksort=ranking");
+  await expect(list(page).locator("text", { hasText: /^MTCHEDLISHVILI Levan$/ })).toBeVisible();
+  await page.locator("#ranking-controls").getByRole("button", { name: "Number ones", exact: true }).click();
+  expect(page.url()).toContain("kview=numbers");
+  await expect(list(page).locator("text", { hasText: /^#1 in -60 kg$/ })).toBeVisible();
+  await page.locator("#ranking-code-box summary").click();
+  await expect(page.locator("#ranking-code")).toContainText("rankingNumberOnes(");
+  expect(errors).toEqual([]);
+});

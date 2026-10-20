@@ -1,4 +1,4 @@
-# Ranking lists
+# Rankings
 
 `rankingList` draws a ranking for any ranked sport (judo, taekwondo, wrestling, boxing, a club ladder) from the data you give it: a province's or a club's feed, a federation's list. It is text first. A row is a rank, a flag, a name, a club and points, with the movement since the last list, so a list looks complete and tidy without a photo and there is no empty photo slot. The package ships no ranking data: the numbers are yours.
 
@@ -95,6 +95,54 @@ Every colour is a custom property with a fallback: `--rk-bg`, `--rk-ink`, `--rk-
 
 `describeRanking(source, options)` is the sentence the drawing's description carries, for a screen reader: `Provincial ranking. U18 · Men -60 kg. 1, NAKAMURA Kenji, Coastal Pine Judo, 412.50 points, up 1. …`. A missing name, a rank that is not a whole number from 1, a change that is not a whole number or `"new"`, an unknown option value, or a bad size or theme is a `RangeError` that names it.
 
+## The number one of each category
+
+`rankingNumberOnes` draws a card for the number one of each category (each weight class, each age group), or for the top of an overall list: a coloured panel with the 1, the flag, the name, the club or country, the points and a pill that reads `#1 in -57 kg`. No photo: the card is the name and the numbers.
+
+<p align="center"><picture>
+<img alt="Four number-one cards on a square card, in the light: a title Number ones and the date October 2026; each card has a coloured panel with a big 1 (orange, crimson, blue, teal), a round flag, the name in capitals with the club under it, the points and a pill reading number 1 in minus 60, 66, 73 or 81 kg." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-numbers-square-light.webp" width="540">
+</picture><br><em>Number ones as cards (invented names, clubs and points).</em></p>
+
+```js
+import { rankingNumberOnes } from "@johnmorrisdotca/taisen-brackets";
+
+const svg = rankingNumberOnes({
+  date: "October 2026",
+  cards: [
+    { category: "-60 kg", entry: { name: { surname: "Nakamura", given: "Kenji" }, club: "Coastal Pine Judo", flag: "CA-BC", points: 1240 } },
+    { category: "-66 kg", entry: { name: { surname: "Leclerc", given: "Mathieu" }, club: "Kestrel Valley Judo", flag: "CA-QC", points: 1175 } },
+  ],
+}, { size: "square" });
+console.log(svg.includes("#1 in -66 kg"), svg.includes("LECLERC Mathieu")); // true true
+```
+
+The source is `{ title?, date?, source?, cards }`, a card `{ category, entry }` with the same entry as a ranking list (`name`, `club`, `country`, `flag`, `mark`, `points`). `columns` (1 to 4) sets the columns of cards; by default the number that lets the longest name be set biggest is chosen, so a few cards on a TV go two by two and many on a phone go one under the other. `colors` (hex codes, taken in turn; `NUMBER_ONE_COLORS` by default) colours the number panels, with white or near-black on each, whichever reads. `precision` and `nameStyle` are as for a list. `describeNumberOnes` is the description.
+
+## An entry list with each athlete's ranking
+
+`rankingEntryList` draws an event's entry list in the order of the draw (the seeding view): a numbered row for each athlete with the flag, the name, the club if there is one, the country's letters and the athlete's ranking at the right, `NR` for an athlete with none. An entry's `rank` is its ranking and `points` (optional) are written beside it.
+
+<p align="center"><picture>
+<img alt="An entry list on a 4:5 card, in the light: the title Entry list and a pill reading Men -66 kg; the sixteen athletes by ranking, each row with its place in the list, a round flag, the name in capitals, the country's three letters and the ranking in big type, the unranked athlete last with NR." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-entries-portrait-light.webp" width="480">
+</picture><br><em>An entry list sorted by ranking (invented names).</em></p>
+
+```js
+import { rankingEntryList } from "@johnmorrisdotca/taisen-brackets";
+
+const svg = rankingEntryList({
+  category: "Men -66 kg",
+  entries: [
+    { name: { surname: "Hoshino", given: "Daiki" }, code: "JPN", flag: "JP", rank: 3 },
+    { name: { surname: "Whitfield", given: "Marcus" }, code: "USA", flag: "US" },
+  ],
+}, { sort: "ranking" });
+console.log(svg.includes("HOSHINO Daiki"), svg.includes("NR")); // true true
+```
+
+`sort: "ranking"` puts the best ranked first and the unranked last (default: the order given); `numbers: false` leaves out the row numbers; `columns` (1 to 3) sets the columns, by default two on a wide board and more only as the rows need; `rows` and `page` page a long list as for a ranking list, and the header says which entries are shown. `describeEntryList` is the description.
+
+Both take the options every board takes: `size`, `theme`, `flags`, `flagHref`, `flagShape`, `locale`, `words`, `title`, `id` and `className`, and the same `--rk-*` custom properties. A missing category, name, a ranking that is not a whole number from 1, a colour that is not a hex code or a bad option is a `RangeError` that names it.
+
 ## Not drawn yet
 
-Number-one cards, an entry list with world rankings, and the head-to-head card are the next steps ([roadmap](./roadmap.md)).
+The head-to-head card ([roadmap](./roadmap.md)).

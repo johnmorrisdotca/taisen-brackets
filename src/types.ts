@@ -424,6 +424,12 @@ export interface Words {
   rankNone: string;
   /** What joins the pieces of one entry in the description ("1, NAKAMURA Kenji, 412.50 points"). */
   rankJoin: string;
+  /** Number-one cards (`rankingNumberOnes`): the heading, and `{category}`: "#1 in -57 kg". The entry list (`rankingEntryList`): the heading, the column heading over the rankings, and the mark of an athlete with none. */
+  rankNumberOnes: string;
+  rankNumberOneIn: string;
+  rankEntryTitle: string;
+  rankColRanking: string;
+  rankUnranked: string;
 }
 
 /** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */

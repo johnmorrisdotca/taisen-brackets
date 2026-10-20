@@ -10,7 +10,7 @@ import { WORLD_CUP_2026 } from "../demo/data/worldcup-2026.js";
 import { JUDO_SAMPLE } from "../demo/data/judo-sample.js";
 import { RANKING_SAMPLE } from "../demo/data/ranking-sample.js";
 
-const codes = [...new Set([...[...WORLD_CUPS.wc2022, ...WORLD_CUP_2026.matches].flatMap((m) => [m.home_flag, m.away_flag]), ...JUDO_SAMPLE.athletes.map((a) => a.flag), ...Object.values(RANKING_SAMPLE.lists).flatMap((l) => l.entries.map((e) => e.flag))].filter(Boolean))].sort();
+const codes = [...new Set([...[...WORLD_CUPS.wc2022, ...WORLD_CUP_2026.matches].flatMap((m) => [m.home_flag, m.away_flag]), ...JUDO_SAMPLE.athletes.map((a) => a.flag), ...Object.values(RANKING_SAMPLE.lists).flatMap((l) => l.entries.map((e) => e.flag)), ...RANKING_SAMPLE.numberOnes.map((c) => c.entry.flag), ...RANKING_SAMPLE.entryList.entries.map((e) => e.flag)].filter(Boolean))].sort();
 const flags = {};
 const credits = {};
 for (const code of codes) {

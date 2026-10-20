@@ -121,6 +121,8 @@ export function boardRules(p: BoardPalette, scope: string, before: string, extra
     sel(".rk-pillink", `fill:${v("pill-ink", p.pillInk)}`),
     sel(".rk-nr", `fill:${v("accent", p.accent)}`),
     sel(".rk-nrink", `fill:${v("accent-ink", p.accentInk)}`),
+    sel(".rk-onaccent", "fill:#ffffff"),
+    sel(".rk-onaccent-dark", "fill:#15181a"),
     sel(".tb-ring", `fill:none;stroke:rgba(0,0,0,.28);stroke-width:1.5`),
     sel(".tb-plain", `fill:${v("pill", p.pill)}`),
     sel(".tb-initials", `fill:${v("pill-ink", p.pillInk)}`),

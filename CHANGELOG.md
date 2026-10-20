@@ -6,6 +6,17 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.12.0] - 2026-10-20
+
+Rankings, step 2: the number ones and the entry list.
+
+### Added
+
+- **`rankingNumberOnes({ title?, date?, source?, cards }, options)`**: the number one of each category (each weight class, each age group) as a card in a grid: a coloured panel with the 1, the flag, the name, the club or country, the points and a pill that reads `#1 in -57 kg`. No photo. `columns` (1 to 4; by default the number that lets the longest name be set biggest), `colors` (hex codes taken in turn, white or near-black ink on each; `NUMBER_ONE_COLORS`), `precision`, `nameStyle`. `describeNumberOnes`.
+- **`rankingEntryList({ title?, category?, date?, source?, entries }, options)`**: an event's entry list in the order of the draw: a numbered row for each athlete with the flag, the name, the club, the country's letters and the athlete's ranking at the right (`NR` for none), `points` optional. `sort: "ranking"`, `numbers`, `columns` (two on a wide board by default), `rows` and `page` (the header says which entries are shown), `badge`. `describeEntryList`.
+- Both take the options every board takes (size, theme, flags, locale, words, `--rk-*` custom properties). Words in the five languages (the French and Japanese were read by native-language reviewers; the Spanish and German were not).
+- The demo's Rankings section has both, with the view in the address (`kview`). [docs/rankings.md](docs/rankings.md).
+
 ## [0.11.0] - 2026-10-20
 
 Rankings, step 1: the ranking list.

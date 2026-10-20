@@ -233,5 +233,10 @@ The English name is the key (a round the table does not name keeps its English n
 | `rankRange` | `{a}–{b} of {n}` | `{a}–{b} sur {n}` | `{n}人中{a}–{b}位` | `{a}–{b} de {n}` | `{a}–{b} von {n}` |
 | `rankNone` | `No ranked athletes yet` | `Aucun athlète classé pour l’instant` | `ランキング入りした選手はまだいません` | `Aún no hay deportistas clasificados` | `Noch keine platzierten Athleten` |
 | `rankJoin` | `, ` | `, ` | `、` | `, ` | `, ` |
+| `rankNumberOnes` | `Number ones` | `Les numéros un` | `各階級の1位` | `Los números uno` | `Die Nummer Eins` |
+| `rankNumberOneIn` | `#1 in {category}` | `N°␣1 en {category}` | `{category} 1位` | `N.º 1 en {category}` | `Nr. 1 in {category}` |
+| `rankEntryTitle` | `Entry list` | `Liste des engagés` | `エントリーリスト` | `Lista de inscritos` | `Meldeliste` |
+| `rankColRanking` | `Ranking` | `Classement` | `ランキング` | `Clasificación` | `Rangliste` |
+| `rankUnranked` | `NR` | `NC` | `圏外` | `SC` | `o. R.` |
 
 Holes in a phrase are filled in (`{n}`, `{a}`, `{b}`, `{sa}`, `{sb}`, `{w}`, `{name}`, `{round}`, `{tie}`, `{notes}`); `␣` stands for a no-break space (the French writes one before a colon).

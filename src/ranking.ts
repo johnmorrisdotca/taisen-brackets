@@ -117,9 +117,9 @@ export function rankingCategoryLabel(category: { age?: string; sex?: "men" | "wo
   return parts.join(" · ");
 }
 
-const voiceFor = (locale?: string): Voice => voiceOf(locale === undefined ? {} : { locale });
+export const voiceFor = (locale?: string): Voice => voiceOf(locale === undefined ? {} : { locale });
 
-const nameText = (n: RankingEntry["name"], style: NonNullable<RankingOptions["nameStyle"]>, v: Voice): string => {
+export const nameText = (n: RankingEntry["name"], style: NonNullable<RankingOptions["nameStyle"]>, v: Voice): string => {
   if (typeof n === "string") return n;
   const given = (n.given ?? "").trim();
   const sur = style === "as-is" ? n.surname.trim() : v.upper(n.surname.trim());
@@ -127,7 +127,7 @@ const nameText = (n: RankingEntry["name"], style: NonNullable<RankingOptions["na
   return style === "given-first" || style === "as-is" ? `${given} ${sur}` : `${sur} ${given}`;
 };
 
-const pointsText = (p: RankingEntry["points"], precision: number | undefined, v: Voice): string => {
+export const pointsText = (p: RankingEntry["points"], precision: number | undefined, v: Voice): string => {
   if (p === undefined || p === null) return "";
   if (typeof p === "string") return p;
   if (!Number.isFinite(p)) return "";
@@ -149,7 +149,7 @@ interface Row {
   team: Team;
 }
 
-interface R { x: number; y: number; w: number; h: number }
+export interface R { x: number; y: number; w: number; h: number }
 
 function validate(source: RankingSource, options: RankingOptions): void {
   if (!source || !Array.isArray(source.entries)) throw new RangeError("taisen-brackets: a ranking needs a list of entries");
@@ -209,7 +209,7 @@ export function describeRanking(source: RankingSource, options: Pick<RankingOpti
   return parts.join(w.sep) + w.end;
 }
 
-const teamFor = (e: RankingEntry, id: string, name: string, badge: string): Team => ({ id, name, abbr: badge, ...(e.flag ? { flag: e.flag } : {}), ...(e.mark ? { mark: e.mark } : {}) });
+export const teamFor = (e: RankingEntry, id: string, name: string, badge: string): Team => ({ id, name, abbr: badge, ...(e.flag ? { flag: e.flag } : {}), ...(e.mark ? { mark: e.mark } : {}) });
 
 /**
  * The ranking list as an SVG. Throws a `RangeError` for an entry with no name, a rank or change that is not a whole number, an option that is not one of its values, or a bad size or theme.

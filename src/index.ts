@@ -29,3 +29,5 @@ export { rankingList, rankingRanks, rankingCategoryLabel, describeRanking } from
 export type { RankingEntry, RankingName, RankingOptions, RankingSource } from "./ranking.ts";
 export { BOARD_SIZES } from "./rank-kit.ts";
 export type { BoardOptions, BoardSizeName } from "./rank-kit.ts";
+export { rankingNumberOnes, describeNumberOnes, rankingEntryList, describeEntryList, NUMBER_ONE_COLORS } from "./ranking-cards.ts";
+export type { EntryListOptions, EntryListSource, NumberOnesOptions, NumberOnesSource, RankingCard } from "./ranking-cards.ts";
