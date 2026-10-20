@@ -407,6 +407,23 @@ export interface Words {
   /** The default titles of the contest card and of the mat queue board. */
   judoCardTitle: string;
   judoQueueTitle: string;
+  /** Ranking lists (`rankingList`): the heading, "points" and its short form, the champion's mark ("C") and its words, the interim champion's, newly ranked ("NR") and its words, the movement in a sentence (`{n}` places), no change, which entries are shown (`{a}`, `{b}`, `{n}`) and an empty list. */
+  rankTitle: string;
+  rankPoints: string;
+  rankPointsShort: string;
+  rankChampion: string;
+  rankChampionLong: string;
+  rankInterim: string;
+  rankInterimLong: string;
+  rankNew: string;
+  rankNewLong: string;
+  rankUp: string;
+  rankDown: string;
+  rankSame: string;
+  rankRange: string;
+  rankNone: string;
+  /** What joins the pieces of one entry in the description ("1, NAKAMURA Kenji, 412.50 points"). */
+  rankJoin: string;
 }
 
 /** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */

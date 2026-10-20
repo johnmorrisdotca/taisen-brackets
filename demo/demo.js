@@ -4,6 +4,7 @@ import { examples, SPORTS } from "./examples.js";
 import { renderEmblem } from "./emblems.js";
 import { FLAGS } from "./flags-data.js";
 import { ROAD_CARDS } from "./road-data.js";
+import { initRankings } from "./rankings.js";
 
 const ALL = examples(T);
 const $ = (id) => document.getElementById(id);
@@ -41,6 +42,7 @@ if (params.get("bgp") && T.BACKGROUND_PRESETS.includes(params.get("bgp"))) custo
 if (/^(#[0-9a-f]{6}-?){1,4}$/i.test(params.get("bgc") ?? "")) params.get("bgc").split("-").forEach((c, i) => { custom.colors[i] = c.startsWith("#") ? c : `#${c}`; });
 for (const [name, key] of [["bga", "angle"], ["bgi", "intensity"], ["bgs", "seed"]]) if (Number.isFinite(Number(params.get(name))) && params.has(name)) custom[key] = Number(params.get(name));
 
+const rankings = initRankings({ T, flags: (code) => FLAGS[code], lang: () => state.lang, params, $ });
 const narrow = matchMedia("(max-width: 640px)");
 const current = () => ALL.find((e) => e.key === state.ex);
 const sizeNow = () => (state.size === "auto" ? (narrow.matches ? "phone" : state.layout === "series" ? "card" : "wide") : state.size);
@@ -168,8 +170,9 @@ function draw() {
   for (const [key, value] of boardParams()) next.set(key, value);
   for (const [key, value] of queueParams()) next.set(key, value);
   for (const [key, value] of roadParams()) next.set(key, value);
+  for (const [key, value] of rankings.address()) next.set(key, value);
   history.replaceState(null, "", `?${next}${location.hash}`);
-  if (boardReady) { drawBoard(); drawQueue(); drawRoad(); }
+  if (boardReady) { drawBoard(); drawQueue(); drawRoad(); rankings.draw(); }
 }
 
 function choose(key) {
@@ -563,3 +566,4 @@ queueControls();
 drawQueue();
 roadControls();
 drawRoad();
+rankings.draw();

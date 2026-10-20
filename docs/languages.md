@@ -218,5 +218,20 @@ The English name is the key (a round the table does not name keeps its English n
 | `judoBoardTitle` | `Judo contest scoreboard` | `Tableau d’affichage d’un combat de judo` | `柔道試合のスコアボード` | `Marcador de un combate de judo` | `Anzeigetafel eines Judokampfes` |
 | `judoCardTitle` | `Judo contest card` | `Présentation d’un combat de judo` | `柔道の対戦カード` | `Ficha de un combate de judo` | `Kampfkarte eines Judokampfes` |
 | `judoQueueTitle` | `Judo mat queue` | `Prochains combats par tapis` | `各試合場の次の試合` | `Próximos combates por tatami` | `Nächste Kämpfe je Matte` |
+| `rankTitle` | `Ranking` | `Classement` | `ランキング` | `Clasificación` | `Rangliste` |
+| `rankPoints` | `points` | `points` | `ポイント` | `puntos` | `Punkte` |
+| `rankPointsShort` | `pts` | `pts` | `pt` | `pts` | `Pkt.` |
+| `rankChampion` | `C` | `C` | `王者` | `C` | `C` |
+| `rankChampionLong` | `Champion` | `Champion` | `王者` | `Campeón` | `Champion` |
+| `rankInterim` | `IC` | `CI` | `暫定` | `CI` | `IC` |
+| `rankInterimLong` | `Interim champion` | `Champion intérimaire` | `暫定王者` | `Campeón interino` | `Interimschampion` |
+| `rankNew` | `NR` | `Nouv.` | `NEW` | `NUEVO` | `NEU` |
+| `rankNewLong` | `newly ranked` | `nouvelle entrée au classement` | `新規ランクイン` | `nuevo en la clasificación` | `neu in der Rangliste` |
+| `rankUp` | `up {n}` | `en hausse de {n}` | `{n}ランク上昇` | `sube {n}` | `{n} Plätze höher` |
+| `rankDown` | `down {n}` | `en baisse de {n}` | `{n}ランク下降` | `baja {n}` | `{n} Plätze tiefer` |
+| `rankSame` | `unchanged` | `rang inchangé` | `変動なし` | `sin cambios` | `unverändert` |
+| `rankRange` | `{a}–{b} of {n}` | `{a}–{b} sur {n}` | `{n}人中{a}–{b}位` | `{a}–{b} de {n}` | `{a}–{b} von {n}` |
+| `rankNone` | `No ranked athletes yet` | `Aucun athlète classé pour l’instant` | `ランキング入りした選手はまだいません` | `Aún no hay deportistas clasificados` | `Noch keine platzierten Athleten` |
+| `rankJoin` | `, ` | `, ` | `、` | `, ` | `, ` |
 
 Holes in a phrase are filled in (`{n}`, `{a}`, `{b}`, `{sa}`, `{sb}`, `{w}`, `{name}`, `{round}`, `{tie}`, `{notes}`); `␣` stands for a no-break space (the French writes one before a colon).

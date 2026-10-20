@@ -43,6 +43,7 @@ footer .credit { flex: 1 1 100%; }
 .board-stage { background: transparent; }
 .board-stage svg { max-width: 1280px; }
 .board-stage[data-size="tablet-tall"] svg { max-width: 560px; }
+.board-stage[data-size="portrait"] svg { max-width: 680px; }
 .counters { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
 .counter { display: inline-flex; align-items: center; gap: 6px; }
 .counter .name { min-width: 5.2em; font-size: .9rem; }

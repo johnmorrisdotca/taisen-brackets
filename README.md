@@ -11,7 +11,7 @@ Give it the games, series, two-legged ties or replays of a tournament and it wor
   <img alt="TypeScript" src="https://img.shields.io/badge/types-TypeScript-3178c6">
 </p>
 
-<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/layouts.md">Layouts</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/road.md">Road to the final</a> · <a href="./docs/backgrounds.md">Backgrounds</a> · <a href="./docs/judo.md">Judo</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
+<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/layouts.md">Layouts</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/road.md">Road to the final</a> · <a href="./docs/backgrounds.md">Backgrounds</a> · <a href="./docs/judo.md">Judo</a> · <a href="./docs/rankings.md">Rankings</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
 
 <p align="center">
 <picture>
@@ -247,6 +247,15 @@ A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as
 <img alt="A made-up men's minus 66 kilogram judo tournament of 16 athletes with round flags, score marks, shido cards, how each contest was won and its time, and the repechage and bronze medal contests under the tree." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-desk-light.webp" width="720">
 </picture><br><em>Men's -66 kg, with the quarter-final repechage (invented names).</em></p>
 
+## Rankings
+
+`rankingList` draws a ranking for any ranked sport from your own data (a province's or a club's feed, a federation's list), text first, with no photo slot to leave empty: the rank, a flag (a country's or a Canadian province's, `CA-BC`), the name, the club and the points, with the movement since the last list as arrows or row colours. The top three can be big gold, silver and bronze rows above a compact list, a champion row is marked `C`, tied ranks share a number (`10`, `10`), a newly ranked athlete is `NR`, and points are written to the sport's own precision (`91.60`). `rankingRanks` and `rankingCategoryLabel` are its helpers, `describeRanking` its description, and `BOARD_SIZES` the sizes of every board (a TV, a tablet, a phone, and a square and a 4:5 card for social media). [docs/rankings.md](./docs/rankings.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#rankings)
+
+<p align="center"><picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-podium-tv-dark.webp">
+<img alt="A ranking list on a TV: three big rows tinted gold, silver and bronze for the first three, and the ranks 4 to 15 as compact rows beside them, each with its rank, movement arrow, round flag, name, club and points." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-podium-tv-light.webp" width="720">
+</picture><br><em>A made-up provincial ranking (invented names and clubs).</em></p>
+
 ## In 30 seconds
 
 ```sh
@@ -295,6 +304,7 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **A judo scoreboard**: `judoScoreboard` draws one contest for a given state, in two styles (a board, and table-top flip cards) and three sizes, in five languages; live updating is yours.
 - **The road to the final of a judoka**: `judoWins` reads an athlete's wins from a bracket (a top seed's bye included) and `judoRoadPanel` draws them with the opponent's flag, code and name and how each was won.
 - **Judo screens for the hall**: `judoContestCard` (the category, the round, the white athlete over the blue one) and `judoMatQueue` (per mat, a big number and colour and the contests to come in order, with flags and codes), on a TV or a tablet, in five languages.
+- **Ranking lists**: `rankingList` draws a ranking from your data, text first: rank, flag (a country or a Canadian province), name, club, points, movement arrows, a podium, a champion row, ties and paging ([docs/rankings.md](./docs/rankings.md)).
 - **Judo scoring**: `Matchup.judo` takes ippon, waza-ari, yuko, shido, hansoku-make, golden score and the contest time, checked against the IJF rules (`judoOutcome`); a box shows the marks, the shido cards and how the contest was won, and `judoBracket` adds the repechage and the two bronze medal contests ([docs/judo.md](./docs/judo.md)).
 - **Formats by era**: NHL, NBA, MLB, NFL, CFL, MLS and FIFA World Cup round names, series lengths and byes.
 - **Five languages**: English, French, Japanese, Spanish and German, for every word the drawing, the tooltips, the description and the table write, with the football terms of each language; countries named by `Intl` from their ISO code; numbers and dates by `Intl`. Add a language of your own.
@@ -656,6 +666,7 @@ Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part 
 - `matchupsFromGames(games, options)`: matchups from a flat list of games.
 - `resolveMatchup`, `collectTeams`, `describeTie`, `noteParts`, `noteLong`: one tie's result, the teams of a bracket, a tie in a sentence.
 - `judoOutcome(result, winner?)`, `judoBracket(athletes, options?)`, `judoPodium(input)`, `judoCategoryLabel(category, locale?)`, `JUDO_WEIGHT_CLASSES`, `judoSeconds(time)`, `judoClock(seconds)`: judo results checked against the IJF rules, the bracket with its repechage and two bronze medal contests, the medallists, a weight category as a heading ([docs/judo.md](./docs/judo.md)). `judoScoreboard(contest, options?)`, `describeJudoContest(contest, options?)`, `JUDO_BOARD_SIZES`: the scoreboard of a contest as SVG and as a sentence. `judoContestCard(contest, options?)`, `judoMatQueue(mats, options?)`, `describeJudoCard`, `describeJudoQueue`, `JUDO_MAT_COLORS`: the contest card and the mat queue board as SVG and as sentences. `judoWins(bracket, athlete, options?)`, `judoRoadPanel(source, options?)`, `describeJudoRoad`: an athlete's wins on the road to the final, and the panel. `Matchup.judo` and `Matchup.stage` (`"repechage"`, `"bronze"`) carry them into `drawBracket`.
+- `rankingList(source, options?)`, `rankingRanks(entries, options?)`, `rankingCategoryLabel(category, locale?)`, `describeRanking(source, options?)`, `BOARD_SIZES`: a ranking list as SVG, its ranks as data, a category as a heading and the drawing as a sentence ([docs/rankings.md](./docs/rankings.md)).
 - `playoffFormat(league, year)`, `playoffEras(league)`, `LEAGUES`: the formats by era (`nhl`, `nba`, `mlb`, `nfl`, `cfl`, `mls`, `worldcup`). `LEAGUE_EMBLEMS`: each league's default emblem id.
 - `isEmblemId(value)`, and the types `EmblemRenderer`, `EmblemRequest`, `EmblemStyle`: the trophy emblems (see "Emblems for the trophy").
 - `roundName(remaining)`, `roundNamesFor(count)`, `roundLabel(layout, round, names, words)`: round names.

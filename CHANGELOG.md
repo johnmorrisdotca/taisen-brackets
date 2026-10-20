@@ -6,6 +6,22 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.11.0] - 2026-10-20
+
+Rankings, step 1: the ranking list.
+
+### Added
+
+- **`rankingList(source, options)`**: a ranking for any ranked sport as an SVG, from the caller's data (a province's or a club's feed, a federation's list). Text first, with no photo slot: the rank, a flag (a country's or a Canadian province's or territory's, `CA-BC`), the name, the club and the points, with the movement since the last list. `source` is `{ title?, category?, date?, source?, entries }` and an entry `{ name, rank?, points?, club?, country?, code?, flag?, mark?, category?, change?, champion? }`. Styles: `podium` (the top three as big rows tinted gold, silver and bronze above the compact rest; on a wide board the big rows stand in a panel beside the others), `featured` (one big row above two columns) and `list`; `big`, `columns`, `split`, `medals`. Movement as arrows with the number of places, as green and red row colours, both, or none; `NR` for the newly ranked; a dash for no change. Tied ranks (equal points share a rank: 9, 10, 10, 12), an own `rank`, `rankStyle: "hash"` (`#10`). A champion row marked `C` (`IC` for an interim champion) above rank 1. `precision` writes points to the sport's own decimals (`91.60`, `50.00`), `nameStyle` writes `SURNAME Given`, `Given SURNAME` or the name as it is, `sort`, `categories`, `badge` (a club's initials where there is no flag), `rows` and `page` (the header says which entries are shown) and `flagShape`. Where the row is narrow the type steps down and then the text is cut with an ellipsis; nothing is stretched.
+- **`rankingRanks(entries, { ties })`**, **`rankingCategoryLabel({ age, sex, weight }, locale)`** (`U18 · Men -60 kg`) and **`describeRanking(source, options)`**, the drawing's description.
+- **`BOARD_SIZES`** and the options every board takes (`BoardOptions`): `tv`, `tablet`, `tablet-tall`, `phone` (600 by 1300), `square` and `portrait` (4:5) for a social card, or your own `{ width, height }`; light, dark or `auto`; five languages; custom properties `--rk-*`. The medal table and the results boards that follow share them.
+- Words for ranking lists in the five languages (the French and Japanese were read by native-language reviewers; the Spanish and German were not). The Japanese marks the champion with `王者` and the interim champion with `暫定`.
+- The demo has a Ranking lists section with a made-up provincial feed (U18 men -60 kg, and a senior women's list with a champion): style, size, look, movement, columns, name and rank style and paging, with the call that draws it; the state is in the address. [docs/rankings.md](docs/rankings.md).
+
+### Changed
+
+- The demo's flags come from Hata 1.6.2, which has all thirteen Canadian provinces and territories.
+
 ## [0.10.0] - 2026-10-20
 
 Judo, step 4: the road to the final of one judoka.

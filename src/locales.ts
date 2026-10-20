@@ -31,6 +31,8 @@ const EN: Words = {
   judoWeightClass: "{sex} -{w} kg", judoWeightOver: "{sex} +{w} kg", judoMen: "Men", judoWomen: "Women",
   judoOsaekomi: "Osaekomi", judoShido: "Shido", judoMat: "Mat {n}", judoContest: "Contest {n}", judoCoach: "Coach: {name}", judoBoardTitle: "Judo contest scoreboard",
   judoCardTitle: "Judo contest card", judoQueueTitle: "Judo mat queue",
+  rankTitle: "Ranking", rankPoints: "points", rankPointsShort: "pts", rankChampion: "C", rankChampionLong: "Champion", rankInterim: "IC", rankInterimLong: "Interim champion",
+  rankNew: "NR", rankNewLong: "newly ranked", rankUp: "up {n}", rankDown: "down {n}", rankSame: "unchanged", rankRange: "{a}–{b} of {n}", rankNone: "No ranked athletes yet", rankJoin: ", ",
 };
 
 const FR: Words = {
@@ -56,6 +58,8 @@ const FR: Words = {
   judoWeightClass: "{sex} -{w}\u00a0kg", judoWeightOver: "{sex} +{w}\u00a0kg", judoMen: "Hommes", judoWomen: "Femmes",
   judoOsaekomi: "Osaekomi", judoShido: "Shido", judoMat: "Tapis {n}", judoContest: "Combat {n}", judoCoach: "Entraîneur\u00a0: {name}", judoBoardTitle: "Tableau d’affichage d’un combat de judo",
   judoCardTitle: "Présentation d’un combat de judo", judoQueueTitle: "Prochains combats par tapis",
+  rankTitle: "Classement", rankPoints: "points", rankPointsShort: "pts", rankChampion: "C", rankChampionLong: "Champion", rankInterim: "CI", rankInterimLong: "Champion intérimaire",
+  rankNew: "Nouv.", rankNewLong: "nouvelle entrée au classement", rankUp: "en hausse de {n}", rankDown: "en baisse de {n}", rankSame: "rang inchangé", rankRange: "{a}–{b} sur {n}", rankNone: "Aucun athlète classé pour l’instant", rankJoin: ", ",
 };
 
 const JA: Words = {
@@ -81,6 +85,8 @@ const JA: Words = {
   judoWeightClass: "{sex}{w}kg級", judoWeightOver: "{sex}{w}kg超級", judoMen: "男子", judoWomen: "女子",
   judoOsaekomi: "抑え込み", judoShido: "指導", judoMat: "第{n}試合場", judoContest: "試合 {n}", judoCoach: "コーチ：{name}", judoBoardTitle: "柔道試合のスコアボード",
   judoCardTitle: "柔道の対戦カード", judoQueueTitle: "各試合場の次の試合",
+  rankTitle: "ランキング", rankPoints: "ポイント", rankPointsShort: "pt", rankChampion: "王者", rankChampionLong: "王者", rankInterim: "暫定", rankInterimLong: "暫定王者",
+  rankNew: "NEW", rankNewLong: "新規ランクイン", rankUp: "{n}ランク上昇", rankDown: "{n}ランク下降", rankSame: "変動なし", rankRange: "{n}人中{a}–{b}位", rankNone: "ランキング入りした選手はまだいません", rankJoin: "、",
 };
 
 const ES: Words = {
@@ -106,6 +112,8 @@ const ES: Words = {
   judoWeightClass: "{sex} -{w} kg", judoWeightOver: "{sex} +{w} kg", judoMen: "Hombres", judoWomen: "Mujeres",
   judoOsaekomi: "Osaekomi", judoShido: "Shido", judoMat: "Tatami {n}", judoContest: "Combate {n}", judoCoach: "Entrenador: {name}", judoBoardTitle: "Marcador de un combate de judo",
   judoCardTitle: "Ficha de un combate de judo", judoQueueTitle: "Próximos combates por tatami",
+  rankTitle: "Clasificación", rankPoints: "puntos", rankPointsShort: "pts", rankChampion: "C", rankChampionLong: "Campeón", rankInterim: "CI", rankInterimLong: "Campeón interino",
+  rankNew: "NUEVO", rankNewLong: "nuevo en la clasificación", rankUp: "sube {n}", rankDown: "baja {n}", rankSame: "sin cambios", rankRange: "{a}–{b} de {n}", rankNone: "Aún no hay deportistas clasificados", rankJoin: ", ",
 };
 
 const DE: Words = {
@@ -131,6 +139,8 @@ const DE: Words = {
   judoWeightClass: "{sex} -{w} kg", judoWeightOver: "{sex} +{w} kg", judoMen: "Herren", judoWomen: "Damen",
   judoOsaekomi: "Osaekomi", judoShido: "Shido", judoMat: "Matte {n}", judoContest: "Kampf {n}", judoCoach: "Trainer: {name}", judoBoardTitle: "Anzeigetafel eines Judokampfes",
   judoCardTitle: "Kampfkarte eines Judokampfes", judoQueueTitle: "Nächste Kämpfe je Matte",
+  rankTitle: "Rangliste", rankPoints: "Punkte", rankPointsShort: "Pkt.", rankChampion: "C", rankChampionLong: "Champion", rankInterim: "IC", rankInterimLong: "Interimschampion",
+  rankNew: "NEU", rankNewLong: "neu in der Rangliste", rankUp: "{n} Plätze höher", rankDown: "{n} Plätze tiefer", rankSame: "unverändert", rankRange: "{a}–{b} von {n}", rankNone: "Noch keine platzierten Athleten", rankJoin: ", ",
 };
 
 /**

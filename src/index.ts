@@ -25,3 +25,7 @@ export { judoContestCard, describeJudoCard, judoMatQueue, describeJudoQueue, JUD
 export type { JudoCardContest, JudoMat, JudoQueueContest, JudoQueueOptions } from "./judo-sheets.ts";
 export { judoWins, judoRoadPanel, describeJudoRoad } from "./judo-road.ts";
 export type { JudoRoadOptions, JudoRoadSource, JudoWin, JudoWinsOptions } from "./judo-road.ts";
+export { rankingList, rankingRanks, rankingCategoryLabel, describeRanking } from "./ranking.ts";
+export type { RankingEntry, RankingName, RankingOptions, RankingSource } from "./ranking.ts";
+export { BOARD_SIZES } from "./rank-kit.ts";
+export type { BoardOptions, BoardSizeName } from "./rank-kit.ts";
