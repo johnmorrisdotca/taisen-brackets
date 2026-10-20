@@ -105,6 +105,8 @@ try {
   await shoot("results-apparatus-blue", "gex=apparatus&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
   await shoot("results-swimming-paper", "gex=swimming&glook=paper&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
   await shoot("results-athletics-night", "gex=athletics&glook=night&grank=medal&gicon=stopwatch&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
+  await shoot("bout-board-blue", "gview=bout&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
+  await shoot("bout-board-night", "gview=bout&glook=night&gicon=none&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
   await shoot("judo-board-tall-light", "bstyle=board&bsize=tablet-tall&btheme=light&bw=1,0,0,0&bb=0,0,1,1&bclock=1:51&bosa=none", { width: 1280, height: 900 }, out, "#board-stage svg");
   // The road look's own pictures: the classic look beside it (it keeps its plain colour), a card, one team's path, and the road to the final in three sizes.
   await shoot("classic-desk-light", "ex=wc2022&look=classic&bg=plain", { width: 1280, height: 900 });

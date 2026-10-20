@@ -254,5 +254,10 @@ The English name is the key (a round the table does not name keeps its English n
 | `medalLine` | `{g} gold, {s} silver, {b} bronze, {t} total` | `{g} or, {s} argent, {b} bronze, {t} au total` | `金{g}、銀{s}、銅{b}、合計{t}` | `{g} oro, {s} plata, {b} bronce, {t} en total` | `{g} Gold, {s} Silber, {b} Bronze, {t} gesamt` |
 | `medalRank` | `{n}` | `{n}` | `{n}位` | `{n}` | `{n}` |
 | `rbResult` | `Result` | `Résultat` | `結果` | `Resultado` | `Ergebnis` |
+| `rbBoutPresentation` | `Bout presentation` | `Présentation du combat` | `試合紹介` | `Presentación del combate` | `Kampfvorstellung` |
+| `rbBout` | `Bout: {n}` | `Combat␣: {n}` | `第{n}試合` | `Combate: {n}` | `Kampf: {n}` |
+| `rbOfficials` | `Referee and judges` | `Arbitre et juges` | `審判` | `Árbitro y jueces` | `Kampfrichter` |
+| `rbReferee` | `Referee` | `Arbitre` | `主審` | `Árbitro` | `Mattenleiter` |
+| `rbJudge` | `Judge {n}` | `Juge {n}` | `副審{n}` | `Juez {n}` | `Punktrichter {n}` |
 
 Holes in a phrase are filled in (`{n}`, `{a}`, `{b}`, `{sa}`, `{sb}`, `{w}`, `{name}`, `{round}`, `{tie}`, `{notes}`); `␣` stands for a no-break space (the French writes one before a colon).

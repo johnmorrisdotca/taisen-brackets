@@ -1,13 +1,13 @@
 // The broadcast boards section of the demo: made-up results (demo/data/results-sample.js) drawn by `resultsBoard`, in the manner of a television graphic. The state (which example, look, rank style,
 // icon, width and capitals) is in the address, under keys that start with `g`, and nowhere else.
-import { RESULTS_SAMPLE } from "./data/results-sample.js";
+import { BOUT_SAMPLE, RESULTS_SAMPLE } from "./data/results-sample.js";
 import { FLAGS, FLAGS_RECT } from "./flags-data.js";
 
-const DEFAULTS = { ex: "apparatus", look: "blue", rank: "box", icon: "medal", width: "1280", caps: "0" };
+const DEFAULTS = { view: "results", ex: "apparatus", look: "blue", rank: "box", icon: "medal", width: "1280", caps: "0" };
 const KEYS = Object.keys(DEFAULTS);
 const PATTERN = new RegExp(`^g(${KEYS.join("|")})$`);
 const EXAMPLES = [["apparatus", "Gymnastics apparatus final"], ["allAround", "All-around"], ["swimming", "Swimming final, record badge"], ["athletics", "Athletics 100 m"], ["skating", "Speed skating"]];
-const ONE_OF = { ex: EXAMPLES.map(([k]) => k), look: ["blue", "night", "paper"], rank: ["box", "medal", "plain"], icon: ["medal", "stopwatch", "none"], width: ["1280", "960", "720"], caps: ["0", "1"] };
+const ONE_OF = { view: ["results", "bout"], ex: EXAMPLES.map(([k]) => k), look: ["blue", "night", "paper"], rank: ["box", "medal", "plain"], icon: ["medal", "stopwatch", "none"], width: ["1280", "960", "720"], caps: ["0", "1"] };
 /** The flags the boards draw: 4:3 where a board asks for `rect`, round otherwise (Hata's, made once by `pnpm flags`). */
 const flags = (code, request) => (request.shape === "rect" ? FLAGS_RECT[code] : FLAGS[code]);
 // A plain rank is a white numeral and wants no box; the example that is drawn that way opens with it.
@@ -22,26 +22,33 @@ export function initBoards({ T, lang, params, $ }) {
 
   function draw() {
     drawnIn = lang();
-    const source = RESULTS_SAMPLE[state.ex];
+    const bout = state.view === "bout";
+    const source = bout ? BOUT_SAMPLE : RESULTS_SAMPLE[state.ex];
     const o = options();
-    $("boards-stage").innerHTML = T.resultsBoard(source, o);
+    $("boards-stage").innerHTML = bout ? T.boutBoard(source, o) : T.resultsBoard(source, o);
     for (const b of $("boards-controls").querySelectorAll("[data-gkey]")) b.setAttribute("aria-pressed", String(state[b.dataset.gkey] === b.dataset.value));
-    const size = T.resultsBoardSize(source.rows.length, { width: o.width });
+    for (const row of $("boards-controls").querySelectorAll("[data-views]")) row.hidden = !row.dataset.views.split(" ").includes(state.view);
+    const size = bout ? T.boutBoardSize(source.officials.length, { width: o.width }) : T.resultsBoardSize(source.rows.length, { width: o.width });
     $("boards-size").textContent = `${size.width} by ${size.height}`;
     const next = new URLSearchParams(location.search);
     for (const key of [...next.keys()]) if (PATTERN.test(key)) next.delete(key);
     for (const [key, value] of address()) next.set(key, value);
     history.replaceState(null, "", `?${next}${location.hash}`);
+    if (bout) {
+      $("boards-code").firstChild.textContent = `import { boutBoard, boutBoardSize } from "@johnmorrisdotca/taisen-brackets";\n\n// Hata's flags, loaded once, asked for as 4:3: const loadedFlags = { BR: await flag("BR", { shape: "4:3" }), ... }\nconst source = ${JSON.stringify({ ...source, officials: `@@${source.officials.length} officials: { role, code, flag, name }@@` }, null, 2).replace(/"@@(.*?)@@"/g, "[/* $1 */]")};\nconst svg = boutBoard(source, ${JSON.stringify({ ...o, flags: "@@(code) => loadedFlags[code]@@" }, null, 2).replace(/"@@(.*?)@@"/g, "$1")});\nconst { width, height } = boutBoardSize(${source.officials.length}, { width: ${o.width} }); // ${size.width} by ${size.height}\n`;
+      return;
+    }
     $("boards-code").firstChild.textContent = `import { resultsBoard, resultsBoardSize } from "@johnmorrisdotca/taisen-brackets";\n\n// Hata's flags, loaded once, asked for as 4:3: const loadedFlags = { US: await flag("US", { shape: "4:3" }), ... }\nconst source = ${JSON.stringify({ ...source, rows: `@@${source.rows.length} rows: { rank, code, flag, name, values, record }@@` }, null, 2).replace(/"@@(.*?)@@"/g, "[/* $1 */]")};\nconst svg = resultsBoard(source, ${JSON.stringify({ ...o, flags: "@@(code) => loadedFlags[code]@@" }, null, 2).replace(/"@@(.*?)@@"/g, "$1")});\nconst { width, height } = resultsBoardSize(${source.rows.length}, { width: ${o.width} }); // ${size.width} by ${size.height}\n`;
   }
   let drawnIn = null;
   const refresh = () => { if (drawnIn !== lang()) draw(); };
 
-  const seg = (label, key, values) => `<div class="fam-row"><span class="fam-label">${label}</span><div class="fam-seg" role="group" aria-label="${label}">${values.map(([v, t]) => `<button type="button" data-gkey="${key}" data-value="${v}" aria-pressed="${state[key] === v}">${t}</button>`).join("")}</div></div>`;
+  const seg = (label, key, values, views = "results bout") => `<div class="fam-row" data-views="${views}"><span class="fam-label">${label}</span><div class="fam-seg" role="group" aria-label="${label}">${values.map(([v, t]) => `<button type="button" data-gkey="${key}" data-value="${v}" aria-pressed="${state[key] === v}">${t}</button>`).join("")}</div></div>`;
   $("boards-controls").innerHTML = [
-    seg("Example", "ex", EXAMPLES),
+    seg("Board", "view", [["results", "Results board"], ["bout", "Bout presentation"]]),
+    seg("Example", "ex", EXAMPLES, "results"),
     seg("Look", "look", [["blue", "Blue"], ["night", "Night"], ["paper", "Paper"]]),
-    seg("Rank", "rank", [["box", "Red box"], ["medal", "Medal boxes"], ["plain", "Plain"]]),
+    seg("Rank", "rank", [["box", "Red box"], ["medal", "Medal boxes"], ["plain", "Plain"]], "results"),
     seg("Icon", "icon", [["medal", "Medal"], ["stopwatch", "Stopwatch"], ["none", "None"]]),
     seg("Width", "width", [["1280", "1280"], ["960", "960"], ["720", "720"]]),
     seg("Names", "caps", [["0", "As given"], ["1", "Capitals"]]),

@@ -37,6 +37,7 @@ const EN: Words = {
   rankMatchTitle: "Head to head", rankMeetings: "Previous meetings", rankNoMeetings: "No previous meetings", rankMore: "+{n} more",
   medalTitle: "Medal table", medalNone: "No medals yet", medalGold: "Gold", medalSilver: "Silver", medalBronze: "Bronze", medalGoldShort: "G", medalSilverShort: "S", medalBronzeShort: "B", medalTotal: "Total", medalLine: "{g} gold, {s} silver, {b} bronze, {t} total", medalRank: "{n}",
   rbResult: "Result",
+  rbBoutPresentation: "Bout presentation", rbBout: "Bout: {n}", rbOfficials: "Referee and judges", rbReferee: "Referee", rbJudge: "Judge {n}",
 };
 
 const FR: Words = {
@@ -68,6 +69,7 @@ const FR: Words = {
   rankMatchTitle: "Face-à-face", rankMeetings: "Confrontations précédentes", rankNoMeetings: "Aucune confrontation précédente", rankMore: "+{n} de plus",
   medalTitle: "Tableau des médailles", medalNone: "Aucune médaille pour l’instant", medalGold: "Or", medalSilver: "Argent", medalBronze: "Bronze", medalGoldShort: "O", medalSilverShort: "A", medalBronzeShort: "B", medalTotal: "Total", medalLine: "{g} or, {s} argent, {b} bronze, {t} au total", medalRank: "{n}",
   rbResult: "Résultat",
+  rbBoutPresentation: "Présentation du combat", rbBout: "Combat\u00a0: {n}", rbOfficials: "Arbitre et juges", rbReferee: "Arbitre", rbJudge: "Juge {n}",
 };
 
 const JA: Words = {
@@ -99,6 +101,7 @@ const JA: Words = {
   rankMatchTitle: "直接対決", rankMeetings: "過去の対戦", rankNoMeetings: "過去の対戦はありません", rankMore: "ほか{n}試合",
   medalTitle: "メダル獲得表", medalNone: "まだメダルはありません", medalGold: "金メダル", medalSilver: "銀メダル", medalBronze: "銅メダル", medalGoldShort: "金", medalSilverShort: "銀", medalBronzeShort: "銅", medalTotal: "合計", medalLine: "金{g}、銀{s}、銅{b}、合計{t}", medalRank: "{n}位",
   rbResult: "結果",
+  rbBoutPresentation: "試合紹介", rbBout: "第{n}試合", rbOfficials: "審判", rbReferee: "主審", rbJudge: "副審{n}",
 };
 
 const ES: Words = {
@@ -130,6 +133,7 @@ const ES: Words = {
   rankMatchTitle: "Cara a cara", rankMeetings: "Enfrentamientos anteriores", rankNoMeetings: "Sin enfrentamientos anteriores", rankMore: "+{n} más",
   medalTitle: "Medallero", medalNone: "Aún no hay medallas", medalGold: "Oro", medalSilver: "Plata", medalBronze: "Bronce", medalGoldShort: "O", medalSilverShort: "P", medalBronzeShort: "B", medalTotal: "Total", medalLine: "{g} oro, {s} plata, {b} bronce, {t} en total", medalRank: "{n}",
   rbResult: "Resultado",
+  rbBoutPresentation: "Presentación del combate", rbBout: "Combate: {n}", rbOfficials: "Árbitro y jueces", rbReferee: "Árbitro", rbJudge: "Juez {n}",
 };
 
 const DE: Words = {
@@ -161,6 +165,7 @@ const DE: Words = {
   rankMatchTitle: "Direkter Vergleich", rankMeetings: "Bisherige Duelle", rankNoMeetings: "Noch keine Duelle", rankMore: "+{n} weitere",
   medalTitle: "Medaillenspiegel", medalNone: "Noch keine Medaillen", medalGold: "Gold", medalSilver: "Silber", medalBronze: "Bronze", medalGoldShort: "G", medalSilverShort: "S", medalBronzeShort: "B", medalTotal: "Gesamt", medalLine: "{g} Gold, {s} Silber, {b} Bronze, {t} gesamt", medalRank: "{n}",
   rbResult: "Ergebnis",
+  rbBoutPresentation: "Kampfvorstellung", rbBout: "Kampf: {n}", rbOfficials: "Kampfrichter", rbReferee: "Mattenleiter", rbJudge: "Punktrichter {n}",
 };
 
 /**

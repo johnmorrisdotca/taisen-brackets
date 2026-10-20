@@ -64,6 +64,40 @@ The text is set in a condensed sans stack of free fonts, none of them shipped wi
 
 `describeResultsBoard(source, options)` is the sentence the drawing's description carries (`Men's 100m. Result. 1, A. Runner, USA, 9.80, NR. …`). A board with no title or no rows, more than 24 rows, a row with no name, a value that is not a number, a text or `null`, a precision that is not a whole number from 0 to 6, an unknown option value or a width outside 720 to 4000 is a `RangeError` that names it.
 
+## The bout presentation board
+
+`boutBoard` draws the screen shown as two athletes are about to compete: a title band with the event and, at its right, the phase; a bar that says "Bout presentation" with the bout's number; the two athletes, a red band at the left and a blue one at the right, each with a code, a 4:3 flag and a name; and a bar that says "Referee and judges" over a row for each official, with the country code, the flag, the name and the role at the right.
+
+<p align="center"><picture>
+<img alt="A bout presentation board in the blue look: a title band reading Women's 57-60 kg with Preliminaries at its right; a cyan bar reading Bout presentation and Bout: 142; a red band with BRA, a Brazilian flag and TAVARES M., a dash, and a blue band with MAYER M., an American flag and USA; a cyan bar reading Referee and judges; and six rows, each with a country code, a flag, a name and the role Referee or Judge 1 to Judge 5." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/bout-board-blue.webp" width="720">
+</picture><br><em>A wrestling bout (invented athletes and officials).</em></p>
+
+```js
+import { boutBoard, boutBoardSize } from "@johnmorrisdotca/taisen-brackets";
+
+const source = {
+  title: "Women's 57-60 kg",
+  phase: "Preliminaries",
+  bout: 142,
+  red: { code: "BRA", flag: "BR", name: "TAVARES M." },
+  blue: { code: "USA", flag: "US", name: "MAYER M." },
+  officials: [
+    { role: "referee", code: "MGL", flag: "MN", name: "KHISHIGEE Khas-Erdene" },
+    { code: "POL", flag: "PL", name: "GORNY Mariusz" },
+    { code: "KAZ", flag: "KZ", name: "RYSBAYEV Rakhymzhan" },
+  ],
+};
+const svg = boutBoard(source, { width: 960 });
+console.log(svg.includes("BOUT: 142"), svg.includes("JUDGE 2"), svg.includes("REFEREE AND JUDGES")); // true true true
+console.log(JSON.stringify(boutBoardSize(source.officials.length, { width: 960 }))); // {"width":960,"height":269}
+```
+
+<p align="center"><picture>
+<img alt="The bout presentation board in the night look, with no icon in the title band: the same two bars, the red and blue athlete bands and six official rows on a near black panel with a cyan bar." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/bout-board-night.webp" width="560">
+</picture><br><em>The night look, with no icon.</em></p>
+
+The source is `{ title, phase?, bout?, red, blue, officials? }`. An athlete is `{ name, code?, flag?, mark? }`; an official is the same with a `role`: `"referee"` (the language's word), `"judge"` (the default: numbered 1, 2, 3 in the order given, in the language's words) or any text of your own (`"Mat president"`), written as it is. `bout` is a number or a text (`142`, `"A-12"`), written "Bout: 142". `boutBoardSize(officialCount, { width })` is the size before it is drawn: the width (1280 by default) and a height of `64 + 38 + 10 + 62 + 10 + 38 + 42 × officials + 10`, in units of the width over 1280, so six officials make 1280 by 484: a standalone SVG to place over a picture, as for the results board. Looks, icons, `nameCase`, `nameStyle`, languages and custom properties are the results board's. At most 12 officials; a missing title or name, an unknown option or a width outside 720 to 4000 is a `RangeError`. `describeBoutBoard` is the description.
+
 ## Not drawn yet
 
-The bout presentation board (the two athletes, the referee and the judges) and the broadcast-style medal table are the next steps ([roadmap](./roadmap.md)).
+The broadcast-style medal table is the next step ([roadmap](./roadmap.md)).

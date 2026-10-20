@@ -6,6 +6,17 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.16.0] - 2026-10-20
+
+Broadcast boards, step 2: the bout presentation board.
+
+### Added
+
+- **`boutBoard({ title, phase?, bout?, red, blue, officials? }, options)`**: the screen shown as two athletes are about to compete, as one standalone SVG: a title band (the event, with the phase at its right), a bar "Bout presentation" with the bout's number ("Bout: 142"), the two athletes in a red band and a blue one (code, 4:3 flag, name), a bar "Referee and judges", and a row for each official (code, flag, name, role). A role is `"referee"`, `"judge"` (numbered in the order given, in the language's words) or a text of your own. Looks, icons, `nameCase`, `nameStyle`, languages and `--bc-*` custom properties as for the results board; up to 12 officials. `describeBoutBoard`.
+- **`boutBoardSize(officialCount, { width })`**: the size before it is drawn, for placing it: the width (1280 by default, 720 to 4000) and a height of 64 + 38 + 10 + 62 + 10 + 38 + 42 an official + 10, scaled.
+- Words for the board in the five languages: the bout, the two bars, the referee and a judge (the French and Japanese were read by native-language reviewers; the Spanish and German were not).
+- The demo's Broadcast boards section has the bout presentation (a made-up wrestling bout with a referee and five judges), in the three looks. [docs/broadcast.md](docs/broadcast.md).
+
 ## [0.15.0] - 2026-10-20
 
 Broadcast boards, step 1: the results board.

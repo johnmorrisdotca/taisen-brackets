@@ -450,6 +450,12 @@ export interface Words {
   medalRank: string;
   /** The broadcast-style boards (`resultsBoard`, `boutBoard`, `broadcastMedalTable`): the sub bar\'s word for a result. */
   rbResult: string;
+  /** The bout presentation board (`boutBoard`): the first bar, the bout's number (`{n}`), the second bar, the referee and a judge (`{n}`). */
+  rbBoutPresentation: string;
+  rbBout: string;
+  rbOfficials: string;
+  rbReferee: string;
+  rbJudge: string;
 }
 
 /** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */

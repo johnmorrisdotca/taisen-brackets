@@ -39,3 +39,5 @@ export { resultsBoard, resultsBoardSize, describeResultsBoard } from "./results-
 export type { ResultsBoardOptions, ResultsBoardSource, ResultsColumn, ResultsRow } from "./results-board.ts";
 export { BROADCAST_LOOKS } from "./broadcast-kit.ts";
 export type { BroadcastIcon, BroadcastLook, BroadcastOptions } from "./broadcast-kit.ts";
+export { boutBoard, boutBoardSize, describeBoutBoard } from "./bout-board.ts";
+export type { BoutAthlete, BoutBoardOptions, BoutBoardSource, BoutOfficial } from "./bout-board.ts";

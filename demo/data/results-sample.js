@@ -83,3 +83,20 @@ export const RESULTS_SAMPLE = {
     ],
   },
 };
+
+/** A made-up bout presentation (a wrestling bout): the athletes, the referee and the judges are invented. */
+export const BOUT_SAMPLE = {
+  title: "Women's 57-60 kg",
+  phase: "Preliminaries",
+  bout: 142,
+  red: { code: "BRA", flag: "BR", name: "TAVARES M." },
+  blue: { code: "USA", flag: "US", name: "MAYER M." },
+  officials: [
+    { role: "referee", code: "MGL", flag: "MN", name: "KHISHIGEE Khas-Erdene" },
+    { code: "POL", flag: "PL", name: "GORNY Mariusz" },
+    { code: "KAZ", flag: "KZ", name: "RYSBAYEV Rakhymzhan" },
+    { code: "DEN", flag: "DK", name: "BEDEMANN Claus" },
+    { code: "ALG", flag: "DZ", name: "SIDI YAKOUB Kheira" },
+    { code: "FRA", flag: "FR", name: "MADFOUA Fathi" },
+  ],
+};

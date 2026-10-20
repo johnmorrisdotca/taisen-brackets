@@ -51,3 +51,21 @@ test("choosing the all-around opens it with plain ranks, and the board follows t
   await page.goto("/?lang=fr&gex=allAround");
   await expect(board(page).locator("text", { hasText: /^RÉSULTAT$/ })).toBeVisible();
 });
+
+test("the bout presentation board draws from the address, its size is the officials', and the controls follow the board", async ({ page }) => {
+  await page.goto("/?gview=bout");
+  await expect(board(page)).toHaveAttribute("viewBox", "0 0 1280 484");
+  await expect(board(page).locator(".bc-official")).toHaveCount(6);
+  await expect(board(page).locator(".bc-athlete")).toHaveCount(2);
+  await expect(page.locator("#boards-size")).toHaveText("1280 by 484");
+  await expect(page.locator("#boards-controls").getByRole("button", { name: "Medal boxes" })).toBeHidden();
+  await page.locator("#boards-controls").getByRole("button", { name: "720", exact: true }).click();
+  expect(page.url()).toContain("gwidth=720");
+  await expect(board(page)).toHaveAttribute("viewBox", "0 0 720 272");
+  await page.locator("#boards-controls").getByRole("button", { name: "Results board" }).click();
+  await expect(board(page).locator(".bc-row")).toHaveCount(8);
+  await page.goto("/?gview=bout&lang=ja");
+  await expect(board(page).locator("text", { hasText: /^試合紹介$/ })).toBeVisible();
+  await page.locator("#boards-code-box summary").click();
+  await expect(page.locator("#boards-code")).toContainText("boutBoard(source");
+});
