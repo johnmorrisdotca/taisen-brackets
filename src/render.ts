@@ -6,7 +6,7 @@ import { cleanSvg, drawEmblem, drawMark, hasTrophy as hasTrophyOf, isEmblemId, m
 import { roundLabel } from "./rounds.ts";
 import { styleFor } from "./theme.ts";
 import { resolveBackground } from "./background.ts";
-import { emWidth, esc, fit, hash, num } from "./text.ts";
+import { emWidth, esc, fit, hash, num, safeId } from "./text.ts";
 import { fill, voiceOf, type Voice } from "./locales.ts";
 import { paintVariant, seriesLineWidth, type PaintEnv, type VariantKind } from "./layouts.ts";
 import { drawGroups } from "./groups.ts";
@@ -154,7 +154,7 @@ export function drawBracket(input: BracketLayout | readonly Matchup[] | BracketI
   const orientation = options.orientation && options.orientation !== "auto" ? options.orientation : kind === "series" || sizeName === "phone" || sizeName === "card" || (size.height !== null && size.width < size.height * 0.8) ? "vertical" : "horizontal";
   const road = options.look === "road";
   const hasBg = typeof options.background === "string" || (typeof options.background === "object" && options.background !== null);
-  const prefix = options.id ?? `tb-${hash(JSON.stringify([v.locale.code, layout.teams.map((t) => t.name), layout.ties.map((t) => [t.id, t.sides.map((s) => s?.id ?? null), t.winner, t.result.score, t.round, ...(t.judo ? [t.judo.method, t.judo.goldenScore, t.judo.seconds, t.judo.sides] : [])]), options.size, orientation, options.detail, theme, options.title, options.subtitle, options.seeds, options.scores, options.champion, options.markShape, options.roundLabels, options.thirdPlace, options.trophy ? 1 : 0, road ? 1 : 0, options.highlightPath ?? null, options.flags ? 1 : 0, ...(hasBg ? [options.background, options.vs, options.codes, options.seeds] : []), ...(options.flagHref ? ["h"] : []), ...(kind !== "tree" ? [kind, options.at, options.standings, options.qualify] : []), ...(options.headers ? ["head"] : [])]))}`;
+  const prefix = safeId(options.id, "tb") ?? `tb-${hash(JSON.stringify([v.locale.code, layout.teams.map((t) => t.name), layout.ties.map((t) => [t.id, t.sides.map((s) => s?.id ?? null), t.winner, t.result.score, t.round, ...(t.judo ? [t.judo.method, t.judo.goldenScore, t.judo.seconds, t.judo.sides] : [])]), options.size, orientation, options.detail, theme, options.title, options.subtitle, options.seeds, options.scores, options.champion, options.markShape, options.roundLabels, options.thirdPlace, options.trophy ? 1 : 0, road ? 1 : 0, options.highlightPath ?? null, options.flags ? 1 : 0, ...(hasBg ? [options.background, options.vs, options.codes, options.seeds] : []), ...(options.flagHref ? ["h"] : []), ...(kind !== "tree" ? [kind, options.at, options.standings, options.qualify] : []), ...(options.headers ? ["head"] : [])]))}`;
   const ctx: MarkContext = { radii: new Set(), symbols: new Map(), prefix, shape: options.markShape ?? "round", look: road ? "road" : "classic", flags: options.flags, flagHref: options.flagHref, theme: theme === "light" ? "light" : theme === "dark" || theme === "poster" ? "dark" : "inherit", flagCache: new Map(), defs: new Map() };
   const path = pathOf(layout, options.highlightPath);
   const linked = { count: 0 };

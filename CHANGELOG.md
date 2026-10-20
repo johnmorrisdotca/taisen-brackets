@@ -6,6 +6,14 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.17.1] - 2026-10-20
+
+Security fix.
+
+### Fixed
+
+- **The `id` option is made safe in every drawing that takes one.** The judo drawings (`judoScoreboard`, `judoContestCard`, `judoMatQueue`, `judoRoadPanel`, and `drawBracket` with judo ties; 0.7.0 to 0.17.0) wrote the caller's `id` as it came into the `<style>` text, a class name and element ids, so a hostile `id` (`x"><script>…`, or `a}</style>…`) could break out of the style block or the attribute and put markup into the SVG. `drawBracket` and `roadToFinal` did the same. They now keep only letters, digits, `_` and `-` (every other character becomes `-`) and put the drawing's own prefix in front of an id that does not start with a letter, as the 0.15.0 boards already did. An id made of letters, digits, `_` and `-` that starts with a letter is unchanged, so most pages see no difference. `test/hostile-id.test.ts` draws every drawing that takes an `id` with six hostile ids.
+
 ## [0.17.0] - 2026-10-20
 
 Broadcast boards, step 3: the medal table.

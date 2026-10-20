@@ -6,7 +6,7 @@ import { SIZES } from "./render.ts";
 import { drawRoad } from "./road.draw.ts";
 import { nameOf, readModel, summaryOf, tableOf, totalsOf } from "./road.model.ts";
 import type { RoadChart, RoadInput, RoadOptions } from "./road.types.ts";
-import { hash } from "./text.ts";
+import { hash, safeId } from "./text.ts";
 
 export type { RoadChart, RoadDecided, RoadFinal, RoadFinalist, RoadGroupMatch, RoadInput, RoadMatch, RoadOptions, RoadRecord, RoadScore, RoadSize, RoadTeam, RoadTotals } from "./road.types.ts";
 
@@ -47,7 +47,7 @@ export function roadToFinal(input: RoadInput, options: RoadOptions = {}): RoadCh
     const merged: RoadOptions = { ...options, ...extra };
     check(merged);
     const m = readModel(input, merged);
-    const prefix = merged.id ?? `tb-${hash(JSON.stringify([m.voice.locale.code, m.finalists.map((t) => t.name), [...m.path[0].values()].map((v) => [v.round, v.mine, v.theirs]), [...m.path[1].values()].map((v) => [v.round, v.mine, v.theirs]), m.rounds, merged.size, merged.theme, merged.title, merged.subtitle, merged.final ?? null, merged.endnote, merged.winner, merged.codes, merged.markShape, ...(typeof merged.background === "string" || typeof merged.background === "object" ? [merged.background] : [])]))}`;
+    const prefix = safeId(merged.id, "tb") ?? `tb-${hash(JSON.stringify([m.voice.locale.code, m.finalists.map((t) => t.name), [...m.path[0].values()].map((v) => [v.round, v.mine, v.theirs]), [...m.path[1].values()].map((v) => [v.round, v.mine, v.theirs]), m.rounds, merged.size, merged.theme, merged.title, merged.subtitle, merged.final ?? null, merged.endnote, merged.winner, merged.codes, merged.markShape, ...(typeof merged.background === "string" || typeof merged.background === "object" ? [merged.background] : [])]))}`;
     return drawRoad(m, merged, prefix);
   };
   return {

@@ -108,3 +108,13 @@ export function num(n: number): string {
   const r = Math.round(n * 100) / 100;
   return Object.is(r, -0) ? "0" : String(r);
 }
+
+/**
+ * A caller's `id` option made safe to use as a class name, an element id and a CSS selector: only letters, digits, `_` and `-` stay (every other character becomes `-`),
+ * and an id that does not start with a letter gets `fallback` in front (an id may not start with a digit, and a CSS selector may not either). Left out, it is `undefined`.
+ */
+export function safeId(id: unknown, fallback: string): string | undefined {
+  if (id === undefined) return undefined;
+  const clean = String(id).replace(/[^\w-]/g, "-");
+  return /^[A-Za-z]/.test(clean) ? clean : `${fallback}-${clean}`;
+}

@@ -9,7 +9,7 @@ import { judoMethodWord, judoSideLong } from "./judo-text.ts";
 import { fill, voiceOf, type Voice } from "./locales.ts";
 import { type MarkContext, drawMark, markDefs } from "./marks.ts";
 import { JUDO_COLORS } from "./theme.ts";
-import { capitals, emWidth, esc, fit, fitLines, hash, num } from "./text.ts";
+import { capitals, emWidth, esc, fit, fitLines, hash, num, safeId } from "./text.ts";
 
 /** One athlete on the scoreboard. Only `name` is needed. */
 export interface JudoAthlete {
@@ -217,7 +217,7 @@ export function judoScoreboard(contest: JudoContest, options: JudoBoardOptions =
   const clockSeconds = judoSeconds(contest.clock);
   const osa = contest.osaekomi;
   if (osa && (!(osa.side === 0 || osa.side === 1) || !Number.isFinite(osa.seconds) || osa.seconds < 0)) throw new RangeError("taisen-brackets: osaekomi is { side: 0 | 1, seconds } with seconds from 0");
-  const prefix = options.id ?? `jb-${hash(JSON.stringify([contest, options.size, options.style, theme, options.swap, options.coaches, v.locale.code, options.flags ? 1 : 0, options.flagHref ? 1 : 0, options.title]))}`;
+  const prefix = safeId(options.id, "jb") ?? `jb-${hash(JSON.stringify([contest, options.size, options.style, theme, options.swap, options.coaches, v.locale.code, options.flags ? 1 : 0, options.flagHref ? 1 : 0, options.title]))}`;
   const ctx: MarkContext = { radii: new Set(), symbols: new Map(), prefix, shape: "round", theme: "inherit", flagCache: new Map(), ...(options.flags ? { flags: options.flags } : {}), ...(options.flagHref ? { flagHref: options.flagHref } : {}) };
   const landscape = W >= H;
   const unit = Math.min(W, H);

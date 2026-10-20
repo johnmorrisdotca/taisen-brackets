@@ -657,7 +657,7 @@ export interface DrawOptions extends LayoutOptions {
   words?: Partial<Words>;
   /** The name to draw for a team in this language: `undefined` keeps `Team.names[locale]` or `Team.name`. `countryName(team.region, locale)` makes a country's name from Intl, with no list of your own. */
   teamName?: (team: Team, locale: Locale) => string | undefined;
-  /** Prefix for the drawing's ids. Default: a hash of the bracket and the options. */
+  /** Prefix for the drawing's ids. Default: a hash of the bracket and the options. Only letters, digits, `_` and `-` are kept (any other character becomes `-`), and an id that does not start with a letter gets the drawing's own prefix in front. */
   id?: string;
   /** Extra class names for the root `<svg>`. */
   className?: string;

@@ -7,7 +7,7 @@ import type { JudoAthlete, JudoBoardOptions, JudoContest } from "./judo-board.ts
 import { BLUE_PANEL, DARK, FONT, JUDO_BOARD_SIZES, LIGHT, WHITE_PANEL, bw, clampN, fitSize, rulesFor } from "./judo-board.ts";
 import { fill, voiceOf, type Voice } from "./locales.ts";
 import { drawMark, markDefs, type MarkContext } from "./marks.ts";
-import { emWidth, esc, fit, fitLines, hash, num } from "./text.ts";
+import { emWidth, esc, fit, fitLines, hash, num, safeId } from "./text.ts";
 import type { Team } from "./types.ts";
 
 /** What the contest card shows: the two athletes and the header. The scores and the clock of a `JudoContest` are not drawn. */
@@ -82,7 +82,7 @@ export function frameOf(options: JudoBoardOptions, seed: unknown): Frame {
   if (!size || !(size.width >= 200) || !(size.height >= 200)) throw new RangeError(`taisen-brackets: a size is "tv", "tablet", "tablet-tall" or { width, height } of 200 or more, not ${JSON.stringify(options.size)}`);
   const theme = options.theme ?? "auto";
   if (theme !== "auto" && theme !== "light" && theme !== "dark") throw new RangeError(`taisen-brackets: a theme is "auto", "light" or "dark", not ${JSON.stringify(theme)}`);
-  const scope = options.id ?? `jb-${hash(JSON.stringify([seed, options.size, theme, options.swap, v.locale.code, options.flags ? 1 : 0, options.flagHref ? 1 : 0, options.title]))}`;
+  const scope = safeId(options.id, "jb") ?? `jb-${hash(JSON.stringify([seed, options.size, theme, options.swap, v.locale.code, options.flags ? 1 : 0, options.flagHref ? 1 : 0, options.title]))}`;
   const ctx: MarkContext = { radii: new Set(), symbols: new Map(), prefix: scope, shape: "round", theme: "inherit", flagCache: new Map(), ...(options.flags ? { flags: options.flags } : {}), ...(options.flagHref ? { flagHref: options.flagHref } : {}) };
   return { W: size.width, H: size.height, v, scope, theme, ctx, options };
 }
