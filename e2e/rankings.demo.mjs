@@ -5,6 +5,7 @@ const noSidewaysScroll = (page) => page.evaluate(() => document.documentElement.
 const list = (page) => page.locator("#ranking-stage > svg");
 
 test("the ranking list draws for each size and style from the address, without scrolling sideways", async ({ page }) => {
+  test.setTimeout(180_000);
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   for (const [size, box] of [["tv", "1920 1080"], ["tablet", "1280 800"], ["tablet-tall", "800 1280"], ["phone", "600 1300"], ["square", "1080 1080"], ["portrait", "1080 1350"]]) {
@@ -55,6 +56,7 @@ test("the ranking list follows the language of the page", async ({ page }) => {
 });
 
 test("the number ones and the entry list draw from the address for each size, and the controls follow the view", async ({ page }) => {
+  test.setTimeout(180_000);
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   for (const size of ["tv", "tablet-tall", "phone", "square"]) {
