@@ -124,8 +124,32 @@ The options: `size` (`tv` 1920 by 1080, `tablet` 1280 by 800, `tablet-tall` 800 
 
 A state that cannot happen (two ippon, a third waza-ari, a clock that is not `m:ss`, a bad size or style) is a `RangeError` that names it. `describeJudoContest(contest)` is the sentence the drawing's description carries. The words (Osaekomi, Shido, Mat 1, Contest G-24, the coach line, the title) are in the five languages.
 
+## The contest card and the mat queue board
+
+Two more screens for the hall. **`judoContestCard(contest, options)`** is the card shown when the two athletes enter: the weight class on the left of the header, the round on the right, the mat and contest number between them, then the white athlete over the blue one as two wide bands, each with the flag, the name as big as the band lets it be (on two lines at a space when that is clearly bigger) and the country code under it.
+
+<p align="center"><picture><img alt="A judo contest card on a TV in the dark: the header says Men minus 66 kg on the left, Mat 1 Contest G-1 in the middle and Final on the right; the white athlete Daiki Hoshino of Japan on a wide white band with the Japanese flag and the code JPN, and under it the blue athlete Mathis Roussel of France on a blue band with the French flag and the code FRA." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-card-tv-dark.webp" width="560"></picture><br><em>The contest card (invented names).</em></p>
+
+**`judoMatQueue(mats, options)`** is the board of the contests to come, per mat. A mat is `{ mat, color?, contests }`; a contest is `{ number, white, blue }` with the number as the draw gives it (`"G-24"`). Each mat is a tall strip in its colour with its number big, and a row for each contest in the order they will be fought: the contest number, the white athlete (name, code, flag) and the blue athlete (flag, code, name). The first contest of a mat is the one on now, its number green (`current: false` turns that off).
+
+<p align="center"><picture><img alt="A judo mat queue board on a TV in the dark with three mats: a red strip with a big 1, a green strip with a big 2 and a yellow strip with a big 3, each beside a list of eight or fewer contests with the contest number, the white athlete on a white cell with the name, the country code and a round flag, and the blue athlete on a blue cell with the flag, the code and the name; the first contest of each mat has a green number." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-queue-tv-dark.webp" width="720"></picture><br><em>Three mats on a TV.</em></p>
+
+<p align="center"><picture><img alt="A judo mat queue board on a tablet in the light with four mats in a grid of two by two: red 1, green 2, yellow 3 and purple 4, each with its contests in order." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-queue-tablet-light.webp" width="560"></picture><br><em>Four mats on a tablet.</em></p>
+
+```js
+import { judoMatQueue } from "@johnmorrisdotca/taisen-brackets";
+
+const svg = judoMatQueue([
+  { mat: 1, contests: [{ number: "G-1", white: { name: "Daiki Hoshino", code: "JPN" }, blue: { name: "Mathis Roussel", code: "FRA" } }] },
+  { mat: 2, color: "#0b6fb8", contests: [{ number: "G-2", white: { name: "Levan Mtchedlishvili", code: "GEO" }, blue: { name: "Min-jae Seong", code: "KOR" } }] },
+], { size: "tv", theme: "dark" });
+console.log(svg.includes("G-2"), svg.includes("#0b6fb8")); // true true
+```
+
+The mats are in columns on a wide board, as many as leave each mat room for its names (about six tenths of the short side of the board), and stacked on an upright tablet; up to eight mats. A mat with more contests than fit is cut at `rows` (default: as many as fit at a readable size, up to 12). Mats with no colour take `JUDO_MAT_COLORS` in turn (red, green, yellow, purple, orange, teal), or `colors`, and the number is white or near-black, whichever reads on its colour. Both take `size`, `theme`, `swap` (blue first), `flags`, `flagHref`, `locale`, `words`, `title`, `id` and `className` as the scoreboard does; an athlete is the same `{ name, code, flag, mark }`. `describeJudoCard` and `describeJudoQueue` are the sentences the drawings' descriptions carry. A missing name, a mat with no number, a colour that is not a hex code or a bad size is a `RangeError`.
+
 ## Not drawn yet
 
 - **Double repechage and full repechage** (2.5.3, 2.5.4): their pools are laid out in the rules' Appendix G charts, which are pictures; `judoBracket` refuses them rather than guess.
 - **Team events**, round robins and kata scoring.
-- **A contest card and a mat queue board, and the road to the final** are planned for the next releases ([roadmap](./roadmap.md)).
+- **The road to the final of one judoka** is planned for the next release ([roadmap](./roadmap.md)).

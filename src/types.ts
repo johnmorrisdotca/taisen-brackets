@@ -402,6 +402,9 @@ export interface Words {
   judoContest: string;
   judoCoach: string;
   judoBoardTitle: string;
+  /** The default titles of the contest card and of the mat queue board. */
+  judoCardTitle: string;
+  judoQueueTitle: string;
 }
 
 /** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */

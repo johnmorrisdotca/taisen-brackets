@@ -4,10 +4,10 @@ export const JUDO_SAMPLE = {
   category: { sex: "men", weight: "-66" },
   // In seed order.
   athletes: [
-    { id: "J01", name: "Daiki Hoshino", flag: "JP" }, { id: "J02", name: "Mathis Roussel", flag: "FR" }, { id: "J03", name: "Levan Mtchedlishvili", flag: "GE" }, { id: "J04", name: "Min-jae Seong", flag: "KR" },
-    { id: "J05", name: "Rafael Tavares", flag: "BR" }, { id: "J06", name: "Jasur Rakhimov", flag: "UZ" }, { id: "J07", name: "Tomás Zaldívar", flag: "CU" }, { id: "J08", name: "Joris van Dijk", flag: "NL" },
-    { id: "J09", name: "Emil Hartmann", flag: "DE" }, { id: "J10", name: "Alonso Caballero", flag: "ES" }, { id: "J11", name: "Gianluca Ferraro", flag: "IT" }, { id: "J12", name: "Elnur Qasimov", flag: "AZ" },
-    { id: "J13", name: "Temuulen Batsaikhan", flag: "MN" }, { id: "J14", name: "Owen Callahan", flag: "CA" }, { id: "J15", name: "Marcus Whitfield", flag: "US" }, { id: "J16", name: "Balázs Kertész", flag: "HU" },
+    { id: "J01", name: "Daiki Hoshino", flag: "JP", code: "JPN" }, { id: "J02", name: "Mathis Roussel", flag: "FR", code: "FRA" }, { id: "J03", name: "Levan Mtchedlishvili", flag: "GE", code: "GEO" }, { id: "J04", name: "Min-jae Seong", flag: "KR", code: "KOR" },
+    { id: "J05", name: "Rafael Tavares", flag: "BR", code: "BRA" }, { id: "J06", name: "Jasur Rakhimov", flag: "UZ", code: "UZB" }, { id: "J07", name: "Tomás Zaldívar", flag: "CU", code: "CUB" }, { id: "J08", name: "Joris van Dijk", flag: "NL", code: "NED" },
+    { id: "J09", name: "Emil Hartmann", flag: "DE", code: "GER" }, { id: "J10", name: "Alonso Caballero", flag: "ES", code: "ESP" }, { id: "J11", name: "Gianluca Ferraro", flag: "IT", code: "ITA" }, { id: "J12", name: "Elnur Qasimov", flag: "AZ", code: "AZE" },
+    { id: "J13", name: "Temuulen Batsaikhan", flag: "MN", code: "MGL" }, { id: "J14", name: "Owen Callahan", flag: "CA", code: "CAN" }, { id: "J15", name: "Marcus Whitfield", flag: "US", code: "USA" }, { id: "J16", name: "Balázs Kertész", flag: "HU", code: "HUN" },
   ],
   // Each contest, in the order it is fought: [id, the winner, what the winner scored, what the loser scored, the rest of the result].
   fights: [

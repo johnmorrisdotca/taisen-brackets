@@ -84,19 +84,19 @@ export interface JudoBoardOptions {
   className?: string;
 }
 
-const clampN = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
-const bw = (text: string, size: number): number => emWidth(text) * size;
+export const clampN = (n: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, n));
+export const bw = (text: string, size: number): number => emWidth(text) * size;
 
-interface Palette { bg: string; ink: string; muted: string; band: string; box: string; boxInk: string; gold: string }
-const LIGHT: Palette = { bg: "#ecebe4", ink: "#1b1e1c", muted: "#585d57", band: "#dcdad0", box: "#141716", boxInk: "#f4f1e6", gold: "#e0b43b" };
-const DARK: Palette = { bg: "#0e1011", ink: "#eceae0", muted: "#9aa097", band: "#1b1f21", box: "#050606", boxInk: "#f4f1e6", gold: "#e0b43b" };
-const FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Hiragino Sans", "Yu Gothic UI", "Noto Sans CJK JP", Meiryo, sans-serif';
+export interface Palette { bg: string; ink: string; muted: string; band: string; box: string; boxInk: string; gold: string }
+export const LIGHT: Palette = { bg: "#ecebe4", ink: "#1b1e1c", muted: "#585d57", band: "#dcdad0", box: "#141716", boxInk: "#f4f1e6", gold: "#e0b43b" };
+export const DARK: Palette = { bg: "#0e1011", ink: "#eceae0", muted: "#9aa097", band: "#1b1f21", box: "#050606", boxInk: "#f4f1e6", gold: "#e0b43b" };
+export const FONT = 'system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Hiragino Sans", "Yu Gothic UI", "Noto Sans CJK JP", Meiryo, sans-serif';
 
 /** The panels' own colours: the white and the blue judogi, the ink and the tiles on each. White on #1f4fa8 reads 8 to 1, and the dark ink on the white panel more. */
-const WHITE_PANEL = { panel: "#f7f6f1", ink: "#15181a", sub: "#464b50", tile: "#e0dfd6", edge: "#bdbbae" };
-const BLUE_PANEL = { panel: JUDO_COLORS.blue, ink: "#ffffff", sub: "#dbe5fa", tile: "#173b86", edge: "#0f2a63" };
+export const WHITE_PANEL = { panel: "#f7f6f1", ink: "#15181a", sub: "#464b50", tile: "#e0dfd6", edge: "#bdbbae" };
+export const BLUE_PANEL = { panel: JUDO_COLORS.blue, ink: "#ffffff", sub: "#dbe5fa", tile: "#173b86", edge: "#0f2a63" };
 
-function rulesFor(p: Palette, scope: string, side: string): string {
+export function rulesFor(p: Palette, scope: string, side: string): string {
   const s = (sel: string, body: string) => `${side}${scope} ${sel}{${body}}`;
   const v = (name: string, value: string) => `var(--jb-${name}, ${value})`;
   return [
@@ -456,10 +456,10 @@ export function judoScoreboard(contest: JudoContest, options: JudoBoardOptions =
   ].filter(Boolean).join("\n");
 }
 
-interface R { x: number; y: number; w: number; h: number }
+export interface R { x: number; y: number; w: number; h: number }
 
 /** The size a text can be set at to fit a width, from the size asked for. */
-function fitSize(text: string, size: number, width: number, floor = 0.62): number {
+export function fitSize(text: string, size: number, width: number, floor = 0.62): number {
   const need = bw(text, size);
   return need <= width ? size : Math.max(size * (width / need), size * floor);
 }

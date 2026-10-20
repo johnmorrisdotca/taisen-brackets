@@ -6,6 +6,17 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.9.0] - 2026-10-20
+
+Judo, step 3: the contest card and the mat queue board.
+
+### Added
+
+- **`judoContestCard(contest, options)`**: the card shown when the athletes enter. The weight class, the round, the mat and the contest number in a header, then the white athlete over the blue one as two wide bands with the flag, the name as big as the band allows (two lines at a space when that is clearly bigger) and the three-letter code. `describeJudoCard`.
+- **`judoMatQueue(mats, options)`**: the board of the contests to come, per mat. A mat is `{ mat, color?, contests }` and a contest `{ number, white, blue }`; each mat is a tall strip in its colour with its number big (white or near-black, whichever reads on the colour) and a row for each contest in order: the contest number (green for the one on now, `current: false` turns that off), the white athlete (name, code, flag) and the blue (flag, code, name). One to eight mats, in columns on a wide board (as many as leave each mat room for its names) and stacked on an upright tablet; `rows` cuts a long queue; `colors` and `JUDO_MAT_COLORS` (red, green, yellow, purple, orange, teal). `describeJudoQueue`.
+- Both take the scoreboard's `size` (`tv`, `tablet`, `tablet-tall`, your own), `theme`, `swap`, `flags`, `flagHref`, `locale`, `words`, `title`, `id` and `className`; a missing name, a mat with no number, a colour that is not a hex code, nine mats or a bad size are a `RangeError`. Words for the two titles in the five languages (the French and Japanese were read by native-language reviewers).
+- The demo has a section for them: the screen (queue or card), one to six mats, size, look and blue first, with the call that draws it; the state is in the address. Tests hold every text inside the drawing, in every size and several languages, and every name inside its side of its row.
+
 ## [0.8.0] - 2026-10-20
 
 Judo, step 2: the scoreboard of one contest.

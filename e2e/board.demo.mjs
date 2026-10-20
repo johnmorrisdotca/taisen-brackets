@@ -28,7 +28,7 @@ test("a counter's plus changes the drawing and the address, and the state comes 
   expect(page.url()).toContain("bw=0%2C1%2C1%2C1");
   await page.reload();
   await expect(page.locator("#board-w .counter").nth(2).locator("output")).toHaveText("1");
-  await page.getByRole("button", { name: "Golden score", exact: true }).click();
+  await page.locator("#board-controls").getByRole("button", { name: "Golden score", exact: true }).click();
   await expect(board(page).locator("text", { hasText: /^GOLDEN SCORE$/ })).toBeVisible();
   expect(page.url()).toContain("bgs=1");
 });
@@ -46,7 +46,7 @@ test("the language and the controls reach the board: the words are the language'
   await page.goto("/?lang=fr");
   await expect(board(page).locator("text", { hasText: /^OSAEKOMI$/ })).toBeVisible();
   await expect(board(page)).toContainText("Tapis 1");
-  await page.getByRole("button", { name: "Blue first", exact: true }).click();
+  await page.locator("#board-controls").getByRole("button", { name: "Blue first", exact: true }).click();
   expect(page.url()).toContain("bswap=1");
 });
 
@@ -58,4 +58,34 @@ test("the controls are at least 44 pixels, and the call that draws the board is 
   }
   await page.locator("#board-code-box summary").click();
   await expect(page.locator("#board-code")).toContainText("judoScoreboard(");
+});
+
+const queue = (page) => page.locator("#queue-stage > svg");
+
+test("the mat queue board draws one to six mats in each size from the address, and the number of mats is in the address", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  for (const mats of [1, 3, 6]) for (const size of ["tv", "tablet", "tablet-tall"]) {
+    await page.goto(`/?qmats=${mats}&qsize=${size}`);
+    await expect(queue(page)).toBeVisible();
+    await expect(queue(page).locator(".jq-mat")).toHaveCount(mats);
+    expect(await noSidewaysScroll(page)).toBe(true);
+  }
+  await page.goto("/");
+  await page.locator("#queue-controls").getByRole("button", { name: "4", exact: true }).click();
+  await expect(queue(page).locator(".jq-mat")).toHaveCount(4);
+  expect(page.url()).toContain("qmats=4");
+  expect(errors).toEqual([]);
+});
+
+test("the contest card shows the category and the two athletes, and the language is the page's", async ({ page }) => {
+  await page.goto("/?qview=card&lang=fr");
+  await expect(queue(page)).toBeVisible();
+  await expect(queue(page).locator("text", { hasText: /^Daiki Hoshino$/ })).toBeVisible();
+  await expect(queue(page).locator("text", { hasText: /^Hommes -66\u00a0kg$/ })).toBeVisible();
+  await expect(page.locator("#queue-mats-row")).toBeHidden();
+  await page.locator("#queue-controls").getByRole("button", { name: "Blue first", exact: true }).click();
+  expect(page.url()).toContain("qswap=1");
+  await page.locator("#queue-code-box summary").click();
+  await expect(page.locator("#queue-code")).toContainText("judoContestCard(");
 });

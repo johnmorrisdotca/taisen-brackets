@@ -240,7 +240,7 @@ In the road look, `seeds: true` writes a small tag (`P1`, `WC2`) beside each tea
 
 ## Judo
 
-A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as the IJF's current Sport and Organisation Rules score them (yuko is back since 2025), golden score, the contest time and how it was won. The box writes the marks (`I`, `W`, `Y`), the shido as yellow and red cards and a note under the two rows, in the five languages. `judoBracket` makes a weight category's bracket with the IJF's repechage and its two bronze medal contests. [docs/judo.md](./docs/judo.md) quotes the rules it follows. `judoScoreboard` draws one contest's scoreboard for a given state (the athletes with flags and codes, ippon, waza-ari and yuko counters, shido cards, clock, golden score, osaekomi timer, weight class and round), on a TV or a tablet, as a screen board or as table-top flip cards: [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#board).
+A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as the IJF's current Sport and Organisation Rules score them (yuko is back since 2025), golden score, the contest time and how it was won. The box writes the marks (`I`, `W`, `Y`), the shido as yellow and red cards and a note under the two rows, in the five languages. `judoBracket` makes a weight category's bracket with the IJF's repechage and its two bronze medal contests. [docs/judo.md](./docs/judo.md) quotes the rules it follows. `judoScoreboard` draws one contest's scoreboard for a given state (the athletes with flags and codes, ippon, waza-ari and yuko counters, shido cards, clock, golden score, osaekomi timer, weight class and round), on a TV or a tablet, as a screen board or as table-top flip cards: [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#board). `judoContestCard` and `judoMatQueue` draw the card shown when the athletes enter and the board of the next contests per mat, with a big mat number and colour ([demo](https://johnmorrisdotca.github.io/taisen-brackets/#queue)).
 
 <p align="center"><picture>
 <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-desk-dark.webp">
@@ -293,6 +293,7 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **The champion in the centre**, with a slot for your trophy: your own SVG or image, or an emblem from [Dougu Sports](https://github.com/johnmorrisdotca/dougu-sports) (a hockey cup, a basketball trophy, a globe) through an optional plug-in, with no dependency added.
 - **Accessible**: `role="img"` with a title and a description, a tooltip sentence on every tie, and `bracketTable`.
 - **A judo scoreboard**: `judoScoreboard` draws one contest for a given state, in two styles (a board, and table-top flip cards) and three sizes, in five languages; live updating is yours.
+- **Judo screens for the hall**: `judoContestCard` (the category, the round, the white athlete over the blue one) and `judoMatQueue` (per mat, a big number and colour and the contests to come in order, with flags and codes), on a TV or a tablet, in five languages.
 - **Judo scoring**: `Matchup.judo` takes ippon, waza-ari, yuko, shido, hansoku-make, golden score and the contest time, checked against the IJF rules (`judoOutcome`); a box shows the marks, the shido cards and how the contest was won, and `judoBracket` adds the repechage and the two bronze medal contests ([docs/judo.md](./docs/judo.md)).
 - **Formats by era**: NHL, NBA, MLB, NFL, CFL, MLS and FIFA World Cup round names, series lengths and byes.
 - **Five languages**: English, French, Japanese, Spanish and German, for every word the drawing, the tooltips, the description and the table write, with the football terms of each language; countries named by `Intl` from their ISO code; numbers and dates by `Intl`. Add a language of your own.
@@ -653,7 +654,7 @@ Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part 
 - `singleElimination(teams, options?)`, `advanceWinners(matchups)`, `standardSeeds(size)`: brackets for any number of teams.
 - `matchupsFromGames(games, options)`: matchups from a flat list of games.
 - `resolveMatchup`, `collectTeams`, `describeTie`, `noteParts`, `noteLong`: one tie's result, the teams of a bracket, a tie in a sentence.
-- `judoOutcome(result, winner?)`, `judoBracket(athletes, options?)`, `judoPodium(input)`, `judoCategoryLabel(category, locale?)`, `JUDO_WEIGHT_CLASSES`, `judoSeconds(time)`, `judoClock(seconds)`: judo results checked against the IJF rules, the bracket with its repechage and two bronze medal contests, the medallists, a weight category as a heading ([docs/judo.md](./docs/judo.md)). `judoScoreboard(contest, options?)`, `describeJudoContest(contest, options?)`, `JUDO_BOARD_SIZES`: the scoreboard of a contest as SVG and as a sentence. `Matchup.judo` and `Matchup.stage` (`"repechage"`, `"bronze"`) carry them into `drawBracket`.
+- `judoOutcome(result, winner?)`, `judoBracket(athletes, options?)`, `judoPodium(input)`, `judoCategoryLabel(category, locale?)`, `JUDO_WEIGHT_CLASSES`, `judoSeconds(time)`, `judoClock(seconds)`: judo results checked against the IJF rules, the bracket with its repechage and two bronze medal contests, the medallists, a weight category as a heading ([docs/judo.md](./docs/judo.md)). `judoScoreboard(contest, options?)`, `describeJudoContest(contest, options?)`, `JUDO_BOARD_SIZES`: the scoreboard of a contest as SVG and as a sentence. `judoContestCard(contest, options?)`, `judoMatQueue(mats, options?)`, `describeJudoCard`, `describeJudoQueue`, `JUDO_MAT_COLORS`: the contest card and the mat queue board as SVG and as sentences. `Matchup.judo` and `Matchup.stage` (`"repechage"`, `"bronze"`) carry them into `drawBracket`.
 - `playoffFormat(league, year)`, `playoffEras(league)`, `LEAGUES`: the formats by era (`nhl`, `nba`, `mlb`, `nfl`, `cfl`, `mls`, `worldcup`). `LEAGUE_EMBLEMS`: each league's default emblem id.
 - `isEmblemId(value)`, and the types `EmblemRenderer`, `EmblemRequest`, `EmblemStyle`: the trophy emblems (see "Emblems for the trophy").
 - `roundName(remaining)`, `roundNamesFor(count)`, `roundLabel(layout, round, names, words)`: round names.
@@ -745,7 +746,7 @@ Any current browser, and Node 22 or later. The package makes no network request 
 
 ## Roadmap
 
-- Judo: a contest card and a mat queue board, the road to the final of a judoka, double and full repechage ([docs/judo.md](./docs/judo.md)).
+- Judo: the road to the final of a judoka, double and full repechage ([docs/judo.md](./docs/judo.md)).
 - Double elimination, and the group tables on one page with the knockout they lead to.
 - More languages (Portuguese, Italian, Korean, Chinese), and native review of the Spanish and German words.
 - A custom element and a React helper, as in the other packages of the family.

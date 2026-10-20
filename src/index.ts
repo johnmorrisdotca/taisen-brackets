@@ -21,3 +21,5 @@ export { judoBracket, judoPodium, judoCategoryLabel, judoOutcome, judoSeconds, j
 export type { JudoBracketOptions, JudoCategory, JudoMethod, JudoOutcome, JudoPodium, JudoResult, JudoSide, JudoSystem } from "./judo.ts";
 export { judoScoreboard, describeJudoContest, JUDO_BOARD_SIZES } from "./judo-board.ts";
 export type { JudoAthlete, JudoBoardOptions, JudoBoardSizeName, JudoContest } from "./judo-board.ts";
+export { judoContestCard, describeJudoCard, judoMatQueue, describeJudoQueue, JUDO_MAT_COLORS } from "./judo-sheets.ts";
+export type { JudoCardContest, JudoMat, JudoQueueContest, JudoQueueOptions } from "./judo-sheets.ts";

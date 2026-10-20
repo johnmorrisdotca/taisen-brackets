@@ -166,8 +166,9 @@ function draw() {
   }
   if (state.lang !== "en") next.set("lang", state.lang);
   for (const [key, value] of boardParams()) next.set(key, value);
+  for (const [key, value] of queueParams()) next.set(key, value);
   history.replaceState(null, "", `?${next}${location.hash}`);
-  if (boardReady) drawBoard();
+  if (boardReady) { drawBoard(); drawQueue(); }
 }
 
 function choose(key) {
@@ -415,6 +416,7 @@ function drawBoard() {
   const next = new URLSearchParams(location.search);
   for (const key of [...next.keys()]) if (/^b(style|size|theme|swap|gs|fin|w|b|clock|osa)$/.test(key)) next.delete(key);
   for (const [key, value] of boardParams()) next.set(key, value);
+  for (const [key, value] of queueParams()) next.set(key, value);
   history.replaceState(null, "", `?${next}${location.hash}`);
   $("board-code").firstChild.textContent = `import { judoScoreboard } from "@johnmorrisdotca/taisen-brackets";\n\n// Hata's round flags, loaded once: const loadedFlags = { JP: await flag("JP", { shape: "round" }), ... }\nconst svg = judoScoreboard(${JSON.stringify(boardContest(), null, 2)}, ${JSON.stringify({ ...boardOptions(), flags: "@@(code) => loadedFlags[code]@@" }, null, 2).replace(/"@@(.*?)@@"/g, "$1")});\n`;
 }
@@ -440,6 +442,61 @@ function boardEvents() {
   $("board-osa-sec").addEventListener("input", () => { if (board.osa) { board.osa = { ...board.osa, seconds: Number($("board-osa-sec").value) }; drawBoard(); } });
 }
 
+// ---- The contest card and the mat queue board: the state (which screen, how many mats) is in the address.
+const QUEUE_DEFAULTS = { view: "queue", mats: 2, size: "tv", theme: "auto", swap: false };
+const queue = { ...QUEUE_DEFAULTS };
+if (["queue", "card"].includes(params.get("qview"))) queue.view = params.get("qview");
+if (/^[1-6]$/.test(params.get("qmats") ?? "")) queue.mats = Number(params.get("qmats"));
+if (Object.keys(T.JUDO_BOARD_SIZES).includes(params.get("qsize"))) queue.size = params.get("qsize");
+if (["auto", "light", "dark"].includes(params.get("qtheme"))) queue.theme = params.get("qtheme");
+if (params.get("qswap") === "1") queue.swap = true;
+function queueParams() {
+  return Object.entries({ qview: queue.view, qmats: queue.mats, qsize: queue.size, qtheme: queue.theme, qswap: queue.swap ? 1 : 0 })
+    .filter(([key, value]) => String(value) !== String({ qview: QUEUE_DEFAULTS.view, qmats: QUEUE_DEFAULTS.mats, qsize: QUEUE_DEFAULTS.size, qtheme: QUEUE_DEFAULTS.theme, qswap: 0 }[key]))
+    .map(([key, value]) => [key, String(value)]);
+}
+/** The invented athletes of the demo's judo tournament, with their codes. */
+const SAMPLE = [
+  ["Daiki Hoshino", "JPN", "JP"], ["Mathis Roussel", "FRA", "FR"], ["Levan Mtchedlishvili", "GEO", "GE"], ["Min-jae Seong", "KOR", "KR"], ["Rafael Tavares", "BRA", "BR"], ["Jasur Rakhimov", "UZB", "UZ"],
+  ["Tomás Zaldívar", "CUB", "CU"], ["Joris van Dijk", "NED", "NL"], ["Emil Hartmann", "GER", "DE"], ["Alonso Caballero", "ESP", "ES"], ["Gianluca Ferraro", "ITA", "IT"], ["Elnur Qasimov", "AZE", "AZ"],
+  ["Temuulen Batsaikhan", "MGL", "MN"], ["Owen Callahan", "CAN", "CA"], ["Marcus Whitfield", "USA", "US"], ["Balázs Kertész", "HUN", "HU"],
+].map(([name, code, flag]) => ({ name, code, flag }));
+/** The contests of mat `m` of `n`: numbers G-1, G-2… interleaved across the mats, athletes taken round the list. */
+const queueMat = (m, n) => ({ mat: m, contests: Array.from({ length: 8 }, (_, i) => ({ number: `G-${i * n + m}`, white: SAMPLE[(m * 3 + i * 2) % 16], blue: SAMPLE[(m * 3 + i * 2 + 5) % 16] })) });
+function drawQueue() {
+  const mats = Array.from({ length: queue.mats }, (_, i) => queueMat(i + 1, queue.mats));
+  const options = { size: queue.size, theme: queue.theme, swap: queue.swap, flags, locale: state.lang };
+  const card = { white: SAMPLE[0], blue: SAMPLE[1], weight: T.judoCategoryLabel({ sex: "men", weight: "-66" }, state.lang), round: T.roundName(2), mat: 1, contest: "G-1" };
+  $("queue-stage").innerHTML = queue.view === "card" ? T.judoContestCard(card, options) : T.judoMatQueue(mats, options);
+  $("queue-stage").dataset.size = queue.size;
+  for (const b of $("queue-controls").querySelectorAll("[data-qkey]")) b.setAttribute("aria-pressed", String(String(queue[b.dataset.qkey]) === b.dataset.value));
+  $("queue-controls").querySelector("[data-qflag]").setAttribute("aria-pressed", String(queue.swap));
+  $("queue-controls").querySelector("#queue-mats-row").hidden = queue.view === "card";
+  const next = new URLSearchParams(location.search);
+  for (const key of [...next.keys()]) if (/^q(view|mats|size|theme|swap)$/.test(key)) next.delete(key);
+  for (const [key, value] of queueParams()) next.set(key, value);
+  history.replaceState(null, "", `?${next}${location.hash}`);
+  const shown = queue.view === "card" ? `judoContestCard(${JSON.stringify(card, null, 2)}` : `judoMatQueue(${JSON.stringify(mats.map((m) => ({ ...m, contests: `@@${m.contests.length} contests: { number, white, blue }@@` })), null, 2).replace(/"@@(.*?)@@"/g, "[/* $1 */]")}`;
+  $("queue-code").firstChild.textContent = `import { ${queue.view === "card" ? "judoContestCard" : "judoMatQueue"} } from "@johnmorrisdotca/taisen-brackets";\n\n// An athlete is { name, code, flag }; Hata's round flags are loaded once.\nconst svg = ${shown}, ${JSON.stringify({ ...options, flags: "@@(code) => loadedFlags[code]@@" }, null, 2).replace(/"@@(.*?)@@"/g, "$1")});\n`;
+}
+function queueControls() {
+  const seg = (label, key, values) => `<div class="fam-row"><span class="fam-label">${label}</span><div class="fam-seg" role="group" aria-label="${label}">${values.map(([v, t]) => `<button type="button" data-qkey="${key}" data-value="${v}" aria-pressed="${String(queue[key]) === String(v)}">${t}</button>`).join("")}</div></div>`;
+  $("queue-controls").innerHTML = [
+    seg("Screen", "view", [["queue", "Mat queue"], ["card", "Contest card"]]),
+    `<div id="queue-mats-row">${seg("Mats", "mats", [1, 2, 3, 4, 5, 6].map((n) => [n, String(n)]))}</div>`,
+    seg("Size", "size", [["tv", "TV"], ["tablet", "Tablet"], ["tablet-tall", "Tablet, upright"]]),
+    seg("Look", "theme", [["auto", "Auto"], ["light", "Light"], ["dark", "Dark"]]),
+    `<div class="fam-row"><span class="fam-label">Show</span><div class="fam-actions"><button type="button" class="fam-chip" data-qflag="swap" aria-pressed="${queue.swap}">Blue first</button></div></div>`,
+  ].join("");
+  $("queue-controls").addEventListener("click", (event) => {
+    const b = event.target.closest("button");
+    if (!b) return;
+    if (b.dataset.qkey) queue[b.dataset.qkey] = b.dataset.qkey === "mats" ? Number(b.dataset.value) : b.dataset.value;
+    else if (b.dataset.qflag) queue.swap = !queue.swap;
+    drawQueue();
+  });
+}
+
 swatches();
 customControls();
 gallery();
@@ -450,3 +507,5 @@ boardControls();
 boardEvents();
 boardReady = true;
 drawBoard();
+queueControls();
+drawQueue();
