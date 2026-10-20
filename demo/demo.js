@@ -3,6 +3,7 @@ import * as T from "./dist/index.js";
 import { examples, SPORTS } from "./examples.js";
 import { renderEmblem } from "./emblems.js";
 import { FLAGS } from "./flags-data.js";
+import { fillBracket } from "./play.js";
 import { ROAD_CARDS } from "./road-data.js";
 import { initRankings } from "./rankings.js";
 import { initMedals } from "./medals.js";
@@ -32,7 +33,7 @@ const kept = () => { try { return localStorage.getItem(LANG_KEY); } catch { retu
 const keep = (code) => { try { localStorage.setItem(LANG_KEY, code); } catch { /* Not remembered; still switched. */ } };
 
 const params = new URLSearchParams(location.search);
-const first = ALL.find((e) => e.key === params.get("ex")) ?? ALL[0];
+const first = ALL.find((e) => e.key === params.get("ex")) ?? ALL.find((e) => e.key === "wc2022") ?? ALL[0];
 const own = (example) => ({ theme: example.theme ?? "auto", labels: example.options.roundLabels !== false, seeds: example.key === "nhl2024" || SEEDED.includes(example.layouts[0]), layout: example.layouts[0] });
 const lang = [params.get("lang"), kept()].find((code) => T.LOCALE_CODES.includes(code)) ?? "en";
 const state = { ex: first.key, lang, ...DEFAULTS, ...own(first) };
@@ -109,15 +110,109 @@ function roadOptionsFor(example, size) {
 
 const defaultsFor = (example) => ({ ...DEFAULTS, ...own(example) });
 
+// ---- Play the games: a bracket that fills in game by game when the page opens (not for a reader who prefers reduced motion, nor for an address that names a game: `?game=9&play=0`), with Pause, Play again and a slider.
+// A change to the options, the language or the layout redraws the bracket as it stands and leaves the games coming in.
+const PLAYABLE = new Set(["nhl2024", "nhl1984", "nba2024", "mlb2022", "nfl2024", "cfl2024", "mls2024", "poster", "wc2022", "wc1938", "generic32"]);
+const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
+/** How long each game shows, in milliseconds: 450, or what `?gap=` says (the tests slow it down). */
+const GAME_MS = Math.min(Math.max(Number(params.get("gap")) || 450, 150), 10000);
+const play = { ex: null, k: 0, total: 0, on: false, fromAddress: params.has("game") };
+const playable = () => PLAYABLE.has(state.ex) && state.view === "bracket" && state.layout !== "groups" && state.layout !== "playin";
+/** The bracket as it stands after `play.k` games, or the whole of it when this one is not played out. */
+const dataNow = (example) => (playable() ? fillBracket(T, example.data, play.k).data : example.data);
+/** Called as a playable example is drawn: the first time for it (the page opening, or the visitor choosing it), the games start from the first. */
+function armPlay(example) {
+  if (play.ex === state.ex) return;
+  play.ex = state.ex;
+  play.total = fillBracket(T, example.data, 0).total;
+  if (play.fromAddress) {
+    play.k = Math.min(Math.max(Number.parseInt(params.get("game") ?? "0", 10) || 0, 0), play.total);
+    play.on = false;
+    play.fromAddress = false;
+  } else {
+    play.on = !reducedMotion.matches;
+    play.k = play.on ? 0 : play.total;
+  }
+}
+function syncPlay() {
+  const on = playable();
+  $("playbar").hidden = !on;
+  if (!on) return;
+  $("play").textContent = play.on ? "Pause" : "Play";
+  $("play").setAttribute("aria-pressed", String(play.on));
+  $("game").max = String(play.total);
+  $("game").value = String(play.k);
+  $("game-out").textContent = `${play.k} of ${play.total}`;
+}
+/** While it plays the address says nothing about it (a reload starts the games again); paused, it names the game. */
+function playParams() {
+  return playable() && !play.on && play.k < play.total ? [["play", "0"], ["game", String(play.k)]] : [];
+}
+function syncPlayUrl() {
+  const next = new URLSearchParams(location.search);
+  next.delete("play");
+  next.delete("game");
+  for (const [key, value] of playParams()) next.set(key, value);
+  try { history.replaceState(null, "", `?${next}${location.hash}`); } catch { /* the address stays */ }
+}
+/** The height of the finished bracket over its width, so that the stage keeps room for it and nothing below moves as the champion and the trophy come in. */
+let fullRatio = 0;
+const ratioOf = (svg) => { const m = /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(svg.slice(0, 600)); return m ? Number(m[2]) / Number(m[1]) : 0; };
+function reserveStage() {
+  const stage = $("stage");
+  const svg = stage.querySelector("svg");
+  if (!svg || !fullRatio || !playable()) { stage.style.minHeight = ""; return; }
+  const style = getComputedStyle(stage);
+  stage.style.minHeight = `${Math.ceil(svg.getBoundingClientRect().width * fullRatio + parseFloat(style.paddingTop) + parseFloat(style.paddingBottom))}px`;
+}
+/** Only the bracket, as it stands, is drawn again. */
+function paintBracket() {
+  $("stage").innerHTML = T.drawBracket(dataNow(current()), optionsFor(current(), sizeNow()));
+  reserveStage();
+}
+/** One more game. */
+function tick() {
+  if (!play.on || document.hidden || !playable()) return;
+  play.k += 1;
+  if (play.k >= play.total) play.on = false;
+  paintBracket();
+  syncPlay();
+}
+setInterval(tick, GAME_MS);
+$("play").addEventListener("click", () => {
+  if (play.on) play.on = false;
+  else { if (play.k >= play.total) play.k = 0; play.on = true; }
+  paintBracket();
+  syncPlay();
+  syncPlayUrl();
+});
+$("restart").addEventListener("click", () => {
+  play.k = 0;
+  play.on = true;
+  paintBracket();
+  syncPlay();
+  syncPlayUrl();
+});
+$("game").addEventListener("input", () => {
+  play.k = Number($("game").value);
+  play.on = false;
+  paintBracket();
+  syncPlay();
+  syncPlayUrl();
+});
+
 function draw() {
   const example = current();
+  if (playable()) armPlay(example);
   const size = sizeNow();
   const planned = state.layout === "groups" || state.layout === "playin";
   const road = state.view === "road" && !NO_ROAD.has(example.key);
   const options = road ? roadOptionsFor(example, size) : optionsFor(example, size);
   const stage = $("stage");
   const chart = road ? T.roadToFinal(example.data, options) : null;
-  stage.innerHTML = road ? chart.draw() : T.drawBracket(example.data, options);
+  stage.innerHTML = road ? chart.draw() : T.drawBracket(dataNow(example), options);
+  if (!road && playable()) fullRatio = play.k >= play.total ? ratioOf(stage.innerHTML) : ratioOf(T.drawBracket(example.data, options));
+  reserveStage();
   stage.dataset.size = size;
   stage.dataset.lang = state.lang;
   stage.dataset.view = state.view;
@@ -171,6 +266,7 @@ function draw() {
     next.set("bgs", String(custom.seed));
   }
   if (state.lang !== "en") next.set("lang", state.lang);
+  for (const [key, value] of playParams()) next.set(key, value);
   for (const [key, value] of boardParams()) next.set(key, value);
   for (const [key, value] of queueParams()) next.set(key, value);
   for (const [key, value] of roadParams()) next.set(key, value);
@@ -178,6 +274,7 @@ function draw() {
   for (const [key, value] of medals.address()) next.set(key, value);
   for (const [key, value] of boards.address()) next.set(key, value);
   history.replaceState(null, "", `?${next}${location.hash}`);
+  syncPlay();
   if (boardReady) { drawBoard(); drawQueue(); drawRoad(); rankings.refresh(); medals.refresh(); boards.refresh(); }
 }
 

@@ -1,7 +1,44 @@
 /* Taisen's own part of the demo: the stage, the gallery and the code. family.css is the shared look. */
+/* The bracket and its play bar open the page and stay in view while the options scroll past: on a phone the bar is pinned at the top and the bracket runs under it, with the options after it; on a desk the options are on the left and the bracket stays on the right. */
 .controls { padding-bottom: 10px; }
-.note { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--rule); padding-top: 12px; }
+.try { display: flex; flex-direction: column; overflow: clip; }
+.stagebox, .stagepin { display: contents; }
+.playbar { order: -4; position: sticky; top: 0; z-index: 4; display: flex; flex-wrap: wrap; gap: 4px 8px; align-items: center; padding: 6px 12px; background: var(--surface); border-bottom: 1px solid var(--rule); }
+.playbar .fam-button { min-width: 0; }
+.playbar #play { min-width: 5.5rem; }
+.playbar .fam-label { min-width: 0; }
+.playbar output { font-variant-numeric: tabular-nums; font-size: .85rem; color: var(--muted); min-width: 8ch; text-align: right; }
+.playbar[hidden] { display: none; }
+.range { flex: 1 1 6rem; min-width: 5rem; height: 44px; margin: 0; -webkit-appearance: none; appearance: none; background: transparent; }
+.range::-webkit-slider-runnable-track { height: 6px; border-radius: 3px; background: var(--rule); }
+.range::-moz-range-track { height: 6px; border-radius: 3px; background: var(--rule); }
+.range::-webkit-slider-thumb { -webkit-appearance: none; width: 28px; height: 28px; margin-top: -11px; border-radius: 50%; background: var(--ink); border: 2px solid var(--surface); }
+.range::-moz-range-thumb { width: 24px; height: 24px; border-radius: 50%; background: var(--ink); border: 2px solid var(--surface); }
+.stagebox > .note { order: -2; margin: 0; padding: 10px 14px; }
 .stage { border-top: 1px solid var(--rule); padding: 12px; overflow-x: auto; display: grid; justify-items: center; min-height: 240px; }
+.try .stage { order: -3; border-top: 0; padding: 8px; min-height: 0; }
+.note { color: var(--muted); font-size: .9rem; border-top: 1px solid var(--rule); padding-top: 12px; }
+@media (min-width: 900px) {
+  .try { display: grid; grid-template-columns: minmax(0, 26rem) minmax(0, 1fr); align-items: start; }
+  .controls { border-right: 1px solid var(--rule); }
+  .stagebox { display: grid; align-content: start; gap: 0; }
+  .stagepin { display: grid; position: sticky; top: 8px; align-content: start; }
+  .playbar { order: 0; position: static; border-top: 0; }
+  .try .stage { order: 0; padding: 12px; min-height: 240px; max-height: calc(100vh - 90px); }
+  .stagebox > .note { order: 0; }
+}
+/* A phone opens on the bracket: a shorter header, and the sentence about the name is left for the desk. */
+@media (max-width: 899px) {
+  main { padding-top: 12px; }
+  header { margin-bottom: 8px; gap: 4px 12px; }
+  .intro { min-height: 0; }
+  header nav { gap: 6px 8px; }
+  header .name { display: none; }
+  .jump { margin-top: 12px; }
+}
+.jump { display: flex; flex-wrap: wrap; gap: 8px; margin: 16px 0 0; }
+.jump a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 14px; border: 1px solid var(--rule); border-radius: 22px; background: var(--surface); text-decoration: none; font-size: .9rem; font-weight: 600; }
+.jump a:hover { border-color: var(--ink); }
 .stage svg { display: block; width: 100%; height: auto; max-width: 1200px; border-radius: 10px; }
 .stage[data-size="phone"] svg { max-width: 390px; }
 .stage[data-size="card"] svg { max-width: 640px; }

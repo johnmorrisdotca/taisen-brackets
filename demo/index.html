@@ -10,7 +10,7 @@
 <main>
   <!--family:header-->
 
-  <section class="fam-panels" aria-label="Playground">
+  <section class="fam-panels try" aria-label="Playground">
     <div class="fam-panel controls">
       <div class="fam-row"><span class="fam-label">Sport</span><div class="fam-seg" role="group" aria-label="Sport" id="sport" data-testid="sport"></div></div>
       <div class="fam-row" id="example-row"><span class="fam-label">Example</span><div class="fam-seg" role="group" aria-label="Example" id="example" data-testid="example"></div></div>
@@ -77,9 +77,24 @@
           <button type="button" class="fam-chip" data-toggle="at" id="at-chip" aria-pressed="false">AT</button>
         </div></div>
     </div>
-    <p class="fam-panel note" id="note"></p>
-    <div class="stage" id="stage" data-testid="stage" role="region" aria-label="The bracket"></div>
+    <div class="stagebox">
+      <div class="stagepin">
+        <div class="playbar" id="playbar" data-testid="playbar">
+          <button type="button" class="fam-button" id="play" data-testid="play" aria-pressed="true">Pause</button>
+          <button type="button" class="fam-button" id="restart" data-testid="restart">Play again</button>
+          <label class="fam-label" for="game">Games</label>
+          <input class="range" type="range" id="game" data-testid="game" min="0" max="16" step="1" value="0" />
+          <output id="game-out" for="game" data-testid="game-out">0 of 16</output>
+        </div>
+        <div class="stage" id="stage" data-testid="stage" role="region" aria-label="The bracket"></div>
+      </div>
+      <p class="fam-panel note" id="note"></p>
+    </div>
   </section>
+
+  <nav class="jump" id="jump" aria-label="Sections">
+    <a href="#board">Judo scoreboard</a><a href="#queue">Mat queue</a><a href="#judoroad">Judoka's road</a><a href="#rankings">Rankings</a><a href="#medals">Medal table</a><a href="#boards">Broadcast boards</a><a href="#layouts-h">Layouts</a><a href="#bgs-h">Backgrounds</a><a href="#road-h">Road to the final</a>
+  </nav>
 
   <section class="more" aria-labelledby="board-h" id="board">
     <h2 id="board-h">Judo scoreboard</h2>

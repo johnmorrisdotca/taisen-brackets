@@ -1,7 +1,8 @@
 // The demo's own tests: a real browser, real taps. `pnpm test:demo` builds the demo and runs them.
-// The server is scripts/dev.mjs on port 7101: this package's block of ports is 7100 to 7199, and tests use 7101 and up.
+// The server is scripts/dev.mjs on port 7101, or TEST_PORT: this package's block of ports is 7100 to 7199, and tests use 7101 and up.
 import { defineConfig, devices } from "@playwright/test";
 
+const port = Number(process.env.TEST_PORT ?? 7101);
 const phone = { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile: true };
 
 export default defineConfig({
@@ -12,8 +13,8 @@ export default defineConfig({
   fullyParallel: true,
   forbidOnly: true,
   reporter: "list",
-  use: { baseURL: "http://127.0.0.1:7101", reducedMotion: "reduce", locale: "en-US" },
-  webServer: { command: "node scripts/dev.mjs", env: { PORT: "7101" }, url: "http://127.0.0.1:7101/", reuseExistingServer: false },
+  use: { baseURL: `http://127.0.0.1:${port}`, reducedMotion: "reduce", locale: "en-US" },
+  webServer: { command: "node scripts/dev.mjs", env: { PORT: String(port) }, url: `http://127.0.0.1:${port}/`, reuseExistingServer: false },
   projects: [
     { name: "chromium-phone", use: { ...devices["Desktop Chrome"], ...phone } },
     { name: "chromium-desk", use: { ...devices["Desktop Chrome"], viewport: { width: 1280, height: 900 } } },
