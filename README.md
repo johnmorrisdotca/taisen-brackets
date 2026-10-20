@@ -11,54 +11,75 @@ Give it the games, series, two-legged ties or replays of a tournament and it wor
   <img alt="TypeScript" src="https://img.shields.io/badge/types-TypeScript-3178c6">
 </p>
 
-<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/layouts.md">Layouts</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/road.md">Road to the final</a> · <a href="./docs/backgrounds.md">Backgrounds</a> · <a href="./docs/judo.md">Judo</a> · <a href="./docs/rankings.md">Rankings</a> · <a href="./docs/medals.md">Medal table</a> · <a href="./docs/broadcast.md">Broadcast boards</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
+<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/layouts.md">Layouts</a> · <a href="./docs/every-sport.md">Every sport</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/road.md">Road to the final</a> · <a href="./docs/backgrounds.md">Backgrounds</a> · <a href="./docs/judo.md">Judo</a> · <a href="./docs/rankings.md">Rankings</a> · <a href="./docs/medals.md">Medal table</a> · <a href="./docs/broadcast.md">Broadcast boards</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
 
 <p align="center">
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-dark.webp">
-<img alt="The 2022 World Cup knockout: two halves of eight teams meeting at the final in the centre, with Argentina's round flag and the word Champion above it and the third-place match below. Each box has both teams' round flags, abbreviations and scores, with penalties in brackets." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-light.webp" width="720">
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-fill-dark.webp">
+<img alt="The 2022 World Cup knockout filling in game by game: sixteen teams in two halves on a pitch, the round of 16 results coming in one after another, then the quarter-finals and the semi-finals, and at the end the final and the third-place match, with Argentina's round flag, a trophy and the word Champion in the centre." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-fill-light.webp" width="760">
 </picture>
 </p>
 
-<table align="center">
-<tr>
-<td align="center" valign="top">
-<img alt="The poster look: the 2026 World Cup knockout of 32 nations as round flags on dark navy joined by gold lines, Spain's flag in the centre above the word Champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/poster-desk.webp" width="470"><br><em>The poster look: flags only, gold on navy (the 2026 World Cup).</em>
-</td>
-<td align="center" valign="top">
-<img alt="The 2022 World Cup on a phone: the champion at the top, then the rounds as rows, the first round at the top and at the bottom, the final in the middle, and the third-place match at the foot." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/phone-light.webp" width="190"><br><em>On a phone the rounds are rows.</em>
-</td>
-</tr>
-</table>
+## The best of it
 
-## Every sport
+The pictures above and below are drawn by the package from the demo's own data and made by `pnpm animations` and `pnpm images`; the demo opens on the same bracket filling in, with its options beside it. Brackets of every sport and layout are in [Every sport](./docs/every-sport.md) and [Layouts](./docs/layouts.md).
 
-One layout draws them all, each from real results: the demo has a picker for the sport and, under it, the editions. [docs/formats.md](./docs/formats.md) has the rounds by era.
+### Judo: the scoreboard, flip cards and the mat queue
 
-<table>
-<tr>
-<td align="center" valign="top"><img alt="The 2024 NHL playoffs: Western and Eastern conferences, best-of-seven series, Florida Panthers as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nhl-desk-light.webp" width="360"><br><em>NHL 2024, series</em></td>
-<td align="center" valign="top"><img alt="The 1984 Stanley Cup playoffs: the Campbell and Wales conferences, a best-of-five first round, Edmonton Oilers as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nhl1984-desk-light.webp" width="360"><br><em>NHL 1984, an older era</em></td>
-<td align="center" valign="top"><img alt="The 2024 NBA playoffs: sixteen teams in two conferences, Boston Celtics as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nba-desk-light.webp" width="360"><br><em>NBA 2024</em></td>
-</tr>
-<tr>
-<td align="center" valign="top"><img alt="The 2022 MLB postseason: byes for the top two seeds of each league, Houston Astros as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/byes-desk-light.webp" width="360"><br><em>MLB 2022, byes</em></td>
-<td align="center" valign="top"><img alt="The playoffs of the 2024 NFL season: single games, byes for the top seed of each conference, the Super Bowl at the centre, Philadelphia Eagles as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/nfl-desk-light.webp" width="360"><br><em>NFL 2024 season, the Super Bowl</em></td>
-<td align="center" valign="top"><img alt="The 2024 CFL playoffs: division semi-finals and finals, byes, the Grey Cup at the centre, Toronto Argonauts as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/cfl-desk-light.webp" width="360"><br><em>CFL 2024, the Grey Cup</em></td>
-</tr>
-<tr>
-<td align="center" valign="top"><img alt="The 2022 World Cup knockout stage." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-light.webp" width="360"><br><em>World Cup 2022</em></td>
-<td align="center" valign="top"><img alt="The 1938 World Cup: replays." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/replays-desk-light.webp" width="360"><br><em>World Cup 1938, replays</em></td>
-<td align="center" valign="top"><img alt="The 2026 World Cup as a flags-only poster, in Japanese." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/poster-desk-ja.webp" width="360"><br><em>World Cup 2026 poster, in Japanese</em></td>
-</tr>
-<tr>
-<td align="center" valign="top"><img alt="The 2024 MLS Cup Playoffs: a wild card match, a best-of-three round one, then single matches to the MLS Cup, LA Galaxy as champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/mls-desk-light.webp" width="360"><br><em>MLS 2024, best of three</em></td>
-<td></td>
-<td></td>
-</tr>
-</table>
+<p align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-flip-dark.webp">
+<img alt="A judo contest on the flip-card scoreboard, from four minutes on the clock to ippon: a shido for blue, a yuko for each side, the osaekomi timer counting up to ten seconds for a waza-ari and on to twenty for the ippon, and the winner named at the foot." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-flip-light.webp" width="720">
+</picture>
+</p>
+A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as the IJF's current Sport and Organisation Rules score them (yuko is back since 2025), golden score, the contest time and how it was won. The box writes the marks (`I`, `W`, `Y`), the shido as yellow and red cards and a note under the two rows, in the five languages. `judoBracket` makes a weight category's bracket with the IJF's repechage and its two bronze medal contests. [docs/judo.md](./docs/judo.md) quotes the rules it follows. `judoScoreboard` draws one contest's scoreboard for a given state (the athletes with flags and codes, ippon, waza-ari and yuko counters, shido cards, clock, golden score, osaekomi timer, weight class and round), on a TV or a tablet, as a screen board or as table-top flip cards: [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#board). `judoContestCard` and `judoMatQueue` draw the card shown when the athletes enter and the board of the next contests per mat, with a big mat number and colour ([demo](https://johnmorrisdotca.github.io/taisen-brackets/#queue)). `judoWins` and `judoRoadPanel` draw the road to the final of one judoka, the contests they have won on the way, most recent first ([demo](https://johnmorrisdotca.github.io/taisen-brackets/#judoroad)).
 
-## The road look, and the road to the final
+<p align="center"><picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-desk-dark.webp">
+<img alt="A made-up men's minus 66 kilogram judo tournament of 16 athletes with round flags, score marks, shido cards, how each contest was won and its time, and the repechage and bronze medal contests under the tree." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-desk-light.webp" width="720">
+</picture><br><em>Men's -66 kg, with the quarter-final repechage (invented names).</em></p>
+
+<p align="center"><img alt="The mat queue board on a tablet: for each mat a big number and colour and the contests to come in order, each with the white and the blue athlete's flag and code." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-queue-tablet-light.webp" width="560"></p>
+<p align="center"><em>The mat queue (invented athletes).</em></p>
+
+### Rankings, in the style of a provincial federation
+
+<p align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-live-dark.webp">
+<img alt="A provincial ranking list taking in new results: the top three as big gold, silver and bronze rows and the ranks 4 to 12 beside them, re-ordering after each tournament with green and red arrows for the places gained and lost." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-live-light.webp" width="720">
+</picture>
+</p>
+`rankingList` draws a ranking for any ranked sport from your own data (a province's or a club's feed, a federation's list), text first, with no photo slot to leave empty: the rank, a flag (a country's or a Canadian province's, `CA-BC`), the name, the club and the points, with the movement since the last list as arrows or row colours. The top three can be big gold, silver and bronze rows above a compact list, a champion row is marked `C`, tied ranks share a number (`10`, `10`), a newly ranked athlete is `NR`, and points are written to the sport's own precision (`91.60`). `rankingNumberOnes` draws the number one of each category as a card (`#1 in -57 kg`), and `rankingEntryList` an event's entry list in the order of the draw with each athlete's ranking beside the name. `rankingMatchup` draws the head-to-head card of two athletes with their previous meetings and the record. `rankingRanks` and `rankingCategoryLabel` are helpers, `describeRanking`, `describeNumberOnes` and `describeEntryList` the descriptions, `NUMBER_ONE_COLORS` the card colours and `BOARD_SIZES` the sizes of every board (a TV, a tablet, a phone, and a square and a 4:5 card for social media). [docs/rankings.md](./docs/rankings.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#rankings)
+
+<p align="center"><picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-podium-tv-dark.webp">
+<img alt="A ranking list on a TV: three big rows tinted gold, silver and bronze for the first three, and the ranks 4 to 15 as compact rows beside them, each with its rank, movement arrow, round flag, name, club and points." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-podium-tv-light.webp" width="720">
+</picture><br><em>A made-up provincial ranking (invented names and clubs).</em></p>
+
+### Broadcast boards
+
+`resultsBoard` draws a results board in the manner of a television graphic: a title band with an icon, a sub bar, and a row for each athlete with a rank in a box, the country code, a 4:3 flag, the name, a record badge (`OR`, `WR`, `NR`) and one or more columns of scores or times at the sport's own precision (a gymnastics final, an all-around, a swimming final, athletics, speed skating). It is one standalone SVG of a width you choose and a height that follows from the rows (`resultsBoardSize`), made to be placed over a picture, in three looks and with no mark of any games or broadcaster. `boutBoard` draws the bout presentation: the two athletes in a red and a blue band, the referee and the judges. `broadcastMedalTable` draws the medal table with a disc for each medal. [docs/broadcast.md](./docs/broadcast.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#boards)
+
+<p align="center"><picture>
+<img alt="A results board in the blue look: a gymnastics apparatus final with a title band, a sub bar with three score columns, and eight rows with a red rank box, country code, flag, name and scores." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/results-apparatus-blue.webp" width="640">
+</picture><br><em>A made-up apparatus final (invented athletes and scores).</em></p>
+
+### Medal table
+
+<p align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/medals-live-dark.webp">
+<img alt="A medal table changing from one Games to the next: the ranks, flags, gold, silver and bronze counts and totals of the top eight countries, re-ordered each time, with equal rows sharing a rank." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/medals-live-light.webp" width="640">
+</picture>
+</p>
+`medalTable` draws a medal table for any sport and event (an Olympic Games, a world championship, a club tournament): ranked gold first or by the total, equal rows sharing a rank (5, 5, 7), a flag or a badge for each country or team (a former country such as the Soviet Union is a row of its own), the three medals and the total, in two columns where the board is wide. `tallyMedals` adds up a list of medals filtered to one sport, one weight class or one Games, and `medalRanks` gives the ranks as data. [docs/medals.md](./docs/medals.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#medals)
+
+<p align="center"><picture>
+<img alt="A medal table on a 4:5 card: ten countries with rank, flag or badge, name, gold, silver and bronze counts in tinted cells and the total." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/medal-table-portrait-light.webp" width="480">
+</picture><br><em>A made-up medal table (invented results).</em></p>
+
+### The road look, and the road to the final
 
 `look: "road"` draws the bracket with large round flags, big bold scores and a team's path as a dotted line, and `roadToFinal` draws the way each finalist came from the same tournament.
 
@@ -75,132 +96,24 @@ One layout draws them all, each from real results: the demo has a picker for the
 </tr>
 </table>
 
+### Every size and look
+
+Wide, square, a card for a post and a tall one for a phone, in light, dark or a gold-on-navy poster look; [Every sport](./docs/every-sport.md) has the same bracket drawn for the NHL, NBA, MLB, NFL, CFL, MLS and the World Cup.
+
+<table align="center">
+<tr>
+<td align="center" valign="top">
+<img alt="The poster look: the 2026 World Cup knockout of 32 nations as round flags on dark navy joined by gold lines, Spain's flag in the centre above the word Champion." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/poster-desk.webp" width="470"><br><em>The poster look: flags only, gold on navy (the 2026 World Cup).</em>
+</td>
+<td align="center" valign="top">
+<img alt="The 2022 World Cup on a phone: the champion at the top, then the rounds as rows, the first round at the top and at the bottom, the final in the middle, and the third-place match at the foot." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/phone-light.webp" width="190"><br><em>On a phone the rounds are rows.</em>
+</td>
+</tr>
+</table>
+
 ## Layouts
 
 `layout` draws the same ties another way: the default, `"tree"`, is the bracket above; the others are `"rows"`, `"shields"`, `"update"`, `"columns"`, `"playin"`, `"series"` and `"groups"`. Each takes the `background`, both looks, the four sizes, the five languages, `href` links, seeds, codes, flags and logos, and a team with no picture is its tile. [docs/layouts.md](./docs/layouts.md) has the options and what each needs.
-
-### rows
-
-Each team a row, its name on the left and its mark on the right, its seed tag at the outer corner, and a slot for the result at the end that faces the centre (empty until the tie is played): the NHL poster's style.
-
-<p align="center"><img alt="The 2024 NHL playoffs as rows: each team's abbreviation and seed tag, its logo tile and a slot with the games won, on an ice background." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-rows-nhl.webp" width="640"></p>
-
-```js
-import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
-
-const ties = [
-  { id: "a", sides: ["BOS", "MIA"], round: 1, bestOf: 7, score: [4, 1] },
-  { id: "b", sides: ["NYK", "IND"], round: 1, bestOf: 7, score: [4, 3] },
-  { id: "c", sides: ["BOS", "NYK"], round: 2, bestOf: 7, score: [2, 1] },
-];
-const svg = drawBracket(ties, { layout: "rows", look: "road", seeds: true });
-console.log(svg.includes("tb-slot")); // true
-```
-
-### shields
-
-Marks in shield shapes with "vs" between the two of a tie, the matchups listed down both sides of the trophy; no connector lines.
-
-<p align="center"><img alt="The 2022 World Cup as shields: each tie two round flags in shields with vs between them and the score under each, the final under the trophy." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-shields-wc2022.webp" width="640"></p>
-
-```js
-import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
-
-const svg = drawBracket([{ sides: ["ARG", "FRA"], score: [3, 3], pens: [4, 2] }], { layout: "shields" });
-console.log(svg.includes("tb-shield"), svg.includes(">vs<")); // true true
-```
-
-### update
-
-A compact score-update card: each side's abbreviation, seed and series score, and empty cards for the rounds still to come, the final in the centre. Put the "as of" date in `subtitle`.
-
-<p align="center"><img alt="A score-update card of the 2024 NHL playoffs: abbreviations with seeds and the games won in a cell on the right, on an aurora background." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-update-nhl.webp" width="640"></p>
-
-```js
-import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
-
-const teams = [{ id: "A", name: "Alpha", abbr: "ALP", seed: 1 }, { id: "B", name: "Beta", abbr: "BET", seed: 8 }];
-const svg = drawBracket({ teams, matchups: [{ sides: ["A", "B"], round: 1, bestOf: 7, score: [4, 2] }] }, { layout: "update", subtitle: "as of May 1" });
-console.log(svg.includes(">ALP<"), svg.includes(">as of May 1<")); // true true
-```
-
-### columns
-
-The NFL poster's style: each round a column of tall slots that get taller toward the centre, one conference in each of two colours, a "VS" tag between the two slots of a tie, a big seed number beside a team that has a `seed`, and the final as two tall slots side by side. `at: true` writes the language's "AT" in place of "VS", the second side being the one at home (or the side `Matchup.home` names). `headers: true` adds the conference tiles.
-
-<p align="center"><img alt="The 2024 NFL playoffs as columns: tall slots growing toward the centre, the AFC in blue and the NFC in red, VS tags between the slots, the Super Bowl as two tall slots, with a title tile over each half." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-columns-nfl.webp" width="640"></p>
-
-```js
-import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
-
-const ties = [{ sides: ["KC", "BUF"], round: 1, score: [27, 24], home: 0 }, { sides: ["PHI", "WAS"], round: 1, score: [28, 23] }];
-const svg = drawBracket(ties, { layout: "columns", at: true });
-console.log(svg.includes(">AT<"), svg.includes(">VS<")); // true false
-```
-
-### playin
-
-The NBA's play-in: the games of each half (a `stage: "play-in"` tie), with a **winner's arrow solid and a loser's dashed**, into the game that takes it ("Winner 9/10", "Loser 7/8") or the seed it earns, and the seeds that need no game as tiles. A tie says where a side comes from with `feeds`, whose entries can now be `{ tie, result: "winner" | "loser" }`; `Tie.from` has it back.
-
-<p align="center"><img alt="The 2024 NBA play-in: for each conference the 7 v 8 and 9 v 10 games, a dashed arrow for the 7 v 8 loser into the decider with the 9 v 10 winner, and a solid arrow into the 7th and 8th seed slots, beside tiles for seeds 1 to 6." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-playin-nba.webp" width="640"></p>
-
-```js
-import { drawBracket, layoutBracket } from "@johnmorrisdotca/taisen-brackets";
-
-const matchups = [
-  { id: "p78", stage: "play-in", sides: ["T7", "T8"], score: [105, 104], seeds: [7, 8] },
-  { id: "p910", stage: "play-in", sides: ["T9", "T10"], score: [131, 116], seeds: [9, 10] },
-  { id: "dec", stage: "play-in", sides: ["T8", "T9"], score: [112, 91], feeds: [{ tie: "p78", result: "loser" }, { tie: "p910", result: "winner" }] },
-];
-console.log(JSON.stringify(layoutBracket({ matchups }).ties[2].from)); // [{"tie":0,"result":"loser"},{"tie":1,"result":"winner"}]
-console.log(drawBracket({ matchups }, { layout: "playin" }).includes("tb-arrow-loser")); // true
-```
-
-### series
-
-A tall card of one line a series, "BOS 4–0 MIA", the winner bold, the seeds at the line's ends, the east on top and the west below with the final in the middle. It is a card (1080 by 1350) unless a `size` is asked for.
-
-<p align="center"><img alt="The 2024 NBA playoffs as a series card: the Eastern Conference on top, one line a series such as BOS 4-1 MIA, the final in the middle and the Western Conference below, on a carbon background." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-series-nba.webp" width="360"></p>
-
-```js
-import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
-
-const svg = drawBracket([{ sides: ["BOS", "MIA"], round: 1, bestOf: 7, score: [4, 0] }], { layout: "series" });
-console.log(svg.includes('viewBox="0 0 1080 1350"'), svg.includes(">4–0<")); // true true
-```
-
-### groups
-
-The group stage as one card a group: a title tile ("Group A"), a row a team with its flag or mark, its name and its record, the places that go through marked. The standings are worked out from the round-robin games (`round: 0`); `standings: "record"` is wins and losses (softball's), and `"points"` (the default) played, won, drawn, lost, goal difference and points. `qualify: 2` marks the top two of each group.
-
-<p align="center"><img alt="The group stage of a made-up cup: four cards, each with a title tile and four teams with their marks and played, won, drawn, lost, goal difference and points, the top two of each marked." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-groups-cup.webp" width="640"></p>
-
-<p align="center"><img alt="Softball pool play on a phone: three cards of four teams with their wins and losses, the top two of each marked, on a royal background." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-groups-softball.webp" width="260"></p>
-
-```js
-import { drawBracket, groupStandings } from "@johnmorrisdotca/taisen-brackets";
-
-const games = [
-  { sides: ["A", "B"], round: 0, score: [2, 0] }, { sides: ["A", "C"], round: 0, score: [1, 1] }, { sides: ["B", "C"], round: 0, score: [0, 3] },
-];
-console.log(groupStandings({ matchups: games })[0].rows.map((r) => `${r.team.id} ${r.points}`).join(", ")); // C 4, A 4, B 0
-console.log(drawBracket({ matchups: games }, { layout: "groups", qualify: 2 }).includes("Group A")); // true
-```
-
-### Conference headers, a lone final, one stylesheet
-
-`headers: true` puts a big title tile over each half (West and East, AFC and NFC) in the colour of that half, in any layout. A tournament that ended with a lone final and a third-place match (the World Cups of 1974 and 1978) is drawn with them centred, the champion over the final. And two sizes of the same bracket on one page can share one stylesheet: `styleScope` names the class that carries the rules, `style: false` leaves the `<style>` out of the second drawing, and `bracketStyle(options)` is the stylesheet for a page that writes it once itself.
-
-<p align="center"><img alt="A lone final and a third-place match, centred: the champion above the final, the third place under it, on a pitch background." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-lone-final.webp" width="560"></p>
-
-```js
-import { bracketStyle, drawBracket } from "@johnmorrisdotca/taisen-brackets";
-
-const ties = [{ sides: ["A", "B"], round: 1, score: [2, 1] }];
-const desk = drawBracket(ties, { styleScope: "mine", size: "wide" });
-const phone = drawBracket(ties, { styleScope: "mine", size: "phone", style: false });
-console.log(desk.includes("<style>"), phone.includes("<style>"), desk.includes(bracketStyle({ styleScope: "mine" }))); // true false true
-```
 
 ## Backgrounds
 
@@ -237,40 +150,6 @@ console.log(ice.includes("tb-bgd"), mine.includes("#ff7ac8"), photo.includes('<i
 ```
 
 In the road look, `seeds: true` writes a small tag (`P1`, `WC2`) beside each team's mark, `codes: true` its three letters under the mark in a box of marks, `vs: true` a "v" between the two marks, and a team with no flag or logo is a tile with its letters. [docs/backgrounds.md](./docs/backgrounds.md) has the options, the contrast rules and the module the other packages of the family share.
-
-## Judo
-
-A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as the IJF's current Sport and Organisation Rules score them (yuko is back since 2025), golden score, the contest time and how it was won. The box writes the marks (`I`, `W`, `Y`), the shido as yellow and red cards and a note under the two rows, in the five languages. `judoBracket` makes a weight category's bracket with the IJF's repechage and its two bronze medal contests. [docs/judo.md](./docs/judo.md) quotes the rules it follows. `judoScoreboard` draws one contest's scoreboard for a given state (the athletes with flags and codes, ippon, waza-ari and yuko counters, shido cards, clock, golden score, osaekomi timer, weight class and round), on a TV or a tablet, as a screen board or as table-top flip cards: [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#board). `judoContestCard` and `judoMatQueue` draw the card shown when the athletes enter and the board of the next contests per mat, with a big mat number and colour ([demo](https://johnmorrisdotca.github.io/taisen-brackets/#queue)). `judoWins` and `judoRoadPanel` draw the road to the final of one judoka, the contests they have won on the way, most recent first ([demo](https://johnmorrisdotca.github.io/taisen-brackets/#judoroad)).
-
-<p align="center"><picture>
-<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-desk-dark.webp">
-<img alt="A made-up men's minus 66 kilogram judo tournament of 16 athletes with round flags, score marks, shido cards, how each contest was won and its time, and the repechage and bronze medal contests under the tree." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-desk-light.webp" width="720">
-</picture><br><em>Men's -66 kg, with the quarter-final repechage (invented names).</em></p>
-
-## Rankings
-
-`rankingList` draws a ranking for any ranked sport from your own data (a province's or a club's feed, a federation's list), text first, with no photo slot to leave empty: the rank, a flag (a country's or a Canadian province's, `CA-BC`), the name, the club and the points, with the movement since the last list as arrows or row colours. The top three can be big gold, silver and bronze rows above a compact list, a champion row is marked `C`, tied ranks share a number (`10`, `10`), a newly ranked athlete is `NR`, and points are written to the sport's own precision (`91.60`). `rankingNumberOnes` draws the number one of each category as a card (`#1 in -57 kg`), and `rankingEntryList` an event's entry list in the order of the draw with each athlete's ranking beside the name. `rankingMatchup` draws the head-to-head card of two athletes with their previous meetings and the record. `rankingRanks` and `rankingCategoryLabel` are helpers, `describeRanking`, `describeNumberOnes` and `describeEntryList` the descriptions, `NUMBER_ONE_COLORS` the card colours and `BOARD_SIZES` the sizes of every board (a TV, a tablet, a phone, and a square and a 4:5 card for social media). [docs/rankings.md](./docs/rankings.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#rankings)
-
-<p align="center"><picture>
-<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-podium-tv-dark.webp">
-<img alt="A ranking list on a TV: three big rows tinted gold, silver and bronze for the first three, and the ranks 4 to 15 as compact rows beside them, each with its rank, movement arrow, round flag, name, club and points." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-podium-tv-light.webp" width="720">
-</picture><br><em>A made-up provincial ranking (invented names and clubs).</em></p>
-
-## Medal table
-
-`medalTable` draws a medal table for any sport and event (an Olympic Games, a world championship, a club tournament): ranked gold first or by the total, equal rows sharing a rank (5, 5, 7), a flag or a badge for each country or team (a former country such as the Soviet Union is a row of its own), the three medals and the total, in two columns where the board is wide. `tallyMedals` adds up a list of medals filtered to one sport, one weight class or one Games, and `medalRanks` gives the ranks as data. [docs/medals.md](./docs/medals.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#medals)
-
-<p align="center"><picture>
-<img alt="A medal table on a 4:5 card: ten countries with rank, flag or badge, name, gold, silver and bronze counts in tinted cells and the total." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/medal-table-portrait-light.webp" width="480">
-</picture><br><em>A made-up medal table (invented results).</em></p>
-
-## Broadcast boards
-
-`resultsBoard` draws a results board in the manner of a television graphic: a title band with an icon, a sub bar, and a row for each athlete with a rank in a box, the country code, a 4:3 flag, the name, a record badge (`OR`, `WR`, `NR`) and one or more columns of scores or times at the sport's own precision (a gymnastics final, an all-around, a swimming final, athletics, speed skating). It is one standalone SVG of a width you choose and a height that follows from the rows (`resultsBoardSize`), made to be placed over a picture, in three looks and with no mark of any games or broadcaster. `boutBoard` draws the bout presentation: the two athletes in a red and a blue band, the referee and the judges. `broadcastMedalTable` draws the medal table with a disc for each medal. [docs/broadcast.md](./docs/broadcast.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#boards)
-
-<p align="center"><picture>
-<img alt="A results board in the blue look: a gymnastics apparatus final with a title band, a sub bar with three score columns, and eight rows with a red rank box, country code, flag, name and scores." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/results-apparatus-blue.webp" width="640">
-</picture><br><em>A made-up apparatus final (invented athletes and scores).</em></p>
 
 ## In 30 seconds
 

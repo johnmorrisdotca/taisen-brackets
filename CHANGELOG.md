@@ -6,6 +6,16 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.17.3] - 2026-10-20
+
+The npm page and the demo open on the best of it, in motion. No change to the package's code beyond its version.
+
+### Changed
+
+- **README: the first thing is a bracket filling in.** The 2022 World Cup knockout fills in game by game (`docs/images/hero-fill-*.webp`), then "The best of it", a picture each: the judo scoreboard on flip cards from the first second to ippon, the mat queue, a provincial ranking list re-ordering with its movement arrows, the broadcast results board, a medal table changing from one Games to the next, and the road look. Every animation is an animated webp in a light and a dark twin, under 150 kB each. The README is shorter than before: "Every sport" moved to `docs/every-sport.md` and the per-layout pictures and examples to the end of `docs/layouts.md` (nothing removed).
+- **The pictures are made by a script from the demo:** `pnpm animations` (`scripts/animations.mjs`) takes one frame per step with Playwright, from the demo's own data, and joins them with `img2webp`.
+- **Demo: it opens on the World Cup bracket filling in game by game**, with its options beside it on a desk (the bracket and its play bar stay in view while the options scroll) and under it on a phone, where the bar is pinned at the top. Pause, Play again and a slider hold or replay any game; changing the sport's options, the look, the language or the layout while it plays leaves the games coming in; the stage keeps room for the finished bracket so nothing below moves. The address holds `game` and `play=0` once it is paused (an address that names a game opens paused at it); a reader who prefers reduced motion gets the finished bracket. A jump bar leads to the judo, ranking, medal and broadcast sections.
+
 ## [0.17.2] - 2026-10-20
 
 Security fix.
