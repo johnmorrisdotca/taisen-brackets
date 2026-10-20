@@ -1,6 +1,6 @@
 {
   "name": "@johnmorrisdotca/taisen-brackets",
-  "version": "0.13.0",
+  "version": "0.14.0",
   "description": "Taisen Brackets 対戦, knockout brackets as SVG: from a list of ties (games, best-of series, two legs, replays, byes, a third-place match) it works out the rounds and halves and draws the bracket with the halves meeting at the final, or left to right, wide, square, as a tall card or for a phone, in a classic or a road look (large round flags, big scores, a team's dotted path, a link on every box), in light, dark or a gold-on-navy poster look, in eight layouts (the tree, rows, shields, a score-update card, tall columns, the NBA's play-in, a series card and group tables), on one of twenty-five poster backgrounds (the playing surfaces of five sports among them) or your own, with each team's logo or round flag, the champion in the centre, and an accessible table; and the road to the final of either finalist. NHL, NBA, MLB, NFL, CFL, MLS and World Cup formats by era, in English, French, Japanese, Spanish and German. Zero dependencies.",
   "keywords": [
     "bracket",

@@ -33,3 +33,5 @@ export { rankingNumberOnes, describeNumberOnes, rankingEntryList, describeEntryL
 export type { EntryListOptions, EntryListSource, NumberOnesOptions, NumberOnesSource, RankingCard } from "./ranking-cards.ts";
 export { rankingMatchup, describeMatchup, matchupRecord } from "./ranking-matchup.ts";
 export type { MatchupOptions, MatchupSource, RankingMeeting } from "./ranking-matchup.ts";
+export { medalTable, medalRanks, tallyMedals, describeMedalTable } from "./medals.ts";
+export type { MedalAward, MedalFilter, MedalRow, MedalTableOptions, MedalTableSource } from "./medals.ts";

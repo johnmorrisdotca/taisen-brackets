@@ -6,6 +6,17 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.14.0] - 2026-10-20
+
+A medal table for any sport.
+
+### Added
+
+- **`medalTable({ title?, subtitle?, date?, source?, rows }, options)`**: a medal table as an SVG for any sport and event. A row is `{ name, flag?, mark?, code?, gold?, silver?, bronze?, note? }`: rank, flag (or a badge with the code or the initials, for a country or team with no flag, such as a former country), name with an optional line under it (the years it existed), the gold, silver and bronze counts in tinted cells under a disc for each, and the total. `sort: "gold"` ranks as the Olympic Games do (gold, silver, bronze), `"total"` by the number of medals, `"given"` keeps the order; equal rows share a rank (5, 5, 7) unless `ties: false`; `rankStyle: "hash"`; the first three ranks have a gold, silver and bronze bar (`highlight`). `top`, `skipEmpty`, `rows` and `page` choose the rows (the header says which are shown); `columns: 2`, by default on a wide board with more than ten rows. `describeMedalTable`, `medalRanks(rows, options)`.
+- **`tallyMedals(awards, filter?)`**: adds up a list of medals (`{ name, medal, sport?, category?, games?, flag?, mark?, code?, note? }`) into rows, filtered to one sport, one weight class or age group or one Games (or a list of each), so that one list gives the table of an event, of a sport and of all time.
+- Words in the five languages: the heading, the letters over the medal columns, the total and a row in a sentence (the French and Japanese were read by native-language reviewers; the Spanish and German were not).
+- The demo has a Medal table section with made-up medals of seven Games, two sports and five weight classes, the filters, the ranking rule, the number of rows, size and look in the address. [docs/medals.md](docs/medals.md).
+
 ## [0.13.0] - 2026-10-20
 
 Rankings, step 3: the head-to-head card.

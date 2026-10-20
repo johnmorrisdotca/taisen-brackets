@@ -98,6 +98,9 @@ try {
   await shoot("ranking-numbers-square-light", "kview=numbers&ksize=square&ktheme=light", { width: 1280, height: 900 }, out, "#ranking-stage svg");
   await shoot("ranking-entries-portrait-light", "kview=entries&ksize=portrait&ktheme=light&ksort=ranking", { width: 1280, height: 900 }, out, "#ranking-stage svg");
   await shoot("ranking-matchup-phone-light", "kview=matchup&ksize=phone&ktheme=light", { width: 1280, height: 900 }, out, "#ranking-stage svg");
+  // The medal table: all Games on a TV in the dark, in two columns, and the +100 kg judo table on a 4:5 card in the light.
+  await shoot("medal-table-tv-dark", "mtheme=dark&msize=tv", { width: 1280, height: 900 }, out, "#medal-stage svg");
+  await shoot("medal-table-portrait-light", "msport=judo&mcat=%2B100+kg&mtop=10&msize=portrait&mtheme=light", { width: 1280, height: 900 }, out, "#medal-stage svg");
   await shoot("judo-board-tall-light", "bstyle=board&bsize=tablet-tall&btheme=light&bw=1,0,0,0&bb=0,0,1,1&bclock=1:51&bosa=none", { width: 1280, height: 900 }, out, "#board-stage svg");
   // The road look's own pictures: the classic look beside it (it keeps its plain colour), a card, one team's path, and the road to the final in three sizes.
   await shoot("classic-desk-light", "ex=wc2022&look=classic&bg=plain", { width: 1280, height: 900 });

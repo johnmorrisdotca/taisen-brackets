@@ -133,6 +133,7 @@ export function boardRules(p: BoardPalette, scope: string, before: string, extra
   ];
   MEDALS.forEach((m, i) => {
     const c = p[m];
+    out.push(sel(`.rk-cell${i + 1}`, `fill:${c[0]}`), sel(`.rk-disc${i + 1}`, `fill:${c[2]}`));
     out.push(sel(`.rk-ga${i + 1}`, `stop-color:${c[0]}`), sel(`.rk-gb${i + 1}`, `stop-color:${c[1]}`), sel(`.rk-medal${i + 1}`, `stroke:${c[2]};stroke-width:2`), sel(`.rk-num${i + 1}`, `fill:${c[3]}`), sel(`.rk-bar${i + 1}`, `fill:${c[2]}`));
   });
   if (extra) out.push(...extra(sel, v));

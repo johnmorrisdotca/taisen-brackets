@@ -242,5 +242,16 @@ The English name is the key (a round the table does not name keeps its English n
 | `rankMeetings` | `Previous meetings` | `Confrontations précédentes` | `過去の対戦` | `Enfrentamientos anteriores` | `Bisherige Duelle` |
 | `rankNoMeetings` | `No previous meetings` | `Aucune confrontation précédente` | `過去の対戦はありません` | `Sin enfrentamientos anteriores` | `Noch keine Duelle` |
 | `rankMore` | `+{n} more` | `+{n} de plus` | `ほか{n}試合` | `+{n} más` | `+{n} weitere` |
+| `medalTitle` | `Medal table` | `Tableau des médailles` | `メダル獲得表` | `Medallero` | `Medaillenspiegel` |
+| `medalNone` | `No medals yet` | `Aucune médaille pour l’instant` | `まだメダルはありません` | `Aún no hay medallas` | `Noch keine Medaillen` |
+| `medalGold` | `Gold` | `Or` | `金メダル` | `Oro` | `Gold` |
+| `medalSilver` | `Silver` | `Argent` | `銀メダル` | `Plata` | `Silber` |
+| `medalBronze` | `Bronze` | `Bronze` | `銅メダル` | `Bronce` | `Bronze` |
+| `medalGoldShort` | `G` | `O` | `金` | `O` | `G` |
+| `medalSilverShort` | `S` | `A` | `銀` | `P` | `S` |
+| `medalBronzeShort` | `B` | `B` | `銅` | `B` | `B` |
+| `medalTotal` | `Total` | `Total` | `合計` | `Total` | `Gesamt` |
+| `medalLine` | `{g} gold, {s} silver, {b} bronze, {t} total` | `{g} or, {s} argent, {b} bronze, {t} au total` | `金{g}、銀{s}、銅{b}、合計{t}` | `{g} oro, {s} plata, {b} bronce, {t} en total` | `{g} Gold, {s} Silber, {b} Bronze, {t} gesamt` |
+| `medalRank` | `{n}` | `{n}` | `{n}位` | `{n}` | `{n}` |
 
 Holes in a phrase are filled in (`{n}`, `{a}`, `{b}`, `{sa}`, `{sb}`, `{w}`, `{name}`, `{round}`, `{tie}`, `{notes}`); `␣` stands for a no-break space (the French writes one before a colon).

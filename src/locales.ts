@@ -35,6 +35,7 @@ const EN: Words = {
   rankNew: "NR", rankNewLong: "newly ranked", rankUp: "up {n}", rankDown: "down {n}", rankSame: "unchanged", rankRange: "{a}–{b} of {n}", rankNone: "No ranked athletes yet", rankJoin: ", ",
   rankNumberOnes: "Number ones", rankNumberOneIn: "#1 in {category}", rankEntryTitle: "Entry list", rankColRanking: "Ranking", rankUnranked: "NR",
   rankMatchTitle: "Head to head", rankMeetings: "Previous meetings", rankNoMeetings: "No previous meetings", rankMore: "+{n} more",
+  medalTitle: "Medal table", medalNone: "No medals yet", medalGold: "Gold", medalSilver: "Silver", medalBronze: "Bronze", medalGoldShort: "G", medalSilverShort: "S", medalBronzeShort: "B", medalTotal: "Total", medalLine: "{g} gold, {s} silver, {b} bronze, {t} total", medalRank: "{n}",
 };
 
 const FR: Words = {
@@ -64,6 +65,7 @@ const FR: Words = {
   rankNew: "Nouv.", rankNewLong: "nouvelle entrée au classement", rankUp: "en hausse de {n}", rankDown: "en baisse de {n}", rankSame: "rang inchangé", rankRange: "{a}–{b} sur {n}", rankNone: "Aucun athlète classé pour l’instant", rankJoin: ", ",
   rankNumberOnes: "Les numéros un", rankNumberOneIn: "N°\u00a01 en {category}", rankEntryTitle: "Liste des engagés", rankColRanking: "Classement", rankUnranked: "NC",
   rankMatchTitle: "Face-à-face", rankMeetings: "Confrontations précédentes", rankNoMeetings: "Aucune confrontation précédente", rankMore: "+{n} de plus",
+  medalTitle: "Tableau des médailles", medalNone: "Aucune médaille pour l’instant", medalGold: "Or", medalSilver: "Argent", medalBronze: "Bronze", medalGoldShort: "O", medalSilverShort: "A", medalBronzeShort: "B", medalTotal: "Total", medalLine: "{g} or, {s} argent, {b} bronze, {t} au total", medalRank: "{n}",
 };
 
 const JA: Words = {
@@ -93,6 +95,7 @@ const JA: Words = {
   rankNew: "NEW", rankNewLong: "新規ランクイン", rankUp: "{n}ランク上昇", rankDown: "{n}ランク下降", rankSame: "変動なし", rankRange: "{n}人中{a}–{b}位", rankNone: "ランキング入りした選手はまだいません", rankJoin: "、",
   rankNumberOnes: "各階級の1位", rankNumberOneIn: "{category} 1位", rankEntryTitle: "エントリーリスト", rankColRanking: "ランキング", rankUnranked: "圏外",
   rankMatchTitle: "直接対決", rankMeetings: "過去の対戦", rankNoMeetings: "過去の対戦はありません", rankMore: "ほか{n}試合",
+  medalTitle: "メダル獲得表", medalNone: "まだメダルはありません", medalGold: "金メダル", medalSilver: "銀メダル", medalBronze: "銅メダル", medalGoldShort: "金", medalSilverShort: "銀", medalBronzeShort: "銅", medalTotal: "合計", medalLine: "金{g}、銀{s}、銅{b}、合計{t}", medalRank: "{n}位",
 };
 
 const ES: Words = {
@@ -122,6 +125,7 @@ const ES: Words = {
   rankNew: "NUEVO", rankNewLong: "nuevo en la clasificación", rankUp: "sube {n}", rankDown: "baja {n}", rankSame: "sin cambios", rankRange: "{a}–{b} de {n}", rankNone: "Aún no hay deportistas clasificados", rankJoin: ", ",
   rankNumberOnes: "Los números uno", rankNumberOneIn: "N.º 1 en {category}", rankEntryTitle: "Lista de inscritos", rankColRanking: "Clasificación", rankUnranked: "SC",
   rankMatchTitle: "Cara a cara", rankMeetings: "Enfrentamientos anteriores", rankNoMeetings: "Sin enfrentamientos anteriores", rankMore: "+{n} más",
+  medalTitle: "Medallero", medalNone: "Aún no hay medallas", medalGold: "Oro", medalSilver: "Plata", medalBronze: "Bronce", medalGoldShort: "O", medalSilverShort: "P", medalBronzeShort: "B", medalTotal: "Total", medalLine: "{g} oro, {s} plata, {b} bronce, {t} en total", medalRank: "{n}",
 };
 
 const DE: Words = {
@@ -151,6 +155,7 @@ const DE: Words = {
   rankNew: "NEU", rankNewLong: "neu in der Rangliste", rankUp: "{n} Plätze höher", rankDown: "{n} Plätze tiefer", rankSame: "unverändert", rankRange: "{a}–{b} von {n}", rankNone: "Noch keine platzierten Athleten", rankJoin: ", ",
   rankNumberOnes: "Die Nummer Eins", rankNumberOneIn: "Nr. 1 in {category}", rankEntryTitle: "Meldeliste", rankColRanking: "Rangliste", rankUnranked: "o. R.",
   rankMatchTitle: "Direkter Vergleich", rankMeetings: "Bisherige Duelle", rankNoMeetings: "Noch keine Duelle", rankMore: "+{n} weitere",
+  medalTitle: "Medaillenspiegel", medalNone: "Noch keine Medaillen", medalGold: "Gold", medalSilver: "Silber", medalBronze: "Bronze", medalGoldShort: "G", medalSilverShort: "S", medalBronzeShort: "B", medalTotal: "Gesamt", medalLine: "{g} Gold, {s} Silber, {b} Bronze, {t} gesamt", medalRank: "{n}",
 };
 
 /**

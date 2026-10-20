@@ -11,7 +11,7 @@ Give it the games, series, two-legged ties or replays of a tournament and it wor
   <img alt="TypeScript" src="https://img.shields.io/badge/types-TypeScript-3178c6">
 </p>
 
-<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/layouts.md">Layouts</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/road.md">Road to the final</a> · <a href="./docs/backgrounds.md">Backgrounds</a> · <a href="./docs/judo.md">Judo</a> · <a href="./docs/rankings.md">Rankings</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
+<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/layouts.md">Layouts</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/road.md">Road to the final</a> · <a href="./docs/backgrounds.md">Backgrounds</a> · <a href="./docs/judo.md">Judo</a> · <a href="./docs/rankings.md">Rankings</a> · <a href="./docs/medals.md">Medal table</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
 
 <p align="center">
 <picture>
@@ -256,6 +256,14 @@ A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as
 <img alt="A ranking list on a TV: three big rows tinted gold, silver and bronze for the first three, and the ranks 4 to 15 as compact rows beside them, each with its rank, movement arrow, round flag, name, club and points." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-podium-tv-light.webp" width="720">
 </picture><br><em>A made-up provincial ranking (invented names and clubs).</em></p>
 
+## Medal table
+
+`medalTable` draws a medal table for any sport and event (an Olympic Games, a world championship, a club tournament): ranked gold first or by the total, equal rows sharing a rank (5, 5, 7), a flag or a badge for each country or team (a former country such as the Soviet Union is a row of its own), the three medals and the total, in two columns where the board is wide. `tallyMedals` adds up a list of medals filtered to one sport, one weight class or one Games, and `medalRanks` gives the ranks as data. [docs/medals.md](./docs/medals.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#medals)
+
+<p align="center"><picture>
+<img alt="A medal table on a 4:5 card: ten countries with rank, flag or badge, name, gold, silver and bronze counts in tinted cells and the total." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/medal-table-portrait-light.webp" width="480">
+</picture><br><em>A made-up medal table (invented results).</em></p>
+
 ## In 30 seconds
 
 ```sh
@@ -305,6 +313,7 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **The road to the final of a judoka**: `judoWins` reads an athlete's wins from a bracket (a top seed's bye included) and `judoRoadPanel` draws them with the opponent's flag, code and name and how each was won.
 - **Judo screens for the hall**: `judoContestCard` (the category, the round, the white athlete over the blue one) and `judoMatQueue` (per mat, a big number and colour and the contests to come in order, with flags and codes), on a TV or a tablet, in five languages.
 - **Rankings**: `rankingList` draws a ranking from your data, text first: rank, flag (a country or a Canadian province), name, club, points, movement arrows, a podium, a champion row, ties and paging; `rankingNumberOnes` the number one of each category and `rankingEntryList` an event's entry list with each athlete's ranking and `rankingMatchup` a head-to-head card ([docs/rankings.md](./docs/rankings.md)).
+- **A medal table for any sport**: `medalTable` ranks countries or teams gold first or by the total, with shared ranks, flags or badges, filters by sport, weight class and Games through `tallyMedals`, and former countries as rows of their own ([docs/medals.md](./docs/medals.md)).
 - **Judo scoring**: `Matchup.judo` takes ippon, waza-ari, yuko, shido, hansoku-make, golden score and the contest time, checked against the IJF rules (`judoOutcome`); a box shows the marks, the shido cards and how the contest was won, and `judoBracket` adds the repechage and the two bronze medal contests ([docs/judo.md](./docs/judo.md)).
 - **Formats by era**: NHL, NBA, MLB, NFL, CFL, MLS and FIFA World Cup round names, series lengths and byes.
 - **Five languages**: English, French, Japanese, Spanish and German, for every word the drawing, the tooltips, the description and the table write, with the football terms of each language; countries named by `Intl` from their ISO code; numbers and dates by `Intl`. Add a language of your own.
@@ -667,6 +676,7 @@ Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part 
 - `resolveMatchup`, `collectTeams`, `describeTie`, `noteParts`, `noteLong`: one tie's result, the teams of a bracket, a tie in a sentence.
 - `judoOutcome(result, winner?)`, `judoBracket(athletes, options?)`, `judoPodium(input)`, `judoCategoryLabel(category, locale?)`, `JUDO_WEIGHT_CLASSES`, `judoSeconds(time)`, `judoClock(seconds)`: judo results checked against the IJF rules, the bracket with its repechage and two bronze medal contests, the medallists, a weight category as a heading ([docs/judo.md](./docs/judo.md)). `judoScoreboard(contest, options?)`, `describeJudoContest(contest, options?)`, `JUDO_BOARD_SIZES`: the scoreboard of a contest as SVG and as a sentence. `judoContestCard(contest, options?)`, `judoMatQueue(mats, options?)`, `describeJudoCard`, `describeJudoQueue`, `JUDO_MAT_COLORS`: the contest card and the mat queue board as SVG and as sentences. `judoWins(bracket, athlete, options?)`, `judoRoadPanel(source, options?)`, `describeJudoRoad`: an athlete's wins on the road to the final, and the panel. `Matchup.judo` and `Matchup.stage` (`"repechage"`, `"bronze"`) carry them into `drawBracket`.
 - `rankingList(source, options?)`, `rankingRanks(entries, options?)`, `rankingCategoryLabel(category, locale?)`, `describeRanking(source, options?)`, `BOARD_SIZES`: a ranking list as SVG, its ranks as data, a category as a heading and the drawing as a sentence. `rankingNumberOnes(source, options?)`, `describeNumberOnes`, `NUMBER_ONE_COLORS`: the number one of each category as cards. `rankingEntryList(source, options?)`, `describeEntryList`: an event's entry list with each athlete's ranking. `rankingMatchup(source, options?)`, `describeMatchup`, `matchupRecord(meetings)`: the head-to-head card of two athletes and their meetings ([docs/rankings.md](./docs/rankings.md)).
+- `medalTable(source, options?)`, `medalRanks(rows, options?)`, `tallyMedals(awards, filter?)`, `describeMedalTable(source, options?)`: a medal table as SVG, its ranks as data, a list of medals added up and filtered, and the table as a sentence ([docs/medals.md](./docs/medals.md)).
 - `playoffFormat(league, year)`, `playoffEras(league)`, `LEAGUES`: the formats by era (`nhl`, `nba`, `mlb`, `nfl`, `cfl`, `mls`, `worldcup`). `LEAGUE_EMBLEMS`: each league's default emblem id.
 - `isEmblemId(value)`, and the types `EmblemRenderer`, `EmblemRequest`, `EmblemStyle`: the trophy emblems (see "Emblems for the trophy").
 - `roundName(remaining)`, `roundNamesFor(count)`, `roundLabel(layout, round, names, words)`: round names.
