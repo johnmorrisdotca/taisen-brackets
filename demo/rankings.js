@@ -42,7 +42,9 @@ export function initRankings({ T, flags, lang, params, $ }) {
   const matchupSource = () => ({ category: T.rankingCategoryLabel({ age: "U18", sex: "men", weight: "-60" }, lang()), date: RANKING_SAMPLE.matchup.event, source: RANKING_SAMPLE.source, a: RANKING_SAMPLE.matchup.a, b: RANKING_SAMPLE.matchup.b, meetings: state.meet === "none" ? [] : RANKING_SAMPLE.matchup.meetings });
   const matchupOptions = () => ({ size: state.size, theme: state.theme, nameStyle: state.name, precision: 2, locale: lang(), flags });
 
+  let drawnIn = null;
   function draw() {
+    drawnIn = lang();
     const stage = $("ranking-stage");
     const o = options();
     const view = state.view;
@@ -107,5 +109,7 @@ export function initRankings({ T, flags, lang, params, $ }) {
     else if (b.id === "ranking-next") state.page = String(Number(state.page) + 1);
     draw();
   });
-  return { draw, address };
+  /** Draws again only if the language changed since the last drawing: the other controls of the page do not touch this section. */
+  const refresh = () => { if (drawnIn !== lang()) draw(); };
+  return { draw, refresh, address };
 }

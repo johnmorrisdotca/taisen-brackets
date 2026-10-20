@@ -7,6 +7,8 @@ const phone = { viewport: { width: 390, height: 844 }, hasTouch: true, isMobile:
 export default defineConfig({
   testDir: "e2e",
   testMatch: "*.demo.mjs",
+  // The demo draws many boards and the CI runners are slow, WebKit on a phone most of all: 30 s was too tight for the longest tests.
+  timeout: 60_000,
   fullyParallel: true,
   forbidOnly: true,
   reporter: "list",

@@ -172,7 +172,7 @@ function draw() {
   for (const [key, value] of roadParams()) next.set(key, value);
   for (const [key, value] of rankings.address()) next.set(key, value);
   history.replaceState(null, "", `?${next}${location.hash}`);
-  if (boardReady) { drawBoard(); drawQueue(); drawRoad(); rankings.draw(); }
+  if (boardReady) { drawBoard(); drawQueue(); drawRoad(); rankings.refresh(); }
 }
 
 function choose(key) {
