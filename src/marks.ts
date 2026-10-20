@@ -80,7 +80,8 @@ export interface MarkContext {
   /** Inline SVG marks, each written once as a `<symbol>` and used wherever the team appears. Keyed by the markup. */
   symbols: Map<string, { id: string; viewBox: string; inner: string }>;
   prefix: string;
-  shape: "round" | "square" | "none";
+  /** `rect` draws a flag 4:3: `size` is its height and its width a third more (`FlagRequest.shape` is then `rect`, which Hata calls `"4:3"`). */
+  shape: "round" | "square" | "rect" | "none";
   /** The look: `road` draws a team's mark with a wide ring and a hairline outside it. */
   look?: "classic" | "road";
   /** Draws a team's `flag` code; with none a team's `mark` or initials are drawn. */
@@ -107,7 +108,7 @@ export function safeHref(url: string): boolean {
 /** The flag a renderer makes for a code, cleaned like any inline SVG, or `null` when there is no renderer, it has no flag for the code, it throws, or what it returns is not an `<svg>`. */
 function flagOf(code: string | undefined, size: number, ctx: MarkContext): { viewBox: string; inner: string } | null {
   if (typeof ctx.flags !== "function" || typeof code !== "string" || code.trim() === "") return null;
-  const shape = ctx.shape === "square" ? "square" : "round";
+  const shape = ctx.shape === "square" ? "square" : ctx.shape === "rect" ? "rect" : "round";
   const key = `${code.trim()}|${shape}|${Math.round(size)}`;
   const cache = ctx.flagCache;
   if (cache?.has(key)) return cache.get(key) ?? null;
@@ -139,6 +140,7 @@ export const clipId = (prefix: string, r: number) => `${prefix}-c${String(num(r)
  * with no mark, or one that cannot be used, is its initials on a plain disc. Returns SVG text.
  */
 export function drawMark(team: Team | null, cx: number, cy: number, size: number, ctx: MarkContext, abbrText?: string): string {
+  if (ctx.shape === "rect") return drawRectMark(team, cx, cy, size, ctx, abbrText);
   const r = size / 2;
   if (!team) return `<circle class="tb-plain tb-mark" cx="${num(cx)}" cy="${num(cy)}" r="${num(r)}" opacity=".5"/>`;
   const x = cx - r, y = cy - r;
@@ -208,4 +210,41 @@ export function drawMark(team: Team | null, cx: number, cy: number, size: number
   const shape = clip ? `<circle class="tb-plain" cx="${num(cx)}" cy="${num(cy)}" r="${num(r)}"${fill}/>` : `<rect class="tb-plain" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="2"${fill}/>`;
   const ink = team.color ? inkOn(team.color) : null;
   return `<g class="tb-mark">${shape}<text class="tb-initials" x="${num(cx)}" y="${num(cy + size * 0.12)}" font-size="${num(size * 0.36)}" font-weight="700" text-anchor="middle"${ink ? ` style="fill:${ink}"` : ""}>${esc(text)}</text></g>${ring}`;
+}
+
+/** A flag, a mark or a badge in a 4:3 box `h` high (the shape of a national flag, as a scoreboard draws it), centred at (cx, cy). */
+function drawRectMark(team: Team | null, cx: number, cy: number, h: number, ctx: MarkContext, abbrText?: string): string {
+  const w = h * (4 / 3);
+  const x = cx - w / 2, y = cy - h / 2;
+  const rx = Math.max(h * 0.08, 1);
+  const box = (cls: string, extra = ""): string => `<rect class="${cls}" x="${num(x)}" y="${num(y)}" width="${num(w)}" height="${num(h)}" rx="${num(rx)}"${extra}/>`;
+  if (!team) return box("tb-plain tb-mark", ' opacity=".5"');
+  const ring = box("tb-ring");
+  const used = (key: string, markup: { viewBox: string; inner: string }): string => {
+    let symbol = ctx.symbols.get(key);
+    if (!symbol) { symbol = { id: `${ctx.prefix}-m${ctx.symbols.size + 1}`, ...markup }; ctx.symbols.set(key, symbol); }
+    return `<g class="tb-mark"><use href="#${symbol.id}" x="${num(x)}" y="${num(y)}" width="${num(w)}" height="${num(h)}"/></g>${ring}`;
+  };
+  const flag = flagOf(team.flag, w, ctx);
+  if (flag) return used(`flag:${flag.viewBox}:${flag.inner}`, flag);
+  let fromCode: string | undefined;
+  if (typeof ctx.flagHref === "function" && typeof team.flag === "string" && team.flag.trim() !== "") {
+    try {
+      const href: unknown = ctx.flagHref(team.flag.trim());
+      if (typeof href === "string" && !href.trim().startsWith("<") && safeUrl(href)) fromCode = href;
+    } catch {
+      fromCode = undefined;
+    }
+  }
+  const mark = (fromCode ?? team.mark)?.trim();
+  if (mark) {
+    if (mark.startsWith("<")) {
+      const svg = cleanSvg(mark);
+      if (svg) return used(mark, svg);
+    } else if (safeUrl(mark)) return used(`url:${mark}`, { viewBox: "0 0 100 100", inner: `<image href="${esc(mark)}" x="0" y="0" width="100" height="100" preserveAspectRatio="xMidYMid slice"/>` });
+  }
+  const text = (abbrText ?? team.abbr ?? abbreviate(team.name)).slice(0, 3);
+  const fillStyle = team.color ? ` style="fill:${esc(team.color)}"` : "";
+  const ink = team.color ? inkOn(team.color) : null;
+  return `<g class="tb-mark">${box("tb-plain", fillStyle)}<text class="tb-initials" x="${num(cx)}" y="${num(cy + h * 0.14)}" font-size="${num(Math.max(h * (text.length <= 2 ? 0.46 : 0.4), 9))}" font-weight="700" text-anchor="middle"${ink ? ` style="fill:${ink}"` : ""}>${esc(text)}</text></g>${ring}`;
 }

@@ -448,6 +448,8 @@ export interface Words {
   medalLine: string;
   /** A rank in the row sentence (`{n}`): "3", and "3位" in Japanese. */
   medalRank: string;
+  /** The broadcast-style boards (`resultsBoard`, `boutBoard`, `broadcastMedalTable`): the sub bar\'s word for a result. */
+  rbResult: string;
 }
 
 /** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */

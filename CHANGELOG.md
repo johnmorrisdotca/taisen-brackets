@@ -6,6 +6,19 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.15.0] - 2026-10-20
+
+Broadcast boards, step 1: the results board.
+
+### Added
+
+- **`resultsBoard({ title, phase?, columns?, rows }, options)`**: a results board in the manner of a television results graphic, as one standalone SVG: a title band (the event in capitals, with an icon square), a light sub bar (the phase, and the heading of each score column), and a row for each athlete: a rank in a box (`rankStyle`: a red box, gold, silver and bronze boxes, or a plain numeral), the country code, a 4:3 flag, the name, a record badge (`record: "OR"`, `["WR", "NR"]`) and one or more columns of numbers at the sport's own precision (per column, then `precision`) or texts (`1:08.34`); `note` (`DNS`, `DQ`) in place of the values; equal results share a rank. Looks `blue`, `night` and `paper` (`BROADCAST_LOOKS`), icons `medal`, `stopwatch`, `none` or an `iconMark` of your own, `nameCase`, `nameStyle`, five languages, `--bc-*` custom properties, up to 24 rows. `describeResultsBoard`.
+- **`resultsBoardSize(rowCount, { width })`**: the board's size before it is drawn, for placing it: the width (1280 by default, 720 to 4000) and a height of 64 + 36 + 20 + 54 a row, scaled. The SVG carries the same size, has nothing outside its panel and scales as a picture.
+- **Flags drawn 4:3**: a board asks the `flags` function for the shape `rect` (Hata's `"4:3"`); a row with no flag is a rectangular badge with its code.
+- Nothing of any games, federation, sponsor or broadcaster is drawn: no rings, pictograms, emblems or timing company's name; the type is a stack of free condensed fonts, none shipped.
+- One word for the sub bar, in the five languages (Result, Résultat, `結果`, Resultado, Ergebnis: the plain word of each).
+- The demo has a Broadcast boards section with five made-up finals (a gymnastics apparatus final, an all-around, a swimming final with a record badge, athletics 100 m and speed skating), the look, rank style, icon, width and capitals in the address, and the board's size shown. [docs/broadcast.md](docs/broadcast.md).
+
 ## [0.14.0] - 2026-10-20
 
 A medal table for any sport.

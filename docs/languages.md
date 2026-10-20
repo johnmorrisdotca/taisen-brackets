@@ -253,5 +253,6 @@ The English name is the key (a round the table does not name keeps its English n
 | `medalTotal` | `Total` | `Total` | `合計` | `Total` | `Gesamt` |
 | `medalLine` | `{g} gold, {s} silver, {b} bronze, {t} total` | `{g} or, {s} argent, {b} bronze, {t} au total` | `金{g}、銀{s}、銅{b}、合計{t}` | `{g} oro, {s} plata, {b} bronce, {t} en total` | `{g} Gold, {s} Silber, {b} Bronze, {t} gesamt` |
 | `medalRank` | `{n}` | `{n}` | `{n}位` | `{n}` | `{n}` |
+| `rbResult` | `Result` | `Résultat` | `結果` | `Resultado` | `Ergebnis` |
 
 Holes in a phrase are filled in (`{n}`, `{a}`, `{b}`, `{sa}`, `{sb}`, `{w}`, `{name}`, `{round}`, `{tie}`, `{notes}`); `␣` stands for a no-break space (the French writes one before a colon).

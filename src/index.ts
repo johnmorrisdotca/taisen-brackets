@@ -35,3 +35,7 @@ export { rankingMatchup, describeMatchup, matchupRecord } from "./ranking-matchu
 export type { MatchupOptions, MatchupSource, RankingMeeting } from "./ranking-matchup.ts";
 export { medalTable, medalRanks, tallyMedals, describeMedalTable } from "./medals.ts";
 export type { MedalAward, MedalFilter, MedalRow, MedalTableOptions, MedalTableSource } from "./medals.ts";
+export { resultsBoard, resultsBoardSize, describeResultsBoard } from "./results-board.ts";
+export type { ResultsBoardOptions, ResultsBoardSource, ResultsColumn, ResultsRow } from "./results-board.ts";
+export { BROADCAST_LOOKS } from "./broadcast-kit.ts";
+export type { BroadcastIcon, BroadcastLook, BroadcastOptions } from "./broadcast-kit.ts";

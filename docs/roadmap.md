@@ -16,7 +16,8 @@ What is planned and not built. Nothing here is promised for a date; each item sa
 - **0.12.0** (built): the number ones and the entry list.
 - **0.13.0** (built): the head-to-head card.
 - **0.14.0** (built): the medal table for any sport, [docs/medals.md](./medals.md).
-- Next: broadcast-style results boards.
+- **0.15.0** (built): the broadcast-style results board, [docs/broadcast.md](./broadcast.md).
+- Next: the bout presentation board and the broadcast-style medal table.
 
 ## Built in 0.6.0
 
