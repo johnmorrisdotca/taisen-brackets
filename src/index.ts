@@ -41,3 +41,5 @@ export { BROADCAST_LOOKS } from "./broadcast-kit.ts";
 export type { BroadcastIcon, BroadcastLook, BroadcastOptions } from "./broadcast-kit.ts";
 export { boutBoard, boutBoardSize, describeBoutBoard } from "./bout-board.ts";
 export type { BoutAthlete, BoutBoardOptions, BoutBoardSource, BoutOfficial } from "./bout-board.ts";
+export { broadcastMedalTable, broadcastMedalSize } from "./broadcast-medals.ts";
+export type { BroadcastMedalOptions } from "./broadcast-medals.ts";

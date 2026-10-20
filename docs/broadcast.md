@@ -98,6 +98,33 @@ console.log(JSON.stringify(boutBoardSize(source.officials.length, { width: 960 }
 
 The source is `{ title, phase?, bout?, red, blue, officials? }`. An athlete is `{ name, code?, flag?, mark? }`; an official is the same with a `role`: `"referee"` (the language's word), `"judge"` (the default: numbered 1, 2, 3 in the order given, in the language's words) or any text of your own (`"Mat president"`), written as it is. `bout` is a number or a text (`142`, `"A-12"`), written "Bout: 142". `boutBoardSize(officialCount, { width })` is the size before it is drawn: the width (1280 by default) and a height of `64 + 38 + 10 + 62 + 10 + 38 + 42 × officials + 10`, in units of the width over 1280, so six officials make 1280 by 484: a standalone SVG to place over a picture, as for the results board. Looks, icons, `nameCase`, `nameStyle`, languages and custom properties are the results board's. At most 12 officials; a missing title or name, an unknown option or a width outside 720 to 4000 is a `RangeError`. `describeBoutBoard` is the description.
 
-## Not drawn yet
+## The medal table
 
-The broadcast-style medal table is the next step ([roadmap](./roadmap.md)).
+`broadcastMedalTable` is the medal table in the same manner: a title band with the heading and the date, a sub bar with the three medal discs over their columns and the word total, and a row for each country or team with its rank, a 4:3 flag, its code (or its name) and the gold, silver and bronze counts, each beside its disc, and the total. It takes the same source as [`medalTable`](./medals.md), and the rows are ranked and tied by the same rules (`sort`, `ties`, `top`, `skipEmpty`), so `tallyMedals` feeds it too.
+
+<p align="center"><picture>
+<img alt="A broadcast-style medal table in the blue look: a title band reading Medal table with Games at its right, a sub bar reading Day 16 with a gold, a silver and a bronze disc over their columns and the word Total, and ten rows, each with a rank, a flag, a three-letter country code, three counts each beside its disc, and the total in larger type." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/broadcast-medal-table-blue.webp" width="720">
+</picture><br><em>The medal table after a made-up day 16 (invented numbers).</em></p>
+
+```js
+import { broadcastMedalSize, broadcastMedalTable } from "@johnmorrisdotca/taisen-brackets";
+
+const rows = [
+  { name: "United States", code: "USA", flag: "US", gold: 46, silver: 29, bronze: 29 },
+  { name: "China", code: "CHN", flag: "CN", gold: 38, silver: 27, bronze: 22 },
+  { name: "Great Britain", code: "GBR", flag: "GB", gold: 29, silver: 17, bronze: 19 },
+];
+const svg = broadcastMedalTable({ subtitle: "Day 16", date: "Games", rows }, { width: 960 });
+console.log(svg.includes("104"), svg.includes("USA"), svg.includes("TOTAL")); // true true true
+console.log(JSON.stringify(broadcastMedalSize(rows.length, { width: 960 }))); // {"width":960,"height":198}
+```
+
+`labels` is `code` (the default where every row has one) or `name`; `ranks: false` leaves the rank out. `broadcastMedalSize(rowCount, { width })` is the size before it is drawn: the width (1280 by default) and a height of `64 + 36 + 10 + 48 × rows + 10`, in units of the width over 1280, so ten rows make 1280 by 600. At most 24 rows (`top` cuts a longer table). A former country is a row of its own, as in the medal table, drawn as a badge with its code where there is no flag. The other options, the looks and the sizes are the results board's.
+
+<p align="center"><picture>
+<img alt="The broadcast-style medal table in the night look, with no icon in the title band: ten rows on a near black panel with a cyan sub bar and the three medal discs." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/broadcast-medal-table-night.webp" width="560">
+</picture><br><em>The night look, with no icon.</em></p>
+
+## Placing a board over something
+
+Every board here is one standalone SVG with a size you can read before drawing it (`resultsBoardSize`, `boutBoardSize`, `broadcastMedalSize`) and nothing outside its panel, so another program can put it over a picture: read the size, place the SVG at the position you want, and scale it (it scales as a picture, `max-width: 100%; height: auto`). The kyogijo-stadiums package can do this over a surface it draws; this package only promises the size and the transparent corners.

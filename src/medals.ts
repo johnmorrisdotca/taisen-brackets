@@ -125,7 +125,8 @@ export function medalRanks(rows: readonly MedalRow[], options: Pick<MedalTableOp
   return ordered(rows, options.sort ?? "gold", options.ties ?? true).map((x) => x.rank);
 }
 
-function validate(source: MedalTableSource, options: MedalTableOptions): void {
+/** Checks a medal table's source and options (shared by the broadcast-style table). */
+export function validateMedalSource(source: MedalTableSource, options: MedalTableOptions): void {
   if (!source || !Array.isArray(source.rows)) throw new RangeError("taisen-brackets: a medal table needs a list of rows");
   source.rows.forEach((r, i) => {
     if (typeof r?.name !== "string" || r.name.trim() === "") throw new RangeError(`taisen-brackets: row ${i + 1} of the medal table needs a name`);
@@ -143,7 +144,7 @@ function validate(source: MedalTableSource, options: MedalTableOptions): void {
 }
 
 /** The rows that are drawn: sorted, ranked, with the empty ones and all but the top N left out when asked. */
-function chosen(source: MedalTableSource, options: MedalTableOptions): { row: MedalRow; rank: number }[] {
+export function chosenMedalRows(source: MedalTableSource, options: Pick<MedalTableOptions, "sort" | "ties" | "skipEmpty" | "top">): { row: MedalRow; rank: number }[] {
   let list = ordered(source.rows, options.sort ?? "gold", options.ties ?? true);
   if (options.skipEmpty) list = list.filter((x) => totalOf(x.row) > 0);
   return options.top ? list.slice(0, options.top) : list;
@@ -156,7 +157,7 @@ export function describeMedalTable(source: MedalTableSource, options: Pick<Medal
   const parts = [source.title ?? w.medalTitle];
   if (source.subtitle) parts.push(source.subtitle);
   if (source.date) parts.push(source.date);
-  const list = chosen(source, options);
+  const list = chosenMedalRows(source, options);
   if (list.length === 0) parts.push(w.medalNone);
   for (const { row, rank } of list) parts.push([fill(w.medalRank, { n: v.number(rank) }), row.name, fill(w.medalLine, { g: v.number(count(row.gold)), s: v.number(count(row.silver)), b: v.number(count(row.bronze)), t: v.number(totalOf(row)) })].join(w.rankJoin));
   return parts.join(w.sep) + w.end;
@@ -168,13 +169,13 @@ const teamFor = (r: MedalRow, id: string): Team => ({ id, name: r.name, abbr: (r
  * The medal table as an SVG. Throws a `RangeError` for a row with no name, a medal count that is not a whole number from 0, an option that is not one of its values, or a bad size or theme.
  */
 export function medalTable(source: MedalTableSource, options: MedalTableOptions = {}): string {
-  validate(source, options);
+  validateMedalSource(source, options);
   const f = boardFrame(options, [source, options.sort, options.ties, options.rankStyle, options.top, options.rows, options.page, options.columns, options.highlight, options.skipEmpty]);
   const { W, H, v } = f;
   const w = v.words;
   const unit = Math.min(W, H);
   const pad = Math.round(unit * 0.035);
-  const all = chosen(source, options);
+  const all = chosenMedalRows(source, options);
   const columns = options.columns ?? (W / H >= 1.5 && all.length > 10 ? 2 : 1);
   const head = heading(f, source.title ?? w.medalTitle, source.subtitle, source.date, pad, columns === 2 ? W - pad * 2 : Math.min(W - pad * 2, unit * 1.3), source.source);
   const body: string[] = [...head.svg];

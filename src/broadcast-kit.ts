@@ -133,6 +133,7 @@ export function broadcastStyle(scope: string, look: BroadcastLook, fixed = ""): 
     s(".bc-ink", `fill:${v("ink", p.ink)}`), s(".bc-sub", `fill:${v("sub", p.sub)}`),
     s(".bc-rank", `fill:${v("rank", p.rank)};stroke:${v("rank-edge", p.rankEdge)};stroke-width:1.5`), s(".bc-rankink", `fill:${v("rank-ink", p.rankInk)}`),
     s(".bc-g1", `fill:${v("gold", p.gold)};stroke:none`), s(".bc-g2", `fill:${v("silver", p.silver)};stroke:none`), s(".bc-g3", `fill:${v("bronze", p.bronze)};stroke:none`), s(".bc-medalink", `fill:${v("medal-ink", p.medalInk)}`),
+    s(".bc-discrim", "fill:none;stroke:rgba(255,255,255,.55);stroke-width:1.5"),
     s(".bc-badge", `fill:${v("badge", p.badge)}`), s(".bc-badgeink", `fill:${v("badge-ink", p.badgeInk)}`),
     s(".bc-red", `fill:${v("red", p.red)}`), s(".bc-blue", `fill:${v("blue", p.blue)}`),
     s(".bc-band", `fill:${v("band", p.band)}`), s(".bc-bandink", `fill:${v("band-ink", p.bandInk)}`),

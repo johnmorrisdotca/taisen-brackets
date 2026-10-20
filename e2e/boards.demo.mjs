@@ -69,3 +69,19 @@ test("the bout presentation board draws from the address, its size is the offici
   await page.locator("#boards-code-box summary").click();
   await expect(page.locator("#boards-code")).toContainText("boutBoard(source");
 });
+
+test("the broadcast medal table draws from the address at each width, and its size is the rows'", async ({ page }) => {
+  test.setTimeout(120_000);
+  for (const [width, height] of [["1280", "600"], ["960", "450"], ["720", "338"]]) {
+    await page.goto(`/?gview=medals&gwidth=${width}`);
+    await expect(board(page)).toHaveAttribute("viewBox", `0 0 ${width} ${height}`);
+    await expect(board(page).locator(".bc-row")).toHaveCount(10);
+    await expect(page.locator("#boards-size")).toHaveText(`${width} by ${height}`);
+    expect(await noSidewaysScroll(page)).toBe(true);
+  }
+  await expect(board(page).locator(".bc-medalhead")).toHaveCount(3);
+  await page.goto("/?gview=medals&lang=fr");
+  await expect(board(page).locator("text", { hasText: /^TABLEAU DES MÉDAILLES$/ })).toBeVisible();
+  await page.locator("#boards-code-box summary").click();
+  await expect(page.locator("#boards-code")).toContainText("broadcastMedalTable(");
+});

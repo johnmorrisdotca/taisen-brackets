@@ -18,7 +18,8 @@ What is planned and not built. Nothing here is promised for a date; each item sa
 - **0.14.0** (built): the medal table for any sport, [docs/medals.md](./medals.md).
 - **0.15.0** (built): the broadcast-style results board, [docs/broadcast.md](./broadcast.md).
 - **0.16.0** (built): the bout presentation board.
-- Next: the broadcast-style medal table.
+- **0.17.0** (built): the broadcast-style medal table.
+- Next: nothing planned. Ideas: a ranking board in the broadcast style, and boards that update as a contest goes on (today a board is drawn again for each state).
 
 ## Built in 0.6.0
 

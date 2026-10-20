@@ -6,6 +6,17 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.17.0] - 2026-10-20
+
+Broadcast boards, step 3: the medal table.
+
+### Added
+
+- **`broadcastMedalTable({ title?, subtitle?, date?, source?, rows }, options)`**: the medal table in the manner of a television graphic, as one standalone SVG: a title band (the heading, with the date at its right), a sub bar with the three medal discs over their columns and the word total, and a row for each country or team with its rank, a 4:3 flag, its code or name (`labels`) and the gold, silver and bronze counts each beside its disc, and the total. The same source as `medalTable`, ranked and tied by the same rules (`sort`, `ties`, `top`, `skipEmpty`), so `tallyMedals` feeds it; `ranks: false`. Looks, icons, languages and `--bc-*` custom properties as for the other boards; up to 24 rows.
+- **`broadcastMedalSize(rowCount, { width })`**: the size before it is drawn: the width (1280 by default, 720 to 4000) and a height of 64 + 36 + 10 + 48 a row + 10, scaled.
+- The three boards now have a section on placing them over something: the size is read before drawing, nothing is drawn outside the panel, and the SVG scales as a picture. [docs/broadcast.md](docs/broadcast.md).
+- The demo's Broadcast boards section has the medal table, with the look, icon and width in the address.
+
 ## [0.16.0] - 2026-10-20
 
 Broadcast boards, step 2: the bout presentation board.

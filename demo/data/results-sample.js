@@ -100,3 +100,13 @@ export const BOUT_SAMPLE = {
     { code: "FRA", flag: "FR", name: "MADFOUA Fathi" },
   ],
 };
+
+/** A made-up medal table of ten countries for the broadcast style: the numbers are invented. */
+export const MEDALS_SAMPLE = {
+  subtitle: "Day 16",
+  date: "Games",
+  rows: [
+    ["United States", "USA", "US", 46, 29, 29], ["China", "CHN", "CN", 38, 27, 22], ["Great Britain", "GBR", "GB", 29, 17, 19], ["Japan", "JPN", "JP", 24, 25, 33], ["South Korea", "KOR", "KR", 13, 8, 7],
+    ["Germany", "GER", "DE", 11, 19, 14], ["France", "FRA", "FR", 11, 11, 12], ["Italy", "ITA", "IT", 8, 9, 11], ["Hungary", "HUN", "HU", 8, 4, 5], ["Netherlands", "NED", "NL", 0, 1, 0],
+  ].map(([name, code, flag, gold, silver, bronze]) => ({ name, code, flag, gold, silver, bronze })),
+};
