@@ -6,6 +6,14 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.17.2] - 2026-10-20
+
+Security fix.
+
+### Fixed
+
+- **The background's `id` option is made safe.** `backgroundSvg` (and the `background` option of the drawings that use it, which already passed a safe id) wrote the `id` it was given as it came into element ids and `url(#...)`, so a hostile `id` (`x"><script>…`) could break out of the attribute when `backgroundSvg` is called directly. It now keeps only letters, digits, `_` and `-` (every other character becomes `-`) and puts `bg-` in front of an id that does not start with a letter. An id that is already safe is unchanged. The shared module `family-backgrounds` is now version 1.0.1; `test/family-backgrounds.test.ts` draws every preset with eight hostile ids.
+
 ## [0.17.1] - 2026-10-20
 
 Security fix.

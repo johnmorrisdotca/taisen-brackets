@@ -8,8 +8,8 @@ import { BACKGROUND_PRESETS, FAMILY_BACKGROUNDS_VERSION, backgroundSvg, contrast
 import { wellFormed } from "./helpers.ts";
 
 /** The sha256 of src/family-backgrounds.ts at FAMILY_BACKGROUNDS_VERSION. Another package that copies the file checks its copy against this; a change to the file changes the version and this line together. */
-const SHA256 = "23e1ce89ed072365813df6255414aa51b056fb582f4b253d041e78c4d16b57d0";
-const VERSION = "1.0.0";
+const SHA256 = "584b1c6f5dea2c1e395e3f0d29f69b378039d1adc13eaac136b2ec02ee40c503";
+const VERSION = "1.0.1";
 
 const SIZES: [number, number][] = [[1080, 1350], [1200, 675], [1080, 1080], [390, 1600]];
 const rgb = (text: string) => parseColor(text)!;
@@ -92,4 +92,25 @@ test("colors, angle, intensity and seed change the picture; the seed moves the s
 test("a copy of the module is the same text in every package: it has no import, no clock and no random number", () => {
   const text = readFileSync(new URL("../src/family-backgrounds.ts", import.meta.url), "utf8");
   assert.ok(!/Math\.random|Date\.now|new Date|performance\.now/.test(text));
+});
+
+test("a hostile id cannot reach the markup: only letters, digits, _ and - are written, and a safe id is used as written", () => {
+  const hostile = [`x"><script>alert(7)</script>`, `a}</style><script>alert(7)</script><style>b{`, `x" onload="alert(7)`, `1 starts with a digit`, `.x{fill:red}`, `a\nb`, `url(#x)`, ``];
+  for (const name of BACKGROUND_PRESETS) {
+    for (const id of hostile) {
+      const made = backgroundSvg(name, { width: 1080, height: 1350, id });
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1080 1350"><defs>${made.defs}</defs><rect fill="${made.ink.base}"/>${made.body}</svg>`;
+      assert.equal(wellFormed(svg), null, `${name} ${JSON.stringify(id)}: well formed`);
+      assert.ok(!/<script|\sonload=|\(7\)/.test(svg), `${name} ${JSON.stringify(id)}: nothing of the id's markup`);
+      const ids = [...made.defs.matchAll(/ id="([^"]*)"/g)].map((m) => m[1]);
+      assert.ok(ids.length > 0);
+      for (const written of ids) assert.match(written, /^[A-Za-z][\w-]*$/, `${name} ${JSON.stringify(id)}: element id ${written}`);
+      for (const ref of made.body.matchAll(/url\(#([^)]*)\)/g)) assert.ok(ids.includes(ref[1]), `${name} ${JSON.stringify(id)}: ${ref[1]} is defined`);
+    }
+  }
+  assert.ok(backgroundSvg("midnight", { width: 100, height: 100, id: "x\"y" }).defs.includes('id="x-yg"'), "a bad character becomes -");
+  assert.ok(backgroundSvg("midnight", { width: 100, height: 100, id: "7 mat" }).defs.includes('id="bg-7-matg"'), "an id that starts with a digit gets bg- in front");
+  const plain = backgroundSvg("midnight", { width: 100, height: 100, id: "my-board_2" });
+  assert.ok(plain.defs.includes('id="my-board_2g"') && plain.body.includes("url(#my-board_2g)"), "an id that is already safe is unchanged");
+  assert.deepEqual(backgroundSvg("midnight", { width: 100, height: 100, id: "my-board_2" }), plain, "the same id draws the same");
 });
