@@ -6,8 +6,14 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.6.1] - 2026-10-19
+
+No change to the package's code. The README's pictures were checked against 0.6.0's features and remade: they already show every layout, so none is added.
+
 ### Changed
 
+- The demo's road to the final shows three real tournaments (the World Cups of 2022 and 2026 with Hata's round flags, and the 2024 Stanley Cup playoffs with each team's initials on its colour) in place of made-up nations.
+- `CONTRIBUTING.md` has a release-checklist line for visual features: new visual feature? update the README images and add a showcase section if the examples do not show it well.
 - Docs pages are single-language (`CONTRIBUTING.md`), held by a new test, `docs-language.test`, which lists each exception with its reason; two changelog entries that had Japanese in English prose are now in English.
 
 ## [0.6.0] - 2026-10-14
