@@ -40,7 +40,7 @@ export interface JudoQueueOptions extends Omit<JudoBoardOptions, "style" | "coac
 export const JUDO_MAT_COLORS: readonly string[] = Object.freeze(["#d2232a", "#1e9c4c", "#e7b800", "#7a3fb4", "#e8741a", "#12877f"]);
 
 /** White or near-black, whichever reads better on a hex colour. */
-function inkOn(color: string): string {
+export function inkOn(color: string): string {
   const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(color.trim())?.[1];
   if (!hex) return "#ffffff";
   const full = hex.length === 3 ? [...hex].map((c) => c + c).join("") : hex;
@@ -50,7 +50,7 @@ function inkOn(color: string): string {
 
 const HEX = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
 
-function sheetStyle(scope: string, theme: "auto" | "light" | "dark"): string {
+export function sheetStyle(scope: string, theme: "auto" | "light" | "dark", extra = ""): string {
   const base = (p: typeof LIGHT, before: string) => rulesFor(p, `.${scope}`, before);
   const fixed = [
     `.${scope} .jb-w .jb-panel{fill:var(--jb-white-panel, ${WHITE_PANEL.panel});stroke:${WHITE_PANEL.edge};stroke-width:2}`,
@@ -68,14 +68,15 @@ function sheetStyle(scope: string, theme: "auto" | "light" | "dark"): string {
     `.${scope} .tb-initials{fill:#1f2320}`,
     `.${scope} text{font-family:var(--jb-font, ${FONT});font-variant-numeric:tabular-nums}`,
   ].join("\n");
-  if (theme === "light") return `${base(LIGHT, "")}\n${fixed}`;
-  if (theme === "dark") return `${base(DARK, "")}\n${fixed}`;
-  return `${base(LIGHT, "")}\n@media (prefers-color-scheme: dark){\n${base(DARK, ':root:not([data-theme="light"]) ')}\n}\n${base(DARK, ':root[data-theme="dark"] ')}\n${fixed}`;
+  const tail = extra ? `${fixed}\n${extra.replaceAll("$S", `.${scope}`)}` : fixed;
+  if (theme === "light") return `${base(LIGHT, "")}\n${tail}`;
+  if (theme === "dark") return `${base(DARK, "")}\n${tail}`;
+  return `${base(LIGHT, "")}\n@media (prefers-color-scheme: dark){\n${base(DARK, ':root:not([data-theme="light"]) ')}\n}\n${base(DARK, ':root[data-theme="dark"] ')}\n${tail}`;
 }
 
-interface Frame { W: number; H: number; v: Voice; scope: string; theme: "auto" | "light" | "dark"; ctx: MarkContext; options: JudoBoardOptions }
+export interface Frame { W: number; H: number; v: Voice; scope: string; theme: "auto" | "light" | "dark"; ctx: MarkContext; options: JudoBoardOptions }
 
-function frameOf(options: JudoBoardOptions, seed: unknown): Frame {
+export function frameOf(options: JudoBoardOptions, seed: unknown): Frame {
   const v = voiceOf(options);
   const size = typeof options.size === "string" ? JUDO_BOARD_SIZES[options.size] : options.size ?? JUDO_BOARD_SIZES.tv;
   if (!size || !(size.width >= 200) || !(size.height >= 200)) throw new RangeError(`taisen-brackets: a size is "tv", "tablet", "tablet-tall" or { width, height } of 200 or more, not ${JSON.stringify(options.size)}`);
@@ -86,11 +87,11 @@ function frameOf(options: JudoBoardOptions, seed: unknown): Frame {
   return { W: size.width, H: size.height, v, scope, theme, ctx, options };
 }
 
-function wrap(f: Frame, title: string, desc: string, body: string[], label: string): string {
+export function wrap(f: Frame, title: string, desc: string, body: string[], label: string, extraCss = ""): string {
   return [
     `<svg xmlns="http://www.w3.org/2000/svg" lang="${esc(f.v.locale.code)}" class="taisen taisen-judo ${esc(f.scope)}${f.options.className ? ` ${esc(f.options.className)}` : ""}" viewBox="0 0 ${num(f.W)} ${num(f.H)}" width="${num(f.W)}" height="${num(f.H)}" style="max-width:100%;height:auto" role="img" aria-labelledby="${esc(f.scope)}-t ${esc(f.scope)}-d" data-board="${label}">`,
     `<title id="${esc(f.scope)}-t">${esc(title)}</title><desc id="${esc(f.scope)}-d">${esc(desc)}</desc>`,
-    `<style>${sheetStyle(f.scope, f.theme)}</style>`,
+    `<style>${sheetStyle(f.scope, f.theme, extraCss)}</style>`,
     markDefs(f.ctx) ? `<defs>${markDefs(f.ctx)}</defs>` : "",
     `<rect class="jb-bg" width="${num(f.W)}" height="${num(f.H)}"/>`,
     ...body,
@@ -98,12 +99,12 @@ function wrap(f: Frame, title: string, desc: string, body: string[], label: stri
   ].filter(Boolean).join("\n");
 }
 
-const text = (x: number, y: number, size: number, content: string, cls: string, anchor: "start" | "middle" | "end" = "start", weight = 800, extra = ""): string =>
+export const text = (x: number, y: number, size: number, content: string, cls: string, anchor: "start" | "middle" | "end" = "start", weight = 800, extra = ""): string =>
   `<text class="${cls}" x="${num(x)}" y="${num(y)}" font-size="${num(size)}" font-weight="${weight}" text-anchor="${anchor}"${extra}>${esc(content)}</text>`;
 
-const teamOf = (a: JudoAthlete, id: string): Team => ({ id, name: a.name, abbr: (a.code ?? a.name).slice(0, 3).toUpperCase(), ...(a.flag ? { flag: a.flag } : {}), ...(a.mark ? { mark: a.mark } : {}) });
+export const teamOf = (a: JudoAthlete, id: string): Team => ({ id, name: a.name, abbr: (a.code ?? a.name).slice(0, 3).toUpperCase(), ...(a.flag ? { flag: a.flag } : {}), ...(a.mark ? { mark: a.mark } : {}) });
 
-function check(a: JudoAthlete | undefined, side: string): void {
+export function check(a: JudoAthlete | undefined, side: string): void {
   if (!a || typeof a.name !== "string" || a.name.trim() === "") throw new RangeError(`taisen-brackets: the ${side} athlete needs a name`);
 }
 

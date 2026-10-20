@@ -6,6 +6,16 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.10.0] - 2026-10-20
+
+Judo, step 4: the road to the final of one judoka.
+
+### Added
+
+- **`judoWins(bracket, athleteId, options)`**: the contests an athlete has won in a bracket, oldest first, as `{ round, opponent, how }`: the round (a repechage and a bronze medal contest named as such), the opponent as an athlete (`name`, `code`, `flag`, `mark` of the team, or what `athlete(team)` gives) and how it was won (a judo result's method, golden score and time, or the score). A bye is a row for each round a top seed skipped (`byes: false` leaves them out). A name that is not in the bracket is a `RangeError`. `Team.code`, the three letters of the country, is new.
+- **`judoRoadPanel({ athlete, wins }, options)`**: the panel for a broadcast or a hall screen. The athlete's block (flag, name, code, coach) in the colour of a judogi (`side`), and a row for each win, most recent first (`order`): the round on a pill, the opponent's flag, code and name, and how it was won; a bye is a quiet row. A wide screen puts the block on the left and the rows on the right, an upright one the block on top and the result under each name. `size`, `theme`, `flags`, `flagHref`, `locale`, `words`, `title`, `weight`, `rows`, `coach`. `describeJudoRoad`. The title is the road chart's word in each language.
+- The demo has a section for it: any of the 16 athletes of the Judo example (a bronze medallist's repechage and bronze medal contest included), size, look, the colour of the block and the order, with the call that draws it; the state is in the address. Tests hold every text inside the drawing and every opponent inside its row, in every size and several languages.
+
 ## [0.9.0] - 2026-10-20
 
 Judo, step 3: the contest card and the mat queue board.

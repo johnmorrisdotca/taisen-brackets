@@ -36,6 +36,8 @@ export interface Team {
    * renderer, or one that has no flag for the code, the team's `mark` is drawn, or its initials: it never throws.
    */
   flag?: string;
+  /** The three letters of the team's country (`JPN`), which the judo screens write beside the name (`judoWins`, `judoRoadPanel`). */
+  code?: string;
 }
 
 /** One game of a tie: a match of a knockout, a game of a series, a leg of an aggregate, a replay. */

@@ -88,6 +88,8 @@ try {
   await shoot("judo-queue-tv-dark", "qview=queue&qmats=3&qsize=tv&qtheme=dark", { width: 1280, height: 900 }, out, "#queue-stage svg");
   await shoot("judo-queue-tablet-light", "qview=queue&qmats=4&qsize=tablet&qtheme=light", { width: 1280, height: 900 }, out, "#queue-stage svg");
   await shoot("judo-card-tv-dark", "qview=card&qsize=tv&qtheme=dark", { width: 1280, height: 900 }, out, "#queue-stage svg");
+  await shoot("judo-road-tv-dark", "rathlete=J01&rsize=tv&rtheme=dark", { width: 1280, height: 900 }, out, "#judoroad-stage svg");
+  await shoot("judo-road-tall-light", "rathlete=J02&rsize=tablet-tall&rtheme=light&rside=white", { width: 1280, height: 900 }, out, "#judoroad-stage svg");
   await shoot("judo-board-tall-light", "bstyle=board&bsize=tablet-tall&btheme=light&bw=1,0,0,0&bb=0,0,1,1&bclock=1:51&bosa=none", { width: 1280, height: 900 }, out, "#board-stage svg");
   // The road look's own pictures: the classic look beside it (it keeps its plain colour), a card, one team's path, and the road to the final in three sizes.
   await shoot("classic-desk-light", "ex=wc2022&look=classic&bg=plain", { width: 1280, height: 900 });

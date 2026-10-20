@@ -148,8 +148,30 @@ console.log(svg.includes("G-2"), svg.includes("#0b6fb8")); // true true
 
 The mats are in columns on a wide board, as many as leave each mat room for its names (about six tenths of the short side of the board), and stacked on an upright tablet; up to eight mats. A mat with more contests than fit is cut at `rows` (default: as many as fit at a readable size, up to 12). Mats with no colour take `JUDO_MAT_COLORS` in turn (red, green, yellow, purple, orange, teal), or `colors`, and the number is white or near-black, whichever reads on its colour. Both take `size`, `theme`, `swap` (blue first), `flags`, `flagHref`, `locale`, `words`, `title`, `id` and `className` as the scoreboard does; an athlete is the same `{ name, code, flag, mark }`. `describeJudoCard` and `describeJudoQueue` are the sentences the drawings' descriptions carry. A missing name, a mat with no number, a colour that is not a hex code or a bad size is a `RangeError`.
 
+## The road to the final of a judoka
+
+The panel for a broadcast or a hall screen: one athlete's block and the contests they have won on the way. **`judoWins(bracket, athleteId, options)`** reads them from a bracket (the matchups, `{ matchups, teams }` or a layout), oldest first, as `{ round, opponent, how }`: the round (a repechage and a bronze medal contest are named as such), the opponent as `{ name, code, flag, mark }` (from the team's `name`, `code`, `flag` and `mark`; `athlete: (team) => …` maps your own), and how it was won in words (`ippon · 1:12`, `decision · GS · 5:12`, `fusen-gachi`, or the score of a contest with no judo result). A top seed's bye is a row of its own for each round it skipped (`byes: false` leaves them out). **`judoRoadPanel({ athlete, wins }, options)`** draws it.
+
+<p align="center"><picture><img alt="A road to the final panel on a TV in the dark: a blue block with the Japanese flag, the name Daiki Hoshino, the code JPN and the coach, beside four rows, most recent first: the final won over Jasur Rakhimov of Uzbekistan by decision in golden score at 7:02, the semi-final over Rafael Tavares of Brazil by ippon at 3:21, the quarter-final over Emil Hartmann of Germany by ippon at 2:30 and the round of 16 over Balázs Kertész of Hungary by ippon at 1:12." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-road-tv-dark.webp" width="720"></picture><br><em>The road of the champion (invented names).</em></p>
+
+<p align="center"><picture><img alt="A road to the final panel on a tablet held upright, in the light: a white block with the athlete and, under it, three rows: the bronze medal contest, the quarter-final and the round of 16, each with the opponent's flag, code and name and how it was won." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-road-tall-light.webp" width="300"></picture><br><em>A bronze medallist's road, on an upright tablet.</em></p>
+
+```js
+import { judoRoadPanel, judoWins } from "@johnmorrisdotca/taisen-brackets";
+
+const matchups = [
+  { id: "a", round: 1, sides: ["Haru", "Marc"], judo: { sides: [{ ippon: true }, {}], time: "1:12" } },
+  { id: "f", round: 2, sides: ["Haru", "Levan"], judo: { sides: [{ wazaAri: 1 }, { yuko: 1 }], goldenScore: true, time: "5:40" } },
+];
+const wins = judoWins(matchups, "Haru");
+console.log(wins.map((w) => `${w.round}: ${w.opponent.name}, ${w.how}`).join(" / ")); // Semi-finals: Marc, ippon · 1:12 / Final: Levan, decision · GS · 5:40
+const svg = judoRoadPanel({ athlete: { name: "Haru", code: "JPN" }, wins }, { weight: "Men -66 kg" });
+console.log(svg.includes("Road to the final")); // true
+```
+
+`judoRoadPanel` takes `size`, `theme`, `flags`, `flagHref`, `locale`, `words`, `title`, `id` and `className` as the scoreboard does, and: `weight` (the heading at the right of the header), `side` (`blue`, the default, or `white`: the colour of the athlete's block), `order` (`latest` first, as a broadcast does, or `first`), `rows` (the most wins drawn; default as many as fit at a readable size, up to 8) and `coach`. The athlete is the same `{ name, code, flag, mark, coach }`. A wide screen puts the block on the left and the rows on the right; an upright one puts the block on top, and the result under each name. `describeJudoRoad` is the sentence the drawing's description carries. A missing name, a win with no round, a bad `side`, `rows` or size is a `RangeError`. The title is the language's "Road to the final" (the word the road-to-the-final chart already has).
+
 ## Not drawn yet
 
 - **Double repechage and full repechage** (2.5.3, 2.5.4): their pools are laid out in the rules' Appendix G charts, which are pictures; `judoBracket` refuses them rather than guess.
 - **Team events**, round robins and kata scoring.
-- **The road to the final of one judoka** is planned for the next release ([roadmap](./roadmap.md)).

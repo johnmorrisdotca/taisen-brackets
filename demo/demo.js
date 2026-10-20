@@ -167,8 +167,9 @@ function draw() {
   if (state.lang !== "en") next.set("lang", state.lang);
   for (const [key, value] of boardParams()) next.set(key, value);
   for (const [key, value] of queueParams()) next.set(key, value);
+  for (const [key, value] of roadParams()) next.set(key, value);
   history.replaceState(null, "", `?${next}${location.hash}`);
-  if (boardReady) { drawBoard(); drawQueue(); }
+  if (boardReady) { drawBoard(); drawQueue(); drawRoad(); }
 }
 
 function choose(key) {
@@ -417,6 +418,7 @@ function drawBoard() {
   for (const key of [...next.keys()]) if (/^b(style|size|theme|swap|gs|fin|w|b|clock|osa)$/.test(key)) next.delete(key);
   for (const [key, value] of boardParams()) next.set(key, value);
   for (const [key, value] of queueParams()) next.set(key, value);
+  for (const [key, value] of roadParams()) next.set(key, value);
   history.replaceState(null, "", `?${next}${location.hash}`);
   $("board-code").firstChild.textContent = `import { judoScoreboard } from "@johnmorrisdotca/taisen-brackets";\n\n// Hata's round flags, loaded once: const loadedFlags = { JP: await flag("JP", { shape: "round" }), ... }\nconst svg = judoScoreboard(${JSON.stringify(boardContest(), null, 2)}, ${JSON.stringify({ ...boardOptions(), flags: "@@(code) => loadedFlags[code]@@" }, null, 2).replace(/"@@(.*?)@@"/g, "$1")});\n`;
 }
@@ -475,6 +477,7 @@ function drawQueue() {
   const next = new URLSearchParams(location.search);
   for (const key of [...next.keys()]) if (/^q(view|mats|size|theme|swap)$/.test(key)) next.delete(key);
   for (const [key, value] of queueParams()) next.set(key, value);
+  for (const [key, value] of roadParams()) next.set(key, value);
   history.replaceState(null, "", `?${next}${location.hash}`);
   const shown = queue.view === "card" ? `judoContestCard(${JSON.stringify(card, null, 2)}` : `judoMatQueue(${JSON.stringify(mats.map((m) => ({ ...m, contests: `@@${m.contests.length} contests: { number, white, blue }@@` })), null, 2).replace(/"@@(.*?)@@"/g, "[/* $1 */]")}`;
   $("queue-code").firstChild.textContent = `import { ${queue.view === "card" ? "judoContestCard" : "judoMatQueue"} } from "@johnmorrisdotca/taisen-brackets";\n\n// An athlete is { name, code, flag }; Hata's round flags are loaded once.\nconst svg = ${shown}, ${JSON.stringify({ ...options, flags: "@@(code) => loadedFlags[code]@@" }, null, 2).replace(/"@@(.*?)@@"/g, "$1")});\n`;
@@ -497,6 +500,55 @@ function queueControls() {
   });
 }
 
+// ---- The road-to-the-final panel of a judoka: the athlete, size, look and colour are in the address.
+const ROAD_DEFAULTS = { athlete: "J01", size: "tv", theme: "auto", side: "blue", order: "latest" };
+const roadState = { ...ROAD_DEFAULTS };
+const JUDO_DATA = () => ALL.find((e) => e.key === "judo66").data;
+if (JUDO_DATA().teams.some((t) => t.id === params.get("rathlete"))) roadState.athlete = params.get("rathlete");
+if (Object.keys(T.JUDO_BOARD_SIZES).includes(params.get("rsize"))) roadState.size = params.get("rsize");
+if (["auto", "light", "dark"].includes(params.get("rtheme"))) roadState.theme = params.get("rtheme");
+if (["white", "blue"].includes(params.get("rside"))) roadState.side = params.get("rside");
+if (["latest", "first"].includes(params.get("rorder"))) roadState.order = params.get("rorder");
+function roadParams() {
+  return Object.keys(ROAD_DEFAULTS).filter((k) => roadState[k] !== ROAD_DEFAULTS[k]).map((k) => [`r${k}`, roadState[k]]);
+}
+const COACHES = { J01: "Yuki Mori", J02: "Alain Lefort" };
+function drawRoad() {
+  const data = JUDO_DATA();
+  const team = data.teams.find((t) => t.id === roadState.athlete);
+  const athlete = { name: team.name, code: team.code, flag: team.flag, ...(COACHES[team.id] ? { coach: COACHES[team.id] } : {}) };
+  const wins = T.judoWins(data, team.id, { locale: state.lang });
+  const options = { size: roadState.size, theme: roadState.theme, side: roadState.side, order: roadState.order, flags, locale: state.lang, weight: T.judoCategoryLabel({ sex: "men", weight: "-66" }, state.lang) };
+  $("judoroad-stage").innerHTML = T.judoRoadPanel({ athlete, wins }, options);
+  $("judoroad-stage").dataset.size = roadState.size;
+  for (const b of $("judoroad-controls").querySelectorAll("[data-rkey]")) b.setAttribute("aria-pressed", String(roadState[b.dataset.rkey] === b.dataset.value));
+  $("road-athlete").value = roadState.athlete;
+  const next = new URLSearchParams(location.search);
+  for (const key of [...next.keys()]) if (/^r(athlete|size|theme|side|order)$/.test(key)) next.delete(key);
+  for (const [key, value] of roadParams()) next.set(key, value);
+  history.replaceState(null, "", `?${next}${location.hash}`);
+  $("judoroad-code").firstChild.textContent = `import { judoWins, judoRoadPanel } from "@johnmorrisdotca/taisen-brackets";\n\n// judo66: { teams, matchups }, the bracket above; each team carries { name, code, flag }\nconst wins = judoWins(judo66, ${JSON.stringify(team.id)}, { locale: ${JSON.stringify(state.lang)} });\nconst svg = judoRoadPanel(${JSON.stringify({ athlete }, null, 2).replace(/\n}$/, ",\n  wins\n}")}, ${JSON.stringify({ ...options, flags: "@@(code) => loadedFlags[code]@@" }, null, 2).replace(/"@@(.*?)@@"/g, "$1")});\n`;
+}
+function roadControls() {
+  const seg = (label, key, values) => `<div class="fam-row"><span class="fam-label">${label}</span><div class="fam-seg" role="group" aria-label="${label}">${values.map(([v, t]) => `<button type="button" data-rkey="${key}" data-value="${v}" aria-pressed="${roadState[key] === v}">${t}</button>`).join("")}</div></div>`;
+  $("judoroad-controls").innerHTML = [
+    `<div class="fam-row"><span class="fam-label">Athlete</span><label class="board-field"><select id="road-athlete" aria-label="Athlete">${JUDO_DATA().teams.map((t) => `<option value="${t.id}">${t.seed}. ${t.name} (${t.code})</option>`).join("")}</select></label></div>`,
+    seg("Size", "size", [["tv", "TV"], ["tablet", "Tablet"], ["tablet-tall", "Tablet, upright"]]),
+    seg("Look", "theme", [["auto", "Auto"], ["light", "Light"], ["dark", "Dark"]]),
+    seg("Block", "side", [["blue", "Blue"], ["white", "White"]]),
+    seg("Order", "order", [["latest", "Latest first"], ["first", "Oldest first"]]),
+  ].join("");
+  $("judoroad-controls").addEventListener("click", (event) => {
+    const b = event.target.closest("button");
+    if (!b?.dataset.rkey) return;
+    roadState[b.dataset.rkey] = b.dataset.value;
+    drawRoad();
+  });
+  $("judoroad-controls").addEventListener("change", (event) => {
+    if (event.target.id === "road-athlete") { roadState.athlete = event.target.value; drawRoad(); }
+  });
+}
+
 swatches();
 customControls();
 gallery();
@@ -509,3 +561,5 @@ boardReady = true;
 drawBoard();
 queueControls();
 drawQueue();
+roadControls();
+drawRoad();

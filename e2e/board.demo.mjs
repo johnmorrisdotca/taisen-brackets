@@ -89,3 +89,32 @@ test("the contest card shows the category and the two athletes, and the language
   await page.locator("#queue-code-box summary").click();
   await expect(page.locator("#queue-code")).toContainText("judoContestCard(");
 });
+
+const roadPanel = (page) => page.locator("#judoroad-stage > svg");
+
+test("the road to the final of a judoka draws from the address for each size and athlete, and the address follows the controls", async ({ page }) => {
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  for (const size of ["tv", "tablet", "tablet-tall"]) {
+    await page.goto(`/?rsize=${size}&rathlete=J02`);
+    await expect(roadPanel(page)).toBeVisible();
+    await expect(roadPanel(page).locator(".jr-win")).toHaveCount(3);
+    expect(await noSidewaysScroll(page)).toBe(true);
+  }
+  await page.goto("/");
+  await expect(roadPanel(page).locator(".jr-win")).toHaveCount(4);
+  await page.locator("#road-athlete").selectOption("J05");
+  expect(page.url()).toContain("rathlete=J05");
+  await expect(roadPanel(page).locator(".jr-win").first()).toBeVisible();
+  await page.locator("#judoroad-controls").getByRole("button", { name: "Oldest first", exact: true }).click();
+  expect(page.url()).toContain("rorder=first");
+  await page.locator("#judoroad-code-box summary").click();
+  await expect(page.locator("#judoroad-code")).toContainText("judoRoadPanel(");
+  expect(errors).toEqual([]);
+});
+
+test("the road panel follows the language of the page", async ({ page }) => {
+  await page.goto("/?lang=fr&rathlete=J02");
+  await expect(roadPanel(page).locator("text", { hasText: /^Parcours vers la finale$/ })).toBeVisible();
+  await expect(roadPanel(page).locator("text", { hasText: /^COMBAT POUR LA MÉDAILLE DE BRONZE$/ })).toBeVisible();
+});
