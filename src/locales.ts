@@ -34,6 +34,7 @@ const EN: Words = {
   rankTitle: "Ranking", rankPoints: "points", rankPointsShort: "pts", rankChampion: "C", rankChampionLong: "Champion", rankInterim: "IC", rankInterimLong: "Interim champion",
   rankNew: "NR", rankNewLong: "newly ranked", rankUp: "up {n}", rankDown: "down {n}", rankSame: "unchanged", rankRange: "{a}–{b} of {n}", rankNone: "No ranked athletes yet", rankJoin: ", ",
   rankNumberOnes: "Number ones", rankNumberOneIn: "#1 in {category}", rankEntryTitle: "Entry list", rankColRanking: "Ranking", rankUnranked: "NR",
+  rankMatchTitle: "Head to head", rankMeetings: "Previous meetings", rankNoMeetings: "No previous meetings", rankMore: "+{n} more",
 };
 
 const FR: Words = {
@@ -62,6 +63,7 @@ const FR: Words = {
   rankTitle: "Classement", rankPoints: "points", rankPointsShort: "pts", rankChampion: "C", rankChampionLong: "Champion", rankInterim: "CI", rankInterimLong: "Champion intérimaire",
   rankNew: "Nouv.", rankNewLong: "nouvelle entrée au classement", rankUp: "en hausse de {n}", rankDown: "en baisse de {n}", rankSame: "rang inchangé", rankRange: "{a}–{b} sur {n}", rankNone: "Aucun athlète classé pour l’instant", rankJoin: ", ",
   rankNumberOnes: "Les numéros un", rankNumberOneIn: "N°\u00a01 en {category}", rankEntryTitle: "Liste des engagés", rankColRanking: "Classement", rankUnranked: "NC",
+  rankMatchTitle: "Face-à-face", rankMeetings: "Confrontations précédentes", rankNoMeetings: "Aucune confrontation précédente", rankMore: "+{n} de plus",
 };
 
 const JA: Words = {
@@ -90,6 +92,7 @@ const JA: Words = {
   rankTitle: "ランキング", rankPoints: "ポイント", rankPointsShort: "pt", rankChampion: "王者", rankChampionLong: "王者", rankInterim: "暫定", rankInterimLong: "暫定王者",
   rankNew: "NEW", rankNewLong: "新規ランクイン", rankUp: "{n}ランク上昇", rankDown: "{n}ランク下降", rankSame: "変動なし", rankRange: "{n}人中{a}–{b}位", rankNone: "ランキング入りした選手はまだいません", rankJoin: "、",
   rankNumberOnes: "各階級の1位", rankNumberOneIn: "{category} 1位", rankEntryTitle: "エントリーリスト", rankColRanking: "ランキング", rankUnranked: "圏外",
+  rankMatchTitle: "直接対決", rankMeetings: "過去の対戦", rankNoMeetings: "過去の対戦はありません", rankMore: "ほか{n}試合",
 };
 
 const ES: Words = {
@@ -118,6 +121,7 @@ const ES: Words = {
   rankTitle: "Clasificación", rankPoints: "puntos", rankPointsShort: "pts", rankChampion: "C", rankChampionLong: "Campeón", rankInterim: "CI", rankInterimLong: "Campeón interino",
   rankNew: "NUEVO", rankNewLong: "nuevo en la clasificación", rankUp: "sube {n}", rankDown: "baja {n}", rankSame: "sin cambios", rankRange: "{a}–{b} de {n}", rankNone: "Aún no hay deportistas clasificados", rankJoin: ", ",
   rankNumberOnes: "Los números uno", rankNumberOneIn: "N.º 1 en {category}", rankEntryTitle: "Lista de inscritos", rankColRanking: "Clasificación", rankUnranked: "SC",
+  rankMatchTitle: "Cara a cara", rankMeetings: "Enfrentamientos anteriores", rankNoMeetings: "Sin enfrentamientos anteriores", rankMore: "+{n} más",
 };
 
 const DE: Words = {
@@ -146,6 +150,7 @@ const DE: Words = {
   rankTitle: "Rangliste", rankPoints: "Punkte", rankPointsShort: "Pkt.", rankChampion: "C", rankChampionLong: "Champion", rankInterim: "IC", rankInterimLong: "Interimschampion",
   rankNew: "NEU", rankNewLong: "neu in der Rangliste", rankUp: "{n} Plätze höher", rankDown: "{n} Plätze tiefer", rankSame: "unverändert", rankRange: "{a}–{b} von {n}", rankNone: "Noch keine platzierten Athleten", rankJoin: ", ",
   rankNumberOnes: "Die Nummer Eins", rankNumberOneIn: "Nr. 1 in {category}", rankEntryTitle: "Meldeliste", rankColRanking: "Rangliste", rankUnranked: "o. R.",
+  rankMatchTitle: "Direkter Vergleich", rankMeetings: "Bisherige Duelle", rankNoMeetings: "Noch keine Duelle", rankMore: "+{n} weitere",
 };
 
 /**

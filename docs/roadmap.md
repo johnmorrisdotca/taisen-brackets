@@ -14,7 +14,8 @@ What is planned and not built. Nothing here is promised for a date; each item sa
 
 - **0.11.0** (built): the ranking list, [docs/rankings.md](./rankings.md).
 - **0.12.0** (built): the number ones and the entry list.
-- Next: the head-to-head card, a medal table for any sport, and broadcast-style results boards.
+- **0.13.0** (built): the head-to-head card.
+- Next: a medal table for any sport, and broadcast-style results boards.
 
 ## Built in 0.6.0
 

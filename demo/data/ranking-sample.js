@@ -75,4 +75,19 @@ export const RANKING_SAMPLE = {
       { name: { surname: "Kertész", given: "Balázs" }, code: "HUN", flag: "HU", rank: 27 },
     ],
   },
+  // Two athletes about to meet, and their previous meetings, latest first (winner: 0 the first athlete, 1 the second).
+  matchup: {
+    category: "U18 · Men -60 kg",
+    event: "Provincial Championships, Final",
+    a: { name: { surname: "Nakamura", given: "Kenji" }, club: "Coastal Pine Judo", flag: "CA-BC", rank: 1, points: 412.5 },
+    b: { name: { surname: "Brar", given: "Harpreet" }, club: "Salmonberry Judo Club", flag: "CA-BC", rank: 2, points: 398 },
+    meetings: [
+      { date: "2026-09-13", event: "Fall Open", round: "Semi-final", winner: 0, result: "ippon · 2:11" },
+      { date: "2026-05-17", event: "Spring Classic", round: "Final", winner: 1, result: "waza-ari · golden score" },
+      { date: "2026-02-08", event: "Winter Cup", round: "Quarter-final", winner: 0, result: "yuko · 4:00" },
+      { date: "2025-11-22", event: "Provincial Qualifier", round: "Pool", winner: 0, result: "ippon · 0:58" },
+      { date: "2025-06-14", event: "Summer Games trial", round: "Round of 16", winner: 1, result: "ippon · 3:02" },
+      { date: "2025-03-01", event: "Winter Cup", round: "Semi-final", winner: null, result: "no contest" },
+    ],
+  },
 };

@@ -238,5 +238,9 @@ The English name is the key (a round the table does not name keeps its English n
 | `rankEntryTitle` | `Entry list` | `Liste des engagés` | `エントリーリスト` | `Lista de inscritos` | `Meldeliste` |
 | `rankColRanking` | `Ranking` | `Classement` | `ランキング` | `Clasificación` | `Rangliste` |
 | `rankUnranked` | `NR` | `NC` | `圏外` | `SC` | `o. R.` |
+| `rankMatchTitle` | `Head to head` | `Face-à-face` | `直接対決` | `Cara a cara` | `Direkter Vergleich` |
+| `rankMeetings` | `Previous meetings` | `Confrontations précédentes` | `過去の対戦` | `Enfrentamientos anteriores` | `Bisherige Duelle` |
+| `rankNoMeetings` | `No previous meetings` | `Aucune confrontation précédente` | `過去の対戦はありません` | `Sin enfrentamientos anteriores` | `Noch keine Duelle` |
+| `rankMore` | `+{n} more` | `+{n} de plus` | `ほか{n}試合` | `+{n} más` | `+{n} weitere` |
 
 Holes in a phrase are filled in (`{n}`, `{a}`, `{b}`, `{sa}`, `{sb}`, `{w}`, `{name}`, `{round}`, `{tie}`, `{notes}`); `␣` stands for a no-break space (the French writes one before a colon).

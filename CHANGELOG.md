@@ -6,6 +6,16 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.13.0] - 2026-10-20
+
+Rankings, step 3: the head-to-head card.
+
+### Added
+
+- **`rankingMatchup({ title?, category?, date?, source?, a, b, meetings? }, options)`**: the card for the contest about to be fought, for beside a bracket: the two athletes side by side (flag, name, club, ranking and points), a VS between them, and under them their previous meetings (date, event and round, who won, the result) with the record. Each athlete has a colour (`--rk-side-a`, `--rk-side-b`) that marks the panel and the winner of each meeting. `winner` is `0`, `1` or `null` (a draw: a dash); the date is written the language's way; `rows` cuts the list and the rest are counted (`+2 more`); with no meetings the card says so. `describeMatchup`, `matchupRecord(meetings)`.
+- Words for the card in the five languages (the French and Japanese were read by native-language reviewers; the Spanish and German were not).
+- The demo's Rankings section has it (`kview=matchup`), with the meetings on or off. [docs/rankings.md](docs/rankings.md).
+
 ## [0.12.0] - 2026-10-20
 
 Rankings, step 2: the number ones and the entry list.

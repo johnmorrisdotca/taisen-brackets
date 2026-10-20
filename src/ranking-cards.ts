@@ -3,7 +3,7 @@
  * points and "#1 in -57 kg", no photo. `rankingEntryList`: an event's entry list, in the order of the draw, with each athlete's ranking beside the name (the seeding view).
  * Static SVG for a given state, like every drawing here.
  */
-import { boardFrame, boardWrap, bw, clampN, fitSize, label, pill, type BoardFrame, type BoardOptions } from "./rank-kit.ts";
+import { boardFrame, boardWrap, bw, clampN, fitSize, heading, label, pill, type BoardFrame, type BoardOptions } from "./rank-kit.ts";
 import { inkOn } from "./judo-sheets.ts";
 import { fill, voiceOf } from "./locales.ts";
 import { drawMark } from "./marks.ts";
@@ -333,32 +333,4 @@ export function rankingEntryList(source: EntryListSource, options: EntryListOpti
     if (slice.length < all.length) body.push(label(bx + boxW, header.top - pad * 0.15, hs, fit(t, hs, boxW * 0.35, bw), "rk-sub", "end", 700));
   }
   return boardWrap(f, options.title ?? [title, source.category].filter(Boolean).join(": "), describeEntryList(source, options), body, "entry-list");
-}
-
-// ------------------------------------------------------------------------------------------------ shared header
-
-/** The heading every ranking board has: the title, an optional category pill, the date at the right and the source at the foot. Returns the shapes and the space left. */
-function heading(f: BoardFrame, title: string, category: string | undefined, date: string | undefined, pad: number, maxBoxW: number, source: string | undefined): { svg: string[]; top: number; bottom: number; bx: number; boxW: number } {
-  const { W, H } = f;
-  const unit = Math.min(W, H);
-  const boxW = Math.min(W - pad * 2, maxBoxW);
-  const bx = (W - boxW) / 2;
-  const hs = clampN(unit * 0.05, 18, 70);
-  const cs = hs * 0.58;
-  const svg: string[] = [];
-  let y = pad;
-  const dateW = date ? Math.min(boxW * 0.4, bw(date, cs) + 4) : 0;
-  const titleAvail = boxW - (dateW ? dateW + pad : 0);
-  const ts = fitSize(title, hs, titleAvail, 0.5);
-  svg.push(label(bx, y + hs * 0.85, ts, fit(title, ts, titleAvail + 1, bw), "rk-ink", "start", 800));
-  if (date) svg.push(label(bx + boxW, y + hs * 0.85, cs, fit(date, cs, dateW, bw), "rk-sub", "end", 700));
-  y += hs * 1.05;
-  if (category) svg.push(pill(bx, y + cs * 0.7, cs * 1.35, category, boxW * 0.62, "rk-accent", "rk-accentink").svg);
-  y += category ? cs * 1.35 + pad * 0.7 : pad * 0.35;
-  const footerH = source ? Math.max(14, unit * 0.026) + pad * 0.5 : 0;
-  if (source) {
-    const fs = Math.max(12, unit * 0.022);
-    svg.push(label(bx, H - pad - fs * 0.2, fs, fit(source, fs, boxW, bw), "rk-sub", "start", 600));
-  }
-  return { svg, top: y, bottom: H - pad - footerH, bx, boxW };
 }

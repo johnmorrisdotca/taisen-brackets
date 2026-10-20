@@ -143,6 +143,33 @@ console.log(svg.includes("HOSHINO Daiki"), svg.includes("NR")); // true true
 
 Both take the options every board takes: `size`, `theme`, `flags`, `flagHref`, `flagShape`, `locale`, `words`, `title`, `id` and `className`, and the same `--rk-*` custom properties. A missing category, name, a ranking that is not a whole number from 1, a colour that is not a hex code or a bad option is a `RangeError` that names it.
 
-## Not drawn yet
+## Head to head
 
-The head-to-head card ([roadmap](./roadmap.md)).
+`rankingMatchup` draws the card for the contest about to be fought, to stand beside the bracket: the two athletes side by side (flag, name, club, ranking and points), a VS between them, and under them their previous meetings with the record. Each athlete has a colour (blue and orange by default, `--rk-side-a` and `--rk-side-b`) that marks the panel and, in the list, who won each meeting, so the card reads without the names.
+
+<p align="center"><picture>
+<img alt="A head-to-head card on a phone, in the light: the heading Head to head and the pill U18 Men minus 60 kg; two panels, the first with a blue bar, the flag of British Columbia, NAKAMURA Kenji, Coastal Pine Judo, ranking 1 and 412.50 points, the second with an orange bar for BRAR Harpreet, ranking 2 and 398.00 points, and a VS between them; under them Previous meetings 3 to 2 and six rows with the date, the event and round, the winner marked by a dot in his colour and the result." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-matchup-phone-light.webp" width="300">
+</picture><br><em>The card on a phone (invented athletes, events and results).</em></p>
+
+```js
+import { matchupRecord, rankingMatchup } from "@johnmorrisdotca/taisen-brackets";
+
+const meetings = [
+  { date: "2026-09-13", event: "Fall Open", round: "Semi-final", winner: 0, result: "ippon · 2:11" },
+  { date: "2026-05-17", event: "Spring Classic", round: "Final", winner: 1, result: "waza-ari · golden score" },
+  { date: "2026-02-08", event: "Winter Cup", round: "Quarter-final", winner: 0, result: "yuko · 4:00" },
+];
+const svg = rankingMatchup({
+  category: "U18 · Men -60 kg",
+  a: { name: { surname: "Nakamura", given: "Kenji" }, club: "Coastal Pine Judo", flag: "CA-BC", rank: 1, points: 412.5 },
+  b: { name: { surname: "Brar", given: "Harpreet" }, club: "Salmonberry Judo Club", flag: "CA-BC", rank: 2, points: 398 },
+  meetings,
+}, { precision: 2, size: "square" });
+console.log(matchupRecord(meetings).join("–"), svg.includes("PREVIOUS MEETINGS")); // 2–1 true
+```
+
+The source is `{ title?, category?, date?, source?, a, b, meetings? }`. `a` and `b` are ranking entries (`rank` is the ranking, `NR` where there is none). A meeting is `{ date?, event?, round?, winner?, result? }`: `date` is an ISO date, written the language's way, or any text; `winner` is `0` for the first athlete, `1` for the second and `null` or left out for a draw or no result (a dash); `result` is written as it is, so a sport writes its own (`ippon · 2:11`, `7–2`). The meetings are drawn in the order given, the latest first as a broadcast does. `matchupRecord(meetings)` counts the wins, and the record in the card counts every meeting, also those that do not fit. `rows` cuts the list; by default as many are drawn as fit at a readable size and the rest are counted (`+2 more`). With no meetings the card says so. `nameStyle`, `rankStyle` and `precision` are as for a list, and `describeMatchup` is the description. A missing name, a ranking that is not a whole number from 1, a winner that is not 0, 1 or null, or a bad option is a `RangeError`.
+
+## What the package does not do
+
+It draws; it ships no ranking data and no photos. Where the numbers come from is the app's business, and so are the terms of that source: a federation's ranking, a province's, a club's.

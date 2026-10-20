@@ -80,3 +80,22 @@ test("the number ones and the entry list draw from the address for each size, an
   await expect(page.locator("#ranking-code")).toContainText("rankingNumberOnes(");
   expect(errors).toEqual([]);
 });
+
+test("the head-to-head card draws from the address for each size and the meetings can be left out", async ({ page }) => {
+  test.setTimeout(120_000);
+  const errors = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  for (const size of ["tv", "tablet-tall", "phone", "square"]) {
+    await page.goto(`/?kview=matchup&ksize=${size}`);
+    await expect(list(page).locator(".rk-panel")).toHaveCount(2);
+    await expect(list(page).locator(".rk-meeting")).toHaveCount(6);
+    expect(await noSidewaysScroll(page)).toBe(true);
+  }
+  await page.locator("#ranking-controls").getByRole("button", { name: "None yet", exact: true }).click();
+  expect(page.url()).toContain("kmeet=none");
+  await expect(list(page).locator(".rk-meeting")).toHaveCount(0);
+  await expect(list(page).locator("text", { hasText: /^No previous meetings$/ })).toBeVisible();
+  await page.locator("#ranking-code-box summary").click();
+  await expect(page.locator("#ranking-code")).toContainText("rankingMatchup(");
+  expect(errors).toEqual([]);
+});

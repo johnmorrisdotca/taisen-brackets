@@ -76,6 +76,8 @@ export interface BoardPalette {
   row: string; rowAlt: string; edge: string; head: string; headInk: string;
   up: string; down: string; upRow: string; downRow: string;
   pill: string; pillInk: string;
+  /** The two sides of a head-to-head card. */
+  sideA: string; sideB: string;
   /** Gold, silver, bronze: the two ends of the row's gradient, the edge and the numeral. */
   gold: readonly [string, string, string, string]; silver: readonly [string, string, string, string]; bronze: readonly [string, string, string, string];
 }
@@ -84,7 +86,7 @@ export const BOARD_LIGHT: BoardPalette = {
   bg: "#eceff4", ink: "#131822", sub: "#566071", accent: "#2457c5", accentInk: "#ffffff",
   row: "#ffffff", rowAlt: "#f6f8fb", edge: "#d3d9e3", head: "#16233f", headInk: "#ffffff",
   up: "#0f8a46", down: "#c3302a", upRow: "#e0f4e8", downRow: "#fbe3e1",
-  pill: "#e3e8f1", pillInk: "#2a3345",
+  pill: "#e3e8f1", pillInk: "#2a3345", sideA: "#1d4ed8", sideB: "#c2410c",
   gold: ["#f8e9b5", "#fdf6dc", "#d4a929", "#7d5d00"], silver: ["#e4e8ee", "#f3f5f8", "#a9b2c0", "#4f586a"], bronze: ["#f2d5ba", "#faeadb", "#c98650", "#82451a"],
 };
 
@@ -92,7 +94,7 @@ export const BOARD_DARK: BoardPalette = {
   bg: "#0b0f17", ink: "#f0f3f9", sub: "#98a3b8", accent: "#6ea2ff", accentInk: "#0b0f17",
   row: "#161d2b", rowAlt: "#121826", edge: "#27324a", head: "#1b2742", headInk: "#f0f3f9",
   up: "#4fdc8b", down: "#ff7b72", upRow: "#123724", downRow: "#451d1d",
-  pill: "#25304a", pillInk: "#dfe6f5",
+  pill: "#25304a", pillInk: "#dfe6f5", sideA: "#6ea2ff", sideB: "#ff9a5c",
   gold: ["#5a4813", "#2c2512", "#d0aa3a", "#f5d263"], silver: ["#434c60", "#232a38", "#9ba6bb", "#e3e8f2"], bronze: ["#58341b", "#2b1d14", "#c4854f", "#f3a96f"],
 };
 
@@ -121,6 +123,8 @@ export function boardRules(p: BoardPalette, scope: string, before: string, extra
     sel(".rk-pillink", `fill:${v("pill-ink", p.pillInk)}`),
     sel(".rk-nr", `fill:${v("accent", p.accent)}`),
     sel(".rk-nrink", `fill:${v("accent-ink", p.accentInk)}`),
+    sel(".rk-sa", `fill:${v("side-a", p.sideA)}`),
+    sel(".rk-sb", `fill:${v("side-b", p.sideB)}`),
     sel(".rk-onaccent", "fill:#ffffff"),
     sel(".rk-onaccent-dark", "fill:#15181a"),
     sel(".tb-ring", `fill:none;stroke:rgba(0,0,0,.28);stroke-width:1.5`),
@@ -177,4 +181,32 @@ export function pill(x: number, cy: number, h: number, content: string, maxW: nu
   const w = Math.min(maxW, bw(content, fs) + h * 0.7);
   const x0 = anchor === "start" ? x : x - w;
   return { svg: `${rect(x0, cy - h / 2, w, h, cls, h / 2)}${label(x0 + w / 2, cy + fs * 0.36, fs, fit(content, fs, w, bw), inkCls, "middle", 800, ' letter-spacing=".03em"')}`, w };
+}
+
+// ------------------------------------------------------------------------------------------------ shared header
+
+/** The heading every ranking board has: the title, an optional category pill, the date at the right and the source at the foot. Returns the shapes and the space left. */
+export function heading(f: BoardFrame, title: string, category: string | undefined, date: string | undefined, pad: number, maxBoxW: number, source: string | undefined): { svg: string[]; top: number; bottom: number; bx: number; boxW: number } {
+  const { W, H } = f;
+  const unit = Math.min(W, H);
+  const boxW = Math.min(W - pad * 2, maxBoxW);
+  const bx = (W - boxW) / 2;
+  const hs = clampN(unit * 0.05, 18, 70);
+  const cs = hs * 0.58;
+  const svg: string[] = [];
+  let y = pad;
+  const dateW = date ? Math.min(boxW * 0.4, bw(date, cs) + 4) : 0;
+  const titleAvail = boxW - (dateW ? dateW + pad : 0);
+  const ts = fitSize(title, hs, titleAvail, 0.5);
+  svg.push(label(bx, y + hs * 0.85, ts, fit(title, ts, titleAvail + 1, bw), "rk-ink", "start", 800));
+  if (date) svg.push(label(bx + boxW, y + hs * 0.85, cs, fit(date, cs, dateW, bw), "rk-sub", "end", 700));
+  y += hs * 1.05;
+  if (category) svg.push(pill(bx, y + cs * 0.7, cs * 1.35, category, boxW * 0.62, "rk-accent", "rk-accentink").svg);
+  y += category ? cs * 1.35 + pad * 0.7 : pad * 0.35;
+  const footerH = source ? Math.max(14, unit * 0.026) + pad * 0.5 : 0;
+  if (source) {
+    const fs = Math.max(12, unit * 0.022);
+    svg.push(label(bx, H - pad - fs * 0.2, fs, fit(source, fs, boxW, bw), "rk-sub", "start", 600));
+  }
+  return { svg, top: y, bottom: H - pad - footerH, bx, boxW };
 }

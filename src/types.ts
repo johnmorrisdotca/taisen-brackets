@@ -430,6 +430,11 @@ export interface Words {
   rankEntryTitle: string;
   rankColRanking: string;
   rankUnranked: string;
+  /** The head-to-head card (`rankingMatchup`): the heading, the heading over the previous meetings, no meetings yet, and `{n}`: "+3 more". */
+  rankMatchTitle: string;
+  rankMeetings: string;
+  rankNoMeetings: string;
+  rankMore: string;
 }
 
 /** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */
