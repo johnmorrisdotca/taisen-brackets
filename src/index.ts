@@ -19,3 +19,5 @@ export { playoffFormat, playoffEras, LEAGUES, LEAGUE_EMBLEMS } from "./presets.t
 export type { League, PlayoffFormat, PlayoffRound } from "./presets.ts";
 export { judoBracket, judoPodium, judoCategoryLabel, judoOutcome, judoSeconds, judoClock, JUDO_WEIGHT_CLASSES } from "./judo.ts";
 export type { JudoBracketOptions, JudoCategory, JudoMethod, JudoOutcome, JudoPodium, JudoResult, JudoSide, JudoSystem } from "./judo.ts";
+export { judoScoreboard, describeJudoContest, JUDO_BOARD_SIZES } from "./judo-board.ts";
+export type { JudoAthlete, JudoBoardOptions, JudoBoardSizeName, JudoContest } from "./judo-board.ts";

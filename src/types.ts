@@ -395,6 +395,13 @@ export interface Words {
   judoWeightOver: string;
   judoMen: string;
   judoWomen: string;
+  /** The scoreboard of a contest: the osaekomi timer's label, the shido row's, a mat (`{n}`), a contest (`{n}`), the coach (`{name}`), and the drawing's default title. */
+  judoOsaekomi: string;
+  judoShido: string;
+  judoMat: string;
+  judoContest: string;
+  judoCoach: string;
+  judoBoardTitle: string;
 }
 
 /** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */

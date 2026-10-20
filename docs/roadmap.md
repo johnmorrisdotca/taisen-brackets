@@ -5,7 +5,8 @@ What is planned and not built. Nothing here is promised for a date; each item sa
 ## Judo
 
 - **0.7.0** (built): judo results in the boxes and the repechage bracket, [docs/judo.md](./judo.md).
-- **Next, one release each**: a contest scoreboard drawing (names, flags, ippon, waza-ari and yuko counters, shido, osaekomi timer, clock, golden score, weight class and round; tablet and TV sizes), a contest card and a mat queue board (per mat, the upcoming contests in order), and the road to the final of one judoka.
+- **0.8.0** (built): a contest scoreboard drawing for a given state, as a board or as flip cards, for a TV and a tablet.
+- **Next, one release each**: a contest card and a mat queue board (per mat, the upcoming contests in order), and the road to the final of one judoka.
 - Not drawn: double repechage and full repechage (their pools are in the rules' Appendix G charts), team events.
 
 ## Built in 0.6.0

@@ -57,9 +57,9 @@ try {
     return { page, context };
   };
   // The README pictures are WebP (a gradient and a pattern are far smaller so); the review shots in `--extra` are PNG.
-  const shoot = async (name, query, options, dir = out) => {
+  const shoot = async (name, query, options, dir = out, selector = "#stage svg") => {
     const { page, context } = await open(query, options);
-    const element = await page.$("#stage svg");
+    const element = await page.$(selector);
     if (dir === out) writeFileSync(`${dir}/${name}.webp`, await toWebp(await element.screenshot({ type: "png" })));
     else await element.screenshot({ path: `${dir}/${name}.png` });
     await context.close();
@@ -82,6 +82,10 @@ try {
   await shoot("nhl1984-desk-light", "ex=nhl1984", { width: 1280, height: 900 });
   await shoot("judo-desk-light", "ex=judo66", { width: 1280, height: 900 });
   await shoot("judo-desk-dark", "ex=judo66", { width: 1280, height: 900, scheme: "dark" });
+  // The judo scoreboard: a TV board in the dark in golden score with an osaekomi running, table-top flip cards on a tablet, and a tablet held upright at the end of a contest.
+  await shoot("judo-board-tv-dark", "bstyle=board&bsize=tv&btheme=dark&bgs=1&bclock=0:42&bosa=1:14&bw=0,1,1,1&bb=0,1,0,2", { width: 1280, height: 900 }, out, "#board-stage svg");
+  await shoot("judo-board-flip-tablet-light", "bstyle=flip&bsize=tablet&btheme=light", { width: 1280, height: 900 }, out, "#board-stage svg");
+  await shoot("judo-board-tall-light", "bstyle=board&bsize=tablet-tall&btheme=light&bw=1,0,0,0&bb=0,0,1,1&bclock=1:51&bosa=none", { width: 1280, height: 900 }, out, "#board-stage svg");
   // The road look's own pictures: the classic look beside it (it keeps its plain colour), a card, one team's path, and the road to the final in three sizes.
   await shoot("classic-desk-light", "ex=wc2022&look=classic&bg=plain", { width: 1280, height: 900 });
   await shoot("card-light", "ex=wc2022&size=card&bg=royal", { width: 1280, height: 900 });

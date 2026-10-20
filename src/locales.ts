@@ -29,6 +29,7 @@ const EN: Words = {
   judoGolden: "GS", judoGoldenLong: "golden score", judoTime: "{t}", judoShidoOf: "{name}: {n} shido", judoShidoShort: "shido {a}–{b}",
   judoRepechage: "Repechage", judoBronze: "Bronze medal contest", judoRepechageBronze: "Repechage and bronze medal contests", judoWhite: "white", judoBlue: "blue",
   judoWeightClass: "{sex} -{w} kg", judoWeightOver: "{sex} +{w} kg", judoMen: "Men", judoWomen: "Women",
+  judoOsaekomi: "Osaekomi", judoShido: "Shido", judoMat: "Mat {n}", judoContest: "Contest {n}", judoCoach: "Coach: {name}", judoBoardTitle: "Judo contest scoreboard",
 };
 
 const FR: Words = {
@@ -52,6 +53,7 @@ const FR: Words = {
   judoGolden: "GS", judoGoldenLong: "golden score", judoTime: "{t}", judoShidoOf: "{name}\u00a0: {n}\u00a0shido", judoShidoShort: "shido {a}–{b}",
   judoRepechage: "Repêchage", judoBronze: "Combat pour la médaille de bronze", judoRepechageBronze: "Repêchages et combats pour la médaille de bronze", judoWhite: "blanc", judoBlue: "bleu",
   judoWeightClass: "{sex} -{w}\u00a0kg", judoWeightOver: "{sex} +{w}\u00a0kg", judoMen: "Hommes", judoWomen: "Femmes",
+  judoOsaekomi: "Osaekomi", judoShido: "Shido", judoMat: "Tapis {n}", judoContest: "Combat {n}", judoCoach: "Entraîneur\u00a0: {name}", judoBoardTitle: "Tableau d’affichage d’un combat de judo",
 };
 
 const JA: Words = {
@@ -75,6 +77,7 @@ const JA: Words = {
   judoGolden: "GS", judoGoldenLong: "ゴールデンスコア", judoTime: "{t}", judoShidoOf: "{name}：指導{n}", judoShidoShort: "指導{a}–{b}",
   judoRepechage: "敗者復活戦", judoBronze: "銅メダル決定戦", judoRepechageBronze: "敗者復活戦と銅メダル決定戦", judoWhite: "白", judoBlue: "青",
   judoWeightClass: "{sex}{w}kg級", judoWeightOver: "{sex}{w}kg超級", judoMen: "男子", judoWomen: "女子",
+  judoOsaekomi: "抑え込み", judoShido: "指導", judoMat: "第{n}試合場", judoContest: "試合 {n}", judoCoach: "コーチ：{name}", judoBoardTitle: "柔道試合のスコアボード",
 };
 
 const ES: Words = {
@@ -98,6 +101,7 @@ const ES: Words = {
   judoGolden: "GS", judoGoldenLong: "golden score", judoTime: "{t}", judoShidoOf: "{name}: {n} shido", judoShidoShort: "shido {a}–{b}",
   judoRepechage: "Repesca", judoBronze: "Combate por la medalla de bronce", judoRepechageBronze: "Repesca y combates por la medalla de bronce", judoWhite: "blanco", judoBlue: "azul",
   judoWeightClass: "{sex} -{w} kg", judoWeightOver: "{sex} +{w} kg", judoMen: "Hombres", judoWomen: "Mujeres",
+  judoOsaekomi: "Osaekomi", judoShido: "Shido", judoMat: "Tatami {n}", judoContest: "Combate {n}", judoCoach: "Entrenador: {name}", judoBoardTitle: "Marcador de un combate de judo",
 };
 
 const DE: Words = {
@@ -121,6 +125,7 @@ const DE: Words = {
   judoGolden: "GS", judoGoldenLong: "Golden Score", judoTime: "{t}", judoShidoOf: "{name}: {n} Shido", judoShidoShort: "Shido {a}–{b}",
   judoRepechage: "Hoffnungsrunde", judoBronze: "Kampf um Bronze", judoRepechageBronze: "Hoffnungsrunde und Kämpfe um Bronze", judoWhite: "weiß", judoBlue: "blau",
   judoWeightClass: "{sex} -{w} kg", judoWeightOver: "{sex} +{w} kg", judoMen: "Herren", judoWomen: "Damen",
+  judoOsaekomi: "Osaekomi", judoShido: "Shido", judoMat: "Matte {n}", judoContest: "Kampf {n}", judoCoach: "Trainer: {name}", judoBoardTitle: "Anzeigetafel eines Judokampfes",
 };
 
 /**

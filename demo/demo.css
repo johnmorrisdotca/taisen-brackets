@@ -38,3 +38,16 @@ footer .credit { flex: 1 1 100%; }
 .custom .colours { display: inline-flex; gap: 4px; }
 .custom input[type="color"] { width: 44px; height: 44px; padding: 2px; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); }
 .custom select, .custom input[type="number"] { min-height: 44px; }
+
+/* The judo scoreboard section: a stage as wide as the board, and counters with a plus and a minus. */
+.board-stage { background: transparent; }
+.board-stage svg { max-width: 1280px; }
+.board-stage[data-size="tablet-tall"] svg { max-width: 560px; }
+.counters { display: flex; flex-wrap: wrap; gap: 8px 20px; align-items: center; }
+.counter { display: inline-flex; align-items: center; gap: 6px; }
+.counter .name { min-width: 5.2em; font-size: .9rem; }
+.counter button { min-width: 44px; min-height: 44px; border: 1px solid var(--rule); border-radius: 10px; background: var(--surface); color: inherit; font: inherit; font-size: 1.2rem; cursor: pointer; }
+.counter output { min-width: 2ch; text-align: center; font-variant-numeric: tabular-nums; font-weight: 700; }
+.board-field { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; }
+.board-field input[type="text"] { min-height: 44px; width: 6em; padding: 0 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); color: inherit; font: inherit; }
+.board-field input[type="range"] { min-height: 44px; }

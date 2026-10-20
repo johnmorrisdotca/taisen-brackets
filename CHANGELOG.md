@@ -6,6 +6,19 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.8.0] - 2026-10-20
+
+Judo, step 2: the scoreboard of one contest.
+
+### Added
+
+- **`judoScoreboard(contest, options)`**: one judo contest's scoreboard as an SVG string for the state given. The two athletes (white and blue) with their flags and three-letter codes, the ippon, waza-ari and yuko counters, the shido cards (the third red), the contest clock, a golden score badge, the osaekomi timer (a bar to 20 seconds with ticks at 5, 10 and 20, the IJF's yuko, waza-ari and ippon times, filled from the holder's side), the weight class, the round, the mat and the contest number, and, when something has ended the contest, the winner and how at the foot. The state is checked like a bracket's judo result (`JudoContest`, `JudoAthlete`); a lead on the scores wins only once `finished`.
+- **Sizes**: `tv` (1920 by 1080), `tablet` (1280 by 800), `tablet-tall` (800 by 1280) or your own `{ width, height }`; light, dark or `auto`; `swap` (blue first); `coaches`; `flags` and `flagHref` as for `drawBracket`; five languages. `JUDO_BOARD_SIZES`.
+- **`style: "flip"`**: the same state as a table-top flip scoreboard, a row of ring-bound cards on a stand for each side, one card to a counter (ippon, waza-ari, yuko, shido, hansoku-make), the numeral on the upper flap and the label on the lower, white and blue cards.
+- **`describeJudoContest(contest, options)`**: the state as a sentence, the drawing's description.
+- Words for the scoreboard in the five languages (Osaekomi, Shido, Mat, Contest, Coach, the title); the French and Japanese were read by native-language reviewers (the Japanese osaekomi is written with the Kodokan's own character, not the everyday one), the Spanish and German were not.
+- The demo has a Judo scoreboard section: counters with a plus and a minus, the clock, the osaekomi side and seconds, golden score, finished, blue first, style, size and look, and the call that draws it; the state is in the address and nowhere else. Geometry tests hold every text inside the drawing, and every name inside its panel, in every size, look and several languages.
+
 ## [0.7.0] - 2026-10-20
 
 Judo, step 1: results in the bracket boxes, and the bracket of a weight category with the repechage and two bronze medals. Nothing changes for a bracket that has no judo result (every existing snapshot is unchanged).

@@ -83,8 +83,49 @@ So there are two repechage contests (`stage: "repechage"`, fed by the losers of 
 
 The competition systems were read in the Sport and Organisation Rules of March 2023 (2.5); the Refereeing Rules of January 2026 hold the scoring only.
 
+## The scoreboard of a contest
+
+`judoScoreboard(contest, options)` draws one contest's scoreboard for the state you give it, as an SVG string: the two athletes with their flags and codes, the ippon, waza-ari and yuko counters, the shido cards, the contest clock, the golden score badge, the osaekomi timer, and a header with the weight class, the round, the mat and the contest number. Live updating is yours: draw again when the state changes (the [demo](https://johnmorrisdotca.github.io/taisen-brackets/#board) does, with the state in the address).
+
+<p align="center"><picture><img alt="A judo scoreboard on a TV, in the dark, in golden score: the white athlete Daiki Hoshino of Japan on a white panel and the blue athlete Mathis Roussel of France on a blue panel, each with the ippon, waza-ari and yuko counters as large tiles and three shido slots, a golden score badge over the clock showing 0:42, and the osaekomi timer at 14 seconds held by blue." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-board-tv-dark.webp" width="720"></picture><br><em>A TV board in the dark, in golden score, with a hold running (invented names).</em></p>
+
+```js
+import { judoScoreboard } from "@johnmorrisdotca/taisen-brackets";
+
+const svg = judoScoreboard({
+  white: { name: "Daiki Hoshino", code: "JPN" },
+  blue: { name: "Mathis Roussel", code: "FRA" },
+  sides: [{ wazaAri: 1, shido: 1 }, { yuko: 2, shido: 2 }],
+  clock: "2:14",
+  osaekomi: { side: 0, seconds: 12 },
+  weight: "Men -66 kg",
+  round: "Final",
+  mat: 1,
+}, { size: "tablet", theme: "dark" });
+console.log(svg.includes("OSAEKOMI"), svg.includes("2:14")); // true true
+```
+
+The state, `JudoContest`:
+
+- `white` and `blue`: `{ name, code?, flag?, mark?, coach? }`. `code` is the country's three letters, written big under the name; `flag` is a country code the `flags` option draws (Hata's round flags are one line, as for `drawBracket`; with none, the flag is the code on a tile), `mark` a picture of your own. The first side of a matchup is white and the second blue, here as in the bracket.
+- `sides`: what each side has scored, white first, the same `{ ippon, wazaAri, yuko, shido }` as a bracket's `judo` result and checked the same way.
+- `clock`: the contest clock as shown, seconds or `"m:ss"`. `goldenScore: true` puts the badge over it and the clock in gold.
+- `osaekomi`: `{ side, seconds }`, the side holding (0 white, 1 blue) and the seconds so far; a bar to 20 with a tick at 5 (Y), 10 (W) and 20 (I), the IJF's times for yuko, waza-ari and ippon (Article 7), filled from the holder's side.
+- `weight`, `round`, `mat`, `contest`: the header. Use `judoCategoryLabel` and `roundName` for the first two.
+- `finished: true` says the contest is over: a lead on the scores then wins by decision. An ippon, a second waza-ari, a third shido, `hansokuMake`, or a `method` of `fusen-gachi` or `kiken-gachi` (with `winner`) ends it by itself. The winner's panel gets a gold frame and the foot reads "Winner: name · how".
+
+The options: `size` (`tv` 1920 by 1080, `tablet` 1280 by 800, `tablet-tall` 800 by 1280, or `{ width, height }`: a wider-than-tall one puts the athletes left and right, a taller one top and bottom), `style`, `theme` (`auto`, `light`, `dark`), `swap` (blue first), `coaches`, `flags`, `flagHref`, `locale`, `words`, `title`, `id`, `className`. Every colour is a custom property with a fallback (`--jb-bg`, `--jb-ink`, `--jb-white-panel`, `--jb-blue-panel`, `--jb-shido`, `--jb-hansoku` and others, see the stylesheet in the drawing). The panels are the colours of the two judogi in every theme; the text on each reads 6 to 1 or better.
+
+**`style: "flip"`** draws the same state as a table-top flip scoreboard: for each side a row of ring-bound cards on a stand, one card to a counter (ippon, waza-ari, yuko, shido, hansoku-make), a big numeral on the upper flap and the counter's name printed on the lower one, white cards for white and blue for blue. The clock and the osaekomi timer stay in the middle.
+
+<p align="center"><picture><img alt="A judo scoreboard as table-top flip cards: for the white athlete a plate with the name and flag over a row of five white cards, and for the blue athlete a row of five cards with blue lower flaps, each card showing a numeral over its label: ippon, waza-ari, yuko, shido and hansoku-make; the clock and the osaekomi timer between them." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-board-flip-tablet-light.webp" width="560"></picture><br><em>The flip-card style on a tablet.</em></p>
+
+<p align="center"><picture><img alt="A judo scoreboard on a tablet held upright, in the light, at the end of a contest: the white athlete over the clock strip over the blue athlete, the white athlete's panel framed in gold with one ippon, and the foot reading Winner, Daiki Hoshino, ippon." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-board-tall-light.webp" width="300"></picture><br><em>A tablet held upright, at the end of a contest.</em></p>
+
+A state that cannot happen (two ippon, a third waza-ari, a clock that is not `m:ss`, a bad size or style) is a `RangeError` that names it. `describeJudoContest(contest)` is the sentence the drawing's description carries. The words (Osaekomi, Shido, Mat 1, Contest G-24, the coach line, the title) are in the five languages.
+
 ## Not drawn yet
 
 - **Double repechage and full repechage** (2.5.3, 2.5.4): their pools are laid out in the rules' Appendix G charts, which are pictures; `judoBracket` refuses them rather than guess.
 - **Team events**, round robins and kata scoring.
-- **A contest scoreboard, a contest card and a mat queue board, and the road to the final** are planned for the next releases ([roadmap](./roadmap.md)).
+- **A contest card and a mat queue board, and the road to the final** are planned for the next releases ([roadmap](./roadmap.md)).

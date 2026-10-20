@@ -165,7 +165,9 @@ function draw() {
     next.set("bgs", String(custom.seed));
   }
   if (state.lang !== "en") next.set("lang", state.lang);
-  history.replaceState(null, "", `?${next}`);
+  for (const [key, value] of boardParams()) next.set(key, value);
+  history.replaceState(null, "", `?${next}${location.hash}`);
+  if (boardReady) drawBoard();
 }
 
 function choose(key) {
@@ -332,9 +334,119 @@ if (typeof IntersectionObserver === "function") {
 } else buildBackgroundGallery();
 matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => syncBackground());
 
+// ---- The judo scoreboard: the state is in the address, nothing is stored or sent.
+const BOARD_DEFAULTS = { style: "board", size: "tv", theme: "auto", swap: false, gs: false, fin: false, w: [0, 1, 0, 1], b: [0, 0, 2, 2], clock: "2:14", osa: { side: 0, seconds: 12 } };
+const board = { ...BOARD_DEFAULTS, w: [...BOARD_DEFAULTS.w], b: [...BOARD_DEFAULTS.b], osa: { ...BOARD_DEFAULTS.osa } };
+let boardReady = false;
+const BOARD_LIMITS = [1, 2, 20, 3];
+const BOARD_NAMES = ["Ippon", "Waza-ari", "Yuko", "Shido"];
+const ints = (text, n) => { const a = String(text ?? "").split(",").map(Number); return a.length === n && a.every((x, i) => Number.isInteger(x) && x >= 0 && x <= BOARD_LIMITS[i]) ? a : null; };
+for (const key of ["style", "size", "theme"]) if (params.has(`b${key}`)) board[key] = params.get(`b${key}`);
+if (!["board", "flip"].includes(board.style)) board.style = BOARD_DEFAULTS.style;
+if (!Object.keys(T.JUDO_BOARD_SIZES).includes(board.size)) board.size = BOARD_DEFAULTS.size;
+if (!["auto", "light", "dark"].includes(board.theme)) board.theme = BOARD_DEFAULTS.theme;
+for (const key of ["swap", "gs", "fin"]) if (params.has(`b${key}`)) board[key] = params.get(`b${key}`) === "1";
+board.w = ints(params.get("bw"), 4) ?? board.w;
+board.b = ints(params.get("bb"), 4) ?? board.b;
+if (params.has("bclock") && /^\d{1,2}:[0-5]\d$/.test(params.get("bclock"))) board.clock = params.get("bclock");
+if (params.has("bosa")) {
+  const m = /^([01]):(\d{1,2})$/.exec(params.get("bosa"));
+  board.osa = m ? { side: Number(m[1]), seconds: Math.min(Number(m[2]), 20) } : null;
+}
+const sameList = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+/** The address parameters of the board state that differ from the defaults. */
+function boardParams() {
+  const out = [];
+  for (const key of ["style", "size", "theme"]) if (board[key] !== BOARD_DEFAULTS[key]) out.push([`b${key}`, board[key]]);
+  for (const key of ["swap", "gs", "fin"]) if (board[key] !== BOARD_DEFAULTS[key]) out.push([`b${key}`, board[key] ? "1" : "0"]);
+  if (!sameList(board.w, BOARD_DEFAULTS.w)) out.push(["bw", board.w.join(",")]);
+  if (!sameList(board.b, BOARD_DEFAULTS.b)) out.push(["bb", board.b.join(",")]);
+  if (board.clock !== BOARD_DEFAULTS.clock) out.push(["bclock", board.clock]);
+  const o = board.osa, d = BOARD_DEFAULTS.osa;
+  if ((o === null) !== false || (o && (o.side !== d.side || o.seconds !== d.seconds))) out.push(["bosa", o ? `${o.side}:${o.seconds}` : "none"]);
+  return out;
+}
+const sideOfList = (list) => ({ ...(list[0] ? { ippon: true } : {}), wazaAri: list[1], yuko: list[2], shido: list[3] });
+function boardContest() {
+  return {
+    white: { name: "Daiki Hoshino", code: "JPN", flag: "JP", coach: "Yuki Mori" },
+    blue: { name: "Mathis Roussel", code: "FRA", flag: "FR", coach: "Alain Lefort" },
+    sides: [sideOfList(board.w), sideOfList(board.b)],
+    clock: board.clock, goldenScore: board.gs, finished: board.fin,
+    ...(board.osa ? { osaekomi: board.osa } : {}),
+    weight: T.judoCategoryLabel({ sex: "men", weight: "-66" }, state.lang), round: T.roundName(2), mat: 1, contest: "G-24",
+  };
+}
+const boardOptions = () => ({ size: board.size, style: board.style, theme: board.theme, swap: board.swap, flags, locale: state.lang });
+function boardControls() {
+  const seg = (id, label, key, values) => `<div class="fam-row"><span class="fam-label">${label}</span><div class="fam-seg" role="group" aria-label="${label}" id="${id}">${values.map(([v, t]) => `<button type="button" data-value="${v}" data-key="${key}" aria-pressed="${board[key] === v}">${t}</button>`).join("")}</div></div>`;
+  const counters = (list, side, title) => `<div class="fam-row"><span class="fam-label">${title}</span><div class="counters" id="board-${side}">${BOARD_NAMES.map((n, i) => `<span class="counter" data-side="${side}" data-i="${i}"><span class="name">${n}</span>${i === 0 ? `<button type="button" data-step="1" aria-pressed="${list[0] === 1}" aria-label="${title}: ippon on or off">${list[0] ? "On" : "Off"}</button>` : `<button type="button" data-step="-1" aria-label="${title}: fewer ${n.toLowerCase()}">−</button><output aria-live="polite">${list[i]}</output><button type="button" data-step="1" aria-label="${title}: more ${n.toLowerCase()}">+</button>`}</span>`).join("")}</div></div>`;
+  $("board-controls").innerHTML = [
+    seg("board-style", "Style", "style", [["board", "Board"], ["flip", "Flip cards"]]),
+    seg("board-size", "Size", "size", [["tv", "TV"], ["tablet", "Tablet"], ["tablet-tall", "Tablet, upright"]]),
+    seg("board-theme", "Look", "theme", [["auto", "Auto"], ["light", "Light"], ["dark", "Dark"]]),
+    counters(board.w, "w", "White"),
+    counters(board.b, "b", "Blue"),
+    `<div class="fam-row"><span class="fam-label">Clock</span><div class="counters"><label class="board-field">Time <input type="text" id="board-clock" inputmode="numeric" value="${board.clock}" aria-describedby="board-note" /></label><label class="board-field">Osaekomi <select id="board-osa-side"><option value="none">none</option><option value="0">white holds</option><option value="1">blue holds</option></select></label><label class="board-field">Seconds <input type="range" id="board-osa-sec" min="0" max="20" step="1" /></label></div></div>`,
+    `<div class="fam-row"><span class="fam-label">Show</span><div class="fam-actions"><button type="button" class="fam-chip" data-bflag="gs" aria-pressed="${board.gs}">Golden score</button><button type="button" class="fam-chip" data-bflag="fin" aria-pressed="${board.fin}">Contest finished</button><button type="button" class="fam-chip" data-bflag="swap" aria-pressed="${board.swap}">Blue first</button></div></div>`,
+  ].join("");
+}
+function drawBoard() {
+  const stage = $("board-stage");
+  let svg;
+  try {
+    svg = T.judoScoreboard(boardContest(), boardOptions());
+    $("board-note").textContent = "";
+  } catch (error) {
+    $("board-note").textContent = `That state cannot happen in judo: ${error.message.replace(/^taisen-brackets: /, "")}`;
+    return;
+  }
+  stage.innerHTML = svg;
+  stage.dataset.size = board.size;
+  for (const b of $("board-controls").querySelectorAll("[data-key]")) b.setAttribute("aria-pressed", String(board[b.dataset.key] === b.dataset.value));
+  for (const b of $("board-controls").querySelectorAll("[data-bflag]")) b.setAttribute("aria-pressed", String(board[b.dataset.bflag]));
+  for (const side of ["w", "b"]) for (const c of $(`board-${side}`).querySelectorAll(".counter")) {
+    const i = Number(c.dataset.i), list = board[side];
+    if (i === 0) { const btn = c.querySelector("button"); btn.textContent = list[0] ? "On" : "Off"; btn.setAttribute("aria-pressed", String(list[0] === 1)); } else c.querySelector("output").textContent = String(list[i]);
+  }
+  $("board-osa-side").value = board.osa ? String(board.osa.side) : "none";
+  $("board-osa-sec").value = String(board.osa?.seconds ?? 0);
+  $("board-osa-sec").disabled = !board.osa;
+  const next = new URLSearchParams(location.search);
+  for (const key of [...next.keys()]) if (/^b(style|size|theme|swap|gs|fin|w|b|clock|osa)$/.test(key)) next.delete(key);
+  for (const [key, value] of boardParams()) next.set(key, value);
+  history.replaceState(null, "", `?${next}${location.hash}`);
+  $("board-code").firstChild.textContent = `import { judoScoreboard } from "@johnmorrisdotca/taisen-brackets";\n\n// Hata's round flags, loaded once: const loadedFlags = { JP: await flag("JP", { shape: "round" }), ... }\nconst svg = judoScoreboard(${JSON.stringify(boardContest(), null, 2)}, ${JSON.stringify({ ...boardOptions(), flags: "@@(code) => loadedFlags[code]@@" }, null, 2).replace(/"@@(.*?)@@"/g, "$1")});\n`;
+}
+function boardEvents() {
+  $("board-controls").addEventListener("click", (event) => {
+    const b = event.target.closest("button");
+    if (!b) return;
+    if (b.dataset.key) board[b.dataset.key] = b.dataset.value;
+    else if (b.dataset.bflag) board[b.dataset.bflag] = !board[b.dataset.bflag];
+    else if (b.dataset.step) {
+      const c = b.closest(".counter"), side = c.dataset.side, i = Number(c.dataset.i);
+      const list = board[side];
+      list[i] = i === 0 ? 1 - list[0] : Math.min(BOARD_LIMITS[i], Math.max(0, list[i] + Number(b.dataset.step)));
+      // Only one side can score ippon or a second waza-ari: the other side's is cleared, so the state stays one the rules allow.
+      const other = board[side === "w" ? "b" : "w"];
+      if (i === 0 && list[0] === 1) other[0] = 0;
+      if (i === 1 && list[1] === 2 && other[1] === 2) other[1] = 1;
+    }
+    drawBoard();
+  });
+  $("board-clock").addEventListener("input", () => { const v = $("board-clock").value.trim(); if (/^\d{1,2}:[0-5]\d$/.test(v)) { board.clock = v; drawBoard(); } });
+  $("board-osa-side").addEventListener("change", () => { const v = $("board-osa-side").value; board.osa = v === "none" ? null : { side: Number(v), seconds: board.osa?.seconds ?? 8 }; drawBoard(); });
+  $("board-osa-sec").addEventListener("input", () => { if (board.osa) { board.osa = { ...board.osa, seconds: Number($("board-osa-sec").value) }; drawBoard(); } });
+}
+
 swatches();
 customControls();
 gallery();
 layoutGallery();
 roadCards();
 draw();
+boardControls();
+boardEvents();
+boardReady = true;
+drawBoard();
