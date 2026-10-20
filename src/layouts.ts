@@ -3,6 +3,7 @@
 import type { DrawOptions, Place, Tie } from "./types.ts";
 import type { Voice } from "./locales.ts";
 import { abbrOf } from "./matchup.ts";
+import { sideScore } from "./judo-text.ts";
 import { drawMark, type MarkContext } from "./marks.ts";
 import { emWidth, esc, fit, num } from "./text.ts";
 
@@ -47,7 +48,7 @@ const clamp = (v: number, lo: number, hi: number) => Math.min(hi, Math.max(lo, v
 /** The width of a text set in bold at a size: the package's generous estimate, so that a text stays inside its place in any font. */
 const bw = (text: string, size: number): number => emWidth(text) * size;
 
-const scoreOf = (e: PaintEnv, k: 0 | 1): string => (e.scoresOn && e.tie.result.score ? e.v.number(e.tie.result.score[k]) : "");
+const scoreOf = (e: PaintEnv, k: 0 | 1): string => (e.scoresOn ? sideScore(e.tie, k, e.v) : "");
 const pensOf = (e: PaintEnv, k: 0 | 1): string => (e.scoresOn && e.tie.result.pens ? `(${e.v.number(e.tie.result.pens[k])})` : "");
 
 /** A small pill with a seed tag, its left edge at `x`, centred on `cy`. */
@@ -290,7 +291,7 @@ export function seriesLineWidth(tie: Tie, v: Voice, size: number, scoresOn: bool
   return bw(code(0), size) + bw(code(1), size) + bw(score, size) + 4 * size * 0.6 + 8 * 2 + 2 * bw("00", size * 0.72);
 }
 
-const fillScore = (tie: Tie, v: Voice): string => (tie.result.score ? v.words.scoreText.replace("{a}", v.number(tie.result.score[0])).replace("{b}", v.number(tie.result.score[1])) : "");
+const fillScore = (tie: Tie, v: Voice, swap = false): string => (tie.result.score ? v.words.scoreText.replace("{a}", sideScore(tie, swap ? 1 : 0, v)).replace("{b}", sideScore(tie, swap ? 0 : 1, v)) : "");
 
 /** One line a series: "(1) BOS 4–0 MIA (8)", the winner in bold and the loser quiet. Where the box is too narrow for a line, two compact rows. */
 function series(e: PaintEnv): string[] {
@@ -303,7 +304,7 @@ function series(e: PaintEnv): string[] {
   const [a, b] = e.order;
   const cy = y + h / 2;
   const score = e.scoresOn && tie.result.score ? fillScore(tie, v) : v.words.vs;
-  const scoreOrdered = e.scoresOn && tie.result.score && a === 1 ? v.words.scoreText.replace("{a}", v.number(tie.result.score[1])).replace("{b}", v.number(tie.result.score[0])) : score;
+  const scoreOrdered = e.scoresOn && tie.result.score && a === 1 ? fillScore(tie, v, true) : score;
   const sw = bw(scoreOrdered, size);
   const cx = x + w / 2;
   const ss = Math.max(size * 0.72, 7.5);

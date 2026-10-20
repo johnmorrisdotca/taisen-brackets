@@ -24,6 +24,11 @@ const EN: Words = {
   roadFinal: "The final: {a} {score} {b} ({how}).", roadChampion: "{name} won the final.", roadToPlay: "The final is still to be played.",
   vs: "vs", at: "AT", groupName: "Group {n}", colPlayed: "P", colWon: "W", colDrawn: "D", colLost: "L", colDiff: "GD", colPoints: "Pts",
   playIn: "Play-in", playInWinner: "Winner {a}/{b}", playInLoser: "Loser {a}/{b}", seedSlot: "Seed {n}", winnerOf: "Winner of {name}", loserOf: "Loser of {name}",
+  judoIppon: "I", judoWazaAri: "W", judoYuko: "Y", judoIpponLong: "ippon", judoWazaAriLong: "waza-ari", judoYukoLong: "yuko",
+  judoMethodIppon: "ippon", judoMethodAwasete: "waza-ari awasete ippon", judoMethodScore: "decision", judoMethodHansoku: "hansoku-make", judoMethodFusen: "fusen-gachi", judoMethodKiken: "kiken-gachi",
+  judoGolden: "GS", judoGoldenLong: "golden score", judoTime: "{t}", judoShidoOf: "{name}: {n} shido", judoShidoShort: "shido {a}–{b}",
+  judoRepechage: "Repechage", judoBronze: "Bronze medal contest", judoRepechageBronze: "Repechage and bronze medal contests", judoWhite: "white", judoBlue: "blue",
+  judoWeightClass: "{sex} -{w} kg", judoWeightOver: "{sex} +{w} kg", judoMen: "Men", judoWomen: "Women",
 };
 
 const FR: Words = {
@@ -42,6 +47,11 @@ const FR: Words = {
   roadFinal: "La finale : {a} {score} {b} ({how}).", roadChampion: "{name} a remporté la finale.", roadToPlay: "La finale reste à jouer.",
   vs: "vs", at: "À", groupName: "Groupe {n}", colPlayed: "PJ", colWon: "V", colDrawn: "N", colLost: "D", colDiff: "+/-", colPoints: "Pts",
   playIn: "Play-in", playInWinner: "Gagnant {a}/{b}", playInLoser: "Perdant {a}/{b}", seedSlot: "N°\u00a0{n}", winnerOf: "Gagnant du match {name}", loserOf: "Perdant du match {name}",
+  judoIppon: "I", judoWazaAri: "W", judoYuko: "Y", judoIpponLong: "ippon", judoWazaAriLong: "waza-ari", judoYukoLong: "yuko",
+  judoMethodIppon: "ippon", judoMethodAwasete: "waza-ari awasete ippon", judoMethodScore: "décision", judoMethodHansoku: "hansoku-make", judoMethodFusen: "fusen-gachi", judoMethodKiken: "kiken-gachi",
+  judoGolden: "GS", judoGoldenLong: "golden score", judoTime: "{t}", judoShidoOf: "{name}\u00a0: {n}\u00a0shido", judoShidoShort: "shido {a}–{b}",
+  judoRepechage: "Repêchage", judoBronze: "Combat pour la médaille de bronze", judoRepechageBronze: "Repêchages et combats pour la médaille de bronze", judoWhite: "blanc", judoBlue: "bleu",
+  judoWeightClass: "{sex} -{w}\u00a0kg", judoWeightOver: "{sex} +{w}\u00a0kg", judoMen: "Hommes", judoWomen: "Femmes",
 };
 
 const JA: Words = {
@@ -60,6 +70,11 @@ const JA: Words = {
   roadFinal: "決勝は{a} {score} {b}（{how}）でした。", roadChampion: "{name}が優勝しました。", roadToPlay: "決勝はまだ行われていません。",
   vs: "対", at: "@", groupName: "グループ{n}", colPlayed: "試合", colWon: "勝", colDrawn: "分", colLost: "敗", colDiff: "得失差", colPoints: "勝点",
   playIn: "プレイイン", playInWinner: "{a}/{b}の勝者", playInLoser: "{a}/{b}の敗者", seedSlot: "第{n}シード", winnerOf: "{name}の勝者", loserOf: "{name}の敗者",
+  judoIppon: "一", judoWazaAri: "技", judoYuko: "有", judoIpponLong: "一本", judoWazaAriLong: "技あり", judoYukoLong: "有効",
+  judoMethodIppon: "一本", judoMethodAwasete: "合わせ技一本", judoMethodScore: "優勢勝ち", judoMethodHansoku: "反則勝ち", judoMethodFusen: "不戦勝", judoMethodKiken: "棄権勝ち",
+  judoGolden: "GS", judoGoldenLong: "ゴールデンスコア", judoTime: "{t}", judoShidoOf: "{name}：指導{n}", judoShidoShort: "指導{a}–{b}",
+  judoRepechage: "敗者復活戦", judoBronze: "銅メダル決定戦", judoRepechageBronze: "敗者復活戦と銅メダル決定戦", judoWhite: "白", judoBlue: "青",
+  judoWeightClass: "{sex}{w}kg級", judoWeightOver: "{sex}{w}kg超級", judoMen: "男子", judoWomen: "女子",
 };
 
 const ES: Words = {
@@ -78,6 +93,11 @@ const ES: Words = {
   roadFinal: "La final: {a} {score} {b} ({how}).", roadChampion: "{name} ganó la final.", roadToPlay: "La final aún no se ha jugado.",
   vs: "vs.", at: "EN", groupName: "Grupo {n}", colPlayed: "PJ", colWon: "G", colDrawn: "E", colLost: "P", colDiff: "DG", colPoints: "Pts",
   playIn: "Play-in", playInWinner: "Ganador {a}/{b}", playInLoser: "Perdedor {a}/{b}", seedSlot: "Puesto {n}", winnerOf: "Ganador de {name}", loserOf: "Perdedor de {name}",
+  judoIppon: "I", judoWazaAri: "W", judoYuko: "Y", judoIpponLong: "ippon", judoWazaAriLong: "waza-ari", judoYukoLong: "yuko",
+  judoMethodIppon: "ippon", judoMethodAwasete: "waza-ari awasete ippon", judoMethodScore: "decisión", judoMethodHansoku: "hansoku-make", judoMethodFusen: "fusen-gachi", judoMethodKiken: "kiken-gachi",
+  judoGolden: "GS", judoGoldenLong: "golden score", judoTime: "{t}", judoShidoOf: "{name}: {n} shido", judoShidoShort: "shido {a}–{b}",
+  judoRepechage: "Repesca", judoBronze: "Combate por la medalla de bronce", judoRepechageBronze: "Repesca y combates por la medalla de bronce", judoWhite: "blanco", judoBlue: "azul",
+  judoWeightClass: "{sex} -{w} kg", judoWeightOver: "{sex} +{w} kg", judoMen: "Hombres", judoWomen: "Mujeres",
 };
 
 const DE: Words = {
@@ -96,6 +116,11 @@ const DE: Words = {
   roadFinal: "Das Finale: {a} {score} {b} ({how}).", roadChampion: "{name} gewann das Finale.", roadToPlay: "Das Finale steht noch aus.",
   vs: "vs.", at: "BEI", groupName: "Gruppe {n}", colPlayed: "Sp", colWon: "S", colDrawn: "U", colLost: "N", colDiff: "Diff.", colPoints: "Pkt",
   playIn: "Play-in", playInWinner: "Sieger {a}/{b}", playInLoser: "Verlierer {a}/{b}", seedSlot: "Platz {n}", winnerOf: "Sieger von {name}", loserOf: "Verlierer von {name}",
+  judoIppon: "I", judoWazaAri: "W", judoYuko: "Y", judoIpponLong: "Ippon", judoWazaAriLong: "Waza-ari", judoYukoLong: "Yuko",
+  judoMethodIppon: "Ippon", judoMethodAwasete: "Waza-ari awasete Ippon", judoMethodScore: "Punktsieg", judoMethodHansoku: "Hansoku-make", judoMethodFusen: "Fusen-gachi", judoMethodKiken: "Kiken-gachi",
+  judoGolden: "GS", judoGoldenLong: "Golden Score", judoTime: "{t}", judoShidoOf: "{name}: {n} Shido", judoShidoShort: "Shido {a}–{b}",
+  judoRepechage: "Hoffnungsrunde", judoBronze: "Kampf um Bronze", judoRepechageBronze: "Hoffnungsrunde und Kämpfe um Bronze", judoWhite: "weiß", judoBlue: "blau",
+  judoWeightClass: "{sex} -{w} kg", judoWeightOver: "{sex} +{w} kg", judoMen: "Herren", judoWomen: "Damen",
 };
 
 /**

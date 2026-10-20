@@ -11,7 +11,7 @@ Give it the games, series, two-legged ties or replays of a tournament and it wor
   <img alt="TypeScript" src="https://img.shields.io/badge/types-TypeScript-3178c6">
 </p>
 
-<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/layouts.md">Layouts</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/road.md">Road to the final</a> · <a href="./docs/backgrounds.md">Backgrounds</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
+<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><strong>Open the demo →</strong></a> · <a href="./docs/layout.md">Layout</a> · <a href="./docs/layouts.md">Layouts</a> · <a href="./docs/drawing.md">Drawing</a> · <a href="./docs/road.md">Road to the final</a> · <a href="./docs/backgrounds.md">Backgrounds</a> · <a href="./docs/judo.md">Judo</a> · <a href="./docs/formats.md">Formats</a> · <a href="./docs/compare.md">How it compares</a></p>
 
 <p align="center">
 <picture>
@@ -238,6 +238,15 @@ console.log(ice.includes("tb-bgd"), mine.includes("#ff7ac8"), photo.includes('<i
 
 In the road look, `seeds: true` writes a small tag (`P1`, `WC2`) beside each team's mark, `codes: true` its three letters under the mark in a box of marks, `vs: true` a "v" between the two marks, and a team with no flag or logo is a tile with its letters. [docs/backgrounds.md](./docs/backgrounds.md) has the options, the contrast rules and the module the other packages of the family share.
 
+## Judo
+
+A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as the IJF's current Sport and Organisation Rules score them (yuko is back since 2025), golden score, the contest time and how it was won. The box writes the marks (`I`, `W`, `Y`), the shido as yellow and red cards and a note under the two rows, in the five languages. `judoBracket` makes a weight category's bracket with the IJF's repechage and its two bronze medal contests. [docs/judo.md](./docs/judo.md) quotes the rules it follows.
+
+<p align="center"><picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-desk-dark.webp">
+<img alt="A made-up men's minus 66 kilogram judo tournament of 16 athletes with round flags, score marks, shido cards, how each contest was won and its time, and the repechage and bronze medal contests under the tree." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-desk-light.webp" width="720">
+</picture><br><em>Men's -66 kg, with the quarter-final repechage (invented names).</em></p>
+
 ## In 30 seconds
 
 ```sh
@@ -283,6 +292,7 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **Team marks you supply**: a logo address or inline SVG, drawn round or square; a team with none is its initials on a colour. Round flags from [Hata](https://github.com/johnmorrisdotca/hata) go in as they are.
 - **The champion in the centre**, with a slot for your trophy: your own SVG or image, or an emblem from [Dougu Sports](https://github.com/johnmorrisdotca/dougu-sports) (a hockey cup, a basketball trophy, a globe) through an optional plug-in, with no dependency added.
 - **Accessible**: `role="img"` with a title and a description, a tooltip sentence on every tie, and `bracketTable`.
+- **Judo scoring**: `Matchup.judo` takes ippon, waza-ari, yuko, shido, hansoku-make, golden score and the contest time, checked against the IJF rules (`judoOutcome`); a box shows the marks, the shido cards and how the contest was won, and `judoBracket` adds the repechage and the two bronze medal contests ([docs/judo.md](./docs/judo.md)).
 - **Formats by era**: NHL, NBA, MLB, NFL, CFL, MLS and FIFA World Cup round names, series lengths and byes.
 - **Five languages**: English, French, Japanese, Spanish and German, for every word the drawing, the tooltips, the description and the table write, with the football terms of each language; countries named by `Intl` from their ISO code; numbers and dates by `Intl`. Add a language of your own.
 - **Deterministic**: no clock, no random number, no counter; the same input gives the same string, and ids come from a hash of the input.
@@ -642,6 +652,7 @@ Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part 
 - `singleElimination(teams, options?)`, `advanceWinners(matchups)`, `standardSeeds(size)`: brackets for any number of teams.
 - `matchupsFromGames(games, options)`: matchups from a flat list of games.
 - `resolveMatchup`, `collectTeams`, `describeTie`, `noteParts`, `noteLong`: one tie's result, the teams of a bracket, a tie in a sentence.
+- `judoOutcome(result, winner?)`, `judoBracket(athletes, options?)`, `judoPodium(input)`, `judoCategoryLabel(category, locale?)`, `JUDO_WEIGHT_CLASSES`, `judoSeconds(time)`, `judoClock(seconds)`: judo results checked against the IJF rules, the bracket with its repechage and two bronze medal contests, the medallists, a weight category as a heading ([docs/judo.md](./docs/judo.md)). `Matchup.judo` and `Matchup.stage` (`"repechage"`, `"bronze"`) carry them into `drawBracket`.
 - `playoffFormat(league, year)`, `playoffEras(league)`, `LEAGUES`: the formats by era (`nhl`, `nba`, `mlb`, `nfl`, `cfl`, `mls`, `worldcup`). `LEAGUE_EMBLEMS`: each league's default emblem id.
 - `isEmblemId(value)`, and the types `EmblemRenderer`, `EmblemRequest`, `EmblemStyle`: the trophy emblems (see "Emblems for the trophy").
 - `roundName(remaining)`, `roundNamesFor(count)`, `roundLabel(layout, round, names, words)`: round names.
@@ -700,6 +711,7 @@ console.log(svg.includes('lang="nl"')); // true
 | CFL | 1996 on | Division Semi-Final, Division Final, Grey Cup |
 | MLS | 2023 on | Wild Card Round, Round One (best of three), Conference Semifinals, Conference Finals, MLS Cup |
 | FIFA World Cup | every edition with a knockout, 1930 to 2026 (1950 had none) | Round of 32 (2026), Round of 16, Quarter-finals, Semi-finals, Final |
+| Judo (IJF rules of 21 January 2026) | any weight category: `judoBracket` with the quarter-final repechage or a direct knockout | Round of N … Final, repechage, two bronze medal contests |
 | Any other | single elimination for any number of teams | Round of N … Final |
 
 Each era was checked against English Wikipedia (facts only; the articles are cited in [docs/formats.md](./docs/formats.md)). The year is the year the playoffs are played in, except for the NFL, whose year is its season's, so 2024 is the season whose playoffs were played in January and February 2025. A season did something of its own (a strike, a pandemic) has its own entry, and a later one is not covered until it is checked.
@@ -732,6 +744,7 @@ Any current browser, and Node 22 or later. The package makes no network request 
 
 ## Roadmap
 
+- Judo: a contest scoreboard drawing, a contest card and a mat queue board, the road to the final of a judoka, double and full repechage ([docs/judo.md](./docs/judo.md)).
 - Double elimination, and the group tables on one page with the knockout they lead to.
 - More languages (Portuguese, Italian, Korean, Chinese), and native review of the Spanish and German words.
 - A custom element and a React helper, as in the other packages of the family.

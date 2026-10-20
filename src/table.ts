@@ -1,6 +1,7 @@
 import type { BracketInput, BracketLayout, DrawOptions, Matchup, Tie } from "./types.ts";
 import { layoutBracket } from "./layout.ts";
 import { noteLong } from "./matchup.ts";
+import { sideScore } from "./judo-text.ts";
 import { fill, voiceOf } from "./locales.ts";
 import { localizedLayout } from "./render.ts";
 import { roundLabel } from "./rounds.ts";
@@ -32,12 +33,12 @@ export function bracketTable(input: BracketLayout | readonly Matchup[] | Bracket
     const text = team ? esc(team.name) : esc(w.tbd);
     return t.winner === k ? `<strong>${text}</strong>` : text;
   };
-  const score = (t: Tie) => (t.result.score ? fill(w.scoreText, { a: v.number(t.result.score[0]), b: v.number(t.result.score[1]) }) : "");
+  const score = (t: Tie) => (t.result.score ? fill(w.scoreText, { a: sideScore(t, 0, v), b: sideScore(t, 1, v) }) : "");
   // Where a side comes from, in words, when the tie says so: "Loser of A v B".
   const named = (i: number) => fill(w.tieVs, { a: layout.ties[i].sides[0]?.name ?? w.tbd, b: layout.ties[i].sides[1]?.name ?? w.tbd });
   const origins = (t: Tie): string[] => (t.from ?? []).flatMap((s) => (s ? [fill(s.result === "loser" ? w.loserOf : w.winnerOf, { name: named(s.tie) })] : []));
   const rows = order.map((t) => {
-    const roundText = t.third ? w.thirdPlace : t.playIn ? w.playIn : t.round === 0 ? "" : roundLabel(layout, t.round, options.roundNames, v);
+    const roundText = t.third ? w.thirdPlace : t.stage === "repechage" ? w.judoRepechage : t.stage === "bronze" ? w.judoBronze : t.playIn ? w.playIn : t.round === 0 ? "" : roundLabel(layout, t.round, options.roundNames, v);
     const date = dated ? `<td>${esc(v.date(t.date) ?? "")}</td>` : "";
     return `<tr><th scope="row">${esc(roundText)}</th>${date}<td>${name(t, 0)}</td><td>${esc(score(t))}</td><td>${name(t, 1)}</td><td>${esc([...noteLong(t, v), ...origins(t)].join(w.noteJoin))}</td></tr>`;
   });

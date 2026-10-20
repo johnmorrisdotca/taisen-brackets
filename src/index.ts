@@ -17,3 +17,5 @@ export type { ResolvedBackground } from "./background.ts";
 export { VERSION } from "./version.ts";
 export { playoffFormat, playoffEras, LEAGUES, LEAGUE_EMBLEMS } from "./presets.ts";
 export type { League, PlayoffFormat, PlayoffRound } from "./presets.ts";
+export { judoBracket, judoPodium, judoCategoryLabel, judoOutcome, judoSeconds, judoClock, JUDO_WEIGHT_CLASSES } from "./judo.ts";
+export type { JudoBracketOptions, JudoCategory, JudoMethod, JudoOutcome, JudoPodium, JudoResult, JudoSide, JudoSystem } from "./judo.ts";

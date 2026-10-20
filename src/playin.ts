@@ -3,6 +3,7 @@
 import type { BracketLayout, DrawOptions, Size, Team, Tie } from "./types.ts";
 import { fill, type Voice } from "./locales.ts";
 import { abbrOf, describeTie } from "./matchup.ts";
+import { sideScore } from "./judo-text.ts";
 import { drawMark, type MarkContext } from "./marks.ts";
 import { bold, headTile, headingTexts, titleHeight } from "./furniture.ts";
 import type { OwnDrawing } from "./groups.ts";
@@ -151,7 +152,7 @@ export function drawPlayIn(layout: BracketLayout, o: DrawOptions, v: Voice, size
         const team = t.sides[k];
         const ry = rect.y + k * rowH;
         const cy = ry + rowH / 2;
-        const score = o.scores !== false && t.result.score ? v.number(t.result.score[k]) : "";
+        const score = o.scores !== false ? sideScore(t, k, v) : "";
         const cls = t.winner === null ? "tb-pending" : t.winner === k ? "tb-won" : "tb-lost";
         const items: string[] = [];
         const slotX = rect.x + rect.w - 5 - 26;

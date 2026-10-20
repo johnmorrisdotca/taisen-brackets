@@ -6,6 +6,24 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.7.0] - 2026-10-20
+
+Judo, step 1: results in the bracket boxes, and the bracket of a weight category with the repechage and two bronze medals. Nothing changes for a bracket that has no judo result (every existing snapshot is unchanged).
+
+### Added
+
+- **`Matchup.judo`**: a judo contest's result, `{ sides: [white, blue], method?, hansokuMake?, goldenScore?, time? }`, each side `{ ippon, wazaAri, yuko, shido }`. The winner, the method and the score come from it under the IJF Sport and Organisation Rules, Refereeing Rules of 21 January 2026: ippon, two waza-ari are ippon (Article 16), yuko are counted and never add up to a waza-ari (Article 15; yuko is back since 2025, 5 to 9 seconds of osaekomi, Article 7), shido never decide a contest and the third is hansoku-make (Article 18), a direct hansoku-make (`hansokuMake`), golden score (Article 13), fusen-gachi and kiken-gachi (Article 19, the matchup names the `winner`). `Tie.result.score` is the scoreboard's 100, 10 and 1. [docs/judo.md](docs/judo.md) quotes each rule.
+- **`judoOutcome(result, winner?)`** checks a result and works out the winner, the method, the scoreboard points and whether both sides were disqualified; a count out of range, two ippon, a method or winner the scores contradict, and a default with no winner are a `RangeError` that names the field. `judoSeconds`, `judoClock`.
+- **The boxes**: the score in marks (`I`, `W`, `W2`, `Y`, `Y3`, `0`), a white or blue bar at the edge of each row, the shido as yellow and red cards beside the score, and under the rows how it was won, `GS` for golden score and the time. The tooltip, the description and `bracketTable` say the same in a sentence, with each side's shido. Works in the tree, `rows`, `shields`, `update`, `columns` and `series`, both looks, every size. CSS custom properties `--tb-judo-white`, `--tb-judo-blue`, `--tb-shido`, `--tb-hansoku`; `bracketStyle({ judo: true })`.
+- **`judoBracket(athletes, { system, prefix })`**: a weight category for any number of athletes, with the IJF's quarter-final repechage (Sport and Organisation Rules 2.5.2: two repechage contests, two bronze medal contests) for eight athletes or more, or a direct knockout whose losing semi-finalists are the bronze medallists. `Matchup.stage` takes `"repechage"` and `"bronze"` (fed by the losers of the tree's ties, drawn together under the tree with their own heading); `Tie.stage`. `judoPodium(input)` gives gold, silver and the bronze medallists; `judoCategoryLabel({ sex, weight }, locale)` the heading ("Men -66 kg"); `JUDO_WEIGHT_CLASSES`.
+- Words for judo in the five languages (the marks, the methods, golden score, the shido, the headings, the weight class). The French and Japanese were read by native-language reviewers; the Spanish and German need one (docs/languages.md).
+- The demo has a Judo sport: a made-up men's -66 kg category of 16 athletes with every kind of ending, in the tree and in rows, with Hata's flags (Georgia, Uzbekistan, Cuba, Mongolia, Azerbaijan, Hungary, Italy added).
+
+### Changed
+
+- The note under a box is cut to fit with the same width estimate the names use, so that a long note never reaches past its box.
+- The ties kept apart under the tree are 66 high in the road look when one of them has a note.
+
 ## [0.6.1] - 2026-10-19
 
 No change to the package's code. The README's pictures were checked against 0.6.0's features and remade: they already show every layout, so none is added.

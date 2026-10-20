@@ -1,4 +1,6 @@
 import type { Game, Matchup, MatchupKind, Result, SideId, Team, Tie } from "./types.ts";
+import { judoHasScore, judoOutcome, type JudoOutcome } from "./judo-model.ts";
+import { judoNotes, sideScoreLong } from "./judo-text.ts";
 import { abbreviate } from "./text.ts";
 import { fill, type Voice } from "./locales.ts";
 
@@ -71,14 +73,23 @@ export function resolveMatchup(m: Matchup, index: number, teams: ReadonlyMap<Sid
   const ids = [sideId(m.sides[0]), sideId(m.sides[1])] as const;
   if (ids[0] !== null && ids[0] === ids[1]) throw new Error(`taisen-brackets: matchup ${index} has ${JSON.stringify(ids[0])} on both sides`);
   const kind = kindOf(m);
-  const { result, winner: settled } = settle(m, kind);
-  let winner: 0 | 1 | null = settled;
+  let named: 0 | 1 | null | undefined;
   if (m.winner !== undefined) {
-    if (m.winner === null) winner = null;
-    else if (ids[0] === m.winner) winner = 0;
-    else if (ids[1] === m.winner) winner = 1;
+    if (m.winner === null) named = null;
+    else if (ids[0] === m.winner) named = 0;
+    else if (ids[1] === m.winner) named = 1;
     else throw new Error(`taisen-brackets: matchup ${index}'s winner ${JSON.stringify(m.winner)} is not one of its sides`);
   }
+  let judo: JudoOutcome | undefined;
+  let result: Result;
+  let winner: 0 | 1 | null;
+  if (m.judo) {
+    judo = judoOutcome(m.judo, named ?? null);
+    if (judo.winner !== null && named !== undefined && named !== null && named !== judo.winner) throw new RangeError(`taisen-brackets: matchup ${index}'s judo scores make side ${judo.winner} the winner, but its winner is side ${named}`);
+    winner = judo.winner;
+    result = { kind: "game", score: judoHasScore(judo) || winner !== null ? judo.points : null, played: judoHasScore(judo) || winner !== null ? 1 : 0, bestOf: null, pens: null, extraTime: false, replays: 0, games: [judo.points], decided: winner !== null };
+  } else ({ result, winner } = settle(m, kind));
+  if (named !== undefined) winner = named;
   const sides = ids.map((id) => (id === null ? null : teams.get(id) ?? null)) as unknown as readonly [Team | null, Team | null];
   return {
     index,
@@ -92,6 +103,8 @@ export function resolveMatchup(m: Matchup, index: number, teams: ReadonlyMap<Sid
     third: !!m.third,
     walkover: !!m.walkover,
     note: m.note ?? null,
+    ...(judo ? { judo } : {}),
+    ...(m.stage ? { stage: m.stage } : {}),
     ...(m.seeds ? { seeds: m.seeds } : {}),
     ...(m.home !== undefined ? { home: m.home } : {}),
   };
@@ -104,7 +117,13 @@ export const abbrOf = (team: Team | null, v: Voice): string => (team ? team.abbr
 export function noteParts(tie: Tie, v: Voice): string[] {
   const r = tie.result;
   const w = v.words;
-  const out: string[] = [];
+  const out: string[] = tie.judo ? judoNotes(tie, v, false) : [];
+  if (tie.stage === "repechage" || tie.stage === "bronze") out.unshift(tie.stage === "repechage" ? w.judoRepechage : w.judoBronze);
+  if (tie.judo) {
+    if (tie.walkover) out.push(w.walkover);
+    if (tie.note) out.push(tie.note);
+    return out;
+  }
   if (r.kind === "series") {
     if (r.decided && r.played > 0) out.push(fill(w.inGames, { n: v.number(r.played) }));
     else if (r.bestOf) out.push(fill(w.bestOf, { n: v.number(r.bestOf), w: v.number(Math.ceil(r.bestOf / 2)) }));
@@ -123,7 +142,12 @@ export function noteParts(tie: Tie, v: Voice): string[] {
 export function noteLong(tie: Tie, v: Voice): string[] {
   const r = tie.result;
   const w = v.words;
-  const out: string[] = [];
+  const out: string[] = tie.judo ? judoNotes(tie, v, true) : [];
+  if (tie.judo) {
+    if (tie.walkover) out.push(w.walkover);
+    if (tie.note) out.push(tie.note);
+    return out;
+  }
   if (r.kind === "series") {
     if (r.decided && r.played > 0) out.push(fill(w.inGames, { n: v.number(r.played) }));
     else if (r.bestOf) out.push(fill(w.bestOf, { n: v.number(r.bestOf), w: v.number(Math.ceil(r.bestOf / 2)) }));
@@ -145,7 +169,7 @@ export function describeTie(tie: Tie, v: Voice): string {
   const [a, b] = tie.sides;
   const r = tie.result;
   let text = r.score
-    ? fill(w.tieScore, { a: name(a), b: name(b), sa: v.number(r.score[0]), sb: v.number(r.score[1]) })
+    ? fill(w.tieScore, { a: name(a), b: name(b), sa: sideScoreLong(tie, 0, v), sb: sideScoreLong(tie, 1, v) })
     : fill(w.tieVs, { a: name(a), b: name(b) });
   const notes = noteLong(tie, v);
   if (notes.length) text += fill(w.note, { notes: notes.join(w.noteJoin) });

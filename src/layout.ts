@@ -20,8 +20,8 @@ export function layoutBracket(input: readonly Matchup[] | BracketInput, options:
     byId.set(t.id, t.index);
   }
 
-  // A play-in game is outside the tree; so are a third-place match and a round-robin game.
-  const playIns = ties.filter((t) => matchups[t.index].stage === "play-in").map((t) => t.index);
+  // A play-in game is outside the tree, and so are a judo repechage and bronze medal contest (a stage's ties are fed by the tree's losers); so are a third-place match and a round-robin game.
+  const playIns = ties.filter((t) => matchups[t.index].stage !== undefined).map((t) => t.index);
   const isPlayIn = new Set(playIns);
   const thirds = ties.filter((t) => t.third && !isPlayIn.has(t.index)).map((t) => t.index);
   const robin = ties.filter((t) => !t.third && !isPlayIn.has(t.index) && matchups[t.index].round === 0).map((t) => t.index);

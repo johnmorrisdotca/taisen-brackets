@@ -3,6 +3,8 @@
  * the drawing takes as options. Nothing here runs; the functions are in `matchup.ts`, `layout.ts` and `render.ts`.
  */
 
+import type { JudoOutcome, JudoResult } from "./judo-model.ts";
+
 /** A side's key: a team code, a franchise id, anything that is unique within one bracket. */
 export type SideId = string | number;
 
@@ -109,8 +111,13 @@ export interface Matchup {
   walkover?: boolean;
   /** This is the third-place match: it leads nowhere and is drawn apart. */
   third?: boolean;
-  /** `"play-in"`: a game of a play-in (the NBA's) that is outside the rounds of the tree: its winner (and loser, see `feeds`) goes on to a place the tree's ties name. Drawn by the `playin` layout and, apart, under the other layouts' trees. */
-  stage?: "play-in";
+  /**
+   * `"play-in"`: a game of a play-in (the NBA's) that is outside the rounds of the tree: its winner (and loser, see `feeds`) goes on to a place the tree's ties name. Drawn by the `playin` layout and, apart, under the other layouts' trees.
+   * `"repechage"` and `"bronze"`: a judo repechage contest and a bronze medal contest, fed by the losers of the tree's ties (`judoBracket` writes them); drawn apart under the tree.
+   */
+  stage?: "play-in" | "repechage" | "bronze";
+  /** A judo contest's scores: ippon, waza-ari, yuko, shido, hansoku-make, golden score and time. The first side is white, the second blue. The score, the winner and the notes come from it; see `judoOutcome`. */
+  judo?: JudoResult;
   /** The side playing at home (0 or 1), for the `at` wording of the `columns` layout: the home side is drawn second, after "AT". Left out, the second side. */
   home?: 0 | 1;
   note?: string;
@@ -156,8 +163,12 @@ export interface Tie {
   seeds?: readonly [string | number | null, string | number | null];
   /** Where each side comes from, when the matchup's `feeds` name it: another tie's winner or its loser. Left out for a tie that says nothing of the kind. */
   from?: readonly [Source | null, Source | null];
-  /** The tie is a play-in game (`Matchup.stage`). */
+  /** The tie is a play-in game, a judo repechage contest or a bronze medal contest (`Matchup.stage`). */
   playIn?: boolean;
+  /** The tie's `Matchup.stage`, when it has one. */
+  stage?: "play-in" | "repechage" | "bronze";
+  /** A judo contest's result, checked and worked out (`Matchup.judo`). */
+  judo?: JudoOutcome;
   /** The side at home (`Matchup.home`), when given. */
   home?: 0 | 1;
 }
@@ -351,6 +362,39 @@ export interface Words {
   /** `{name}`: a side that is the winner or loser of another tie, in a sentence or a table: "Loser of {name}". */
   winnerOf: string;
   loserOf: string;
+  /** Judo. The marks of the scores on a box (ippon, waza-ari, yuko), the same written out, and how a contest was won. */
+  judoIppon: string;
+  judoWazaAri: string;
+  judoYuko: string;
+  judoIpponLong: string;
+  judoWazaAriLong: string;
+  judoYukoLong: string;
+  judoMethodIppon: string;
+  judoMethodAwasete: string;
+  judoMethodScore: string;
+  judoMethodHansoku: string;
+  judoMethodFusen: string;
+  judoMethodKiken: string;
+  /** Golden score, short and in a sentence. */
+  judoGolden: string;
+  judoGoldenLong: string;
+  /** `{t}`: the contest time ("3:42"). */
+  judoTime: string;
+  /** `{name}`, `{n}`: a side's shido ("Kenji Nakamura: 2 shido"). */
+  judoShidoOf: string;
+  /** `{a}`, `{b}`: the sides' shido in a short note. */
+  judoShidoShort: string;
+  /** The headings over the repechage contests and the bronze medal contests, alone and together; the sides' colours. */
+  judoRepechage: string;
+  judoBronze: string;
+  judoRepechageBronze: string;
+  judoWhite: string;
+  judoBlue: string;
+  /** `{sex}`, `{w}` (the number of kilograms, no sign): a weight category up to and including that weight ("Men -66 kg"), one over it ("Women +78 kg"), and the two sexes' words. */
+  judoWeightClass: string;
+  judoWeightOver: string;
+  judoMen: string;
+  judoWomen: string;
 }
 
 /** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */
@@ -362,6 +406,8 @@ export interface Locale {
   /** Round names by their English name: `{ "Round of 16": "Huitièmes de finale" }`. A round with no entry keeps its name (or `roundOf`). */
   rounds: Readonly<Record<string, string>>;
 }
+
+export type { JudoMethod, JudoOutcome, JudoResult, JudoSide } from "./judo-model.ts";
 
 export type ThemeName = "auto" | "light" | "dark" | "poster" | "none";
 
@@ -460,6 +506,8 @@ export interface DrawOptions extends LayoutOptions {
   standings?: "points" | "record";
   /** In the `groups` layout, how many teams of each group go through: their rows are marked. Default 0, none. */
   qualify?: number;
+  /** For `bracketStyle`: include the judo rules (the white and blue side bars, the shido cards). `drawBracket` adds them by itself when a tie has judo scores. */
+  judo?: boolean;
   /** Write the `<style>` into the drawing. Default true; false leaves it out, for a second drawing of a page that shares the first's (`styleScope`, `bracketStyle`). */
   style?: boolean;
   /** A class that carries this drawing's rules in place of its own: two drawings with the same `styleScope` take their colours from one `<style>`, and the second can leave it out (`style: false`). A word of letters, digits, `-` and `_`. */

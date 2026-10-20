@@ -53,7 +53,12 @@ export interface StyleParts {
   bgAuto?: boolean;
   /** The rules of the layouts of their own (slots, shields, conference colours, header tiles, arrows, group cards). */
   layout?: boolean;
+  /** A judo bracket: the white and blue side bars and the shido cards (`--tb-judo-white`, `--tb-judo-blue`, `--tb-shido`, `--tb-hansoku`). */
+  judo?: boolean;
 }
+
+/** The colours of a judo contest: the white and the blue judogi, the yellow shido card and the red hansoku-make card. */
+export const JUDO_COLORS = Object.freeze({ white: "#ffffff", blue: "#1f4fa8", shido: "#f0c000", hansoku: "#d3302a" });
 
 /** The colours of the two halves (conferences) of the layouts that colour them, each with white letters on it: `--tb-conf-a` and `--tb-conf-b`. Both read 5 to 1 or more against white. */
 export const CONFERENCE_COLORS: readonly [string, string] = Object.freeze(["#2457c5", "#b3261e"] as const);
@@ -166,6 +171,14 @@ function rules(p: Palette, r: RoadPalette, poster: boolean, withFont: boolean, p
       [[".tb-gname"], `fill:${v("ink")};font-weight:700`],
       [[".tb-qual"], `fill:${v("win")};fill-opacity:.16`],
       [[".tb-gsep"], `stroke:${v("edge")};stroke-width:1;stroke-opacity:.6`],
+    );
+  }
+  if (parts.judo === true) {
+    list.push(
+      [[".tb-jw"], `fill:var(--tb-judo-white, ${JUDO_COLORS.white});stroke:${v("edge")};stroke-width:.8`],
+      [[".tb-jb"], `fill:var(--tb-judo-blue, ${JUDO_COLORS.blue});stroke:${v("edge")};stroke-width:.8`],
+      [[".tb-sh-y"], `fill:var(--tb-shido, ${JUDO_COLORS.shido});stroke:rgba(0,0,0,.35);stroke-width:.6`],
+      [[".tb-sh-r"], `fill:var(--tb-hansoku, ${JUDO_COLORS.hansoku});stroke:rgba(0,0,0,.35);stroke-width:.6`],
     );
   }
   if (parts.follow === true) {

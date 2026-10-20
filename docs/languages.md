@@ -54,6 +54,8 @@ const spain = defineLocale("es-ES", { tag: "es-ES", words: { pens: "penaltis", p
 
 **The layouts' words** (`vs`, `at`, `groupName`, the table heads `colPlayed` to `colPoints`, `playIn`, `playInWinner`, `playInLoser`, `seedSlot`, `winnerOf` and `loserOf`, added in 0.6.0) were read by the same French and Japanese reviewers on 2026-10-14; the Spanish and German were not read by a native speaker and need one. French, the reviewer's changes: *Play-in* in place of *Barrages* (which means a promotion play-off in France and *tirs de barrage* in Quebec), *Gagnant* and *Perdant* as a pair, *Gagnant du match {name}* so that no *de* meets a name that starts with a vowel, a no-break space in *N° {n}*, and the Canadian heads *PJ V N D* with *+/-* for the goal difference (France writes *J G N P*). Japanese: *試合* and *得失差* in full where *試* and *得失* alone are ambiguous, *勝点* for points (never *得点*, which is goals), and a plain ASCII *@* for "at": Japanese schedules write it as English ones do, and the full-width form looks like part of an address. *第{n}シード* shares *シード* with the word for a bye (*bye*); the number keeps them apart.
 
+**The judo words** (the keys that start `judo`, added in 0.7.0) were read by the same French and Japanese reviewers on 2026-10-20; the Spanish and German were not read by a native speaker and need one. The judo terms (*ippon*, *waza-ari*, *yuko*, *shido*, *hansoku-make*, *fusen-gachi*, *kiken-gachi*, *golden score*) are kept as the international judo vocabulary in French, Spanish and German. French, the reviewer's changes: a no-break space before the colon and before *kg*. Left as they are, for a French judo reader to settle: *décision* for a win on the technical scores (*aux points* is the alternative) and *{n} shido* with no plural. Japanese, the reviewer's changes: *合わせ技一本* for waza-ari-awasete-ippon, no space in *指導{a}–{b}*, and the weight class written the Japanese way, *男子66kg級* and *女子78kg超級* (the sign is dropped, *judoWeightOver* is for a class over a weight). Left as they are: the one-character marks *一*, *技* and *有* (from memory of Japanese scoreboards; a native judo reader should confirm them), *優勢勝ち* for a decision, *反則勝ち* for the winner by the other's hansoku-make, and *銅メダル決定戦* for the bronze medal contest (*3位決定戦* is the domestic word).
+
 ## What stays the same in every language
 
 - **Clubs and people** keep their names. A national team's name comes from `Intl.DisplayNames` by its ISO 3166 code (`countryName`), or from `Team.names`, or from a `teamName` function; the demo writes by hand only the two states that no longer exist (Czechoslovakia, the Dutch East Indies), after the form each language's Wikipedia gives, and the home nations are in `src/locales.ts`.
@@ -182,5 +184,31 @@ The English name is the key (a round the table does not name keeps its English n
 | `seedSlot` | `Seed {n}` | `N°␣{n}` | `第{n}シード` | `Puesto {n}` | `Platz {n}` |
 | `winnerOf` | `Winner of {name}` | `Gagnant du match {name}` | `{name}の勝者` | `Ganador de {name}` | `Sieger von {name}` |
 | `loserOf` | `Loser of {name}` | `Perdant du match {name}` | `{name}の敗者` | `Perdedor de {name}` | `Verlierer von {name}` |
+| `judoIppon` | `I` | `I` | `一` | `I` | `I` |
+| `judoWazaAri` | `W` | `W` | `技` | `W` | `W` |
+| `judoYuko` | `Y` | `Y` | `有` | `Y` | `Y` |
+| `judoIpponLong` | `ippon` | `ippon` | `一本` | `ippon` | `Ippon` |
+| `judoWazaAriLong` | `waza-ari` | `waza-ari` | `技あり` | `waza-ari` | `Waza-ari` |
+| `judoYukoLong` | `yuko` | `yuko` | `有効` | `yuko` | `Yuko` |
+| `judoMethodIppon` | `ippon` | `ippon` | `一本` | `ippon` | `Ippon` |
+| `judoMethodAwasete` | `waza-ari awasete ippon` | `waza-ari awasete ippon` | `合わせ技一本` | `waza-ari awasete ippon` | `Waza-ari awasete Ippon` |
+| `judoMethodScore` | `decision` | `décision` | `優勢勝ち` | `decisión` | `Punktsieg` |
+| `judoMethodHansoku` | `hansoku-make` | `hansoku-make` | `反則勝ち` | `hansoku-make` | `Hansoku-make` |
+| `judoMethodFusen` | `fusen-gachi` | `fusen-gachi` | `不戦勝` | `fusen-gachi` | `Fusen-gachi` |
+| `judoMethodKiken` | `kiken-gachi` | `kiken-gachi` | `棄権勝ち` | `kiken-gachi` | `Kiken-gachi` |
+| `judoGolden` | `GS` | `GS` | `GS` | `GS` | `GS` |
+| `judoGoldenLong` | `golden score` | `golden score` | `ゴールデンスコア` | `golden score` | `Golden Score` |
+| `judoTime` | `{t}` | `{t}` | `{t}` | `{t}` | `{t}` |
+| `judoShidoOf` | `{name}: {n} shido` | `{name}␣: {n}␣shido` | `{name}：指導{n}` | `{name}: {n} shido` | `{name}: {n} Shido` |
+| `judoShidoShort` | `shido {a}–{b}` | `shido {a}–{b}` | `指導{a}–{b}` | `shido {a}–{b}` | `Shido {a}–{b}` |
+| `judoRepechage` | `Repechage` | `Repêchage` | `敗者復活戦` | `Repesca` | `Hoffnungsrunde` |
+| `judoBronze` | `Bronze medal contest` | `Combat pour la médaille de bronze` | `銅メダル決定戦` | `Combate por la medalla de bronce` | `Kampf um Bronze` |
+| `judoRepechageBronze` | `Repechage and bronze medal contests` | `Repêchages et combats pour la médaille de bronze` | `敗者復活戦と銅メダル決定戦` | `Repesca y combates por la medalla de bronce` | `Hoffnungsrunde und Kämpfe um Bronze` |
+| `judoWhite` | `white` | `blanc` | `白` | `blanco` | `weiß` |
+| `judoBlue` | `blue` | `bleu` | `青` | `azul` | `blau` |
+| `judoWeightClass` | `{sex} -{w} kg` | `{sex} -{w}␣kg` | `{sex}{w}kg級` | `{sex} -{w} kg` | `{sex} -{w} kg` |
+| `judoWeightOver` | `{sex} +{w} kg` | `{sex} +{w}␣kg` | `{sex}{w}kg超級` | `{sex} +{w} kg` | `{sex} +{w} kg` |
+| `judoMen` | `Men` | `Hommes` | `男子` | `Hombres` | `Herren` |
+| `judoWomen` | `Women` | `Femmes` | `女子` | `Mujeres` | `Damen` |
 
 Holes in a phrase are filled in (`{n}`, `{a}`, `{b}`, `{sa}`, `{sb}`, `{w}`, `{name}`, `{round}`, `{tie}`, `{notes}`); `␣` stands for a no-break space (the French writes one before a colon).

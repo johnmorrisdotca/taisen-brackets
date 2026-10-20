@@ -1,14 +1,15 @@
 // Writes demo/flags-data.js: the round flags the demo draws, taken from @johnmorrisdotca/hata (a development dependency of
 // the demo only; the package itself has no dependency on it), and the Commons credit of each. The flags are those of the nations in
-// the World Cup data of 2022 and 2026 (demo/data/), by the ISO 3166 code that data gives each. Run `pnpm flags` after the data changes.
+// the World Cup data of 2022 and 2026 and of the made-up judo tournament (demo/data/), by their ISO 3166 code. Run `pnpm flags` after the data changes.
 import { writeFileSync } from "node:fs";
 import process from "node:process";
 import { flag } from "@johnmorrisdotca/hata/load";
 import { manifest } from "@johnmorrisdotca/hata/manifest";
 import { WORLD_CUPS } from "../demo/data/worldcup-1938-2022.js";
 import { WORLD_CUP_2026 } from "../demo/data/worldcup-2026.js";
+import { JUDO_SAMPLE } from "../demo/data/judo-sample.js";
 
-const codes = [...new Set([...WORLD_CUPS.wc2022, ...WORLD_CUP_2026.matches].flatMap((m) => [m.home_flag, m.away_flag]).filter(Boolean))].sort();
+const codes = [...new Set([...[...WORLD_CUPS.wc2022, ...WORLD_CUP_2026.matches].flatMap((m) => [m.home_flag, m.away_flag]), ...JUDO_SAMPLE.athletes.map((a) => a.flag)].filter(Boolean))].sort();
 const flags = {};
 const credits = {};
 for (const code of codes) {

@@ -2,6 +2,7 @@
 // scripts/fetch-demo-data.mjs into demo/data/ (their sources and terms are in NOTICE.md); this file only turns those rows into teams and matchups.
 // Two examples are made up and say so: the two-legged ties (the clubs do not exist) and the 32-team field.
 import { CFL_2024 } from "./data/cfl-2024.js";
+import { JUDO_SAMPLE } from "./data/judo-sample.js";
 import { MLB_2022 } from "./data/mlb-2022.js";
 import { MLS_2024 } from "./data/mls-2024.js";
 import { NBA_2024 } from "./data/nba-2024.js";
@@ -191,5 +192,20 @@ export function build(T, flags = {}) {
   const runs = (next) => { const a = 1 + Math.floor(next() * 9); let b = Math.floor(next() * 9); if (b === a) b += 1; return [a, b]; };
   const cupGroups = groupCup([["Northgate United", "Redcliff Rovers", "Bayport City", "Highmoor FC"], ["Ashford Athletic", "Seaview Town", "Ironvale SC", "Maplewood FC"], ["Stonebridge FC", "Lakeside Wanderers", "Fairhaven Albion", "Oakridge Rangers"], ["Crestfield Town", "Pinehurst FC", "Riverbend United", "Summerton City"]], goals, 2026);
   const softballGroups = groupCup([["Kestrel Bay", "Granite Coast", "Maple Ridge", "Harbour Point"], ["Cedar Falls", "Prairie Gold", "Lakeview", "Iron Hills"], ["Silver Creek", "Sunfield", "Westmont", "Northshore"]], runs, 77);
-  return { nhl2024, nba2024, nba2024playin, mlb2022, nfl2024, cfl2024, mls2024, nhl1984, wc2022, wc2026, wc1938, twoLegs, cupGroups, softballGroups };
+  // ----- Made up: a judo weight category of 16 athletes with the IJF's quarter-final repechage, every contest fought with the scores the rules allow (demo/data/judo-sample.js).
+  const judo66 = (() => {
+    const teams = JUDO_SAMPLE.athletes.map((a, i) => ({ ...a, abbr: a.name.split(" ").at(-1).slice(0, 3).toUpperCase(), seed: i + 1, ...(flags[a.flag] ? {} : { flag: undefined }) }));
+    let matchups = T.judoBracket(teams, { prefix: "J" }).matchups;
+    for (const [id, winner, won, lost, rest] of JUDO_SAMPLE.fights) {
+      matchups = T.advanceWinners(matchups);
+      const at = matchups.findIndex((m) => m.id === id);
+      const sides = matchups[at].sides.map((x) => (typeof x === "object" && x ? x.id : x));
+      const k = sides.indexOf(winner);
+      if (k < 0) throw new Error(`demo judo: ${winner} is not in ${id} (${sides.join(", ")})`);
+      const judo = { sides: k === 0 ? [won, lost] : [lost, won], ...rest };
+      matchups = matchups.map((m, i) => (i === at ? { ...m, judo, ...(rest.method === "fusen-gachi" || rest.method === "kiken-gachi" ? { winner } : {}) } : m));
+    }
+    return { teams, matchups: T.advanceWinners(matchups) };
+  })();
+  return { judo66, nhl2024, nba2024, nba2024playin, mlb2022, nfl2024, cfl2024, mls2024, nhl1984, wc2022, wc2026, wc1938, twoLegs, cupGroups, softballGroups };
 }

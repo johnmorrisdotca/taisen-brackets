@@ -80,6 +80,8 @@ try {
   await shoot("cfl-desk-light", "ex=cfl2024", { width: 1280, height: 900 });
   await shoot("mls-desk-light", "ex=mls2024", { width: 1280, height: 900 });
   await shoot("nhl1984-desk-light", "ex=nhl1984", { width: 1280, height: 900 });
+  await shoot("judo-desk-light", "ex=judo66", { width: 1280, height: 900 });
+  await shoot("judo-desk-dark", "ex=judo66", { width: 1280, height: 900, scheme: "dark" });
   // The road look's own pictures: the classic look beside it (it keeps its plain colour), a card, one team's path, and the road to the final in three sizes.
   await shoot("classic-desk-light", "ex=wc2022&look=classic&bg=plain", { width: 1280, height: 900 });
   await shoot("card-light", "ex=wc2022&size=card&bg=royal", { width: 1280, height: 900 });
