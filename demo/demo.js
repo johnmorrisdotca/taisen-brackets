@@ -110,17 +110,19 @@ function roadOptionsFor(example, size) {
 
 const defaultsFor = (example) => ({ ...DEFAULTS, ...own(example) });
 
-// ---- Play the games: a bracket that fills in game by game when the page opens (not for a reader who prefers reduced motion, nor for an address that names a game: `?game=9&play=0`), with Pause, Play again and a slider.
+// ---- Play the games: the page opens on the finished bracket and it stays still. It fills in game by game while the mouse is over it (a tap on a phone starts it and a tap stops it) and stops when the pointer leaves, or with Play,
+// Pause, Play again and the slider; a reader who prefers reduced motion is never played to unasked. An address that names a game opens at it: `?game=9&play=0`.
 // A change to the options, the language or the layout redraws the bracket as it stands and leaves the games coming in.
 const PLAYABLE = new Set(["nhl2024", "nhl1984", "nba2024", "mlb2022", "nfl2024", "cfl2024", "mls2024", "poster", "wc2022", "wc1938", "generic32"]);
 const reducedMotion = matchMedia("(prefers-reduced-motion: reduce)");
-/** How long each game shows, in milliseconds: 450, or what `?gap=` says (the tests slow it down). */
-const GAME_MS = Math.min(Math.max(Number(params.get("gap")) || 450, 150), 10000);
-const play = { ex: null, k: 0, total: 0, on: false, fromAddress: params.has("game") };
+/** How long each game shows, in milliseconds: 900, or what `?gap=` says (the tests change it). */
+const GAME_MS = Math.min(Math.max(Number(params.get("gap")) || 900, 150), 10000);
+/** `hover` is true while the games are playing because the pointer is over the bracket (so that leaving stops them); Play and a tap clear it. */
+const play = { ex: null, k: 0, total: 0, on: false, hover: false, fromAddress: params.has("game") };
 const playable = () => PLAYABLE.has(state.ex) && state.view === "bracket" && state.layout !== "groups" && state.layout !== "playin";
 /** The bracket as it stands after `play.k` games, or the whole of it when this one is not played out. */
 const dataNow = (example) => (playable() ? fillBracket(T, example.data, play.k).data : example.data);
-/** Called as a playable example is drawn: the first time for it (the page opening, or the visitor choosing it), the games start from the first. */
+/** Called as a playable example is drawn: the first time for it (the page opening, or the visitor choosing it), the bracket is whole and still, and the games start from the first when it is played. */
 function armPlay(example) {
   if (play.ex === state.ex) return;
   play.ex = state.ex;
@@ -130,15 +132,17 @@ function armPlay(example) {
     play.on = false;
     play.fromAddress = false;
   } else {
-    play.on = !reducedMotion.matches;
-    play.k = play.on ? 0 : play.total;
+    play.on = false;
+    play.k = play.total;
   }
+  play.hover = false;
 }
 function syncPlay() {
   const on = playable();
   $("playbar").hidden = !on;
   if (!on) return;
   $("play").textContent = play.on ? "Pause" : "Play";
+  $("stage").dataset.playing = String(play.on);
   $("play").setAttribute("aria-pressed", String(play.on));
   $("game").max = String(play.total);
   $("game").value = String(play.k);
@@ -179,15 +183,29 @@ function tick() {
   syncPlay();
 }
 setInterval(tick, GAME_MS);
-$("play").addEventListener("click", () => {
-  if (play.on) play.on = false;
-  else { if (play.k >= play.total) play.k = 0; play.on = true; }
+/** Starts the games (from the first when the bracket is whole) or holds them; `hover` says the pointer did it. */
+function setPlaying(on, hover) {
+  if (on && !play.on && play.k >= play.total) play.k = 0;
+  play.on = on;
+  play.hover = on && hover;
   paintBracket();
   syncPlay();
   syncPlayUrl();
+}
+$("play").addEventListener("click", () => setPlaying(!play.on, false));
+// The mouse: the games run while the pointer is over the bracket. A touch or a pen: a tap on the bracket plays or pauses it (a mouse click does nothing, so a link on a box opens as it should).
+const stageEl = $("stage");
+let lastPointer = "mouse";
+stageEl.addEventListener("pointerdown", (event) => { lastPointer = event.pointerType; });
+stageEl.addEventListener("pointerenter", (event) => { if (event.pointerType === "mouse" && playable() && !reducedMotion.matches && !play.on) setPlaying(true, true); });
+stageEl.addEventListener("pointerleave", (event) => { if (event.pointerType === "mouse" && play.hover && play.on) setPlaying(false, false); });
+stageEl.addEventListener("click", (event) => {
+  if (lastPointer === "mouse" || !playable() || event.target.closest?.("a")) return;
+  setPlaying(!play.on, false);
 });
 $("restart").addEventListener("click", () => {
   play.k = 0;
+  play.hover = false;
   play.on = true;
   paintBracket();
   syncPlay();
@@ -216,7 +234,7 @@ function draw() {
   stage.dataset.size = size;
   stage.dataset.lang = state.lang;
   stage.dataset.view = state.view;
-  $("note").textContent = road ? `The road to the final, drawn from the same tournament as the bracket: the two sides of the final, the ties each played on the way, and the score between their flags. ${example.note}` : example.note;
+  $("note").textContent = road ? `The road to the final, drawn from the same tournament as the bracket: the two sides of the final, the ties each played on the way, and the score between their flags. ${example.note}` : `${example.note}${playable() ? " Hover over the bracket to watch the games come in (tap it on a phone)." : ""}`;
   $("table").innerHTML = road ? chart.table() : T.bracketTable(example.data, { roundNames: options.roundNames, locale: state.lang, teamName });
   const shown = { ...options };
   delete shown.teamName;

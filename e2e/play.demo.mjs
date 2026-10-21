@@ -1,4 +1,4 @@
-// The demo's first screen, played in a real browser: the World Cup bracket fills in game by game, with its play bar in view on a phone and on a desk, and a change to an option leaves the games coming in.
+// The demo's first screen, played in a real browser: the World Cup bracket opens whole and still, with its play bar in view on a phone and on a desk; the games come in while the mouse is over the bracket (a tap on a touch screen), stop when it leaves, and Play, Pause and a change to an option work as before.
 import { expect, test } from "@playwright/test";
 
 const played = async (page) => Number((await page.locator('[data-testid="game-out"]').textContent()).split(" of ")[0]);
@@ -12,20 +12,59 @@ const inView = (page, selector) =>
 test.describe("a reader who has not asked for less motion", () => {
   test.use({ reducedMotion: "no-preference" });
 
-  test("the page opens on the bracket and its play bar, in the first screen, and the games come in by themselves", async ({ page }) => {
+  test("the page opens on the whole bracket and its play bar, in the first screen, and nothing moves until the pointer is over it", async ({ page }) => {
     await page.goto("/");
     await expect(page.locator("#stage > svg")).toBeVisible();
     expect(await inView(page, '[data-testid="playbar"]')).toBe(true);
     expect(await inView(page, "#stage > svg")).toBe(true);
-    await expect(page.locator('[data-testid="play"]')).toHaveAttribute("aria-pressed", "true");
-    await expect.poll(() => played(page), { timeout: 8000 }).toBeGreaterThan(0);
-    // The address says nothing about it while it plays: a reload starts the games again.
+    await expect(page.locator('[data-testid="play"]')).toHaveAttribute("aria-pressed", "false");
+    await expect(page.locator('[data-testid="play"]')).toHaveText("Play");
+    expect(await played(page)).toBe(16);
+    await page.waitForTimeout(1500);
+    expect(await played(page)).toBe(16);
     expect(page.url()).not.toMatch(/game=|play=/);
   });
 
-  test("changing the options while it plays leaves the games coming in", async ({ page }) => {
-    await page.goto("/");
+  test("the games come in while the mouse is over the bracket and stop where it leaves", async ({ page, hasTouch }) => {
+    test.skip(hasTouch, "a touch screen has no pointer to hover with: the tap test covers it");
+    await page.goto("/?gap=300");
     await expect(page.locator("#stage > svg")).toBeVisible();
+    await page.locator("#stage").hover();
+    // It starts from the first game, not from the end.
+    await expect.poll(() => played(page), { timeout: 8000 }).toBeLessThan(16);
+    await expect(page.locator('[data-testid="play"]')).toHaveAttribute("aria-pressed", "true");
+    await expect.poll(() => played(page), { timeout: 8000 }).toBeGreaterThan(1);
+    await page.mouse.move(2, 2);
+    await expect(page.locator('[data-testid="play"]')).toHaveAttribute("aria-pressed", "false");
+    const stopped = await played(page);
+    await page.waitForTimeout(1000);
+    expect(await played(page)).toBe(stopped);
+    await expect(page).toHaveURL(new RegExp(`game=${stopped}`));
+    // Over it again, and it carries on from where it stopped.
+    await page.locator("#stage").hover();
+    await expect.poll(() => played(page), { timeout: 8000 }).toBeGreaterThan(stopped);
+  });
+
+  test("a tap on the bracket plays it and a second tap holds it", async ({ page, hasTouch }) => {
+    test.skip(!hasTouch, "needs a touch screen");
+    await page.goto("/?gap=300");
+    await expect(page.locator("#stage > svg")).toBeVisible();
+    await page.locator("#stage").tap();
+    await expect(page.locator('[data-testid="play"]')).toHaveAttribute("aria-pressed", "true");
+    await expect.poll(() => played(page), { timeout: 8000 }).toBeGreaterThan(1);
+    await page.locator("#stage").tap();
+    await expect(page.locator('[data-testid="play"]')).toHaveAttribute("aria-pressed", "false");
+    const stopped = await played(page);
+    await page.waitForTimeout(1000);
+    expect(await played(page)).toBe(stopped);
+  });
+
+  test("changing the options while it plays leaves the games coming in", async ({ page }) => {
+    await page.goto("/?gap=300");
+    await expect(page.locator("#stage > svg")).toBeVisible();
+    // Play holds on when the pointer goes off the bracket to the options, which hovering would not.
+    await page.locator('[data-testid="play"]').click();
+    await expect.poll(() => played(page), { timeout: 8000 }).toBeLessThan(16);
     await expect.poll(() => played(page), { timeout: 8000 }).toBeGreaterThan(0);
     // A look, the style and a toggle are changed one after the other, and the count keeps rising after each (the bar stays pinned, and the bracket keeps its place on the page).
     for (const choose of [
@@ -63,10 +102,12 @@ test.describe("a reader who has not asked for less motion", () => {
     await expect(page.locator("#stage .tb-champ")).toHaveCount(0);
   });
 
-  test("another sport opens its own games from the first, and a sport that is not played out hides the bar", async ({ page }) => {
-    await page.goto("/");
+  test("another sport opens whole and still, plays from its first game, and a sport that is not played out hides the bar", async ({ page }) => {
+    await page.goto("/?gap=300");
     await page.locator("#sport").getByRole("button", { name: "NBA", exact: true }).click();
     await expect(page.locator('[data-testid="playbar"]')).toBeVisible();
+    await expect(page.locator('[data-testid="play"]')).toHaveAttribute("aria-pressed", "false");
+    await page.locator('[data-testid="play"]').click();
     await expect.poll(() => played(page), { timeout: 8000 }).toBeGreaterThan(0);
     await page.locator("#sport").getByRole("button", { name: "Judo", exact: true }).click();
     await expect(page.locator('[data-testid="playbar"]')).toBeHidden();
@@ -86,4 +127,18 @@ test("an address that names a game opens paused at it, and a reader who prefers 
   expect(await played(page)).toBe(16);
   await expect(page.locator('[data-testid="play"]')).toHaveAttribute("aria-pressed", "false");
   await expect(page.locator('[data-testid="play"]')).toHaveText("Play");
+});
+
+test("a reader who prefers reduced motion is not played to by the pointer, and Play still works", async ({ page, hasTouch }) => {
+  await page.goto("/?gap=300");
+  await expect(page.locator("#stage > svg")).toBeVisible();
+  if (!hasTouch) {
+    await page.locator("#stage").hover();
+    await page.waitForTimeout(1000);
+    expect(await played(page)).toBe(16);
+    await page.mouse.move(2, 2);
+  }
+  await page.locator('[data-testid="play"]').click();
+  await expect(page.locator('[data-testid="play"]')).toHaveAttribute("aria-pressed", "true");
+  await expect.poll(() => played(page), { timeout: 8000 }).toBeGreaterThan(0);
 });
