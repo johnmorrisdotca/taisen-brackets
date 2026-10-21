@@ -6,6 +6,16 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.17.4] - 2026-10-21
+
+The pictures are slower and no longer first; the demo waits for the pointer. No change to the package's code beyond its version.
+
+### Changed
+
+- **README: it opens on the still bracket again** (the 2022 World Cup knockout, as before 0.17.3). The moving pictures sit lower, one in its own section ("A bracket filling in, game by game", the judo scoreboard, the ranking list, the medal table), never stacked.
+- **The moving pictures run at half the speed.** `pnpm animations` keeps each step twice as long (`SLOW=2`, `SLOW=1` for the old pace); the webp files are the same size.
+- **Demo: the bracket opens whole and still.** The games come in while the mouse is over the bracket (from the first game, carrying on from where it stopped the next time) and stop when the pointer leaves; on a phone a tap on the bracket plays it and a second tap holds it. Play, Pause, Play again and the slider work as before, and Play keeps playing when the pointer leaves. A game now shows for 900 ms (`?gap=` still sets it). A reader who prefers reduced motion is never played to by the pointer. The addresses `game` and `play=0` work as before.
+
 ## [0.17.3] - 2026-10-20
 
 The npm page and the demo open on the best of it, in motion. No change to the package's code beyond its version.

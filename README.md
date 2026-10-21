@@ -15,14 +15,25 @@ Give it the games, series, two-legged ties or replays of a tournament and it wor
 
 <p align="center">
 <picture>
-<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-fill-dark.webp">
-<img alt="The 2022 World Cup knockout filling in game by game: sixteen teams in two halves on a pitch, the round of 16 results coming in one after another, then the quarter-finals and the semi-finals, and at the end the final and the third-place match, with Argentina's round flag, a trophy and the word Champion in the centre." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-fill-light.webp" width="760">
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-dark.webp">
+<img alt="The 2022 World Cup knockout: two halves of eight teams meeting at the final in the centre, with Argentina's round flag and the word Champion above it and the third-place match below. Each box has both teams' round flags, abbreviations and scores, with penalties in brackets." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-desk-light.webp" width="720">
 </picture>
 </p>
 
 ## The best of it
 
-The pictures above and below are drawn by the package from the demo's own data and made by `pnpm animations` and `pnpm images`; the demo opens on the same bracket filling in, with its options beside it. Brackets of every sport and layout are in [Every sport](./docs/every-sport.md) and [Layouts](./docs/layouts.md).
+The moving pictures below are drawn by the package from the demo's own data and made by `pnpm animations` (slowly, a step at a time) and `pnpm images`. In the demo they stand still until the pointer is over them (a tap on a phone) and Play and Pause work as well. Brackets of every sport and layout are in [Every sport](./docs/every-sport.md) and [Layouts](./docs/layouts.md).
+
+### A bracket filling in, game by game
+
+<p align="center">
+<picture>
+<source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-fill-dark.webp">
+<img alt="The 2022 World Cup knockout filling in game by game: sixteen teams in two halves on a pitch, the round of 16 results coming in one after another, then the quarter-finals and the semi-finals, and at the end the final and the third-place match, with Argentina's round flag, a trophy and the word Champion in the centre." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/hero-fill-light.webp" width="760">
+</picture>
+</p>
+
+The same `drawBracket` call, drawn again after each game with the ties not yet played empty and the feeding tie named; the demo opens on the finished bracket and plays it from the first game when the pointer is over it.
 
 ### Judo: the scoreboard, flip cards and the mat queue
 

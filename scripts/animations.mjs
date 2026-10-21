@@ -7,6 +7,7 @@
 //   ONLY=hero-fill node scripts/animations.mjs   one scene (hero-fill, judo-flip, ranking-live, medals-live), both twins
 //   IMAGES_OUT=dir                               writes somewhere else than docs/images
 //   QUALITY=80                                   the webp quality
+//   SLOW=2                                       how many times longer than a scene says each step stays (2: half the speed, which is how the README's pictures are made)
 //   FRAMES_OUT=dir                               also keeps every step as a png there, to look at
 //
 // It serves the demo on port 7103, or TEST_PORT (this package's own block, tests and tools from 7101 up), and stops the server it started.
@@ -22,6 +23,7 @@ const root = fileURLToPath(new URL("..", import.meta.url));
 const out = process.env.IMAGES_OUT ?? `${root}docs/images`;
 const only = process.env.ONLY ? process.env.ONLY.split(",") : null;
 const quality = Number(process.env.QUALITY ?? 80);
+const slow = Number(process.env.SLOW ?? 2);
 const port = Number(process.env.TEST_PORT ?? 7103);
 const framesOut = process.env.FRAMES_OUT ?? null;
 const MAX_BYTES = 1.5 * 1024 * 1024;
@@ -152,7 +154,7 @@ try {
         await page.evaluate((n) => globalThis.paint(n), i);
         const file = join(dir, `${String(i).padStart(3, "0")}.png`);
         writeFileSync(file, await (await page.$("#scene")).screenshot({ type: "png" }));
-        args.push("-d", String(info.delays[i]), file);
+        args.push("-d", String(Math.round(info.delays[i] * slow)), file);
         if (framesOut) { mkdirSync(framesOut, { recursive: true }); copyFileSync(file, join(framesOut, `${scene.name}-${scheme}-${String(i).padStart(2, "0")}.png`)); }
       }
       const target = join(out, `${scene.name}-${scheme}.webp`);
