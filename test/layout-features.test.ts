@@ -55,7 +55,7 @@ test("the default layout is the tree, drawn exactly as before, and an unknown la
   const ex = data.wc2022;
   assert.equal(T.drawBracket(ex, { layout: "tree" }), T.drawBracket(ex));
   assert.throws(() => T.drawBracket(ex, { layout: "pyramid" as LayoutName }), /unknown layout "pyramid"/);
-  assert.deepEqual([...T.LAYOUTS], ["tree", "rows", "shields", "update", "columns", "playin", "series", "groups"]);
+  assert.deepEqual([...T.LAYOUTS], ["tree", "rows", "shields", "update", "columns", "playin", "series", "groups", "picture"]);
   assert.throws(() => T.drawBracket(ex, { layout: "playin" }), /play-in games/);
   assert.throws(() => T.drawBracket({ matchups: [] }, { layout: "groups" }), /round-robin/);
 });

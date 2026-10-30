@@ -58,7 +58,7 @@ export function drawEmblem(id: string, size: number, o: Pick<DrawOptions, "emble
 }
 
 /** Readable text on a team colour: white on a dark one, near-black on a light one; `null` when the colour is not a hex one this can read. */
-function inkOn(color: string): string | null {
+export function inkOn(color: string): string | null {
   const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(color.trim())?.[1];
   if (!hex) return null;
   const full = hex.length === 3 ? [...hex].map((c) => c + c).join("") : hex;
@@ -92,6 +92,10 @@ export interface MarkContext {
   theme?: FlagRequest["theme"];
   /** The flags already asked for, by code, shape and size, so that a renderer is called once for each. */
   flagCache?: Map<string, { viewBox: string; inner: string } | null>;
+  /** The `picture` layout: a team is drawn as a logo tile, the champion too. */
+  tiles?: boolean;
+  /** `false` leaves out the ring drawn round a logo or flag (the `picture` layout's tiles have their own edge). Default true. */
+  ring?: boolean;
   /** Other `<defs>` the drawing's shapes need (the shields' clip), each written once under its id. */
   defs?: Map<string, string>;
 }
@@ -135,6 +139,21 @@ export function markDefs(ctx: MarkContext): string {
 /** The id of the circular clip for a radius. */
 export const clipId = (prefix: string, r: number) => `${prefix}-c${String(num(r)).replace(".", "_")}`;
 
+/** Whether a team has a picture to draw (a flag, a logo or a flag address that can be used), as opposed to being its initials on a colour. */
+export function hasPicture(team: Team | null, size: number, ctx: MarkContext): boolean {
+  if (!team) return false;
+  if (flagOf(team.flag, size, ctx)) return true;
+  if (typeof ctx.flagHref === "function" && typeof team.flag === "string" && team.flag.trim() !== "") {
+    try {
+      const href: unknown = ctx.flagHref(team.flag.trim());
+      if (typeof href === "string" && !href.trim().startsWith("<") && safeUrl(href)) return true;
+    } catch { /* No address for this flag. */ }
+  }
+  const mark = team.mark?.trim();
+  if (!mark) return false;
+  return mark.startsWith("<") ? cleanSvg(mark) !== null : safeUrl(mark);
+}
+
 /**
  * A team's mark centred at (cx, cy), `size` across. A logo or flag is clipped to a circle (or left square); a team
  * with no mark, or one that cannot be used, is its initials on a plain disc. Returns SVG text.
@@ -151,7 +170,7 @@ export function drawMark(team: Team | null, cx: number, cy: number, size: number
   const road = ctx.look === "road";
   const rw = Math.max(r * 0.09, 0.5);
   const hair = num(Math.max(rw * 0.3, 0.3));
-  const ring = road
+  const ring = ctx.ring === false ? "" : road
     ? clip
       ? `<circle class="tb-ring tb-ring-r" cx="${num(cx)}" cy="${num(cy)}" r="${num(r - rw / 2)}" stroke-width="${num(rw)}"/><circle class="tb-edge" cx="${num(cx)}" cy="${num(cy)}" r="${num(r)}" stroke-width="${hair}"/>`
       : `<rect class="tb-ring tb-ring-r" x="${num(x + rw / 2)}" y="${num(y + rw / 2)}" width="${num(size - rw)}" height="${num(size - rw)}" rx="2" stroke-width="${num(rw)}"/><rect class="tb-edge" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="2" stroke-width="${hair}"/>`

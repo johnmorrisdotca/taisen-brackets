@@ -1,13 +1,13 @@
 // The boxes of the layouts that draw a tie their own way (`rows`, `shields`, `update`, `columns`, `series`). The tree's planner (render.ts) places each box, its lines and the names of the rounds;
 // these functions fill one box: every mark, text and slot they write lies inside the rectangle they are given, which a test holds for every layout, size and look.
-import type { DrawOptions, Place, Tie } from "./types.ts";
-import type { Voice } from "./locales.ts";
+import type { DrawOptions, Place, Team, Tie } from "./types.ts";
+import { fill, type Voice } from "./locales.ts";
 import { abbrOf } from "./matchup.ts";
 import { sideScore } from "./judo-text.ts";
-import { drawMark, type MarkContext } from "./marks.ts";
+import { drawMark, hasPicture, inkOn, type MarkContext } from "./marks.ts";
 import { emWidth, esc, fit, num } from "./text.ts";
 
-export type VariantKind = "rows" | "shields" | "update" | "columns" | "series";
+export type VariantKind = "rows" | "shields" | "update" | "columns" | "series" | "picture";
 
 /** What one box is drawn from. */
 export interface PaintEnv {
@@ -31,6 +31,8 @@ export interface PaintEnv {
   /** A team's three letters under its mark where a box is marks alone. */
   codes: boolean;
   scoresOn: boolean;
+  /** The sides that skipped the earlier rounds. */
+  byes: readonly (0 | 1)[];
   v: Voice;
   ctx: MarkContext;
   o: DrawOptions;
@@ -74,13 +76,14 @@ function shieldClip(ctx: MarkContext): string {
 /** The parts of one box, after its own `<rect class="tb-box">`. */
 export function paintVariant(e: PaintEnv): string[] {
   // A box too narrow for a mark and a slot is its two marks stacked with their codes and scores, as the shields are.
-  if (e.w < 72 && e.kind !== "shields") return shields(e);
+  if (e.w < 72 && e.kind !== "shields" && e.kind !== "picture") return shields(e);
   switch (e.kind) {
     case "rows": return rows(e);
     case "shields": return shields(e);
     case "update": return update(e);
     case "columns": return columns(e);
     case "series": return series(e);
+    case "picture": return picture(e);
   }
 }
 
@@ -401,5 +404,168 @@ function columns(e: PaintEnv): string[] {
   const tcx = sideBySide ? slots[0].x + slots[0].w + (slots[1].x - slots[0].x - slots[0].w) / 2 : x + w / 2;
   const tcy = sideBySide ? y + h / 2 : slots[0].y + slots[0].h + (slots[1].y - slots[0].y - slots[0].h) / 2;
   out.push(`<rect class="tb-atag" x="${num(tcx - tagW / 2)}" y="${num(tcy - tagH / 2)}" width="${num(tagW)}" height="${num(tagH)}" rx="${num(tagH / 2)}"/><text class="tb-atag-t" x="${num(tcx)}" y="${num(tcy + tf * 0.35)}" font-size="${tf}" font-weight="800" letter-spacing=".08em" text-anchor="middle">${esc(tagText)}</text>`);
+  return out;
+}
+
+// ---------------------------------------------------------------------------------------------- picture
+
+/** The size of a logo tile in a box of the picture layout: the pair stacked (the first rounds), side by side (a tall page, by the box's width), or the two finalists either side of the result. */
+export function pictureTileSize(w: number, h: number, mode: "stack" | "row" | "final"): number {
+  if (mode === "stack") return Math.min(h / 2 - 4, 60, w * 0.4);
+  if (mode === "row") return Math.min(w / 2 - 4, 56, h - 34);
+  return clamp(Math.min(h - 10, w * 0.3), 20, 64);
+}
+
+/** The edge a final's tile keeps from its box's side. */
+export const PICTURE_FINAL_PAD = 6;
+
+/**
+ * A club's logo tile centred at (cx, cy), `size` across: a rounded square in the look's box colour with the club's logo or flag in it, or, for a club with none (or with `markShape: "none"`), its three letters
+ * on its own colour, so that a club without a picture still looks meant. A club not known yet is an empty tile.
+ */
+export function pictureTile(team: Team | null, cx: number, cy: number, size: number, v: Voice, ctx: MarkContext): string {
+  const x = cx - size / 2, y = cy - size / 2;
+  const rx = size * 0.2;
+  const rect = (cls: string, style = "") => `<rect class="${cls}" x="${num(x)}" y="${num(y)}" width="${num(size)}" height="${num(size)}" rx="${num(rx)}"${style}/>`;
+  if (!team) return rect("tb-ptile tb-pempty");
+  if (ctx.shape !== "none" && hasPicture(team, size, ctx)) {
+    const inner = size * 0.78;
+    const on: MarkContext = { ...ctx, shape: ctx.shape === "round" ? "round" : "square", look: "classic", ring: false };
+    return `${rect("tb-ptile")}${drawMark(team, cx, cy, inner, on, abbrOf(team, v))}`;
+  }
+  const text = abbrOf(team, v).slice(0, 3);
+  const ink = team.color ? inkOn(team.color) : null;
+  const letters = [...text].length;
+  return `${rect("tb-ptile tb-pplain", team.color ? ` style="fill:${esc(team.color)}"` : "")}<text class="tb-initials" x="${num(cx)}" y="${num(cy + size * 0.13)}" font-size="${num(size * (letters <= 2 ? 0.4 : 0.31))}" font-weight="800" letter-spacing=".02em" text-anchor="middle"${ink ? ` style="fill:${ink}"` : ""}>${esc(text)}</text>`;
+}
+
+/** One line of a result; `tail` is a smaller, quieter ending (a shoot-out's score). */
+interface PLine { text: string; size: number; cls: string; tail?: string }
+
+/** What a pair's result may say, fullest first: "CLE wins 3–2" on one line, on two, smaller, the score alone, nothing. Each is a list of lines. */
+function pictureCandidates(e: PaintEnv): PLine[][] {
+  const { tie, v } = e;
+  const win = tie.winner;
+  const hasScore = e.scoresOn && tie.result.score !== null;
+  const score = (a: 0 | 1, b: 0 | 1): string => v.words.scoreText.replace("{a}", sideScore(tie, a, v)).replace("{b}", sideScore(tie, b, v));
+  const muted = "tb-pscore tb-muted";
+  // Not decided: the score so far, in the order the pair is drawn.
+  if (win === null) return hasScore ? [[{ text: score(e.order[0], e.order[1]), size: 12, cls: muted }], [{ text: score(e.order[0], e.order[1]), size: 10, cls: muted }], []] : [[]];
+  const team = tie.sides[win];
+  const code = team ? abbrOf(team, v) : "";
+  const other = (1 - win) as 0 | 1;
+  const pens = e.scoresOn && tie.result.pens ? `(${v.number(tie.result.pens[win])}–${v.number(tie.result.pens[other])})` : "";
+  if (!hasScore) {
+    const line = fill(v.words.winnerIs, { name: code });
+    return [[{ text: line, size: 11, cls: "tb-pres" }], [{ text: line, size: 9.5, cls: "tb-pres" }], []];
+  }
+  const s = score(win, other);
+  const tpl = v.words.pictureWins;
+  const at = tpl.indexOf("{score}");
+  const splits = at >= 0 && tpl.slice(at + 7).trim() === "";
+  const one = (size: number): PLine => ({ text: fill(tpl, { team: code, score: s }), size, cls: "tb-pres", ...(pens ? { tail: pens } : {}) });
+  const out: PLine[][] = [[one(11)]];
+  if (splits) {
+    const head = fill(tpl.slice(0, at), { team: code }).trim();
+    for (const [hs, ss] of [[11, 13], [9.5, 11.5]] as const) {
+      out.push([{ text: head, size: hs, cls: "tb-pres" }, { text: s, size: ss, cls: "tb-pscore", ...(pens ? { tail: pens } : {}) }]);
+    }
+  } else out.push([one(9.5)]);
+  out.push([{ text: s, size: 13, cls: "tb-pscore", ...(pens ? { tail: pens } : {}) }], [{ text: s, size: 10, cls: "tb-pscore", ...(pens ? { tail: pens } : {}) }], []);
+  return out;
+}
+
+const blockHeight = (lines: PLine[]): number => lines.reduce((sum, l) => sum + l.size * 1.2, 0);
+const lineWidth = (l: PLine): number => bw(l.text, l.size) + (l.tail ? bw(l.tail, l.size * 0.72) + 3 : 0);
+const blockWidth = (lines: PLine[]): number => Math.max(0, ...lines.map(lineWidth));
+
+/** The lines of a result, stacked and centred on (cx, cy). */
+function pictureText(lines: PLine[], cx: number, cy: number): string[] {
+  let top = cy - blockHeight(lines) / 2;
+  return lines.map((l) => {
+    const baseline = top + l.size * 0.88;
+    top += l.size * 1.2;
+    const tail = l.tail ? `<tspan class="tb-muted" dx="3" font-size="${num(l.size * 0.72)}" font-weight="600">${esc(l.tail)}</tspan>` : "";
+    return `<text class="${l.cls}" x="${num(cx)}" y="${num(baseline)}" font-size="${num(l.size)}" text-anchor="middle" font-variant-numeric="tabular-nums">${esc(l.text)}${tail}</text>`;
+  });
+}
+
+/** A seed badge on a tile's top corner (the outer one), where the tile is large enough to carry it. */
+function pictureSeed(text: string, tx: number, ty: number, size: number, outerLeft: boolean): string {
+  if (!text || size < 26) return "";
+  const f = clamp(size * 0.2, 7, 9.5);
+  const bwid = Math.max(bw(text, f) + 6, f + 5);
+  const bh = f + 4;
+  const bx = outerLeft ? tx + 2 : tx + size - 2 - bwid;
+  return `<rect class="tb-tagbox tb-pbadge" x="${num(bx)}" y="${num(ty + 2)}" width="${num(bwid)}" height="${num(bh)}" rx="${num(bh / 2)}"/><text class="tb-tag tb-pseed" x="${num(bx + bwid / 2)}" y="${num(ty + 2 + bh / 2 + f * 0.35)}" font-size="${num(f)}" text-anchor="middle">${esc(text)}</text>`;
+}
+
+/**
+ * The postseason picture's box. A pair of the first rounds is two logo tiles one over the other at the box's outer edge, the result ("CLE wins 3–2", on two lines where the box is narrow) beside them and a
+ * bracket joining the two toward the next round; the final is its two finalists either side of the result; on a tall page a pair is two tiles side by side with the result under them. A seed is a badge on
+ * the tile's corner. Where the box is too small for tiles, the shields' marks stand in.
+ */
+function picture(e: PaintEnv): string[] {
+  const { x, y, w, h, tie, v, ctx } = e;
+  const mode = e.final ? "final" : e.vertical ? "row" : "stack";
+  const size = pictureTileSize(w, h, mode);
+  if (size < 14 || w < 44) return shields(e);
+  const out: string[] = [];
+  // On a tall page every pair says it the same way, on two lines, so that a row of them reads evenly; the one-line form is for a wide box.
+  const all = pictureCandidates(e);
+  const cands = mode === "row" && all.length > 2 && all[0].length === 1 && all[1].length >= 2 ? [...all.slice(1, -3), all[0], ...all.slice(-3)] : all;
+  const tagOfSide = (k: 0 | 1) => (e.tags ? e.tagOf(tie, k) : "");
+  const haveLine = (extra: string) => `<path class="tb-line" d="${extra}" fill="none"${e.o.theme === "none" ? ' stroke="currentColor" stroke-opacity=".5"' : ""}/>`;
+  const side = (k: 0 | 1, cx: number, cy: number, outerLeft: boolean, rect: [number, number, number, number]) => {
+    const team = tie.sides[k];
+    const left = cx - size / 2, top = cy - size / 2;
+    out.push(e.link(k, `<g class="${e.cls(k)}">${pictureTile(team, cx, cy, size, v, ctx)}${pictureSeed(tagOfSide(k), left, top, size, outerLeft)}</g>`, ...rect));
+  };
+  if (mode === "stack") {
+    const toRight = e.side !== "r";
+    const padO = 5, padI = 7, gapX = 6;
+    const tileLeft = toRight ? x + padO : x + w - padO - size;
+    const innerEdge = toRight ? tileLeft + size : tileLeft;
+    const roomOf = (lines: PLine[]) => (lines.length ? w - padO - size - gapX - blockWidth(lines) - padI : 0);
+    // The fullest result that fits beside the tiles and clear of the bracket's two arms.
+    const arm = h / 4;
+    const lines = cands.find((c) => (c.length === 0 || (roomOf(c) >= 0 && blockHeight(c) / 2 <= arm - 4))) ?? [];
+    const region0 = toRight ? innerEdge + gapX : x + padI;
+    const region1 = toRight ? x + w - padI : innerEdge - gapX;
+    const cx = (region0 + region1) / 2;
+    const cyT = y + h / 4, cyB = y + (3 * h) / 4;
+    e.order.forEach((k, n) => side(k, tileLeft + size / 2, n === 0 ? cyT : cyB, toRight, [x, y + (n * h) / 2, w, h / 2]));
+    const bx = toRight ? x + w : x;
+    if (e.side === "l" || e.side === "r") out.push(haveLine(`M${num(innerEdge)} ${num(cyT)}H${num(bx)}V${num(cyB)}H${num(innerEdge)}`));
+    out.push(...pictureText(lines, cx, y + h / 2));
+    // A side that skipped the earlier rounds says so beside its tile, where the result leaves room.
+    for (const k of e.byes.length === 1 ? e.byes : []) {
+      const n = e.order.indexOf(k);
+      const word = v.words.bye;
+      const fw = bw(word, 9);
+      if (region1 - region0 >= fw + 2 && arm - 4 >= blockHeight(lines) / 2 + 5) out.push(`<text class="tb-muted tb-pbye" x="${num(cx)}" y="${num((n === 0 ? cyT : cyB) - 3)}" font-size="9" font-style="italic" text-anchor="middle">${esc(word)}</text>`);
+    }
+    return out;
+  }
+  if (mode === "final") {
+    const pad = PICTURE_FINAL_PAD;
+    const left = x + pad, right = x + w - pad - size;
+    const cy = y + h / 2;
+    const lines = cands.find((c) => c.length === 0 || w - 2 * pad - 2 * size - 2 * 6 - blockWidth(c) >= 0) ?? [];
+    e.order.forEach((k, n) => side(k, (n === 0 ? left : right) + size / 2, cy, n === 0, [n === 0 ? x : x + w / 2, y, w / 2, h]));
+    const mid = x + w / 2;
+    if (lines.length > 0) out.push(...pictureText(lines, mid, cy));
+    else if (tie.winner === null && w - 2 * pad - 2 * size >= bw(v.words.vs, 11) + 8) out.push(`<text class="tb-vs" x="${num(mid)}" y="${num(cy + 4)}" font-size="11" text-anchor="middle">${esc(v.words.vs)}</text>`);
+    return out;
+  }
+  // A tall page: the two tiles side by side, the result under them (over them in the half that is the bottom of the page, which faces the final).
+  const flip = e.side === "r";
+  const gapY = 4, padY = 4;
+  const lines = cands.find((c) => c.length === 0 || (blockWidth(c) <= w - 6 && blockHeight(c) + gapY + size + 2 * padY <= h)) ?? [];
+  const tilesTop = flip ? y + h - padY - size : y + padY;
+  const textCy = flip ? tilesTop - gapY - blockHeight(lines) / 2 : tilesTop + size + gapY + blockHeight(lines) / 2;
+  const cyTiles = tilesTop + size / 2;
+  e.order.forEach((k, n) => side(k, x + (n === 0 ? w / 4 : (3 * w) / 4), cyTiles, n === 0, [x + (n * w) / 2, y, w / 2, h]));
+  if (lines.length) out.push(...pictureText(lines, x + w / 2, textCy));
   return out;
 }

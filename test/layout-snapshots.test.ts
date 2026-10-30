@@ -18,6 +18,7 @@ const CASES: [LayoutName, BracketInput, DrawOptions][] = [
   ["playin", data.nba2024playin, { look: "road", flags }],
   ["series", data.nba2024, { look: "classic", headers: true }],
   ["groups", data.cupGroups, { look: "road", qualify: 2 }],
+  ["picture", data.mlb2025, { look: "classic" }],
 ];
 
 for (const [layout, input, options] of CASES) {

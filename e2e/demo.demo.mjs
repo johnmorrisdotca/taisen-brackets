@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 
-const examples = ["nhl2024", "nhl1984", "nba2024", "nba2024playin", "mlb2022", "nfl2024", "cfl2024", "mls2024", "poster", "wc2022", "wc1938", "generic32", "twoLegs", "cupGroups", "softballGroups"];
+const examples = ["nhl2024", "nhl1984", "nba2024", "nba2024playin", "mlb2022", "mlb2025", "nfl2024", "cfl2024", "mls2024", "poster", "wc2022", "wc1938", "generic32", "twoLegs", "cupGroups", "softballGroups"];
 
 test("the demo draws a bracket and does not scroll sideways", async ({ page }) => {
   const errors = [];

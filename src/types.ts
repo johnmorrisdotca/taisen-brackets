@@ -294,6 +294,8 @@ export interface Words {
   tieScore: string;
   /** `{a}`, `{b}`: a score as written ("3–1"). */
   scoreText: string;
+  /** `{team}`, `{score}`: the result beside a pair in the `picture` layout: "CLE wins 3–2". */
+  pictureWins: string;
   /** `{name}`. */
   winnerIs: string;
   championIs: string;
@@ -550,13 +552,14 @@ export interface BackgroundImageOptions {
 }
 
 /** How the ties are drawn: `tree` (the default) is the bracket as ever; the others are other ways to draw the same ties. */
-export type LayoutName = "tree" | "rows" | "shields" | "update" | "columns" | "playin" | "series" | "groups";
+export type LayoutName = "tree" | "rows" | "shields" | "update" | "columns" | "playin" | "series" | "groups" | "picture";
 
 export interface DrawOptions extends LayoutOptions {
   /**
    * `tree` (the default): the halves meeting at the final. `rows`: each team a row, its name on the left and its mark on the right, a slot for the result toward the centre. `shields`: marks in shields with "vs",
    * the matchups on both sides of the trophy. `update`: a compact score-update card. `columns`: tall slots that grow toward the centre, the conferences in two colours, "VS" (or "AT") on a tag, big seed numbers.
    * `playin`: the play-in games with their winners and losers going on. `series`: a tall card, one line a series ("BOS 4-0 MIA"), the first half above and the second below. `groups`: the group-stage tables.
+   * `picture`: the postseason picture: the two halves mirrored toward the final, each club a logo tile with its seed, each series' result beside its pair ("CLE wins 3-2"), the round's name and its length ("Best of 5") under its column, the champion big in the middle.
    */
   layout?: LayoutName;
   /** Big title tiles (the halves' groups: West and East, AFC and NFC) over each half, in any layout: each half's `group` name in the colour of that half. Default false. */

@@ -4,6 +4,7 @@
 import { CFL_2024 } from "./data/cfl-2024.js";
 import { JUDO_SAMPLE } from "./data/judo-sample.js";
 import { MLB_2022 } from "./data/mlb-2022.js";
+import { MLB_2025 } from "./data/mlb-2025.js";
 import { MLS_2024 } from "./data/mls-2024.js";
 import { NBA_2024 } from "./data/nba-2024.js";
 import { NBA_2024_PLAYIN } from "./data/nba-2024-playin.js";
@@ -128,6 +129,8 @@ export function build(T, flags = {}) {
   };
   nhl2024.teams = nhl2024.teams.map((t) => (SEEDS_2024[t.name] ? { ...t, tag: SEEDS_2024[t.name] } : t));
   const mlb2022 = playoff(MLB_2022, { 2: 3, 3: 5, 4: 7 });
+  // 2025: the series as they ended, with each club's seed in its league (a seed is drawn on the club's tile in the postseason picture).
+  const mlb2025 = { teams: MLB_2025.teams, matchups: MLB_2025.series };
   const nba2024 = playoff(NBA_2024, { 4: 7 });
   // The NFL's and the CFL's rounds are single games: no `bestOf`, so a tie is a game and its score is drawn.
   const nfl2024 = playoff(NFL_2024, {});
@@ -207,5 +210,5 @@ export function build(T, flags = {}) {
     }
     return { teams, matchups: T.advanceWinners(matchups) };
   })();
-  return { judo66, nhl2024, nba2024, nba2024playin, mlb2022, nfl2024, cfl2024, mls2024, nhl1984, wc2022, wc2026, wc1938, twoLegs, cupGroups, softballGroups };
+  return { judo66, nhl2024, nba2024, nba2024playin, mlb2022, mlb2025, nfl2024, cfl2024, mls2024, nhl1984, wc2022, wc2026, wc1938, twoLegs, cupGroups, softballGroups };
 }

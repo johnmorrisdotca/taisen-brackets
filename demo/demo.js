@@ -15,12 +15,12 @@ const DEFAULTS = { size: "auto", theme: "auto", shape: "auto", look: "road", vie
 const TOGGLES = ["scores", "seeds", "champion", "third", "labels", "trophy", "path", "links", "codes", "vs", "headers", "at"];
 const GROUPS = ["size", "theme", "shape", "look", "view", "estyle", "layout"];
 /** The layouts that show the seeds unless asked not to, and the names the buttons carry. */
-const SEEDED = ["rows", "update", "series", "columns"];
-const LAYOUT_NAMES = { tree: "Tree", rows: "Rows", shields: "Shields", update: "Update", columns: "Columns", playin: "Play-in", series: "Series", groups: "Groups" };
+const SEEDED = ["rows", "update", "series", "columns", "picture"];
+const LAYOUT_NAMES = { tree: "Tree", rows: "Rows", shields: "Shields", update: "Update", columns: "Columns", playin: "Play-in", series: "Series", groups: "Groups", picture: "Picture" };
 /** The examples whose tournament has no road to the final to draw. */
 const NO_ROAD = new Set(["cupGroups", "softballGroups", "nba2024playin", "judo66"]);
 /** The background each example opens with: the playing surface of its sport where there is one, else a poster background that suits it. "plain" is the look's flat colour. */
-const BG_OF = { nhl2024: "ice", nhl1984: "aurora", nba2024: "hardwood", mlb2022: "infield", nfl2024: "turf", cfl2024: "sunburst", mls2024: "waves", poster: "stardust", wc2022: "pitch", wc1938: "ball-panels", generic32: "halftone", twoLegs: "confetti", nba2024playin: "hardwood", cupGroups: "midnight", softballGroups: "royal", judo66: "emerald" };
+const BG_OF = { nhl2024: "ice", nhl1984: "aurora", nba2024: "hardwood", mlb2022: "infield", mlb2025: "infield", nfl2024: "turf", cfl2024: "sunburst", mls2024: "waves", poster: "stardust", wc2022: "pitch", wc1938: "ball-panels", generic32: "halftone", twoLegs: "confetti", nba2024playin: "hardwood", cupGroups: "midnight", softballGroups: "royal", judo66: "emerald" };
 const bgKey = (example) => BG_OF[example.key] ?? "midnight";
 /** The custom background's own settings, and the visitor's picture (a data address read in the browser; it never leaves the page). */
 const custom = { preset: "midnight", colors: ["#0b1230", "#1b2160", "#7f8cff", "#c7ceff"], angle: 160, intensity: 0.6, seed: 1 };
@@ -315,7 +315,7 @@ function gallery() {
 }
 
 /** Each layout on a sport that suits it, with a background that suits both: [example, layout, background]. */
-const LAYOUT_TILES = [["wc2022", "tree", "pitch"], ["nhl2024", "rows", "ice"], ["nhl2024", "update", "aurora"], ["wc2022", "shields", "floodlights"], ["nfl2024", "columns", "turf"], ["nba2024playin", "playin", "hardwood"], ["nba2024", "series", "carbon"], ["cupGroups", "groups", "midnight"], ["softballGroups", "groups", "royal"]];
+const LAYOUT_TILES = [["wc2022", "tree", "pitch"], ["nhl2024", "rows", "ice"], ["nhl2024", "update", "aurora"], ["wc2022", "shields", "floodlights"], ["nfl2024", "columns", "turf"], ["nba2024playin", "playin", "hardwood"], ["nba2024", "series", "carbon"], ["cupGroups", "groups", "midnight"], ["softballGroups", "groups", "royal"], ["mlb2025", "picture", "infield"]];
 function layoutGallery() {
   $("layout-gallery").innerHTML = LAYOUT_TILES.map(([key, layout, bg]) => {
     const e = ALL.find((x) => x.key === key);

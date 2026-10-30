@@ -53,6 +53,8 @@ export interface StyleParts {
   bgAuto?: boolean;
   /** The rules of the layouts of their own (slots, shields, conference colours, header tiles, arrows, group cards). */
   layout?: boolean;
+  /** The `picture` layout: logo tiles, the result beside each pair, the names of the rounds under their columns (`--tb-conf-a` and `--tb-conf-b` colour the half headers as in the other layouts). */
+  picture?: boolean;
   /** A judo bracket: the white and blue side bars and the shido cards (`--tb-judo-white`, `--tb-judo-blue`, `--tb-shido`, `--tb-hansoku`). */
   judo?: boolean;
 }
@@ -171,6 +173,24 @@ function rules(p: Palette, r: RoadPalette, poster: boolean, withFont: boolean, p
       [[".tb-gname"], `fill:${v("ink")};font-weight:700`],
       [[".tb-qual"], `fill:${v("win")};fill-opacity:.16`],
       [[".tb-gsep"], `stroke:${v("edge")};stroke-width:1;stroke-opacity:.6`],
+    );
+  }
+  if (parts.picture === true) {
+    list.push(
+      [[".tb-pic .tb-box", ".tb-pic.tb-final .tb-box"], "fill:none;stroke:none"],
+      [[".tb-ptile"], `fill:${v("box")};stroke:${v("edge")};stroke-width:1`],
+      [[".tb-pplain"], `fill:${v("plain")}`],
+      [[".tb-pempty"], `fill:${v("plain")};fill-opacity:.35;stroke-dasharray:3 3`],
+      [[".tb-won .tb-ptile"], `stroke:${v("win")};stroke-width:2`],
+      [[".tb-pic .tb-lost"], "opacity:.5"],
+      [[".tb-pic .tb-lost .tb-mark"], "opacity:1"],
+      [[".tb-pres"], `fill:${v("ink")};font-weight:700`],
+      [[".tb-pscore"], `fill:${v("ink")};font-weight:800`],
+      [[".tb-pscore.tb-muted", ".tb-pnote", ".tb-pbye", ".tb-pbest"], `fill:${v("muted")};font-weight:600`],
+      [[".tb-plabel"], `fill:${v("ink")};font-weight:700`],
+      [[".tb-pbadge"], `fill:${v("ink")}`],
+      [[".tb-pseed"], `fill:${v("bg")};font-weight:800`],
+      [[".tb-champ .tb-ptile"], `stroke:${v("gold")};stroke-width:3`],
     );
   }
   if (parts.judo === true) {

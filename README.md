@@ -124,7 +124,7 @@ Wide, square, a card for a post and a tall one for a phone, in light, dark or a 
 
 ## Layouts
 
-`layout` draws the same ties another way: the default, `"tree"`, is the bracket above; the others are `"rows"`, `"shields"`, `"update"`, `"columns"`, `"playin"`, `"series"` and `"groups"`. Each takes the `background`, both looks, the four sizes, the five languages, `href` links, seeds, codes, flags and logos, and a team with no picture is its tile. [docs/layouts.md](./docs/layouts.md) has the options and what each needs.
+`layout` draws the same ties another way: the default, `"tree"`, is the bracket above; the others are `"rows"`, `"shields"`, `"update"`, `"columns"`, `"playin"`, `"series"`, `"groups"` and `"picture"` (the postseason picture: logo tiles with their seeds, the result beside each pair, the length of each series under its column). Each takes the `background`, both looks, the four sizes, the five languages, `href` links, seeds, codes, flags and logos, and a team with no picture is its tile. [docs/layouts.md](./docs/layouts.md) has the options and what each needs.
 
 ## Backgrounds
 
@@ -199,7 +199,7 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **The road to the final**: `roadToFinal` draws the two finalists of the tournament you already have, with the ties each played on the way and the score between their flags, on a card, a square, wide or a phone.
 - **Poster backgrounds**: twenty-five, drawn in code, each in a dark and a light variant, among them the playing surfaces of hockey, basketball, baseball, football and soccer; your own colours, or your own picture; and the text, lines and boxes take the colours that read over them (4.5 to 1, held by a test).
 - **Seed tags, codes and a "vs"** in the road look, and a team with no picture drawn as a tile with its letters, so that nothing looks missing.
-- **Eight layouts**: `layout` draws the same ties as the tree, as `rows` (a name, a mark and a result slot a team), `shields`, a score-`update` card, tall `columns` in two conference colours, the NBA's `playin` with winners' and losers' arrows, a `series` card, or the `groups` tables; with big conference `headers` over each half in any of them, a lone final centred, and one stylesheet for several drawings (`styleScope`, `style: false`).
+- **Nine layouts**: `layout` draws the same ties as the tree, as `rows` (a name, a mark and a result slot a team), `shields`, a score-`update` card, tall `columns` in two conference colours, the NBA's `playin` with winners' and losers' arrows, a `series` card, the `groups` tables, or the postseason `picture` (two halves mirrored toward the final, each club a logo tile with its seed, "CLE wins 3–2" beside each pair, "Best of 5" under each round, the champion big in the middle); with big conference `headers` over each half in any of them, a lone final centred, and one stylesheet for several drawings (`styleScope`, `style: false`).
 - **Nothing sticks out**: marks, text and round names stay inside their boxes and off the connector lines, in every size and both looks, held by a geometry test.
 - **A link on every box**: `href: (tie, side?) => address` makes each tie's box (or each team's row) a real `<a>` in the SVG with an accessible name.
 - **Flags from a plug-in**: a team's `flag` code is drawn by the `flags` function you pass (Hata's round flags are one line), with no dependency added.

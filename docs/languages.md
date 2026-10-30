@@ -133,6 +133,7 @@ The English name is the key (a round the table does not name keeps its English n
 | `tieVs` | `{a} v {b}` | `{a} contre {b}` | `{a} 対 {b}` | `{a} vs. {b}` | `{a} gegen {b}` |
 | `tieScore` | `{a} {sa}, {b} {sb}` | `{a} {sa}, {b} {sb}` | `{a} {sa}–{sb} {b}` | `{a} {sa}, {b} {sb}` | `{a} {sa}, {b} {sb}` |
 | `scoreText` | `{a}–{b}` | `{a}–{b}` | `{a}–{b}` | `{a}–{b}` | `{a}:{b}` |
+| `pictureWins` | `{team} wins {score}` | `{team} gagne {score}` | `{team}が{score}で勝利` | `{team} gana {score}` | `{team} gewinnt {score}` |
 | `winnerIs` | `Winner: {name}` | `Vainqueur␣: {name}` | `勝者：{name}` | `Ganador: {name}` | `Sieger: {name}` |
 | `championIs` | `Champion: {name}` | `Champion␣: {name}` | `優勝：{name}` | `Campeón: {name}` | `Turniersieger: {name}` |
 | `finalLine` | `{round}: {tie}` | `{round}␣: {tie}` | `{round}：{tie}` | `{round}: {tie}` | `{round}: {tie}` |

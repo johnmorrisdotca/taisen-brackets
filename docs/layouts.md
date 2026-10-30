@@ -12,12 +12,13 @@
 | `playin` | The play-in games with their winners' and losers' arrows, the seeds they earn, and the seeds that need no game as tiles. | NBA | Ties with `stage: "play-in"` and `feeds` with a `result` |
 | `series` | A tall card of one line a series, the first half above and the second below. | NBA, NHL | Ties; a card (1080 by 1350) unless a `size` is asked for |
 | `groups` | One card a group with its table. | World Cup, softball | Round-robin ties (`round: 0`) or teams with a `group` |
+| `picture` | The postseason picture: two halves mirrored toward the final, each club a logo tile with its seed, the result beside each pair, each round's name and series length under its column, the champion big in the middle. | MLB, NHL, NBA, NFL, CFL, MLS | Ties; `Team.seed` (or `tag`) for the badges; `bestOf` for the lengths |
 
 An unknown name throws a `RangeError` that lists them (`LAYOUTS` is the list), and so does `playin` over a bracket with no play-in game and `groups` over one with no group.
 
-## The layouts of the tree: rows, shields, update, columns, series
+## The layouts of the tree: rows, shields, update, columns, series, picture
 
-They take the places, the lines and the names of the rounds from the tree, so a bracket that works in the tree works in all five, and the `size`, `orientation`, `shape`, `thirdPlace` and `champion` options mean what they do there. What they draw in a box is their own:
+They take the places, the lines and the names of the rounds from the tree, so a bracket that works in the tree works in all six, and the `size`, `orientation`, `shape`, `thirdPlace` and `champion` options mean what they do there. What they draw in a box is their own:
 
 - A box that is too small for everything leaves out what does not fit, in this order: the seed tag, then the length of the names (names, then abbreviations, then none), then the score's slot. A box of marks alone, 40 wide, is two marks stacked with their scores.
 - `seeds` is on by default in `rows`, `update`, `series` and `columns` (it writes nothing for a team with no seed or tag) and off in `shields`.
@@ -211,6 +212,52 @@ const games = [
 console.log(groupStandings({ matchups: games })[0].rows.map((r) => `${r.team.id} ${r.points}`).join(", ")); // C 4, A 4, B 0
 console.log(drawBracket({ matchups: games }, { layout: "groups", qualify: 2 }).includes("Group A")); // true
 ```
+
+### picture
+
+The postseason picture: the two halves mirrored toward the final in the middle (a league's two conferences, named over each half), each club a logo tile with its seed on the tile's corner, the result of each series beside its pair ("CLE wins 3–2"; a single game says "BUF wins 27–21", a shoot-out follows the score in small type), the name of each round under its column with the length of its series under that ("Best of 5"), and the champion big in the middle over the final. It is drawn from the same planner as the tree, so the rounds, the halves and the byes are the tree's: a side that skipped the earlier rounds says `bye` beside its tile, and the line from each earlier series leads to the tile its winner takes the place of.
+
+<p align="center"><img alt="The 2025 MLB postseason as a picture: the American League on the left and the National League on the right, each club a tile with its seed, the result beside each pair, the rounds named under their columns with the length of the series, the Dodgers big in the middle over the World Series." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-picture-mlb.webp" width="640"></p>
+
+- **Logos are yours.** A tile holds the club's `Team.mark` (inline SVG or an image address), its `flag`, or, for a club with none (or with `markShape: "none"`), its three letters on its `color`. The package ships no league marks and no sponsor marks. `markShape` is `"square"` here by default (a logo is not cut to a circle); pass `"round"` for flags.
+- **Seeds** come from `Matchup.seeds`, else `Team.tag`, else `Team.seed`, as in the other layouts; `seeds: false` leaves the badges out, and a tile too small for one leaves it out. `headers` is on by default (the half's group name on a tile in its colour); `headers: false` leaves them out.
+- **The length of a series** comes from each matchup's `bestOf` (the longest in the round): 3, 5 and 7 for baseball, 1 for a round of single games. A round whose ties give none says nothing under its name. `roundLabels: false` leaves the names out.
+- **What a box says depends on its room**: "CLE wins" over "3–2", then the same smaller, then the score alone, then the tiles alone; the tiles never overlap the text. Sizes: 4, 6, 8 or more clubs a side, byes, a lone final, and the four sizes. On a tall page (`phone`, `card`) a pair is two tiles side by side with the result under them, and the half at the bottom faces the final.
+- **Light and dark** follow the page, as in every look; `styleScope` and `bracketStyle` write the rules once for a desk's drawing and a phone's.
+- The words are the language's: `pictureWins` (`{team} wins {score}`) and `bestOf`, in the five languages.
+
+```js
+import { drawBracket, playoffFormat } from "@johnmorrisdotca/taisen-brackets";
+
+const teams = [
+  { id: "TOR", name: "Toronto", abbr: "TOR", color: "#134a8e", group: "American League", seed: 1 },
+  { id: "SEA", name: "Seattle", abbr: "SEA", color: "#005c5c", group: "American League", seed: 2 },
+  { id: "DET", name: "Detroit", abbr: "DET", color: "#0c2340", group: "American League", seed: 6 },
+  { id: "NYY", name: "New York", abbr: "NYY", color: "#0c2340", group: "American League", seed: 4 },
+  { id: "MIL", name: "Milwaukee", abbr: "MIL", color: "#12284b", group: "National League", seed: 1 },
+  { id: "PHI", name: "Philadelphia", abbr: "PHI", color: "#e81828", group: "National League", seed: 2 },
+  { id: "LAD", name: "Los Angeles", abbr: "LAD", color: "#005a9c", group: "National League", seed: 3 },
+  { id: "CHC", name: "Chicago", abbr: "CHC", color: "#0e3386", group: "National League", seed: 4 },
+];
+const series = [
+  { id: "a", round: 1, bestOf: 5, sides: ["TOR", "NYY"], score: [3, 1] },
+  { id: "b", round: 1, bestOf: 5, sides: ["SEA", "DET"], score: [3, 2] },
+  { id: "c", round: 1, bestOf: 5, sides: ["MIL", "CHC"], score: [3, 2] },
+  { id: "d", round: 1, bestOf: 5, sides: ["PHI", "LAD"], score: [1, 3] },
+  { id: "e", round: 2, bestOf: 7, sides: ["TOR", "SEA"], score: [4, 3] },
+  { id: "f", round: 2, bestOf: 7, sides: ["MIL", "LAD"], score: [0, 4] },
+  { id: "g", round: 3, bestOf: 7, sides: ["TOR", "LAD"], score: [3, 4] },
+];
+const svg = drawBracket({ teams, matchups: series }, { layout: "picture", roundNames: playoffFormat("mlb", 2025)?.rounds.slice(1).map((r) => r.name) });
+console.log(svg.includes("tb-ptile"), svg.includes(">Best of 5<"), svg.includes(">Best of 7<")); // true true true
+console.log(svg.includes(">LAD wins<"), svg.includes(">4–3<")); // true true
+```
+
+On a phone the same drawing is the tall one:
+
+<p align="center"><img alt="The 2025 MLB postseason on a phone: the champion at the top, then the rounds as rows with the first half's pairs as two tiles side by side and the result under them, the final in the middle with its two finalists at either end." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-picture-phone.webp" width="240"></p>
+
+<p align="center"><img alt="The 2024 NHL playoffs as a picture in the dark: the Western and Eastern Conferences with a tile for each club, its seed tag on the corner, Best of 7 under every round and the Panthers big in the middle." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/layout-picture-nhl-dark.webp" width="640"></p>
 
 ### Conference headers, a lone final, one stylesheet
 

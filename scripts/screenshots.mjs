@@ -174,6 +174,9 @@ try {
     ["layout-groups-cup", "groups", "ex=cupGroups&bg=midnight", { width: 1280, height: 900 }],
     ["layout-groups-softball", "groups", "ex=softballGroups&bg=royal&size=phone", { width: 390, height: 844, phone: true }],
     ["layout-columns-phone", "columns", "ex=wc2022&layout=columns&bg=pitch&size=phone", { width: 390, height: 844, phone: true }],
+    ["layout-picture-mlb", "picture", "ex=mlb2025&layout=picture&bg=infield", { width: 1280, height: 900 }],
+    ["layout-picture-nhl-dark", "picture", "ex=nhl2024&layout=picture&bg=ice&theme=dark", { width: 1280, height: 900, scheme: "dark" }],
+    ["layout-picture-phone", "picture", "ex=mlb2025&layout=picture&bg=infield&size=phone", { width: 390, height: 844, phone: true }],
   ];
   for (const [name, , query, options] of LAYOUT_SHOTS) await shoot(name, query, options);
   // A final alone, with its third-place match, centred (the World Cups of 1974 and 1978 ended so): drawn by the package itself in the demo's page.

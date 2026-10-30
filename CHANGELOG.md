@@ -6,6 +6,16 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+### Added
+
+- **A new layout, `layout: "picture"`: the postseason picture.** The two halves mirrored toward the final in the middle, each club a logo tile with its seed on the tile's corner, the result of each series beside its pair ("CLE wins 3–2"; a shoot-out follows the score in small type), the name of each round under its column with the length of its series under that ("Best of 5"), and the champion big in the middle over the final. It is built on the tree's planner, so the rounds, the halves, the byes ("bye" beside a side that skipped the earlier rounds), the lone final and the third-place match are the tree's; the lines of each earlier series lead to the tile its winner takes the place of. It works for any bracket the package draws: 4, 6, 8 or more clubs a side, rounds of single games or best-of-3/5/7 series, the four sizes (on a tall page a pair is two tiles side by side with the result under them), light and dark, the five languages. A tile is the club's `mark` (logo), `flag` or its letters on its `color`; the package ships no logo or league mark. `markShape` defaults to `"square"` here and `headers` to on.
+- A new word for the five languages, `pictureWins` (`{team} wins {score}`); the length of a series is the existing `bestOf`, capitalised.
+- **Demo:** a "Picture" layout on the NHL, NBA, MLB, NFL, CFL, MLS and World Cup examples, a new example, the 2025 MLB postseason (series results typed from English Wikipedia, in `demo/data/mlb-2025.js`, credited in NOTICE), a tile in the gallery of layouts.
+- **Docs:** `docs/layouts.md` has the picture, its options and an example; three new pictures in `docs/images`.
+- Tests: `test/picture.test.ts` holds each tile and text inside its box, the tiles apart from each other and from the text, the lines on the tiles, the names and lengths of the rounds, seeds, byes, 4 to 16 clubs, languages, escaping and links; `e2e/layouts.demo.mjs` opens the picture in the demo on a desk and a phone, light and dark.
+
+Size: 6 kB more in the package as packed (234 kB against 228 kB; 805 kB against 780 kB unpacked, type declarations included), no new dependency.
+
 ## [0.17.4] - 2026-10-21
 
 The pictures are slower and no longer first; the demo waits for the pointer. No change to the package's code beyond its version.

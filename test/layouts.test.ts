@@ -13,7 +13,7 @@ const data = build(T, FLAGS);
 const flags = (code: string) => FLAGS[code];
 const SIZES: SizeName[] = ["wide", "square", "card", "phone"];
 const EXAMPLES = Object.entries(data).filter(([, v]) => v && typeof v === "object" && "matchups" in v) as [string, BracketInput][];
-const TREE_LAYOUTS: LayoutName[] = ["rows", "shields", "update", "columns", "series"];
+const TREE_LAYOUTS: LayoutName[] = ["rows", "shields", "update", "columns", "series", "picture"];
 
 for (const layout of TREE_LAYOUTS) {
   for (const look of ["classic", "road"] as const) {
