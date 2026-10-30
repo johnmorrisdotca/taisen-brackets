@@ -154,14 +154,15 @@ test("the background picker: every example opens on its own, twenty-five presets
   expect(errors).toEqual([]);
 });
 
-test("every example follows the language, and none overflows the page", async ({ page }) => {
-  // Forty-eight page loads: a slow runner needs more than the default thirty seconds.
-  test.setTimeout(240_000);
-  for (const code of ["fr", "ja", "es", "de"]) {
+// One test a language, so that the four run side by side and each has its own time: all of them in one test took four minutes on a slow runner (WebKit at a phone's width) and timed out.
+for (const code of ["fr", "ja", "es", "de"]) {
+  test(`every example follows the language (${code}), and none overflows the page`, async ({ page }) => {
+    // One page load for each example: a slow runner needs more than the default thirty seconds.
+    test.setTimeout(240_000);
     for (const key of examples) {
       await page.goto(`/?ex=${key}&lang=${code}`);
       await expect(page.locator("#stage > svg")).toHaveAttribute("lang", code);
       expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true);
     }
-  }
-});
+  });
+}
