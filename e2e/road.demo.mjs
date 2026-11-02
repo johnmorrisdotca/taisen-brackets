@@ -51,9 +51,9 @@ test("the road to the final is drawn from the same tournament, with its own tabl
   expect(await svg.locator("text.tb-lab").allTextContents()).toEqual(["Semi-finals", "Quarter-finals", "Round of 16"]);
   await expect(svg.locator("text.tb-r-name").first()).toHaveText("ARGENTINA");
   await expect(page.locator("#show-row")).toBeHidden();
-  await page.locator("#table-box summary").click();
+  await page.locator("#tab-table").click();
   await expect(page.locator("#table table[data-kind='road'] tbody tr")).toHaveCount(7);
-  await page.locator("#code-box summary").click();
+  await page.locator("#tab-call").click();
   await expect(page.locator("#code")).toContainText("roadToFinal(wc2022");
   await page.locator("#lang button[data-value=ja]").click();
   await expect(svg.locator("text.tb-lab").first()).toHaveText("準決勝");
@@ -84,15 +84,19 @@ test("the section of real roads draws four roads with a title, a description and
   for (const [index, key] of ["card", "wide", "phone", "series"].entries()) {
     const figure = figures.nth(index);
     await expect(figure).toHaveAttribute("data-road", key);
+    await page.locator("#road-view button[data-value=pictures]").click();
     const svg = figure.locator("svg.tb-road");
     await svg.scrollIntoViewIfNeeded();
     expect(await svg.locator("title").first().textContent()).toContain("Road to the final");
     expect(await svg.locator("desc").first().textContent()).not.toBe("");
-    const details = figure.locator("details");
-    await expect(details.locator("table")).toBeHidden();
-    await details.locator("summary").click();
-    await expect(details.locator("table[data-kind='road']")).toBeVisible();
+    // One switch for all four cards: their pictures, or their tables.
+    await page.locator("#road-view button[data-value=pictures]").click();
+    await expect(figure.locator("table")).toBeHidden();
+    await page.locator("#road-view button[data-value=tables]").click();
+    await expect(figure.locator("table[data-kind='road']")).toBeVisible();
+    await expect(svg).toBeHidden();
   }
+  await page.locator("#road-view button[data-value=pictures]").click();
   expect(await figures.nth(0).locator("g.tb-r-fin").count()).toBe(8); // Argentina and France: four knockout matches each
   expect(await noSidewaysScroll(page)).toBe(true);
   await page.locator("#lang button[data-value=ja]").click();
@@ -102,7 +106,7 @@ test("the section of real roads draws four roads with a title, a description and
 test("the flags come through the flags option: each is a symbol written once, and the call says so", async ({ page }) => {
   await page.goto("/?ex=wc2022");
   expect(await page.locator("#stage > svg symbol").count()).toBeGreaterThan(8);
-  await page.locator("#code-box summary").click();
+  await page.locator("#tab-call").click();
   await expect(page.locator("#code")).toContainText("loadedFlags");
   await page.goto("/?ex=wc1938");
   expect(await page.locator("#stage > svg symbol").count()).toBe(0);

@@ -341,9 +341,34 @@ function roadCards() {
   $("road-cards").innerHTML = ROAD_CARDS.map((card) => {
     const example = ALL.find((e) => e.key === card.example);
     const chart = T.roadToFinal(example.data, { ...common, size: card.size, background: card.background, endnote: card.endnote, ...(card.theme && { theme: card.theme }), title: titleOf(example), ...(example.options.roundNames && { roundNames: example.options.roundNames }), id: `road-${card.key}` });
-    return `<figure data-road="${card.key}">${chart.draw()}<details data-testid="road-table-${card.key}"><summary>Table</summary><div class="table-wrap">${chart.table()}</div></details></figure>`;
+    return `<figure data-road="${card.key}">${chart.draw()}<div class="table-wrap" data-testid="road-table-${card.key}">${chart.table()}</div></figure>`;
   }).join("");
 }
+
+/** One switch for the four road cards: their pictures, or their tables (John, 2026-11-02: no fold in every card). */
+$("road-view").addEventListener("click", (event) => {
+  const b = event.target.closest("button");
+  if (!b) return;
+  $("road-cards").dataset.view = b.dataset.value;
+  for (const other of $("road-view").querySelectorAll("button")) other.setAttribute("aria-pressed", String(other === b));
+});
+
+/** The picture, the table and the call of the bracket share one place, chosen by three tabs (they used to be two folds at the foot of the page). */
+const TABS = { picture: "stage", table: "table-panel", call: "code-panel" };
+function showTab(name) {
+  for (const [key, id] of Object.entries(TABS)) $(id).hidden = key !== name;
+  for (const tab of $("viewtabs").querySelectorAll("button")) tab.setAttribute("aria-selected", String(tab.dataset.tab === name));
+}
+$("viewtabs").addEventListener("click", (event) => { const b = event.target.closest("button"); if (b) showTab(b.dataset.tab); });
+$("viewtabs").addEventListener("keydown", (event) => {
+  const tabs = [...$("viewtabs").querySelectorAll("button")], at = tabs.indexOf(document.activeElement);
+  const to = event.key === "ArrowRight" ? at + 1 : event.key === "ArrowLeft" ? at - 1 : event.key === "Home" ? 0 : event.key === "End" ? tabs.length - 1 : -1;
+  if (to < 0 || at < 0) return;
+  event.preventDefault();
+  const next = tabs[(to + tabs.length) % tabs.length];
+  next.focus();
+  showTab(next.dataset.tab);
+});
 
 $("sport").innerHTML = SPORTS.map((s) => `<button type="button" data-value="${s.key}">${s.label}</button>`).join("");
 $("sport").addEventListener("click", (event) => { const b = event.target.closest("button"); if (b) choose(ALL.find((e) => e.sport === b.dataset.value).key); });

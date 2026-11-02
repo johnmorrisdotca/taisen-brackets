@@ -43,10 +43,12 @@ test("the controls change the drawing and the address, and a tap on the gallery 
 
 test("the table and the call are there, and 44 pixels is the least a control gives a finger", async ({ page }) => {
   await page.goto("/?ex=wc2022");
-  await page.locator("#table-box summary").click();
+  await page.locator("#tab-table").click();
   await expect(page.locator("#table table tbody tr")).toHaveCount(16);
-  await page.locator("#code-box summary").click();
+  await expect(page.locator("#table-panel")).toBeVisible();
+  await page.locator("#tab-call").click();
   await expect(page.locator("#code")).toContainText("drawBracket(wc2022");
+  await expect(page.locator("#code-panel")).toBeVisible();
   for (const button of await page.locator("#sport button, #example button, #size button, #view button, #look button, #layout button, #lang button, #bg button, .fam-chip").all()) {
     // A control the example has no use for is hidden (the AT chip outside the columns layout).
     if (!(await button.isVisible())) continue;
@@ -166,3 +168,28 @@ for (const code of ["fr", "ja", "es", "de"]) {
     }
   });
 }
+
+// John, 2026-11-02 (MODULES-113): the bracket's table and call were two folds at the foot of a very long page, and every road card had a fold of its own.
+test("the bracket's picture, table and call are three tabs in one place, and no road card holds a fold", async ({ page }) => {
+  await page.goto("/?ex=wc2022");
+  await expect(page.locator("#stage > svg")).toBeVisible();
+  await expect(page.locator("#table-panel")).toBeHidden();
+  await expect(page.locator("#code-panel")).toBeHidden();
+  // The tabs are beside the picture: the table and the call open where the picture was, not at the foot of the page.
+  const below = async (id) => { const tabs = await page.locator("#viewtabs").boundingBox(), box = await page.locator(id).boundingBox(); return box.y - (tabs.y + tabs.height); };
+  expect(await below("#stage")).toBeLessThan(40);
+  await page.locator("#tab-table").click();
+  await expect(page.locator("#stage")).toBeHidden();
+  expect(await below("#table-panel")).toBeLessThan(40);
+  await expect(page.locator("#tab-table")).toHaveAttribute("aria-selected", "true");
+  await page.locator("#tab-table").focus();
+  await page.keyboard.press("ArrowRight");
+  await expect(page.locator("#code-panel")).toBeVisible();
+  await expect(page.locator("#tab-call")).toHaveAttribute("aria-selected", "true");
+  await page.locator("#tab-picture").click();
+  await expect(page.locator("#stage > svg")).toBeVisible();
+  // One closed fold beside each of the six demos that have a call, none in a road card, none open.
+  expect(await page.locator("details").count()).toBe(6);
+  expect(await page.locator("details[open]").count()).toBe(0);
+  expect(await page.locator("#road-cards details, #road-cards summary, #road-cards [aria-expanded]").count()).toBe(0);
+});

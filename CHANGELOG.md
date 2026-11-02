@@ -6,6 +6,10 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+### Changed
+
+- The demo (not the package): fewer folds (MODULES-113). The bracket's table and call, two folds at the foot of a page 13,000 pixels long, are now three tabs (Picture, Table, The call) under the bracket they describe, with the arrow keys. The four road cards each had a "Table" fold; one switch above them (Pictures or Tables) now does it for all four. What stays is one closed fold of code beside each of the six demos that have one. Tests in `e2e/demo.demo.mjs` and `e2e/road.demo.mjs`.
+
 ## [0.18.0] - 2026-10-30
 
 A new layout: the postseason picture.

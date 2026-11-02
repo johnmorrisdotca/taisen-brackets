@@ -89,3 +89,13 @@ footer .credit { flex: 1 1 100%; }
 .board-field { display: inline-flex; gap: 8px; align-items: center; min-height: 44px; }
 .board-field input[type="text"] { min-height: 44px; width: 6em; padding: 0 10px; border: 1px solid var(--rule); border-radius: 8px; background: var(--surface); color: inherit; font: inherit; }
 .board-field input[type="range"] { min-height: 44px; }
+
+/* The bracket's picture, table and call share one place under three tabs; the road cards swap their pictures for their tables with one switch. */
+[hidden] { display: none !important; }
+.viewtabs { justify-self: start; margin: 8px 0; }
+.panel-box { border-top: 1px solid var(--rule); padding: 12px 14px; max-height: 70vh; overflow: auto; }
+.panel-box pre { margin: 0; overflow-x: auto; font-family: var(--mono); font-size: .8rem; }
+#road-view { margin: 0 0 12px; }
+.road-cards[data-view="tables"] svg { display: none; }
+.road-cards[data-view="pictures"] .table-wrap { display: none; }
+.viewtabs button[aria-selected="true"], .viewtabs button[aria-selected="true"]:hover:not(:disabled) { background: var(--ink); color: var(--surface); }

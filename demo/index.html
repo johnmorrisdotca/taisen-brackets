@@ -86,7 +86,12 @@
           <input class="range" type="range" id="game" data-testid="game" min="0" max="16" step="1" value="0" />
           <output id="game-out" for="game" data-testid="game-out">0 of 16</output>
         </div>
-        <div class="stage" id="stage" data-testid="stage" role="region" aria-label="The bracket"></div>
+        <div class="fam-seg viewtabs" role="tablist" aria-label="What to show" id="viewtabs" data-testid="viewtabs">
+          <button type="button" role="tab" id="tab-picture" data-tab="picture" aria-selected="true" aria-controls="stage">Picture</button><button type="button" role="tab" id="tab-table" data-tab="table" aria-selected="false" aria-controls="table-panel" title="The same bracket as a table, for a screen reader, a search engine or print">Table</button><button type="button" role="tab" id="tab-call" data-tab="call" aria-selected="false" aria-controls="code-panel">The call</button>
+        </div>
+        <div class="stage" id="stage" data-testid="stage" role="tabpanel" aria-labelledby="tab-picture" aria-label="The bracket"></div>
+        <div class="panel-box" id="table-panel" data-testid="table-panel" role="tabpanel" aria-labelledby="tab-table" hidden><div id="table" class="table-wrap"></div></div>
+        <div class="panel-box" id="code-panel" data-testid="code-panel" role="tabpanel" aria-labelledby="tab-call" hidden><pre id="code"><code></code></pre></div>
       </div>
       <p class="fam-panel note" id="note"></p>
     </div>
@@ -167,12 +172,8 @@
   <section class="more" aria-labelledby="road-h">
     <h2 id="road-h">The road to the final</h2>
     <p>The two finalists of a tournament and the way each came, drawn by <code>roadToFinal</code> in four sizes and in the language chosen above. The finalists, the matches on their way and the results are real (the men's World Cups of 2022 and 2026 and the 2024 Stanley Cup playoffs, from the demo's own data), and the nations' flags are Hata's.</p>
-    <div class="road-cards" id="road-cards" data-testid="road-cards"></div>
-  </section>
-
-  <section class="more">
-    <details id="table-box"><summary>The same bracket as a table (for a screen reader, a search engine, or print)</summary><div id="table" class="table-wrap"></div></details>
-    <details id="code-box"><summary>The call that draws it</summary><pre id="code"><code></code></pre></details>
+    <div class="fam-seg" role="group" aria-label="Pictures or tables" id="road-view" data-testid="road-view"><button type="button" data-value="pictures" aria-pressed="true">Pictures</button><button type="button" data-value="tables" aria-pressed="false">Tables</button></div>
+    <div class="road-cards" id="road-cards" data-testid="road-cards" data-view="pictures"></div>
   </section>
 
   <div class="credits">
