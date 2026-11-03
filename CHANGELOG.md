@@ -6,6 +6,8 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+- Docs only (MODULES-247): nine more guides in `docs/guides/` (ties and results, a bracket for any number of teams, layouts and looks, formats by era, marks, flags and trophies, the road to the final, languages and accessibility, judo, rankings, medals and boards, and an architecture guide), each with a Japanese twin in `docs/guides/ja/`; `docs/functions.md`, what each family of functions is for and the options of `drawBracket` and `roadToFinal` (moved out of the README's API section); `demo/builder.html` (the number of teams, the size, the look, the theme, the layout and a background, with the code that draws the result) and `e2e/builder.demo.mjs`. The README has a Guides section and more examples (TypeScript, a server, shaping the data), and is under npm's 64,000 characters: the details of marks, flags, emblems, the road to the final and links moved to the guides.
+
 ## [0.19.0] - 2026-11-03
 
 The documentation, the usage examples, the embed page and the release tooling follow the family's must-have list. No change to the package's drawings.

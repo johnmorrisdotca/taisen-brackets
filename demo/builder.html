@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Taisen Brackets: build a bracket and copy the code</title>
+  <meta name="description" content="Choose the number of teams, the size, the look, the theme, the layout and a background, see the bracket, and copy the code that draws it." />
+  <style>
+    :root { color-scheme: light dark; --bg: #f6f4ee; --ink: #10151b; --muted: #434b54; --card: #fff; --line: #b9b3a3; --accent: #1f5fa8; --tab: #10151b; --tab-ink: #fff; }
+    @media (prefers-color-scheme: dark) { :root { --bg: #0d1218; --ink: #f6f3ea; --muted: #bcc3cb; --card: #18212a; --line: #475463; --accent: #7fb2ee; --tab: #f6f3ea; --tab-ink: #0d1218; } }
+    * { box-sizing: border-box; }
+    body { margin: 0; background: var(--bg); color: var(--ink); font: 16px/1.5 system-ui, -apple-system, "Segoe UI", "Hiragino Sans", "Noto Sans JP", sans-serif; }
+    main { max-width: 1100px; margin: 0 auto; padding: 12px 16px 32px; }
+    h1 { font-size: 1.6rem; margin: 0 0 4px; }
+    p { margin: 0 0 10px; max-width: 70ch; }
+    .lede, .note { color: var(--muted); }
+    a { color: var(--accent); }
+    :focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+    .layout { display: grid; gap: 16px; grid-template-columns: minmax(0, 1fr); }
+    @media (min-width: 900px) { .layout { grid-template-columns: 300px minmax(0, 1fr); align-items: start; } .controls { position: sticky; top: 8px; } }
+    .controls { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; }
+    .row { margin: 0 0 8px; }
+    .row b { display: block; font-size: .8rem; text-transform: uppercase; letter-spacing: .04em; color: var(--muted); margin: 0 0 3px; }
+    .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chips button { font: inherit; font-size: .9rem; font-weight: 700; min-height: 44px; padding: 0 14px; border-radius: 999px; border: 2px solid var(--line); background: var(--card); color: var(--ink); cursor: pointer; }
+    .chips button[aria-pressed="true"] { border-color: var(--tab); background: var(--tab); color: var(--tab-ink); }
+    .stage { background: var(--card); border: 1px solid var(--line); border-radius: 12px; padding: 8px; overflow-x: auto; display: grid; justify-items: center; min-height: 240px; }
+    .stage svg { max-width: 100%; height: auto; }
+    .tabs { display: inline-flex; gap: 4px; padding: 3px; background: var(--card); border: 1px solid var(--line); border-radius: 999px; margin: 12px 0 8px; }
+    .tabs button { font: inherit; font-weight: 700; min-height: 44px; padding: 0 18px; border-radius: 999px; border: 0; background: transparent; color: var(--ink); cursor: pointer; }
+    .tabs button[aria-selected="true"] { background: var(--tab); color: var(--tab-ink); }
+    pre { margin: 0 0 8px; padding: 12px 14px; background: var(--card); border: 1px solid var(--line); border-radius: 10px; overflow-x: auto; font-size: .82rem; max-height: 22rem; }
+    .copy { font: inherit; font-weight: 800; min-height: 48px; padding: 0 22px; border-radius: 999px; border: 0; background: var(--tab); color: var(--tab-ink); cursor: pointer; }
+    #status { margin-left: 10px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <main>
+    <p><a href="./">← The demo</a></p>
+    <h1>Build a bracket, copy the code</h1>
+    <p class="lede">Choose what you want and the bracket is drawn by the package, here, in your browser. The code under it draws the same one.</p>
+    <div class="layout">
+      <div class="controls" id="controls" data-testid="controls"></div>
+      <div>
+        <div class="stage" id="stage" data-testid="stage" role="img" aria-label="The bracket"></div>
+        <div class="tabs" role="tablist" id="tabs" aria-label="The code"></div>
+        <pre><code id="code" data-testid="code"></code></pre>
+        <button type="button" class="copy" id="copy" data-testid="copy">Copy the code</button><span id="status" role="status" aria-live="polite"></span>
+        <p class="note" style="margin-top:12px"><a href="https://github.com/johnmorrisdotca/taisen-brackets/blob/main/docs/guides/getting-started.md">Getting started</a> · <a href="https://github.com/johnmorrisdotca/taisen-brackets/blob/main/docs/guides/layouts-and-looks.md">Layouts, looks and backgrounds</a> · <a href="https://github.com/johnmorrisdotca/taisen-brackets/blob/main/docs/API.md">API reference</a></p>
+      </div>
+    </div>
+  </main>
+  <script type="module">
+    // The builder: the number of teams, the size, the look, the theme, the layout and a background, each a row of buttons; the bracket is drawn with the package's own build
+    // beside this page, from a tournament played out by a fixed rule (the same every time), and the code under it is the call that draws it. Nothing is sent or stored.
+    import { advanceWinners, drawBracket, singleElimination } from "./dist/index.js";
+
+    const CHOICES = {
+      teams: { label: "Teams", values: ["4", "8", "16"], default: "8" },
+      size: { label: "Size", values: ["wide", "square", "card", "phone"], default: "wide" },
+      look: { label: "Look", values: ["classic", "road"], default: "road" },
+      theme: { label: "Theme", values: ["auto", "light", "dark", "poster"], default: "light" },
+      layout: { label: "Layout", values: ["tree", "rows", "shields", "update", "columns"], default: "tree" },
+      background: { label: "Background", values: ["none", "midnight", "ice", "hardwood", "pitch", "turf"], default: "none" },
+    };
+    const state = Object.fromEntries(Object.entries(CHOICES).map(([key, one]) => [key, one.default]));
+    const query = new URLSearchParams(location.search);
+    for (const [key, one] of Object.entries(CHOICES)) if (one.values.includes(query.get(key))) state[key] = query.get(key);
+    let way = "call";
+    const $ = (id) => document.getElementById(id);
+
+    /** A tournament played out by a fixed rule: the result of a tie follows the last character of its id, so the page and the code agree. */
+    function tournament(count) {
+      const teams = Array.from({ length: count }, (_, i) => ({ id: `T${i + 1}`, name: `Team ${i + 1}` }));
+      const results = {};
+      const withResults = (list) => list.map((m) => (results[m.id] ? { ...m, score: results[m.id] } : m));
+      let matchups = singleElimination(teams).matchups;
+      for (let round = 0; round < 6; round += 1) {
+        matchups = advanceWinners(withResults(matchups));
+        for (const m of matchups) if (typeof m.sides[0] === "string" && typeof m.sides[1] === "string" && !results[m.id]) results[m.id] = m.id.charCodeAt(m.id.length - 1) % 2 ? [2, 1] : [0, 1];
+      }
+      return { teams, results, matchups: advanceWinners(withResults(matchups)) };
+    }
+    function options() {
+      const out = { size: state.size, look: state.look, theme: state.theme, layout: state.layout };
+      if (state.background !== "none") out.background = state.background;
+      if (state.look === "road") out.seeds = true;
+      return out;
+    }
+    function call() {
+      const t = tournament(Number(state.teams));
+      return `import { advanceWinners, drawBracket, singleElimination } from "@johnmorrisdotca/taisen-brackets";
+
+const teams = ${JSON.stringify(t.teams.map((team) => team.name))}.map((name, i) => ({ id: \`T\${i + 1}\`, name }));
+// The scores of the ties, by id; later ties fill in from the winners.
+const results = ${JSON.stringify(t.results)};
+const withResults = (list) => list.map((m) => (results[m.id] ? { ...m, score: results[m.id] } : m));
+
+let matchups = singleElimination(teams).matchups;
+for (let round = 0; round < 6; round += 1) matchups = advanceWinners(withResults(matchups));
+
+const svg = drawBracket({ teams, matchups: withResults(matchups) }, ${JSON.stringify(options(), null, 2).replace(/\n/g, "\n")});
+document.querySelector("#bracket").innerHTML = svg;`;
+    }
+    function element() {
+      return `<div id="bracket"></div>
+<script type="module">
+  import { drawBracket } from "https://cdn.jsdelivr.net/npm/@johnmorrisdotca/taisen-brackets@0/+esm";
+  // \`ties\` is your list of games: [{ sides: ["A", "B"], score: [2, 1] }, ...]
+  document.querySelector("#bracket").innerHTML = drawBracket(ties, ${JSON.stringify(options())});
+<\/script>`;
+    }
+
+    function draw() {
+      const t = tournament(Number(state.teams));
+      $("stage").innerHTML = drawBracket({ teams: t.teams, matchups: t.matchups }, options());
+      $("code").textContent = way === "call" ? call() : element();
+      for (const group of document.querySelectorAll("[data-choice]")) for (const button of group.querySelectorAll("button")) button.setAttribute("aria-pressed", String(button.dataset.value === state[group.dataset.choice]));
+      for (const button of $("tabs").querySelectorAll("button")) button.setAttribute("aria-selected", String(button.dataset.way === way));
+      document.body.dataset.ready = "true";
+    }
+
+    $("controls").replaceChildren(...Object.entries(CHOICES).map(([key, one]) => {
+      const row = document.createElement("div");
+      row.className = "row";
+      const label = document.createElement("b");
+      label.textContent = one.label;
+      const chips = document.createElement("div");
+      chips.className = "chips";
+      chips.dataset.choice = key;
+      chips.setAttribute("role", "group");
+      chips.setAttribute("aria-label", one.label);
+      for (const value of one.values) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.dataset.value = value;
+        button.textContent = value;
+        button.addEventListener("click", () => { state[key] = value; draw(); });
+        chips.append(button);
+      }
+      row.append(label, chips);
+      return row;
+    }));
+    for (const [name, text] of [["call", "The call"], ["element", "In a page"]]) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.role = "tab";
+      button.dataset.way = name;
+      button.textContent = text;
+      button.addEventListener("click", () => { way = name; draw(); });
+      $("tabs").append(button);
+    }
+    $("copy").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText($("code").textContent);
+        $("status").textContent = "Copied to the clipboard.";
+      } catch {
+        $("status").textContent = "Could not copy: select the code and copy it.";
+      }
+    });
+    draw();
+  </script>
+</body>
+</html>

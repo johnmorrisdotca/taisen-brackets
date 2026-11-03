@@ -26,9 +26,9 @@ const ALLOWED: Allowed[] = [
     reason: "The package's own name in Japanese, its reading and the two characters it is made of, once in the section that says what the name means.",
   },
   {
-    file: "README.md",
-    quoted: ["ラウンド16", "スーパーボウル"],
-    reason: "The round names per language: the line that lists what each language calls the Round of 16 and the Super Bowl is about the translations themselves, so a Japanese term is the subject there.",
+    file: "docs/guides/languages-and-accessibility.md",
+    quoted: ["ラウンド16"],
+    reason: "The guide lists what each language calls the Round of 16, so the Japanese term is the subject there.",
   },
   {
     file: "docs/languages.md",

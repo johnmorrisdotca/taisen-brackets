@@ -45,7 +45,7 @@ The same `drawBracket` call, drawn again after each game with the ties not yet p
 <img alt="A judo contest on the flip-card scoreboard, from four minutes on the clock to ippon: a shido for blue, a yuko for each side, the osaekomi timer counting up to ten seconds for a waza-ari and on to twenty for the ippon, and the winner named at the foot." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-flip-light.webp" width="720">
 </picture>
 </p>
-A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as the IJF's current Sport and Organisation Rules score them (yuko is back since 2025), golden score, the contest time and how it was won. The box writes the marks (`I`, `W`, `Y`), the shido as yellow and red cards and a note under the two rows, in the five languages. `judoBracket` makes a weight category's bracket with the IJF's repechage and its two bronze medal contests. [docs/judo.md](./docs/judo.md) quotes the rules it follows. `judoScoreboard` draws one contest's scoreboard for a given state (the athletes with flags and codes, ippon, waza-ari and yuko counters, shido cards, clock, golden score, osaekomi timer, weight class and round), on a TV or a tablet, as a screen board or as table-top flip cards: [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#board). `judoContestCard` and `judoMatQueue` draw the card shown when the athletes enter and the board of the next contests per mat, with a big mat number and colour ([demo](https://johnmorrisdotca.github.io/taisen-brackets/#queue)). `judoWins` and `judoRoadPanel` draw the road to the final of one judoka, the contests they have won on the way, most recent first ([demo](https://johnmorrisdotca.github.io/taisen-brackets/#judoroad)).
+A judo contest is a tie with a `judo` result (ippon, waza-ari, yuko, shido, golden score, the contest time) scored as the IJF's current rules score it. `judoBracket` makes a weight category's bracket with the repechage and two bronze medal contests, `judoScoreboard` draws one contest as a board or as flip cards, and `judoContestCard` and `judoMatQueue` are the screens for the hall. [docs/judo.md](./docs/judo.md) · [the guide](./docs/guides/judo-rankings-and-boards.md).
 
 <p align="center"><picture>
 <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/judo-desk-dark.webp">
@@ -63,7 +63,7 @@ A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as
 <img alt="A provincial ranking list taking in new results: the top three as big gold, silver and bronze rows and the ranks 4 to 12 beside them, re-ordering after each tournament with green and red arrows for the places gained and lost." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-live-light.webp" width="720">
 </picture>
 </p>
-`rankingList` draws a ranking for any ranked sport from your own data (a province's or a club's feed, a federation's list), text first, with no photo slot to leave empty: the rank, a flag (a country's or a Canadian province's, `CA-BC`), the name, the club and the points, with the movement since the last list as arrows or row colours. The top three can be big gold, silver and bronze rows above a compact list, a champion row is marked `C`, tied ranks share a number (`10`, `10`), a newly ranked athlete is `NR`, and points are written to the sport's own precision (`91.60`). `rankingNumberOnes` draws the number one of each category as a card (`#1 in -57 kg`), and `rankingEntryList` an event's entry list in the order of the draw with each athlete's ranking beside the name. `rankingMatchup` draws the head-to-head card of two athletes with their previous meetings and the record. `rankingRanks` and `rankingCategoryLabel` are helpers, `describeRanking`, `describeNumberOnes` and `describeEntryList` the descriptions, `NUMBER_ONE_COLORS` the card colours and `BOARD_SIZES` the sizes of every board (a TV, a tablet, a phone, and a square and a 4:5 card for social media). [docs/rankings.md](./docs/rankings.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#rankings)
+`rankingList` draws a ranking for any ranked sport from your own data, text first, with no photo slot to leave empty: the rank, a flag, the name, the club and the points, with the movement since the last list. `rankingNumberOnes`, `rankingEntryList` and `rankingMatchup` draw the number ones, an entry list and a head-to-head card. [docs/rankings.md](./docs/rankings.md) · [the guide](./docs/guides/judo-rankings-and-boards.md#a-ranking-list).
 
 <p align="center"><picture>
 <source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/ranking-podium-tv-dark.webp">
@@ -72,7 +72,7 @@ A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as
 
 ### Broadcast boards
 
-`resultsBoard` draws a results board in the manner of a television graphic: a title band with an icon, a sub bar, and a row for each athlete with a rank in a box, the country code, a 4:3 flag, the name, a record badge (`OR`, `WR`, `NR`) and one or more columns of scores or times at the sport's own precision (a gymnastics final, an all-around, a swimming final, athletics, speed skating). It is one standalone SVG of a width you choose and a height that follows from the rows (`resultsBoardSize`), made to be placed over a picture, in three looks and with no mark of any games or broadcaster. `boutBoard` draws the bout presentation: the two athletes in a red and a blue band, the referee and the judges. `broadcastMedalTable` draws the medal table with a disc for each medal. [docs/broadcast.md](./docs/broadcast.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#boards)
+`resultsBoard`, `boutBoard` and `broadcastMedalTable` draw a results graphic, a bout presentation and a medal table, each as one standalone SVG to place over a picture, in three looks and with no mark of any games. [docs/broadcast.md](./docs/broadcast.md) · [the guide](./docs/guides/judo-rankings-and-boards.md#broadcast-boards).
 
 <p align="center"><picture>
 <img alt="A results board in the blue look: a gymnastics apparatus final with a title band, a sub bar with three score columns, and eight rows with a red rank box, country code, flag, name and scores." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/results-apparatus-blue.webp" width="640">
@@ -86,7 +86,7 @@ A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as
 <img alt="A medal table changing from one Games to the next: the ranks, flags, gold, silver and bronze counts and totals of the top eight countries, re-ordered each time, with equal rows sharing a rank." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/medals-live-light.webp" width="640">
 </picture>
 </p>
-`medalTable` draws a medal table for any sport and event (an Olympic Games, a world championship, a club tournament): ranked gold first or by the total, equal rows sharing a rank (5, 5, 7), a flag or a badge for each country or team (a former country such as the Soviet Union is a row of its own), the three medals and the total, in two columns where the board is wide. `tallyMedals` adds up a list of medals filtered to one sport, one weight class or one Games, and `medalRanks` gives the ranks as data. [docs/medals.md](./docs/medals.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#medals)
+`medalTable` ranks countries or teams gold first or by the total, equal rows sharing a rank, with a flag or a badge for each; `tallyMedals` adds up a list of medals and `medalRanks` gives the ranks as data. [docs/medals.md](./docs/medals.md) · [try it in the demo](https://johnmorrisdotca.github.io/taisen-brackets/#medals)
 
 <p align="center"><picture>
 <img alt="A medal table on a 4:5 card: ten countries with rank, flag or badge, name, gold, silver and bronze counts in tinted cells and the total." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/medal-table-portrait-light.webp" width="480">
@@ -139,7 +139,7 @@ Wide, square, a card for a post and a tall one for a phone, in light, dark or a 
 </picture>
 </p>
 
-The twenty-five: `midnight`, `crimson`, `royal`, `emerald`, `pitch` (soccer), `ice` (hockey), `hardwood` (basketball), `infield` (baseball), `turf` (football), `ball-panels`, `swirl`, `waves`, `glow`, `floodlights`, `confetti`, `carbon`, `aurora`, `sunburst`, `chevrons`, `halftone`, `argyle`, `contour`, `stardust`, `mesh` and `spotlight`. [docs/backgrounds.md](./docs/backgrounds.md) says what each is.
+The twenty-five are listed, with what each is for, in [layouts, looks and backgrounds](./docs/guides/layouts-and-looks.md#backgrounds) and [docs/backgrounds.md](./docs/backgrounds.md).
 
 ```js
 import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
@@ -209,17 +209,38 @@ Put the string in a page (`element.innerHTML = svg`), write it to a file, or sen
 - **Team marks you supply**: a logo address or inline SVG, drawn round or square; a team with none is its initials on a colour. Round flags from [Hata](https://github.com/johnmorrisdotca/hata) go in as they are.
 - **The champion in the centre**, with a slot for your trophy: your own SVG or image, or an emblem from [Dougu Sports](https://github.com/johnmorrisdotca/dougu-sports) (a hockey cup, a basketball trophy, a globe) through an optional plug-in, with no dependency added.
 - **Accessible**: `role="img"` with a title and a description, a tooltip sentence on every tie, and `bracketTable`.
-- **A judo scoreboard**: `judoScoreboard` draws one contest for a given state, in two styles (a board, and table-top flip cards) and three sizes, in five languages; live updating is yours.
-- **The road to the final of a judoka**: `judoWins` reads an athlete's wins from a bracket (a top seed's bye included) and `judoRoadPanel` draws them with the opponent's flag, code and name and how each was won.
-- **Judo screens for the hall**: `judoContestCard` (the category, the round, the white athlete over the blue one) and `judoMatQueue` (per mat, a big number and colour and the contests to come in order, with flags and codes), on a TV or a tablet, in five languages.
-- **Rankings**: `rankingList` draws a ranking from your data, text first: rank, flag (a country or a Canadian province), name, club, points, movement arrows, a podium, a champion row, ties and paging; `rankingNumberOnes` the number one of each category and `rankingEntryList` an event's entry list with each athlete's ranking and `rankingMatchup` a head-to-head card ([docs/rankings.md](./docs/rankings.md)).
-- **A medal table for any sport**: `medalTable` ranks countries or teams gold first or by the total, with shared ranks, flags or badges, filters by sport, weight class and Games through `tallyMedals`, and former countries as rows of their own ([docs/medals.md](./docs/medals.md)).
-- **Broadcast boards**: `resultsBoard` draws a results graphic (title band, rank boxes, 4:3 flags, record badges, columns of scores) and `boutBoard` the bout presentation (the two athletes, the referee and the judges) and `broadcastMedalTable` the medal table as a standalone SVG that follows from its rows, to place over a picture, in three looks and with no mark of any games ([docs/broadcast.md](./docs/broadcast.md)).
-- **Judo scoring**: `Matchup.judo` takes ippon, waza-ari, yuko, shido, hansoku-make, golden score and the contest time, checked against the IJF rules (`judoOutcome`); a box shows the marks, the shido cards and how the contest was won, and `judoBracket` adds the repechage and the two bronze medal contests ([docs/judo.md](./docs/judo.md)).
+- **Judo**: `Matchup.judo` takes ippon, waza-ari, yuko, shido, golden score and the contest time, checked against the IJF rules; `judoBracket` adds the repechage and two bronze medal contests, `judoScoreboard` draws one contest as a board or as flip cards, `judoContestCard` and `judoMatQueue` are the screens for the hall, and `judoWins` and `judoRoadPanel` an athlete's road ([docs/judo.md](./docs/judo.md)).
+- **Rankings and medals**: `rankingList` draws a ranking from your data, text first, with flags, clubs, points and movement; `rankingNumberOnes`, `rankingEntryList` and `rankingMatchup` draw cards; `medalTable` ranks countries gold first or by the total, with shared ranks and `tallyMedals` to add medals up ([rankings](./docs/rankings.md), [medals](./docs/medals.md)).
+- **Broadcast boards**: `resultsBoard`, `boutBoard` and `broadcastMedalTable`, each a standalone SVG to place over a picture, in three looks and with no mark of any games ([docs/broadcast.md](./docs/broadcast.md)).
 - **Formats by era**: NHL, NBA, MLB, NFL, CFL, MLS and FIFA World Cup round names, series lengths and byes.
 - **Five languages**: English, French, Japanese, Spanish and German, for every word the drawing, the tooltips, the description and the table write, with the football terms of each language; countries named by `Intl` from their ISO code; numbers and dates by `Intl`. Add a language of your own.
 - **Deterministic**: no clock, no random number, no counter; the same input gives the same string, and ids come from a hash of the input.
 - **No dependencies**, ESM with types, about 140 kB packed.
+
+## Every way to use it
+
+The [demo](https://johnmorrisdotca.github.io/taisen-brackets/), the [docs](https://johnmorrisdotca.github.io/taisen-brackets/docs/) (English and Japanese) and the [embed page](https://johnmorrisdotca.github.io/taisen-brackets/embed.html). Each way below is a tested file in [`examples/`](./examples) (`pnpm test:usage`).
+
+Guides: [script tag](./docs/guides/html-and-cdn.md), [Vite and webpack](./docs/guides/bundlers.md), [React, Vue, Svelte, Angular](./docs/guides/frameworks.md), [iframe](./docs/guides/embed-in-an-iframe.md), [TypeScript and Node](./docs/guides/typescript-and-node.md).
+
+## Guides
+
+Eighteen guides, each with a Japanese twin in [`docs/guides/ja/`](./docs/guides/ja/), written for someone using the package and published as the [documentation site](https://johnmorrisdotca.github.io/taisen-brackets/docs/) with the reference for every export. Every example is run against the built package, and `pnpm docs:check` holds the guides, the reference and the examples together. The ways in (a script tag, Vite and webpack, React, Vue, Svelte, Angular, an iframe, TypeScript and Node) are under "Every way to use it" above; the rest are here.
+
+| Guide | What it is for |
+| --- | --- |
+| [Getting started](./docs/guides/getting-started.md) | A bracket from a list of games, a size and a look, and a table for the reader the picture does not serve. |
+| [Ties and results](./docs/guides/ties-and-results.md) | A game, a series, two legs, a replay, a shoot-out; a flat list of games; reading a result yourself. |
+| [A bracket for any number of teams](./docs/guides/any-number-of-teams.md) | `singleElimination`, seeds and byes, carrying results forward, naming the tree yourself. |
+| [Layouts, looks and backgrounds](./docs/guides/layouts-and-looks.md) | Size and shape, theme, the road look, nine layouts and twenty-five backgrounds. |
+| [Formats by era](./docs/guides/formats-by-era.md) | The NHL, NBA, MLB, NFL, CFL, MLS and World Cup rounds of any season. |
+| [Marks, flags, the champion and its trophy](./docs/guides/marks-flags-and-trophies.md) | Your marks, safe by construction; flags and emblems as plug-ins; links on boxes. |
+| [The road to the final](./docs/guides/road-to-the-final.md) | The two finalists and the way each came, from a tournament or from two paths. |
+| [Languages and accessibility](./docs/guides/languages-and-accessibility.md) | Five languages and your own; what a screen reader gets. |
+| [Judo, rankings, medals and boards](./docs/guides/judo-rankings-and-boards.md) | The other graphics around a tournament. |
+| [Architecture](./docs/guides/architecture.md) | The pipeline and the four rules, and the checks that keep them true. |
+| [Troubleshooting](./docs/guides/troubleshooting.md) | The tree is wrong, a score is the wrong way round, a flag does not appear. |
+| [Upgrading](./docs/guides/upgrading.md) | How to check an upgrade, stored drawings, and what each release changed. |
 
 ## Use it in your project
 
@@ -232,12 +253,6 @@ npm install @johnmorrisdotca/taisen-brackets
 ```
 
 It is ESM, and `require` works on Node 22.12 and later. It needs no DOM: the functions return strings. Five entry points: `@johnmorrisdotca/taisen-brackets` (everything), `/layout` (the layout and the helpers, no drawing), `/presets` (the formats), `/road` (the road to the final) and `/backgrounds` (the twenty-five backgrounds on their own).
-
-## Every way to use it
-
-The [demo](https://johnmorrisdotca.github.io/taisen-brackets/), the [docs](https://johnmorrisdotca.github.io/taisen-brackets/docs/) (English and Japanese) and the [embed page](https://johnmorrisdotca.github.io/taisen-brackets/embed.html). Each way below is a tested file in [`examples/`](./examples) (`pnpm test:usage`).
-
-Guides: [script tag](./docs/guides/html-and-cdn.md), [Vite and webpack](./docs/guides/bundlers.md), [React, Vue, Svelte, Angular](./docs/guides/frameworks.md), [iframe](./docs/guides/embed-in-an-iframe.md), [TypeScript and Node](./docs/guides/typescript-and-node.md).
 
 ## Examples
 
@@ -398,147 +413,27 @@ A team that lost on the way has a path that ends where it lost, and the third-pl
 
 ### A link on every box
 
-`href` is called for each tie with the tie alone. An address makes the whole box a link; with none, it is called for each side (`0` and `1`) and a team's row with an address is a link of its own. Each is a real `<a href>` in the SVG with an accessible name (the tooltip's sentence, "Argentina 3, France 3 (…). Winner: Argentina", or the team's name before it), a hover and a focus ring, and a hit area. An address must be `http(s)`, relative or a `#` fragment: `javascript:`, `data:` and the rest are refused (`safeHref`), and the tie is drawn with no link.
-
-```js
-import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
-
-const bracket = [
-  { sides: ["A", "B"], score: [1, 0], date: "1" }, { sides: ["C", "D"], score: [0, 2], date: "1" }, { sides: ["A", "D"], score: [2, 1], date: "2" },
-];
-
-// A link on each box, to the page of its series or match.
-const boxes = drawBracket(bracket, { href: (tie) => `/match/${tie.id}` });
-console.log(boxes.match(/<a /g).length); // 3
-console.log(boxes.includes('href="/match/m3"')); // true
-
-// Or a link on each team's row.
-const rows = drawBracket(bracket, { href: (tie, side) => (side === undefined ? undefined : `/team/${tie.sides[side]?.id}`) });
-console.log(rows.match(/<a /g).length); // 6
-```
+`href: (tie, side?) => address` makes each tie's box (or each team's row) a real `<a>` in the SVG with an accessible name, a hover and a focus ring; an address must be http(s), relative or a `#` fragment. [A link on every box](./docs/guides/marks-flags-and-trophies.md#a-link-on-every-box).
 
 ### Team marks, and round flags
 
-A team's `mark` is the address of an image (`https://`, `data:image/`, or a relative path) or inline SVG. It is drawn in a circle (`markShape: "round"`, the default), a square, or left out (`"none"`). A team with no mark is its initials on its `color`.
-
-```js
-import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
-import { flag } from "@johnmorrisdotca/hata/load";
-
-// Hata draws a flag as an SVG string, already framed for a circle.
-const teams = [
-  { id: "ARG", name: "Argentina", mark: await flag("AR", { shape: "round" }) },
-  { id: "FRA", name: "France", mark: await flag("FR", { shape: "round" }) },
-  { id: "ENG", name: "England", mark: await flag("GB-ENG", { shape: "round" }) },
-  { id: "BRA", name: "Brazil", mark: await flag("BR", { shape: "round" }) },
-];
-const matchups = [
-  { sides: ["ARG", "BRA"], score: [1, 0], date: "1" }, { sides: ["FRA", "ENG"], score: [2, 1], date: "1" },
-  { sides: ["ARG", "FRA"], score: [3, 3], extraTime: true, pens: [4, 2], date: "2" },
-];
-
-const poster = drawBracket({ teams, matchups }, { theme: "poster", detail: "mark", roundLabels: false });
-// Each flag is written once, as a <symbol>, and used wherever the team appears.
-console.log(poster.includes("<symbol")); // true
-```
-
-Hata is not a dependency of Taisen: you bring the marks. Inline SVG is cleaned as it goes in (scripts, event attributes, `<style>`, `<foreignObject>` and `javascript:` addresses are removed), and an image address must be http(s), relative or a `data:image/` one. Anything else draws the team's initials.
+A team's `mark` is an image address or inline SVG, drawn in a circle, a square or not at all; a team with none is its initials on its colour, and a `flag` code is drawn by a `flags` function you pass (Hata's round flags are one line). Inline SVG is cleaned as it goes in. [Marks, flags and trophies](./docs/guides/marks-flags-and-trophies.md) has the code.
 
 ### The champion, and a trophy
 
-Once the final is played the champion is in the centre with the word "Champion" (on a phone, at the top, so that no line runs through it). Pass your own trophy, inline SVG or an image address, as `trophy`, and it is drawn above. `champion: false` leaves it out.
-
-```js
-import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
-
-const trophy = '<svg viewBox="0 0 24 24"><path d="M6 3h12v5a6 6 0 0 1-12 0zM10 14h4v4h3v3H7v-3h3z" fill="currentColor"/></svg>';
-const svg = drawBracket([{ sides: ["A", "B"], score: [2, 1] }], { trophy });
-console.log(svg.includes('class="tb-gold"')); // true
-```
+Once the final is played the champion is in the centre; pass your own `trophy` (inline SVG or an address) or an emblem id such as `"trophy:hockey-cup"` with an `emblems` renderer. [Marks, flags and trophies](./docs/guides/marks-flags-and-trophies.md#the-champion-and-a-trophy).
 
 ### Emblems for the trophy
 
-The trophy can also be an emblem id, such as `"trophy:hockey-cup"`, drawn by a function you plug in as `emblems`: any function from an id and a request (`{ style, size, tint, theme }`) to an SVG string. [`@johnmorrisdotca/dougu-sports`](https://github.com/johnmorrisdotca/dougu-sports) ([gallery](https://johnmorrisdotca.github.io/dougu-sports/)) has one, `renderEmblem`, and a cup, a basketball, a baseball, a football, a Canadian-football bowl and a soccer globe among its trophies. Taisen does not import it: it is an optional peer dependency, and the package has no dependencies of its own.
-
-```js
-import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
-import { renderEmblem } from "@johnmorrisdotca/dougu-sports/emblems";
-
-const data = [{ sides: ["Aurora", "Harbour"], score: [2, 1] }];
-const svg = drawBracket(data, { emblems: renderEmblem, trophy: "trophy:hockey-cup" });
-console.log(svg.includes('class="tb-emblem"')); // true
-```
-
-- **The look follows the bracket.** The renderer is asked for the size the trophy has in the drawing, and for `theme: "light"` or `"dark"` when the bracket is in that look (`"dark"` for `poster`), else `"inherit"`, where the drawing's own colour (`--tb-ink`) is the ink. `emblemStyle` (`"metal"`, the default, `"line"` or `"color"`) and `emblemTint` (a hex colour) are passed on.
-- **Each league has a default.** `LEAGUE_EMBLEMS` names one (`nhl` the hockey cup, `nba` the basketball, `mlb` the baseball, `nfl` the football, `cfl` the Canadian bowl, `mls` a cup, `worldcup` the soccer globe), and `playoffFormat(league, year).emblem` carries it: `trophy: playoffFormat("nhl", 2024).emblem`.
-- **Without a renderer** an emblem id draws nothing and takes no room, and nothing throws; a trophy that is inline SVG or an address is drawn exactly as before, whatever `emblems` is. A renderer that throws, or returns something that is not an `<svg>`, draws no trophy. What it returns is cleaned like any inline SVG, and the emblem's own `<title>` (English only) is left out; the drawing's description names the champion in the bracket's language. `isEmblemId(value)` tells an emblem id from SVG and from an address.
-- **No global switch.** There is no module-level setting: a drawing is a pure function of its options, so the renderer is passed to each call.
+`emblems` is any function from an id and a request to an SVG string; `renderEmblem` from [Dougu Sports](https://github.com/johnmorrisdotca/dougu-sports) is one, and `LEAGUE_EMBLEMS` names each league's default. Without a renderer an emblem id draws nothing and takes no room. [The rest](./docs/guides/marks-flags-and-trophies.md#an-emblem-from-dougu-sports).
 
 ### Flags from a plug-in
 
-A team can carry a country code, `flag: "ca"`, and the drawing asks the `flags` function you pass for its picture: any synchronous function from a code and a request (`{ shape, size, theme }`) to an SVG string, or to nothing for a code it has no flag for. `shape` is `"round"` (or `"square"` for `markShape: "square"`), `size` the diameter in pixels and `theme` `"light"` or `"dark"` in those looks (`"dark"` for `poster`), else `"inherit"`. [`@johnmorrisdotca/hata`](https://github.com/johnmorrisdotca/hata) has a proper round frame for every flag (`flag(code, { shape: "round" })`), and, like the emblems, it is an optional peer that Taisen never imports. Its `flag()` is asynchronous and a drawing is a pure function of its options, so load the flags first and pass a lookup.
-
-```js
-import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
-import { flag } from "@johnmorrisdotca/hata/load";
-
-const loaded = { AR: await flag("AR", { shape: "round" }), FR: await flag("FR", { shape: "round" }) };
-const teams = [{ id: "ARG", name: "Argentina", flag: "AR" }, { id: "FRA", name: "France", flag: "FR" }];
-const matchups = [{ sides: ["ARG", "FRA"], score: [3, 3], extraTime: true, pens: [4, 2] }];
-
-const svg = drawBracket({ teams, matchups }, { flags: (code) => loaded[code], look: "road" });
-console.log(svg.includes("<symbol")); // true
-```
-
-- **Each flag is written once**, as a `<symbol>`, and used wherever the team appears; the renderer is called once for each code, shape and size.
-- **Without a renderer**, or when it returns nothing for a code, throws, or returns something that is not an `<svg>`, the team's `mark` is drawn, or its initials on its `color`. It never throws. What a renderer returns is cleaned like any inline SVG.
-- **`logo` and `mark`**: in the road chart's finalists `logo` is another name for `mark`.
+A team's `flag` code is drawn by the `flags` function you pass: any synchronous function from a code and a request (`{ shape, size, theme }`) to an SVG string. Each flag is written once, as a `<symbol>`, and without a renderer the mark or the initials are drawn. [Flags from a plug-in](./docs/guides/marks-flags-and-trophies.md#flags-from-a-plug-in).
 
 ### The road to the final
 
-`roadToFinal` draws the two finalists of a tournament and the way each came: the two large round marks at the top with their names; down the middle the rounds, the last at the top; on each finalist's side its matches, each as the round mark of both teams with the score between them in large type and FT, AET or the shoot-out under it; and the group stage as a compact row of small marks, codes and scores at the foot. It is the kind of graphic sports sites post for a World Cup final, drawn from your data: the arrangement, the type and the code are the package's own. It takes the same input as `drawBracket`, so one tournament draws the bracket and the road, and `team` puts either finalist on the left.
-
-```js
-import { drawBracket, roadToFinal } from "@johnmorrisdotca/taisen-brackets";
-
-const teams = [
-  { id: "NED", name: "Netherlands" }, { id: "ARG", name: "Argentina" },
-  { id: "CRO", name: "Croatia" }, { id: "BRA", name: "Brazil" },
-];
-const matchups = [
-  { sides: ["NED", "ARG"], score: [2, 2], extraTime: true, pens: [3, 4], date: "2022-12-09" },
-  { sides: ["CRO", "BRA"], score: [1, 1], extraTime: true, pens: [4, 2], date: "2022-12-09" },
-  { sides: ["ARG", "CRO"], score: [3, 0], date: "2022-12-13" },
-];
-
-const bracket = drawBracket({ teams, matchups }, { look: "road" });
-const road = roadToFinal({ teams, matchups }, { title: "Qatar 2022", size: "wide" });
-console.log(road.totals.champion); // Argentina
-console.log(road.summary); // Matches played before the final: Argentina (1) and Croatia (1). The final: Argentina 3–0 Croatia (FT). Argentina won the final.
-console.log(roadToFinal({ teams, matchups }, { team: "CRO" }).totals.finalists[0].name); // Croatia
-console.log(road.draw({ size: "phone" }).startsWith("<svg"), bracket.startsWith("<svg")); // true true
-```
-
-A tournament's final names the finalists, each one's played ties are its road (a round-robin game, `round: 0`, is the group stage), and the final's score is written between the marks (a final not played yet says "v"). The rounds are named as the bracket names them (`roundNames`), in the language of `locale`. Or give the two finalists yourself, each a team with a `path` (the matches before the final, the earliest first) and, if you like, its `group`:
-
-```js
-import { roadToFinal } from "@johnmorrisdotca/taisen-brackets";
-
-const owls = { name: "Northern Owls", abbr: "NOW", color: "#3a2d6b", path: [
-  { round: "quarter-final", opponent: { name: "Coastal Pines", abbr: "CPN" }, score: [2, 0] },
-  { round: "semi-final", opponent: { name: "Valley Stars", abbr: "VAL" }, score: [1, 1], decidedBy: "pens", pens: [4, 3] },
-] };
-const gulls = { name: "Harbour City Gulls", abbr: "HCG", color: "#1d4f91", path: [
-  { round: "quarter-final", opponent: { name: "Summit Peaks", abbr: "SMT" }, score: [3, 1] },
-  { round: "semi-final", opponent: { name: "Metro Bolts", abbr: "MTB" }, score: [2, 1], decidedBy: "aet" },
-] };
-
-const chart = roadToFinal([owls, gulls], { title: "Northern Cup 2030", final: { score: [1, 2] }, size: "square" });
-console.log(chart.totals.rounds.join(" "), chart.totals.champion); // quarter-final semi-final Harbour City Gulls
-console.log(chart.table().includes("<td>Semi-final</td>")); // true
-```
-
-[docs/road.md](./docs/road.md) has the fields of a match, the options, the sizes and the table.
+`roadToFinal` draws the two finalists of a tournament and the way each came: two large round marks, the rounds down the middle, each finalist's matches on its side with the score between the teams' marks. It takes what `drawBracket` takes, or two paths you write, and gives back `{ options, title, summary, totals, draw(extra?), table(options?) }`. [The road to the final](./docs/guides/road-to-the-final.md) has both ways in code; [docs/road.md](./docs/road.md) the fields and options.
 
 ### A table for readers the picture does not serve
 
@@ -556,42 +451,123 @@ console.log(bracketTable(bracket).startsWith("<table")); // true
 
 Every word the package writes is in `WORDS` (English; see Languages for the others); pass `words` to replace any: `{ champion: "Vainqueur", thirdPlace: "Match pour la 3e place", tbd: "À déterminer" }`. Round names come from `roundNames`: a list, or a format from `playoffFormat`.
 
-### In React, Vue and the rest
+### From a CDN, as a module
 
-The functions return strings, so any framework can use them:
+```html
+<div id="bracket"></div>
+<script type="module">
+  import { drawBracket } from "https://cdn.jsdelivr.net/npm/@johnmorrisdotca/taisen-brackets@0/+esm";
+  document.querySelector("#bracket").innerHTML = drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }]);
+</script>
+```
+
+### In TypeScript
+
+```ts
+import { drawBracket, type DrawOptions, type Matchup } from "@johnmorrisdotca/taisen-brackets";
+
+const ties: Matchup[] = [{ sides: ["Aurora", "Harbour"], score: [2, 1] }];
+const options: DrawOptions = { size: "square", theme: "dark" };
+console.log(drawBracket(ties, options).startsWith("<svg"));
+```
+
+### In React, Vue, Svelte and Angular
+
+The functions return strings, so any framework can use them. The string is built from your data with every name escaped; do not put untrusted SVG in `mark` or `trophy` without knowing that it is cleaned (it is) and that an image address you pass is loaded by the visitor's browser.
 
 ```tsx no-check
 // React
 <div dangerouslySetInnerHTML={{ __html: drawBracket(bracket, { size: "phone" }) }} />
 ```
 
-The string is built from your data, with every name escaped; do not put untrusted SVG in `mark` or `trophy` without knowing that it is cleaned (it is) and that an image address you pass is loaded by the visitor's browser.
+```vue
+<!-- Vue -->
+<template><div v-html="svg" /></template>
+<script setup>
+import { computed } from "vue";
+import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+const props = defineProps({ ties: Array });
+const svg = computed(() => drawBracket(props.ties, { size: "phone" }));
+</script>
+```
+
+```svelte
+<!-- Svelte -->
+<script>
+  import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+  export let ties = [];
+  $: svg = drawBracket(ties, { size: "phone" });
+</script>
+{@html svg}
+```
+
+```ts no-check
+// Angular: a component with `svg = drawBracket(this.ties)` and `<div [innerHTML]="svg"></div>`; the string is the package's own, so it is safe to trust.
+import { Component, Input } from "@angular/core";
+import { drawBracket, type Matchup } from "@johnmorrisdotca/taisen-brackets";
+
+@Component({ selector: "app-bracket", standalone: true, template: `<div [innerHTML]="svg"></div>` })
+export class BracketComponent {
+  svg = "";
+  @Input() set ties(value: Matchup[]) {
+    this.svg = drawBracket(value, { size: "phone" });
+  }
+}
+```
+
+### On a server, and as a file
+
+```js no-run
+import { createServer } from "node:http";
+import { writeFileSync } from "node:fs";
+import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+
+const ties = [{ sides: ["Aurora", "Harbour"], score: [2, 1] }];
+// A file that stands alone: open it in a browser, or put it in an image tag.
+writeFileSync("bracket.svg", drawBracket(ties, { theme: "light" }));
+// Or an image address: the same input gives the same bytes, so a CDN can keep it.
+createServer((request, response) => {
+  response.writeHead(200, { "content-type": "image/svg+xml", "cache-control": "public, max-age=3600" });
+  response.end(drawBracket(ties));
+}).listen(7100);
+```
+
+### In a frame
+
+```html
+<iframe src="https://johnmorrisdotca.github.io/taisen-brackets/" title="A bracket drawn by Taisen Brackets" loading="lazy" style="width:100%;aspect-ratio:16/9;border:0"></iframe>
+```
+
+A page that cannot run script can show the demo in a frame; a page that can should draw the string itself, which needs no network.
+
+### Shaping the data
+
+```js
+import { collectTeams, drawBracket } from "@johnmorrisdotca/taisen-brackets";
+
+// Ties from your own feed: keep the sides as ids, list the teams once, and the bracket shows their names.
+const feed = [
+  { home: "NED", away: "ARG", homeGoals: 2, awayGoals: 2 },
+  { home: "CRO", away: "BRA", homeGoals: 1, awayGoals: 1 },
+];
+const ties = feed.map((game) => ({ sides: [game.home, game.away], score: [game.homeGoals, game.awayGoals], extraTime: true, pens: [4, 3] }));
+console.log(collectTeams(ties).size, drawBracket({ matchups: ties, teams: [{ id: "NED", name: "Netherlands" }] }).includes("Netherlands")); // 4 true
+```
 
 ## API
 
-Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part from `/layout`, the formats from `/presets`. The types are in the package; each function's doc comment has its details.
+Everything is exported from `@johnmorrisdotca/taisen-brackets`; the layout part from `/layout`, the formats from `/presets`, the road to the final from `/road` and the backgrounds from `/backgrounds`. The [API reference](https://johnmorrisdotca.github.io/taisen-brackets/docs/api/main/) on the documentation site lists every export of every entry point with its signature, doc comment and an example, made from the source; [docs/functions.md](./docs/functions.md) says what each family of functions is for and lists the options of `drawBracket` and `roadToFinal`.
 
-- `drawBracket(input, options?)`: the SVG string. `input` is a list of matchups, `{ matchups, teams }` or a layout. Options: `layout`, `headers`, `at`, `standings`, `qualify`, `style`, `styleScope`, `size`, `orientation`, `shape`, `detail`, `theme`, `background` (a preset's name, a tuned preset or your own picture), `vs`, `codes`, `title`, `subtitle`, `roundNames`, `roundLabels`, `scores`, `seeds`, `markShape`, `champion`, `trophy`, `emblems`, `emblemStyle`, `emblemTint`, `thirdPlace`, `winnerHighlight`, `look`, `href`, `tieClass`, `highlightPath`, `flags`, `flagHref`, `locale`, `words`, `teamName`, `groupOrder`, `id`, `className`.
-- `roadToFinal(input, options?)`: the road to the final of a tournament or of two finalists: `{ options, title, summary, totals, draw(extra?), table(options?) }`. `input` is what `drawBracket` takes, or the two finalists with their paths. Options: `team`, `title`, `subtitle`, `final`, `labels`, `groupLabel`, `size`, `winner`, `codes`, `endnote`, and `locale`, `words`, `teamName`, `roundNames`, `markShape`, `flags`, `theme`, `background`, `id`, `className` as for `drawBracket`. The types `RoadChart`, `RoadFinalist`, `RoadMatch`, `RoadOptions` and the rest are exported too; it is also the one export of `/road`.
-- `groupStandings(input, options?)`, `groupsTable(input, options?)`: the group stage's tables as data (`GroupTable`, `GroupRow`) and as HTML, from the round-robin games.
-- `bracketStyle(options)`: the stylesheet of a drawing with those options and a `styleScope`, for a page that draws a bracket twice. `LAYOUTS` lists the layouts, `CONFERENCE_COLORS` the two half colours of the layouts that colour them (`--tb-conf-a` and `--tb-conf-b`).
-- `layoutBracket(input, options?)`: the rounds, halves, rows, byes and results, without drawing. `shape: "ltr"` and `groupOrder` are its options.
-- `bracketTable(input, options?)`: the HTML table.
-- `describeBracket(input, options?)`: the sentence a screen reader gets.
-- `singleElimination(teams, options?)`, `advanceWinners(matchups)`, `standardSeeds(size)`: brackets for any number of teams.
-- `matchupsFromGames(games, options)`: matchups from a flat list of games.
-- `resolveMatchup`, `collectTeams`, `describeTie`, `noteParts`, `noteLong`: one tie's result, the teams of a bracket, a tie in a sentence.
-- `judoOutcome(result, winner?)`, `judoBracket(athletes, options?)`, `judoPodium(input)`, `judoCategoryLabel(category, locale?)`, `JUDO_WEIGHT_CLASSES`, `judoSeconds(time)`, `judoClock(seconds)`: judo results checked against the IJF rules, the bracket with its repechage and two bronze medal contests, the medallists, a weight category as a heading ([docs/judo.md](./docs/judo.md)). `judoScoreboard(contest, options?)`, `describeJudoContest(contest, options?)`, `JUDO_BOARD_SIZES`: the scoreboard of a contest as SVG and as a sentence. `judoContestCard(contest, options?)`, `judoMatQueue(mats, options?)`, `describeJudoCard`, `describeJudoQueue`, `JUDO_MAT_COLORS`: the contest card and the mat queue board as SVG and as sentences. `judoWins(bracket, athlete, options?)`, `judoRoadPanel(source, options?)`, `describeJudoRoad`: an athlete's wins on the road to the final, and the panel. `Matchup.judo` and `Matchup.stage` (`"repechage"`, `"bronze"`) carry them into `drawBracket`.
-- `rankingList(source, options?)`, `rankingRanks(entries, options?)`, `rankingCategoryLabel(category, locale?)`, `describeRanking(source, options?)`, `BOARD_SIZES`: a ranking list as SVG, its ranks as data, a category as a heading and the drawing as a sentence. `rankingNumberOnes(source, options?)`, `describeNumberOnes`, `NUMBER_ONE_COLORS`: the number one of each category as cards. `rankingEntryList(source, options?)`, `describeEntryList`: an event's entry list with each athlete's ranking. `rankingMatchup(source, options?)`, `describeMatchup`, `matchupRecord(meetings)`: the head-to-head card of two athletes and their meetings ([docs/rankings.md](./docs/rankings.md)).
-- `medalTable(source, options?)`, `medalRanks(rows, options?)`, `tallyMedals(awards, filter?)`, `describeMedalTable(source, options?)`: a medal table as SVG, its ranks as data, a list of medals added up and filtered, and the table as a sentence ([docs/medals.md](./docs/medals.md)).
-- `resultsBoard(source, options?)`, `resultsBoardSize(rowCount, options?)`, `describeResultsBoard(source, options?)`, `BROADCAST_LOOKS`: a broadcast-style results board as a standalone SVG, its size from its rows, and the board as a sentence. `boutBoard(source, options?)`, `boutBoardSize(officialCount, options?)`, `describeBoutBoard(source, options?)`: the bout presentation board, its size and its description. `broadcastMedalTable(source, options?)`, `broadcastMedalSize(rowCount, options?)`: the medal table in the broadcast style and its size ([docs/broadcast.md](./docs/broadcast.md)).
-- `playoffFormat(league, year)`, `playoffEras(league)`, `LEAGUES`: the formats by era (`nhl`, `nba`, `mlb`, `nfl`, `cfl`, `mls`, `worldcup`). `LEAGUE_EMBLEMS`: each league's default emblem id.
-- `isEmblemId(value)`, and the types `EmblemRenderer`, `EmblemRequest`, `EmblemStyle`: the trophy emblems (see "Emblems for the trophy").
-- `roundName(remaining)`, `roundNamesFor(count)`, `roundLabel(layout, round, names, words)`: round names.
-- `LOCALES`, `LOCALE_CODES`, `defineLocale`, `localeOf`, `voiceOf`, `countryName`: the languages (see Languages), a language of your own, the formats and the names of countries from `Intl`. `localizedLayout(layout, voice)` is a layout with the team names in a language.
-- `SIZES`, `THEMES`, `ROAD_THEMES`, `WORDS`, `VERSION`: the sizes (`wide`, `square`, `card`, `phone`), the looks' colours, the road look's extra colours, the English words, the version.
-- `BACKGROUND_PRESETS`, `backgroundSvg(preset, options)`, `contrastRatio(a, b)`, `resolveBackground(option, theme, width, height, prefix)`, `FAMILY_BACKGROUNDS_VERSION`: the twenty-five backgrounds, one drawn on its own with the ink that reads over it, the contrast of two colours, the `background` option read, and the version of the file shared with the family (see "Backgrounds"). Also its own entry point, `/backgrounds`.
-- `cleanSvg(markup)`, `safeUrl(url)`, `safeHref(url)`, `abbreviate(name)`: the rules for marks and for the addresses of links, and the short name made from a name. The types `FlagRenderer`, `FlagRequest` and `FlagShape` are the flags plug-in's (see "Flags from a plug-in").
+- **Draw**: `drawBracket(input, options?)` (the SVG string; `input` is a list of matchups, `{ matchups, teams }` or a layout), `roadToFinal(input, options?)`, `bracketStyle(options)`, `LAYOUTS`, `CONFERENCE_COLORS`, `groupStandings`, `groupsTable`.
+- **Work out**: `layoutBracket(input, options?)`, `bracketTable`, `describeBracket`, `singleElimination`, `advanceWinners`, `standardSeeds`, `matchupsFromGames`, `resolveMatchup`, `collectTeams`, `describeTie`, `noteParts`, `noteLong`.
+- **Judo**: `judoOutcome`, `judoBracket`, `judoPodium`, `judoCategoryLabel`, `JUDO_WEIGHT_CLASSES`, `judoSeconds`, `judoClock`, `judoScoreboard`, `describeJudoContest`, `JUDO_BOARD_SIZES`, `judoContestCard`, `judoMatQueue`, `describeJudoCard`, `describeJudoQueue`, `JUDO_MAT_COLORS`, `judoWins`, `judoRoadPanel`, `describeJudoRoad` ([docs/judo.md](./docs/judo.md)).
+- **Rankings and medals**: `rankingList`, `rankingRanks`, `rankingCategoryLabel`, `describeRanking`, `BOARD_SIZES`, `rankingNumberOnes`, `describeNumberOnes`, `NUMBER_ONE_COLORS`, `rankingEntryList`, `describeEntryList`, `rankingMatchup`, `describeMatchup`, `matchupRecord`, `medalTable`, `medalRanks`, `tallyMedals`, `describeMedalTable` ([rankings](./docs/rankings.md), [medals](./docs/medals.md)).
+- **Broadcast boards**: `resultsBoard`, `resultsBoardSize`, `describeResultsBoard`, `BROADCAST_LOOKS`, `boutBoard`, `boutBoardSize`, `describeBoutBoard`, `broadcastMedalTable`, `broadcastMedalSize` ([docs/broadcast.md](./docs/broadcast.md)).
+- **Formats and rounds**: `playoffFormat`, `playoffEras`, `LEAGUES`, `LEAGUE_EMBLEMS`, `roundName`, `roundNamesFor`, `roundLabel`.
+- **Languages**: `LOCALES`, `LOCALE_CODES`, `defineLocale`, `localeOf`, `voiceOf`, `countryName`, `localizedLayout`, `WORDS`.
+- **Looks and backgrounds**: `SIZES`, `THEMES`, `ROAD_THEMES`, `VERSION`, `BACKGROUND_PRESETS`, `backgroundSvg`, `contrastRatio`, `resolveBackground`, `FAMILY_BACKGROUNDS_VERSION`.
+- **Marks and plug-ins**: `cleanSvg`, `safeUrl`, `safeHref`, `abbreviate`, `isEmblemId`, and the types `EmblemRenderer`, `EmblemRequest`, `EmblemStyle`, `FlagRenderer`, `FlagRequest`, `FlagShape` ([marks, flags and trophies](./docs/guides/marks-flags-and-trophies.md)).
+
 
 ## Languages
 
@@ -615,11 +591,8 @@ for (const locale of ["en", "fr", "ja", "es", "de"]) console.log(describeBracket
 
 <p align="center"><img alt="The same bracket, the World Cup of 2022 on a phone's layout, in English, French, Japanese, Spanish and German side by side: the rounds, the notes, the label under the champion and the names of the countries are each in their language." src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/languages-wc2022.webp" width="900"></p>
 
-- `locale` is `"en"` (the default), `"fr"`, `"ja"`, `"es"`, `"de"`, or a `Locale` you made with `defineLocale`. It sets the words, the names of the rounds, the `lang` of the `<svg>` and of the `<table>`, the digits and the dates (`Intl`), and capitals by the language's rules (not for Japanese). `LOCALES` holds the tables and `LOCALE_CODES` lists the codes.
-- **Round names** are the football terms of each language's Wikipedia article on the World Cup: *Huitièmes de finale*, *Octavos de final*, *Achtelfinale*, ラウンド16; the leagues' rounds (NHL, NBA, MLB, NFL, CFL) are the generic words translated, and a league's own name is kept in the form the language uses (*Finale de la Coupe Stanley*, *Stanley-Cup-Finale*, *Coupe Grey*, *Super Bowl*, スーパーボウル). [docs/languages.md](./docs/languages.md) lists every term, what it was checked against, and what still needs a native reader (Spanish and German).
-- **Team names**: a team can carry its names (`names: { fr: "Allemagne", ja: "ドイツ" }`), the option `teamName(team, locale)` can give one, and `countryName("DE", locale)` makes a country's name from `Intl.DisplayNames` (the home nations `GB-ENG`, `GB-SCT`, `GB-WLS` and `GB-NIR` too). A club keeps its name, and a team's short name (`NED`, `ARG`) stays the FIFA code in every language.
-- **`words`** still replaces any string of any language: `{ locale: "fr", words: { champion: "Vainqueur" } }`.
-- **A language of your own**: `defineLocale("nl", { words: { champion: "Kampioen" }, rounds: { "Quarter-finals": "Kwartfinales" } })` fills what you leave out from English; pass the result as `locale`.
+- `locale` is `"en"` (the default), `"fr"`, `"ja"`, `"es"`, `"de"`, or a `Locale` you made with `defineLocale`. It sets the words, the names of the rounds, the `lang` of the `<svg>` and of the `<table>`, the digits and the dates (`Intl`), and capitals by the language's rules (not for Japanese).
+- Team names come from a team's `names`, the option `teamName(team, locale)` or `countryName("DE", locale)`; `words` replaces any string of any language; `defineLocale("nl", { words: { champion: "Kampioen" } })` fills what you leave out from English. [Languages and accessibility](./docs/guides/languages-and-accessibility.md) has each.
 
 ```js
 import { defineLocale, drawBracket } from "@johnmorrisdotca/taisen-brackets";
