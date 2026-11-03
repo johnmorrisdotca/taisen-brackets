@@ -6,11 +6,25 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.19.0] - 2026-11-03
+
+The documentation, the usage examples, the embed page and the release tooling follow the family's must-have list. No change to the package's drawings.
+
 ### Changed
 
 - The README opens with the package's thumbnail, and the demo carries it as its link preview (og:image) and publishes the card, a dark card and an icon on Pages at `thumbnail.png`, `thumbnail-dark.png` and `icon.png`.
 
 - The demo (not the package): fewer folds (MODULES-113). The bracket's table and call, two folds at the foot of a page 13,000 pixels long, are now three tabs (Picture, Table, The call) under the bracket they describe, with the arrow keys. The four road cards each had a "Table" fold; one switch above them (Pictures or Tables) now does it for all four. What stays is one closed fold of code beside each of the six demos that have one. Tests in `e2e/demo.demo.mjs` and `e2e/road.demo.mjs`.
+- **The demo's header** has the family's language picker and theme switch (kazoku-ui).
+- **The Release workflow** is run by hand from `main` and calls kazoku-ui's shared release workflow; it refuses a commit CI has not passed.
+
+### Added
+
+- **Every export is documented.** Each export of every entry point has a TSDoc summary, `@param`, `@returns` and an `@example` that imports the package and runs: 208 of them were missing. `pnpm docs:check` runs the examples and `pnpm test` checks that they are there.
+- **A documentation site, English and Japanese** (`docs/guides/`, `docs/guides/ja/`, `docs/site.json`), built by the family's `scripts/docs-site.mjs`, with an API page for each export and search. It is published beside the demo.
+- **Every way to use it, tested.** `examples/` holds a script tag from jsDelivr and from unpkg, Vite, webpack, React (with a server render), Vue, Svelte, Angular, an iframe of the embed page, TypeScript and Node. `pnpm test:usage` builds, type-checks or runs each against the package as npm packs it, opens the ones with a page in a browser, and checks that the guides hold the same text word for word. CI runs it.
+- **An embed page**, `demo/embed.html`: a small knockout drawn from its own address (`look`, `theme`, `locale`, `size`, `title`), for an iframe.
+- **`scripts/check-standard.mjs`**, the family's must-have list as a check (kazoku-ui's, copied unchanged), run by `pnpm test`.
 
 ## [0.18.0] - 2026-10-30
 

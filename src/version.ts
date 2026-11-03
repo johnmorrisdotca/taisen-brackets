@@ -1,1 +1,11 @@
-export const VERSION = "0.18.0";
+/**
+ * The package's version.
+ *
+ * @example
+ * ```ts
+ * import { VERSION } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(VERSION);
+ * ```
+ */
+export const VERSION = "0.19.0";

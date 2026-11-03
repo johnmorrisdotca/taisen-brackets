@@ -10,9 +10,29 @@ import { esc, fit, hash, num } from "./text.ts";
 
 export { bw, clampN, fitSize };
 
+/**
+ * The sizes of a board: `tv`, `tablet`, `tablet-tall`, `phone`, `square` and `portrait`.
+ *
+ * @example
+ * ```ts
+ * import { BOARD_SIZES, type BoardSizeName } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const size: BoardSizeName = "square";
+ * console.log(BOARD_SIZES[size]);
+ * ```
+ */
 export type BoardSizeName = "tv" | "tablet" | "tablet-tall" | "phone" | "square" | "portrait";
 
-/** The sizes of a board: a TV's 1920 by 1080, a tablet on its side (1280 by 800) and upright (800 by 1280), a phone's 600 by 1300, and the social-card shapes, square (1080) and 4:5 (1080 by 1350). */
+/**
+ * The sizes of a board: a TV's 1920 by 1080, a tablet on its side (1280 by 800) and upright (800 by 1280), a phone's 600 by 1300, and the social-card shapes, square (1080) and 4:5 (1080 by 1350).
+ *
+ * @example
+ * ```ts
+ * import { BOARD_SIZES } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(Object.keys(BOARD_SIZES), BOARD_SIZES.tv);
+ * ```
+ */
 export const BOARD_SIZES: Readonly<Record<BoardSizeName, { width: number; height: number }>> = Object.freeze({
   tv: { width: 1920, height: 1080 },
   tablet: { width: 1280, height: 800 },
@@ -22,7 +42,17 @@ export const BOARD_SIZES: Readonly<Record<BoardSizeName, { width: number; height
   portrait: { width: 1080, height: 1350 },
 });
 
-/** What every board takes. */
+/**
+ * What every board takes.
+ *
+ * @example
+ * ```ts
+ * import { rankingList, type BoardOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const board: BoardOptions = { size: "tablet", theme: "dark", flagShape: "square", locale: "fr" };
+ * console.log(rankingList({ entries: [{ name: "A", points: 1 }] }, board).startsWith("<svg"));
+ * ```
+ */
 export interface BoardOptions {
   /** One of `BOARD_SIZES` (`tv` by default), or a size of your own, `{ width, height }`, at least 200 each way. */
   size?: BoardSizeName | { width: number; height: number };

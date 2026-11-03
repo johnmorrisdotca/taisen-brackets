@@ -1,0 +1,54 @@
+<!doctype html>
+<!-- One bracket and nothing else, for another site's iframe. What it draws comes from its own address, the options of drawBracket:
+     embed.html?look=road&theme=dark&locale=ja&size=wide&title=Semi-finals (after a # works too). It draws a small made-up knockout,
+     stores nothing, tracks nothing and loads nothing from anywhere else. When the bracket is drawn it tells the page around it:
+     postMessage({ taisen: "load" }), or { taisen: "error", reason }. -->
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="robots" content="noindex" />
+    <meta name="color-scheme" content="light dark" />
+    <title>Taisen Brackets · a bracket</title>
+    <style>
+      html, body { margin: 0; background: transparent; }
+      body { padding: 4px; line-height: 0; }
+      #bracket svg { display: block; width: 100%; height: auto; }
+    </style>
+  </head>
+  <body>
+    <div id="bracket" role="img" aria-label="A knockout bracket"></div>
+    <script type="module">
+      import { drawBracket } from "./dist/index.js";
+      const OPTIONS = { look: ["classic", "road"], theme: ["auto", "light", "dark", "poster"], locale: ["en", "fr", "ja", "es", "de"], size: ["wide", "square", "card", "phone"] };
+      const MATCHUPS = [
+        { sides: ["Aurora", "Harbour"], score: [2, 1], date: "2026-06-01" },
+        { sides: ["Cascade", "Delta"], score: [0, 1], date: "2026-06-01" },
+        { sides: ["Ember", "Fjord"], score: [1, 1], pens: [4, 3], date: "2026-06-02" },
+        { sides: ["Glacier", "Heath"], score: [3, 0], date: "2026-06-02" },
+        { sides: ["Aurora", "Delta"], score: [2, 0], date: "2026-06-08" },
+        { sides: ["Ember", "Glacier"], score: [1, 2], date: "2026-06-08" },
+        { sides: ["Aurora", "Glacier"], score: [3, 1], date: "2026-06-15" },
+      ];
+      const tell = (message) => parent !== window && parent.postMessage(message, "*");
+      const draw = () => {
+        const query = new URLSearchParams(location.hash.length > 1 ? location.hash.slice(1) : location.search.slice(1));
+        const options = {};
+        for (const [name, values] of Object.entries(OPTIONS)) if (values.includes(query.get(name))) options[name] = query.get(name);
+        const title = query.get("title");
+        if (title !== null && title.length <= 120) options.title = title;
+        if (options.locale) document.documentElement.lang = options.locale;
+        try {
+          const target = document.getElementById("bracket");
+          target.innerHTML = drawBracket(MATCHUPS, options);
+          target.setAttribute("aria-label", title ?? "A knockout bracket");
+          tell({ taisen: "load" });
+        } catch (error) {
+          tell({ taisen: "error", reason: error instanceof Error ? error.message : String(error) });
+        }
+      };
+      addEventListener("hashchange", draw);
+      draw();
+    </script>
+  </body>
+</html>

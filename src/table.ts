@@ -7,6 +7,17 @@ import { localizedLayout } from "./render.ts";
 import { roundLabel } from "./rounds.ts";
 import { esc } from "./text.ts";
 
+/**
+ * What `bracketTable` can be told: the language and words, the round names, a caption and a class.
+ *
+ * @example
+ * ```ts
+ * import { bracketTable, type TableOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: TableOptions = { caption: "Aurora Cup", className: "results" };
+ * console.log(bracketTable([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], options).includes("Aurora Cup"));
+ * ```
+ */
 export interface TableOptions extends Pick<DrawOptions, "locale" | "words" | "teamName" | "roundNames"> {
   /** The table's caption. Default: the summary ("16 teams, 4 rounds"). */
   caption?: string;
@@ -18,6 +29,16 @@ export interface TableOptions extends Pick<DrawOptions, "locale" | "words" | "te
  * The bracket as an HTML table, for a reader the drawing does not serve: one row for every tie, round by round, with the
  * two sides, the score, the winner in bold, the date where the tie has one (written as the language writes dates) and a note.
  * It is a plain, valid `<table>` with a caption and header cells, in the language of `locale`.
+ *
+ * @param input - The matchups, a `{ matchups, teams }` or a layout.
+ * @param options - The caption, the class, the language, the words and the round names.
+ * @returns The HTML of a `<table>`: one row for each tie, with its round, its sides, its score and its notes.
+ * @example
+ * ```ts
+ * import { bracketTable } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(bracketTable([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }]).startsWith("<table"));
+ * ```
  */
 export function bracketTable(input: BracketLayout | readonly Matchup[] | BracketInput, options: TableOptions = {}): string {
   const v = voiceOf(options);

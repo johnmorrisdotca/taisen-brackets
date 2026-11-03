@@ -1,6 +1,8 @@
 // Builds the static demo for GitHub Pages into ./site: the page (made by page.mjs from the family's shared header and footer), its scripts and styles, and the compiled library beside them.
 import { cpSync, mkdirSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 
+import { build } from "esbuild";
+
 import { publishThumbnails, thumbnailHead } from "./family-thumbnail.mjs";
 import { renderIndex } from "./page.mjs";
 
@@ -18,4 +20,13 @@ cpSync("node_modules/@johnmorrisdotca/dougu-sports/dist", "site/dougu-sports", {
 const pkg = JSON.parse(readFileSync("package.json", "utf8"));
 writeFileSync("site/index.html", renderIndex().replace("</head>", `  ${thumbnailHead(pkg, { alt: ALT })}\n</head>`));
 publishThumbnails(".", "site");
+// The family header's language picker and theme switch, as one small module for every page of the site (the demo, the embed page and the docs).
+await build({
+  stdin: { contents: 'import "@johnmorrisdotca/kazoku-ui/language-picker/define";\nimport "@johnmorrisdotca/kazoku-ui/theme-switch/define";\n', resolveDir: process.cwd() },
+  outfile: "site/kazoku-parts.js",
+  bundle: true,
+  format: "esm",
+  minify: true,
+  logLevel: "silent",
+});
 console.log("site/ is ready");

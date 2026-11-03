@@ -8,7 +8,19 @@ import { drawMark, type MarkContext } from "./marks.ts";
 import { bold, headingTexts, titleHeight } from "./furniture.ts";
 import { esc, fit, num } from "./text.ts";
 
-/** One team's line of a group's table. */
+/**
+ * One team's line of a group's table.
+ *
+ * @example
+ * ```ts
+ * import { groupStandings, type GroupRow } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const teams = [{ id: "A", name: "Aurora", group: "A" }, { id: "B", name: "Harbour", group: "A" }];
+ * const [group] = groupStandings({ teams, matchups: [{ sides: ["A", "B"], score: [2, 1], round: 0 }] });
+ * const top: GroupRow = group.rows[0];
+ * console.log(top.team.name, top.points, top.diff);
+ * ```
+ */
 export interface GroupRow {
   team: Team;
   played: number;
@@ -23,7 +35,18 @@ export interface GroupRow {
   points: number;
 }
 
-/** One group: its name in the language and its teams, the best first. */
+/**
+ * One group: its name in the language and its teams, the best first.
+ *
+ * @example
+ * ```ts
+ * import { groupStandings, type GroupTable } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const teams = [{ id: "A", name: "Aurora", group: "A" }, { id: "B", name: "Harbour", group: "A" }];
+ * const tables: GroupTable[] = groupStandings({ teams, matchups: [{ sides: ["A", "B"], score: [2, 1], round: 0 }] });
+ * console.log(tables[0].name, tables[0].rows.length);
+ * ```
+ */
 export interface GroupTable {
   /** The group's key: the teams' `group`, or a letter made for a group the teams do not name. */
   key: string;
@@ -38,6 +61,23 @@ const isLayout = (x: unknown): x is BracketLayout => typeof x === "object" && x 
  * The tables of the group stage: one for each group, from the round-robin games (`round: 0`) of the ties. A team's group is its `group`; teams with none take the group of the teams they
  * played (the games make groups of the teams they join), and a group the teams do not name is lettered A, B, C. Rows are in order of points, then goal difference, then goals scored, then
  * name (`standings: "record"` orders by wins, then fewest losses).
+ *
+ * @param input - The matchups, a `{ matchups, teams }` or a layout.
+ * @param options - The language, the words and the `standings` columns.
+ * @returns One table for each group, in the order the groups are listed; an empty list when no game is a group game.
+ * @example
+ * ```ts
+ * import { groupStandings, type Matchup } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const teams = [{ id: "A", name: "Aurora", group: "A" }, { id: "B", name: "Harbour", group: "A" }, { id: "C", name: "Cascade", group: "A" }];
+ * const matchups: Matchup[] = [
+ *   { sides: ["A", "B"], score: [2, 1], round: 0 },
+ *   { sides: ["A", "C"], score: [0, 0], round: 0 },
+ *   { sides: ["B", "C"], score: [1, 3], round: 0 },
+ * ];
+ * const [group] = groupStandings({ teams, matchups });
+ * console.log(group.rows.map((row) => `${row.team.name} ${row.points}`));
+ * ```
  */
 export function groupStandings(input: BracketLayout | readonly Matchup[] | BracketInput, options: Pick<DrawOptions, "locale" | "words" | "teamName" | "standings"> = {}): GroupTable[] {
   const v = voiceOf(options);
@@ -105,7 +145,20 @@ function tablesOf(layout: BracketLayout, mode: "points" | "record", v: Voice): G
   });
 }
 
-/** The table of the groups as HTML, for a reader the drawing does not serve: one `<table>` a group, its caption the group's name, a row a team. */
+/**
+ * The table of the groups as HTML, for a reader the drawing does not serve: one `<table>` a group, its caption the group's name, a row a team.
+ *
+ * @param input - The matchups, a `{ matchups, teams }` or a layout.
+ * @param options - The language, the words, the `standings` columns and a `className`.
+ * @returns The HTML, one `<table>` for each group; an empty string when there is no group game.
+ * @example
+ * ```ts
+ * import { groupsTable } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const teams = [{ id: "A", name: "Aurora", group: "A" }, { id: "B", name: "Harbour", group: "A" }];
+ * console.log(groupsTable({ teams, matchups: [{ sides: ["A", "B"], score: [2, 1], round: 0 }] }).includes("<table"));
+ * ```
+ */
 export function groupsTable(input: BracketLayout | readonly Matchup[] | BracketInput, options: Pick<DrawOptions, "locale" | "words" | "teamName" | "standings"> & { className?: string } = {}): string {
   const v = voiceOf(options);
   const w = v.words;

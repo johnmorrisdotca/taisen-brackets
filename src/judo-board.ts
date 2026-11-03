@@ -11,7 +11,17 @@ import { type MarkContext, drawMark, markDefs } from "./marks.ts";
 import { JUDO_COLORS } from "./theme.ts";
 import { capitals, emWidth, esc, fit, fitLines, hash, num, safeId } from "./text.ts";
 
-/** One athlete on the scoreboard. Only `name` is needed. */
+/**
+ * One athlete on the scoreboard. Only `name` is needed.
+ *
+ * @example
+ * ```ts
+ * import { judoScoreboard, type JudoAthlete } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const white: JudoAthlete = { name: "Daiki Hoshino", code: "JPN", flag: "JP", coach: "A. Sato" };
+ * console.log(judoScoreboard({ white, blue: { name: "Mathis Roussel", code: "FRA" } }).includes("Hoshino"));
+ * ```
+ */
 export interface JudoAthlete {
   name: string;
   /** The country's three letters (`JPN`), written big under the name. Left out, nothing is written. */
@@ -24,7 +34,24 @@ export interface JudoAthlete {
   coach?: string;
 }
 
-/** The state of a contest: who is on the mat, what has been scored, and the clock. */
+/**
+ * The state of a contest: who is on the mat, what has been scored, and the clock.
+ *
+ * @example
+ * ```ts
+ * import { judoScoreboard, type JudoContest } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const contest: JudoContest = {
+ *   white: { name: "Daiki Hoshino", code: "JPN" },
+ *   blue: { name: "Mathis Roussel", code: "FRA" },
+ *   sides: [{ wazaAri: 1, shido: 1 }, { yuko: 2, shido: 2 }],
+ *   clock: "2:14",
+ *   weight: "Men -66 kg",
+ *   round: "Final",
+ * };
+ * console.log(judoScoreboard(contest).includes("2:14"));
+ * ```
+ */
 export interface JudoContest {
   white: JudoAthlete;
   blue: JudoAthlete;
@@ -50,15 +77,53 @@ export interface JudoContest {
   hansokuMake?: 0 | 1;
 }
 
+/**
+ * The sizes of a judo board: `tv`, `tablet` and `tablet-tall`.
+ *
+ * @example
+ * ```ts
+ * import { JUDO_BOARD_SIZES, type JudoBoardSizeName } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const size: JudoBoardSizeName = "tablet";
+ * console.log(JUDO_BOARD_SIZES[size]);
+ * ```
+ */
 export type JudoBoardSizeName = "tv" | "tablet" | "tablet-tall";
 
-/** The sizes: a TV's 1920 by 1080, a tablet on its side, 1280 by 800, and a tablet held upright, 800 by 1280. */
+/**
+ * The sizes: a TV's 1920 by 1080, a tablet on its side, 1280 by 800, and a tablet held upright, 800 by 1280.
+ *
+ * @example
+ * ```ts
+ * import { JUDO_BOARD_SIZES } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(JUDO_BOARD_SIZES.tv);
+ * ```
+ */
 export const JUDO_BOARD_SIZES: Readonly<Record<JudoBoardSizeName, { width: number; height: number }>> = Object.freeze({
   tv: { width: 1920, height: 1080 },
   tablet: { width: 1280, height: 800 },
   "tablet-tall": { width: 800, height: 1280 },
 });
 
+/**
+ * What a judo board can be told: the size, the theme, the style (`board` or `flip` cards), which side is on the left, the coaches, the flags and the language.
+ *
+ * @example
+ * ```ts
+ * import { judoScoreboard, type JudoBoardOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: JudoBoardOptions = { size: "tablet", theme: "dark", style: "flip" };
+ * console.log(judoScoreboard({
+ *   white: { name: "Daiki Hoshino", code: "JPN" },
+ *   blue: { name: "Mathis Roussel", code: "FRA" },
+ *   sides: [{ wazaAri: 1, shido: 1 }, { yuko: 2, shido: 2 }],
+ *   clock: "2:14",
+ *   weight: "Men -66 kg",
+ *   round: "Final",
+ * }, options).startsWith("<svg"));
+ * ```
+ */
 export interface JudoBoardOptions {
   /** `tv` (the default), `tablet`, `tablet-tall`, or a size of your own: a wider-than-tall one lays the sides out left and right, a taller one top and bottom. */
   size?: JudoBoardSizeName | { width: number; height: number };
@@ -170,7 +235,26 @@ function resultOf(c: JudoContest): JudoOutcome {
   return judoOutcome({ sides, ...(c.method ? { method: c.method } : {}), ...(c.hansokuMake !== undefined ? { hansokuMake: c.hansokuMake } : {}), ...(c.goldenScore ? { goldenScore: true } : {}) }, c.winner ?? null);
 }
 
-/** The words of the state in a sentence, for the drawing's description. */
+/**
+ * The words of the state in a sentence, for the drawing's description.
+ *
+ * @param contest - The contest.
+ * @param options - The language and the words.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeJudoContest } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeJudoContest({
+ *   white: { name: "Daiki Hoshino", code: "JPN" },
+ *   blue: { name: "Mathis Roussel", code: "FRA" },
+ *   sides: [{ wazaAri: 1, shido: 1 }, { yuko: 2, shido: 2 }],
+ *   clock: "2:14",
+ *   weight: "Men -66 kg",
+ *   round: "Final",
+ * }));
+ * ```
+ */
 export function describeJudoContest(contest: JudoContest, options: Pick<JudoBoardOptions, "locale" | "words"> = {}): string {
   const v = voiceOf(options);
   const w = v.words;
@@ -202,6 +286,23 @@ function winnerOf(c: JudoContest, out: JudoOutcome): 0 | 1 | null {
 /**
  * The scoreboard of a contest as an SVG string. Throws a `RangeError` for a state that cannot be (two ippon, a third waza-ari, a clock that is not seconds or `m:ss`, an osaekomi
  * past 20 seconds is clamped to 20).
+ *
+ * @param contest - The contest.
+ * @param options - The size, the theme, the style, the flags and the language.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { judoScoreboard } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const svg = judoScoreboard({
+ *   white: { name: "Daiki Hoshino", code: "JPN" },
+ *   blue: { name: "Mathis Roussel", code: "FRA" },
+ *   sides: [{ wazaAri: 1, shido: 1 }, { yuko: 2, shido: 2 }],
+ *   clock: "2:14",
+ *   osaekomi: { side: 0, seconds: 12 },
+ * }, { size: "tablet", theme: "dark" });
+ * console.log(svg.includes("OSAEKOMI"), svg.includes("2:14"));
+ * ```
  */
 export function judoScoreboard(contest: JudoContest, options: JudoBoardOptions = {}): string {
   const v = voiceOf(options);

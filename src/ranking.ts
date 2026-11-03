@@ -10,13 +10,33 @@ import { drawMark } from "./marks.ts";
 import { abbreviate, fit, num } from "./text.ts";
 import type { Team } from "./types.ts";
 
-/** A name in two parts: the family name is written in capitals and first by default (`SURNAME Given`, as judo and the IJF write it). */
+/**
+ * A name in two parts: the family name is written in capitals and first by default (`SURNAME Given`, as judo and the IJF write it).
+ *
+ * @example
+ * ```ts
+ * import { rankingList, type RankingName } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const name: RankingName = { surname: "Nakamura", given: "Kenji" };
+ * console.log(rankingList({ entries: [{ name, points: 412.5 }] }).includes("NAKAMURA Kenji"));
+ * ```
+ */
 export interface RankingName {
   given?: string;
   surname: string;
 }
 
-/** One line of a ranking. Only `name` is needed. */
+/**
+ * One line of a ranking. Only `name` is needed.
+ *
+ * @example
+ * ```ts
+ * import { rankingList, type RankingEntry } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const entry: RankingEntry = { name: { surname: "Brar", given: "Harpreet" }, club: "Salmonberry Judo Club", flag: "CA-BC", points: 398, change: -1 };
+ * console.log(rankingList({ entries: [entry] }).includes("BRAR Harpreet"));
+ * ```
+ */
 export interface RankingEntry {
   /** The name as it is to be written, or its two parts (set by `nameStyle`). */
   name: string | RankingName;
@@ -41,6 +61,21 @@ export interface RankingEntry {
   champion?: boolean | "interim";
 }
 
+/**
+ * A ranking to draw: the title, the category, the date, the source and the entries.
+ *
+ * @example
+ * ```ts
+ * import { rankingList, type RankingSource } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const source: RankingSource = { category: "U18 · Men -60 kg", date: "October 2026", entries: [
+ *   { name: { surname: "Nakamura", given: "Kenji" }, club: "Coastal Pine Judo", flag: "CA-BC", points: 412.5, change: 1 },
+ *   { name: { surname: "Brar", given: "Harpreet" }, club: "Salmonberry Judo Club", flag: "CA-BC", points: 398, change: -1 },
+ *   { name: { surname: "Leclerc", given: "Mathieu" }, club: "Kestrel Valley Judo", flag: "CA-QC", points: 366.25, change: 4 },
+ * ] };
+ * console.log(rankingList(source).includes("U18 · Men -60 kg"));
+ * ```
+ */
 export interface RankingSource {
   /** The heading. Default: the language's word for ranking. */
   title?: string;
@@ -53,6 +88,21 @@ export interface RankingSource {
   entries: readonly RankingEntry[];
 }
 
+/**
+ * What a ranking can be told: the style (`podium`, `list` or `featured`), rows and page, columns, movement arrows, name and rank style, and the size, theme and language.
+ *
+ * @example
+ * ```ts
+ * import { rankingList, type RankingOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: RankingOptions = { style: "list", precision: 2, size: "portrait", movement: "arrow" };
+ * console.log(rankingList({ entries: [
+ *   { name: { surname: "Nakamura", given: "Kenji" }, club: "Coastal Pine Judo", flag: "CA-BC", points: 412.5, change: 1 },
+ *   { name: { surname: "Brar", given: "Harpreet" }, club: "Salmonberry Judo Club", flag: "CA-BC", points: 398, change: -1 },
+ *   { name: { surname: "Leclerc", given: "Mathieu" }, club: "Kestrel Valley Judo", flag: "CA-QC", points: 366.25, change: 4 },
+ * ] }, options).includes("412.50"));
+ * ```
+ */
 export interface RankingOptions extends BoardOptions {
   /** `podium` (the default): the top three as big rows, tinted gold, silver and bronze, above the compact rest. `featured`: one big row above two columns. `list`: every row compact. */
   style?: "podium" | "list" | "featured";
@@ -86,7 +136,20 @@ export interface RankingOptions extends BoardOptions {
   badge?: boolean;
 }
 
-/** The ranks of a list, in order: an entry's own `rank`, else its position, with equal points sharing a rank; `null` for a champion row. Pure; takes the list as it is ordered. */
+/**
+ * The ranks of a list, in order: an entry's own `rank`, else its position, with equal points sharing a rank; `null` for a champion row. Pure; takes the list as it is ordered.
+ *
+ * @param entries - The entries, in the order they are listed.
+ * @param options - `ties: false` numbers every entry.
+ * @returns The ranks, one for each entry; `null` for an entry that has no points.
+ * @example
+ * ```ts
+ * import { rankingRanks } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const entries = Array.from({ length: 6 }, (_, i) => ({ name: `Athlete ${i + 1}`, points: 100 - Math.floor(i / 2) * 3 }));
+ * console.log(rankingRanks(entries).join(" "));
+ * ```
+ */
 export function rankingRanks(entries: readonly RankingEntry[], options: { ties?: boolean } = {}): (number | null)[] {
   const ties = options.ties ?? true;
   const out: (number | null)[] = [];
@@ -104,7 +167,19 @@ export function rankingRanks(entries: readonly RankingEntry[], options: { ties?:
   return out;
 }
 
-/** A category as a heading ("U18 · Men -60 kg"): an age group, a sex and a weight, any of them, joined by a dot. A weight is `-60` or `+100` (kg) or any text. */
+/**
+ * A category as a heading ("U18 · Men -60 kg"): an age group, a sex and a weight, any of them, joined by a dot. A weight is `-60` or `+100` (kg) or any text.
+ *
+ * @param category - The age group, the sex and the weight class, each optional.
+ * @param locale - The language. Default English.
+ * @returns The label.
+ * @example
+ * ```ts
+ * import { rankingCategoryLabel } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(rankingCategoryLabel({ age: "U18", sex: "men", weight: "-60" }));
+ * ```
+ */
 export function rankingCategoryLabel(category: { age?: string; sex?: "men" | "women" | "open"; weight?: string }, locale?: string): string {
   const v = voiceFor(locale);
   const w = v.words;
@@ -185,7 +260,23 @@ function ordered(source: RankingSource, options: RankingOptions): { e: RankingEn
   return list.map((e, i) => ({ e, rank: ranks[i] }));
 }
 
-/** The ranking as a sentence, the drawing's description. */
+/**
+ * The ranking as a sentence, the drawing's description.
+ *
+ * @param source - The ranking.
+ * @param options - The language, the words, the name style and the rows.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeRanking } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeRanking({ category: "U18 · Men -60 kg", entries: [
+ *   { name: { surname: "Nakamura", given: "Kenji" }, club: "Coastal Pine Judo", flag: "CA-BC", points: 412.5, change: 1 },
+ *   { name: { surname: "Brar", given: "Harpreet" }, club: "Salmonberry Judo Club", flag: "CA-BC", points: 398, change: -1 },
+ *   { name: { surname: "Leclerc", given: "Mathieu" }, club: "Kestrel Valley Judo", flag: "CA-QC", points: 366.25, change: 4 },
+ * ] }));
+ * ```
+ */
 export function describeRanking(source: RankingSource, options: Pick<RankingOptions, "locale" | "words" | "nameStyle" | "precision" | "ties" | "sort" | "rankStyle" | "rows" | "page"> = {}): string {
   const vv = voiceOf(options);
   const w = vv.words;
@@ -213,6 +304,21 @@ export const teamFor = (e: RankingEntry, id: string, name: string, badge: string
 
 /**
  * The ranking list as an SVG. Throws a `RangeError` for an entry with no name, a rank or change that is not a whole number, an option that is not one of its values, or a bad size or theme.
+ *
+ * @param source - The ranking.
+ * @param options - The style, rows and page, columns, movement, the size, the theme and the language.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { rankingCategoryLabel, rankingList } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const svg = rankingList({ category: rankingCategoryLabel({ age: "U18", sex: "men", weight: "-60" }), date: "October 2026", entries: [
+ *   { name: { surname: "Nakamura", given: "Kenji" }, club: "Coastal Pine Judo", flag: "CA-BC", points: 412.5, change: 1 },
+ *   { name: { surname: "Brar", given: "Harpreet" }, club: "Salmonberry Judo Club", flag: "CA-BC", points: 398, change: -1 },
+ *   { name: { surname: "Leclerc", given: "Mathieu" }, club: "Kestrel Valley Judo", flag: "CA-QC", points: 366.25, change: 4 },
+ * ] }, { precision: 2, size: "portrait" });
+ * console.log(svg.includes("U18 · Men -60 kg"), svg.includes("NAKAMURA Kenji"), svg.includes("412.50"));
+ * ```
  */
 export function rankingList(source: RankingSource, options: RankingOptions = {}): string {
   validate(source, options);

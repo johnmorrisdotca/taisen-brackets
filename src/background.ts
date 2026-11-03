@@ -6,6 +6,17 @@ import type { BackgroundInks } from "./theme.ts";
 import type { BackgroundImageOptions, BackgroundOptions, ThemeName } from "./types.ts";
 import { esc, num } from "./text.ts";
 
+/**
+ * A background ready to put in a drawing: its definitions, its body and the ink that reads over it.
+ *
+ * @example
+ * ```ts
+ * import { resolveBackground } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const picture = resolveBackground("midnight", "dark", 1200, 675, "tb");
+ * console.log(picture?.auto, picture?.body.length);
+ * ```
+ */
 export interface ResolvedBackground {
   /** For the drawing's `<defs>`. */
   defs: string;
@@ -37,6 +48,19 @@ function inkForImage(theme: "light" | "dark", id: string): BackgroundInk {
 /**
  * Reads the `background` option for a drawing `width` by `height` in the look `theme`, with `prefix` for the ids. Returns `null` when the option is `true`, `false` or left out
  * (a plain colour, or none). An unknown preset, a bad colour list or an image address that is not http(s), relative or `data:image/…` throws a `RangeError`.
+ *
+ * @param option - The `background` option of a drawing.
+ * @param theme - The theme the drawing is in.
+ * @param width - The drawing's width.
+ * @param height - The drawing's height.
+ * @param prefix - The prefix of the drawing's ids.
+ * @returns The background; `null` when the option asks for none.
+ * @example
+ * ```ts
+ * import { resolveBackground } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(resolveBackground(false, "light", 400, 300, "tb"), resolveBackground("ice", "light", 400, 300, "tb") !== null);
+ * ```
  */
 export function resolveBackground(option: unknown, theme: ThemeName, width: number, height: number, prefix: string): ResolvedBackground | null {
   if (option === undefined || typeof option === "boolean" || option === null) return null;

@@ -1,7 +1,17 @@
 import type { BackgroundInk } from "./family-backgrounds.ts";
 import type { ThemeName } from "./types.ts";
 
-/** The colours of one look. Each is the fallback of a CSS custom property of the same name: `--tb-ink` and so on. */
+/**
+ * The colours of one look. Each is the fallback of a CSS custom property of the same name: `--tb-ink` and so on.
+ *
+ * @example
+ * ```ts
+ * import { THEMES, type Palette } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const dark: Palette = THEMES.dark;
+ * console.log(dark.bg, dark.ink);
+ * ```
+ */
 export interface Palette {
   bg: string;
   ink: string;
@@ -14,14 +24,33 @@ export interface Palette {
   plain: string;
 }
 
-/** The looks. Every colour is the fallback for a custom property, so a page can restyle a drawing with `--tb-ink: …` and nothing else. */
+/**
+ * The looks. Every colour is the fallback for a custom property, so a page can restyle a drawing with `--tb-ink: …` and nothing else.
+ *
+ * @example
+ * ```ts
+ * import { THEMES } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(Object.keys(THEMES), THEMES.poster.gold);
+ * ```
+ */
 export const THEMES: Readonly<Record<"light" | "dark" | "poster", Palette>> = Object.freeze({
   light: { bg: "#f4efe4", ink: "#1f2320", muted: "#62665f", line: "#8d9087", box: "#fbf8f1", edge: "#cfc7b3", win: "#b5452c", gold: "#845f06", plain: "#d9d3c2" },
   dark: { bg: "#141614", ink: "#ece8dc", muted: "#9aa095", line: "#6c7168", box: "#1e211d", edge: "#3b403a", win: "#e0705a", gold: "#e0b43b", plain: "#3b403a" },
   poster: { bg: "#0a1130", ink: "#f6f1e3", muted: "#a9b2d3", line: "#d9b24c", box: "#111b47", edge: "#8e7632", win: "#f0c64a", gold: "#f0c64a", plain: "#26336b" },
 });
 
-/** What the road look adds to a palette: the ring and the hairline round a mark, the pill behind a round's name, and the road's dots. Custom properties `--tb-mark-ring`, `--tb-mark-edge`, `--tb-panel` and `--tb-spine`. */
+/**
+ * What the road look adds to a palette: the ring and the hairline round a mark, the pill behind a round's name, and the road's dots. Custom properties `--tb-mark-ring`, `--tb-mark-edge`, `--tb-panel` and `--tb-spine`.
+ *
+ * @example
+ * ```ts
+ * import { ROAD_THEMES, type RoadPalette } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const light: RoadPalette = ROAD_THEMES.light;
+ * console.log(light.ring, light.spine);
+ * ```
+ */
 export interface RoadPalette {
   ring: string;
   edge: string;
@@ -29,6 +58,16 @@ export interface RoadPalette {
   spine: string;
 }
 
+/**
+ * The road look's colours for each theme: `light`, `dark` and `poster`.
+ *
+ * @example
+ * ```ts
+ * import { ROAD_THEMES } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(Object.keys(ROAD_THEMES));
+ * ```
+ */
 export const ROAD_THEMES: Readonly<Record<"light" | "dark" | "poster", RoadPalette>> = Object.freeze({
   light: { ring: "#ffffff", edge: "rgba(0,0,0,.3)", panel: "#e7e3d6", spine: "#b9b39f" },
   dark: { ring: "#e9ece6", edge: "rgba(0,0,0,.6)", panel: "#252b28", spine: "#4a524d" },
@@ -62,7 +101,16 @@ export interface StyleParts {
 /** The colours of a judo contest: the white and the blue judogi, the yellow shido card and the red hansoku-make card. */
 export const JUDO_COLORS = Object.freeze({ white: "#ffffff", blue: "#1f4fa8", shido: "#f0c000", hansoku: "#d3302a" });
 
-/** The colours of the two halves (conferences) of the layouts that colour them, each with white letters on it: `--tb-conf-a` and `--tb-conf-b`. Both read 5 to 1 or more against white. */
+/**
+ * The colours of the two halves (conferences) of the layouts that colour them, each with white letters on it: `--tb-conf-a` and `--tb-conf-b`. Both read 5 to 1 or more against white.
+ *
+ * @example
+ * ```ts
+ * import { CONFERENCE_COLORS } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(CONFERENCE_COLORS);
+ * ```
+ */
 export const CONFERENCE_COLORS: readonly [string, string] = Object.freeze(["#2457c5", "#b3261e"] as const);
 
 /** The colours a background says to draw in (`backgroundSvg`'s `ink`): what `styleFor` takes in place of a look's own palette. */

@@ -6,6 +6,17 @@ import { collectTeams, resolveMatchup } from "./matchup.ts";
  * plays, or the tie that `feeds` names), the rounds, which half each tie sits in, and which side has a bye. A tie is
  * a game, a series, two legs or a replayed game, so one layout draws a hockey playoff and a World Cup. Pure and
  * sport-agnostic: no DOM, no drawing.
+ *
+ * @param input - The ties: a list of matchups, or `{ matchups, teams }` with the teams listed once.
+ * @param options - `shape` (`auto`, `halves` or `ltr`) and `groupOrder`.
+ * @returns The layout: the ties, their rounds, the halves, the rows, the bye of each tie and the champion once the final is played.
+ * @example
+ * ```ts
+ * import { layoutBracket } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const layout = layoutBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }]);
+ * console.log(layout.rounds, layout.champion?.name, layout.shape);
+ * ```
  */
 export function layoutBracket(input: readonly Matchup[] | BracketInput, options: LayoutOptions = {}): BracketLayout {
   const matchups = Array.isArray(input) ? (input as readonly Matchup[]) : (input as BracketInput).matchups;

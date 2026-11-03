@@ -23,6 +23,9 @@ const check = (o: RoadOptions): void => {
  * and optionally its `group`; a match is `{ round, opponent, score: [for, against], decidedBy, pens }`, a round a key (`quarter-final`) with words in every language, or any
  * key you name in `labels`, so a series (`First round`, `4-2`) draws as well as a knockout. A team with no mark is its initials on its colour. The side that won each match
  * is brighter; the sizes are `card` (1080 by 1350, the default), `square`, `wide` (1200 by 675) and `phone` (390 wide). `table()` lists every match as text.
+ * @param input - A tournament (matchups, `{ matchups, teams }` or a layout), or the two finalists with their paths.
+ * @param options - The title, the size, the finalist to put on the left, the theme, the language and the marks.
+ * @returns The chart: `draw()` for the SVG, `table()` for the text, and its title, summary and totals.
  * @example
  * ```ts
  * import { roadToFinal, type RoadFinalist } from "@johnmorrisdotca/taisen-brackets";

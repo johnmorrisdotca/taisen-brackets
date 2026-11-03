@@ -4,6 +4,15 @@ import { collectTeams, resolveMatchup } from "./matchup.ts";
 /**
  * The seeds in the order a standard bracket lists them, so that 1 meets 2 only in the final and the top seeds meet the
  * bottom ones first: `standardSeeds(8)` is `[1, 8, 4, 5, 2, 7, 3, 6]`. `size` is rounded up to a power of two.
+ *
+ * @param size - The number of places; rounded up to a power of two.
+ * @returns The seeds, in the order of the first round's places.
+ * @example
+ * ```ts
+ * import { standardSeeds } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(standardSeeds(8));
+ * ```
  */
 export function standardSeeds(size: number): number[] {
   if (!Number.isInteger(size) || size < 1) throw new Error(`taisen-brackets: standardSeeds needs a whole number of 1 or more, not ${size}`);
@@ -15,6 +24,17 @@ export function standardSeeds(size: number): number[] {
   return seeds;
 }
 
+/**
+ * What `singleElimination` can be told.
+ *
+ * @example
+ * ```ts
+ * import { singleElimination, type SingleEliminationOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: SingleEliminationOptions = { thirdPlace: true, prefix: "wc" };
+ * console.log(singleElimination([{ id: "A", name: "A" }, { id: "B", name: "B" }], options).matchups.length);
+ * ```
+ */
 export interface SingleEliminationOptions {
   /** Add a third-place match between the losing semi-finalists. Default false. */
   thirdPlace?: boolean;
@@ -26,6 +46,17 @@ export interface SingleEliminationOptions {
  * The matchups of a single-elimination bracket for any number of teams, seeded in the standard way: the top seeds meet
  * the lowest first, and when the number is not a power of two the top seeds have byes. The teams are in seed order
  * (or carry a `seed`). No tie has a result yet; fill the results in and call `advanceWinners` to carry them forward.
+ *
+ * @param teams - The teams, best seed first.
+ * @param options - A third-place match, and a prefix for the ties' ids.
+ * @returns The teams and the matchups, none played yet, ready for `drawBracket`.
+ * @example
+ * ```ts
+ * import { singleElimination, drawBracket } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const field = singleElimination([{ id: "A", name: "Aurora" }, { id: "B", name: "Harbour" }, { id: "C", name: "Cascade" }, { id: "D", name: "Delta" }]);
+ * console.log(field.matchups.length, drawBracket(field).startsWith("<svg"));
+ * ```
  */
 export function singleElimination(teams: readonly Team[], options: SingleEliminationOptions = {}): { teams: Team[]; matchups: Matchup[] } {
   const count = teams.length;
@@ -67,6 +98,17 @@ export function singleElimination(teams: readonly Team[], options: SingleElimina
  * Fills the sides of every tie from the ties that feed it: a decided tie's winner takes its place in the next tie (the
  * loser, for a third-place match). Returns new matchups; the ones given are not changed. Ties are filled in the order of
  * the rounds, so a result for a later round is read against the sides this has just filled in.
+ *
+ * @param matchups - The matchups of a bracket made by `singleElimination`, with some results in.
+ * @returns The matchups again, the winners put in their next places.
+ * @example
+ * ```ts
+ * import { advanceWinners, singleElimination } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const { matchups } = singleElimination([{ id: "A", name: "Aurora" }, { id: "B", name: "Harbour" }, { id: "C", name: "Cascade" }, { id: "D", name: "Delta" }]);
+ * const played = matchups.map((m, i) => (i === 0 ? { ...m, score: [2, 1] as [number, number] } : m));
+ * console.log(advanceWinners(played).length);
+ * ```
  */
 export function advanceWinners(matchups: readonly Matchup[]): Matchup[] {
   let current = matchups.map((m) => ({ ...m }));
@@ -97,7 +139,17 @@ export function advanceWinners(matchups: readonly Matchup[]): Matchup[] {
   return current;
 }
 
-/** One played game, in the flat shape that most data sources give. */
+/**
+ * One played game, in the flat shape that most data sources give.
+ *
+ * @example
+ * ```ts
+ * import { matchupsFromGames, type PlayedGame } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const game: PlayedGame = { stage: "Final", home: "ARG", away: "FRA", homeScore: 3, awayScore: 3, extraTime: true, homePens: 4, awayPens: 2 };
+ * console.log(matchupsFromGames([game], { stages: ["Final"] }).length);
+ * ```
+ */
 export interface PlayedGame {
   /** The stage it was played in: a key from `stages`, or the `third` one. */
   stage: string;
@@ -115,6 +167,17 @@ export interface PlayedGame {
   no?: number;
 }
 
+/**
+ * How the games of a flat list are grouped into ties: the stages in order, which one is the third-place match, which are two legs, and how long each series is.
+ *
+ * @example
+ * ```ts
+ * import { matchupsFromGames, type GamesOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: GamesOptions = { stages: ["Semi-final", "Final"], third: "Third place" };
+ * console.log(options.stages.length);
+ * ```
+ */
 export interface GamesOptions {
   /** The knockout stages in order, first round first: `["round-of-16", "quarter-final", "semi-final", "final"]`. */
   stages: readonly string[];
@@ -130,6 +193,21 @@ export interface GamesOptions {
  * Matchups from a flat list of games: the games of one pair in one stage become one tie (a replay, two legs or a series),
  * the stage orders the rounds, and the third-place stage becomes the third-place match. The sides of a tie are the home
  * and away of its first game; each game's score is turned to that order.
+ *
+ * @param games - The games, in any order.
+ * @param options - The stages in order, and which are the third-place match, two-legged ties or series.
+ * @returns The matchups, ready for `layoutBracket` and `drawBracket`.
+ * @example
+ * ```ts
+ * import { drawBracket, matchupsFromGames } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const games = [
+ *   { stage: "Semi-final", home: "Aurora", away: "Harbour", homeScore: 2, awayScore: 1 },
+ *   { stage: "Semi-final", home: "Cascade", away: "Delta", homeScore: 0, awayScore: 1 },
+ *   { stage: "Final", home: "Aurora", away: "Delta", homeScore: 3, awayScore: 1 },
+ * ];
+ * console.log(drawBracket(matchupsFromGames(games, { stages: ["Semi-final", "Final"] })).startsWith("<svg"));
+ * ```
  */
 export function matchupsFromGames(games: readonly PlayedGame[], options: GamesOptions): Matchup[] {
   const sorted = [...games].sort((a, b) => (a.date ?? "") < (b.date ?? "") ? -1 : (a.date ?? "") > (b.date ?? "") ? 1 : 0);

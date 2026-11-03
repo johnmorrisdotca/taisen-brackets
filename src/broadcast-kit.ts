@@ -10,14 +10,55 @@ import { voiceOf, type Voice } from "./locales.ts";
 import { cleanSvg, markDefs, safeUrl, type MarkContext } from "./marks.ts";
 import { esc, fit, hash, num } from "./text.ts";
 
+/**
+ * The looks of a broadcast board: `blue`, `night` and `paper`.
+ *
+ * @example
+ * ```ts
+ * import { resultsBoard, type BroadcastLook } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const look: BroadcastLook = "paper";
+ * console.log(resultsBoard({ title: "Final", rows: [{ name: "A" }] }, { look }).startsWith("<svg"));
+ * ```
+ */
 export type BroadcastLook = "blue" | "night" | "paper";
 
-/** The looks: `blue` (a broadcast's deep blue with a bright title band), `night` (near black with a cyan band) and `paper` (white, with the same blue band). */
+/**
+ * The looks: `blue` (a broadcast's deep blue with a bright title band), `night` (near black with a cyan band) and `paper` (white, with the same blue band).
+ *
+ * @example
+ * ```ts
+ * import { BROADCAST_LOOKS } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(BROADCAST_LOOKS);
+ * ```
+ */
 export const BROADCAST_LOOKS: readonly BroadcastLook[] = Object.freeze(["blue", "night", "paper"] as const);
 
-/** The icons of the title band's square, drawn by the package: a medal and a stopwatch. `none` leaves the band whole. */
+/**
+ * The icons of the title band's square, drawn by the package: a medal and a stopwatch. `none` leaves the band whole.
+ *
+ * @example
+ * ```ts
+ * import { resultsBoard, type BroadcastIcon } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const icon: BroadcastIcon = "stopwatch";
+ * console.log(resultsBoard({ title: "Final", rows: [{ name: "A" }] }, { icon }).startsWith("<svg"));
+ * ```
+ */
 export type BroadcastIcon = "medal" | "stopwatch" | "none";
 
+/**
+ * What every broadcast board takes: the width, the look, the icon, the flags, the language, a title and an id.
+ *
+ * @example
+ * ```ts
+ * import { resultsBoard, type BroadcastOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: BroadcastOptions = { width: 1280, look: "blue", icon: "medal", locale: "ja" };
+ * console.log(resultsBoard({ title: "Final", rows: [{ name: "A" }] }, options).startsWith("<svg"));
+ * ```
+ */
 export interface BroadcastOptions {
   /** The width of the board; the height follows from the rows. Default 1280, from 320 to 4000. */
   width?: number;

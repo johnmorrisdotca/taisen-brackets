@@ -10,10 +10,30 @@
  * - Article 13: a level contest at the end of regular time (4 minutes) goes to golden score, which has no time limit and ends at the first score or hansoku-make.
  */
 
-/** How a contest was won. `"score"` is a decision on the technical scores (the waza-ari, then the yuko, counted). */
+/**
+ * How a contest was won. `"score"` is a decision on the technical scores (the waza-ari, then the yuko, counted).
+ *
+ * @example
+ * ```ts
+ * import { judoOutcome, type JudoMethod } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const method: JudoMethod = "ippon";
+ * console.log(judoOutcome({ sides: [{ ippon: true }, {}] }).method === method);
+ * ```
+ */
 export type JudoMethod = "ippon" | "waza-ari-awasete-ippon" | "score" | "hansoku-make" | "fusen-gachi" | "kiken-gachi";
 
-/** What one side scored in a contest. Anything left out is none. */
+/**
+ * What one side scored in a contest. Anything left out is none.
+ *
+ * @example
+ * ```ts
+ * import { judoOutcome, type JudoSide } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const blue: JudoSide = { wazaAri: 1, yuko: 1, shido: 2 };
+ * console.log(judoOutcome({ sides: [{}, blue] }).winner);
+ * ```
+ */
 export interface JudoSide {
   /** Ippon: the contest ends. */
   ippon?: boolean;
@@ -25,7 +45,17 @@ export interface JudoSide {
   shido?: number;
 }
 
-/** The result of one judo contest, the sides in the order of the matchup's `sides`: the first is white, the second blue. */
+/**
+ * The result of one judo contest, the sides in the order of the matchup's `sides`: the first is white, the second blue.
+ *
+ * @example
+ * ```ts
+ * import { judoOutcome, type JudoResult } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const result: JudoResult = { sides: [{ yuko: 2 }, { wazaAri: 1, shido: 1 }], goldenScore: false, time: "4:00" };
+ * console.log(judoOutcome(result).method);
+ * ```
+ */
 export interface JudoResult {
   sides: readonly [JudoSide, JudoSide];
   /** How it was won. Left out, it is worked out from the scores; fusen-gachi and kiken-gachi (no score can say so) need the matchup's `winner`. */
@@ -38,7 +68,17 @@ export interface JudoResult {
   time?: number | string;
 }
 
-/** A result checked and worked out. */
+/**
+ * A result checked and worked out.
+ *
+ * @example
+ * ```ts
+ * import { judoOutcome, type JudoOutcome } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const outcome: JudoOutcome = judoOutcome({ sides: [{ yuko: 2 }, { wazaAri: 1, shido: 1 }], time: "4:00" });
+ * console.log(outcome.winner, outcome.points, outcome.seconds);
+ * ```
+ */
 export interface JudoOutcome {
   /** 0 or 1, the side that won; `null` while nothing has decided it (level scores: golden score is next). */
   winner: 0 | 1 | null;
@@ -55,7 +95,16 @@ export interface JudoOutcome {
   doubleHansokuMake: boolean;
 }
 
-/** The IJF's senior weight classes in kilograms, the lightest first: a number is "up to and including", a text starting `+` is "over". */
+/**
+ * The IJF's senior weight classes in kilograms, the lightest first: a number is "up to and including", a text starting `+` is "over".
+ *
+ * @example
+ * ```ts
+ * import { JUDO_WEIGHT_CLASSES } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(JUDO_WEIGHT_CLASSES.men.length, JUDO_WEIGHT_CLASSES.women[0]);
+ * ```
+ */
 export const JUDO_WEIGHT_CLASSES: Readonly<Record<"men" | "women", readonly string[]>> = Object.freeze({
   men: Object.freeze(["-60", "-66", "-73", "-81", "-90", "-100", "+100"]),
   women: Object.freeze(["-48", "-52", "-57", "-63", "-70", "-78", "+78"]),
@@ -77,7 +126,18 @@ function filled(side: JudoSide, k: 0 | 1): Required<JudoSide> {
   };
 }
 
-/** A time as seconds: a number, or `"m:ss"`. */
+/**
+ * A time as seconds: a number, or `"m:ss"`.
+ *
+ * @param time - A number of seconds, or text such as `4:00` or `1:12`.
+ * @returns The seconds; `null` when there is no time. Text that is not a time throws a `RangeError`.
+ * @example
+ * ```ts
+ * import { judoSeconds } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(judoSeconds("4:00"), judoSeconds(72), judoSeconds(undefined));
+ * ```
+ */
 export function judoSeconds(time: number | string | undefined): number | null {
   if (time === undefined) return null;
   if (typeof time === "number") {
@@ -89,7 +149,18 @@ export function judoSeconds(time: number | string | undefined): number | null {
   return Number(m[1]) * 60 + Number(m[2]);
 }
 
-/** Seconds as `m:ss`. */
+/**
+ * Seconds as `m:ss`.
+ *
+ * @param seconds - The seconds.
+ * @returns The clock text.
+ * @example
+ * ```ts
+ * import { judoClock } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(judoClock(134), judoClock(5));
+ * ```
+ */
 export const judoClock = (seconds: number): string => `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
 
 const scoreboard = (s: Required<JudoSide>): number => (s.ippon || s.wazaAri >= 2 ? 100 : s.wazaAri * 10 + s.yuko);
@@ -98,6 +169,17 @@ const scoreboard = (s: Required<JudoSide>): number => (s.ippon || s.wazaAri >= 2
  * Checks a result against the rules and works out who won and how. `winner` is the winner the matchup names (needed for fusen-gachi and
  * kiken-gachi, which no score can show). Throws a `RangeError` for a count out of range, two ippon, a method the scores contradict, or a
  * default with no winner.
+ *
+ * @param result - The scores and, optionally, the method, the golden score and the time.
+ * @param winner - Who won, when the scores do not say (a decision by the referees, a withdrawal): 0 or 1.
+ * @returns The outcome: the winner (`null` when there is none yet), the method, the points, the time and whether golden score was played.
+ * @example
+ * ```ts
+ * import { judoOutcome } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const o = judoOutcome({ sides: [{ yuko: 2 }, { wazaAri: 1, shido: 1 }], time: "4:00" });
+ * console.log(o.winner, o.method, o.points.join(" "));
+ * ```
  */
 export function judoOutcome(result: JudoResult, winner: 0 | 1 | null = null): JudoOutcome {
   const sides = [filled(result.sides[0], 0), filled(result.sides[1], 1)] as const;

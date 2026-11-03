@@ -10,7 +10,17 @@ import { abbreviate, fit, num } from "./text.ts";
 import type { R } from "./ranking.ts";
 import type { Team } from "./types.ts";
 
-/** One row of a medal table: a country or a team and its medals. Only `name` is needed. */
+/**
+ * One row of a medal table: a country or a team and its medals. Only `name` is needed.
+ *
+ * @example
+ * ```ts
+ * import { medalTable, type MedalRow } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const row: MedalRow = { name: "Soviet Union", code: "URS", note: "1922–1991", gold: 1, bronze: 4 };
+ * console.log(medalTable({ rows: [row] }).includes("1922–1991"));
+ * ```
+ */
 export interface MedalRow {
   /** The country's or team's name as it is to be written ("France", "Soviet Union", "Unified Team"). */
   name: string;
@@ -27,6 +37,20 @@ export interface MedalRow {
   note?: string;
 }
 
+/**
+ * A medal table to draw: the title, the sport or event, the date, the source and the rows.
+ *
+ * @example
+ * ```ts
+ * import { medalTable, type MedalTableSource } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const source: MedalTableSource = { subtitle: "Men's judo +100 kg", rows: [
+ *   { name: "France", flag: "FR", gold: 6, silver: 1, bronze: 3 },
+ *   { name: "Japan", flag: "JP", gold: 5, silver: 3, bronze: 2 },
+ * ] };
+ * console.log(medalTable(source).includes("France"));
+ * ```
+ */
 export interface MedalTableSource {
   /** The heading. Default: the language's "Medal table". */
   title?: string;
@@ -39,6 +63,20 @@ export interface MedalTableSource {
   rows: readonly MedalRow[];
 }
 
+/**
+ * What a medal table can be told: the sort (`gold`, `total` or `given`), ties, how many rows, columns, highlighting, and the options of every board.
+ *
+ * @example
+ * ```ts
+ * import { medalTable, type MedalTableOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: MedalTableOptions = { sort: "total", top: 10, columns: 2 };
+ * console.log(medalTable({ rows: [
+ *   { name: "France", flag: "FR", gold: 6, silver: 1, bronze: 3 },
+ *   { name: "Japan", flag: "JP", gold: 5, silver: 3, bronze: 2 },
+ * ] }, options).startsWith("<svg"));
+ * ```
+ */
 export interface MedalTableOptions extends BoardOptions {
   /** `gold` (the default): by gold, then silver, then bronze, as the Olympic Games rank. `total`: by the total of medals, then gold, then silver. `given`: the order given, ranked by the same rule as `gold`. */
   sort?: "gold" | "total" | "given";
@@ -59,7 +97,17 @@ export interface MedalTableOptions extends BoardOptions {
   skipEmpty?: boolean;
 }
 
-/** A medal won: who won it and what kind, with whatever you filter on. */
+/**
+ * A medal won: who won it and what kind, with whatever you filter on.
+ *
+ * @example
+ * ```ts
+ * import { tallyMedals, type MedalAward } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const award: MedalAward = { name: "France", flag: "FR", medal: "gold", sport: "judo", category: "+100 kg", games: 2024 };
+ * console.log(tallyMedals([award]));
+ * ```
+ */
 export interface MedalAward {
   name: string;
   flag?: string;
@@ -73,7 +121,17 @@ export interface MedalAward {
   games?: string | number;
 }
 
-/** What `tallyMedals` keeps: awards equal to every field given. A value can be a list (any of them). */
+/**
+ * What `tallyMedals` keeps: awards equal to every field given. A value can be a list (any of them).
+ *
+ * @example
+ * ```ts
+ * import { tallyMedals, type MedalFilter } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const filter: MedalFilter = { sport: "judo", games: [2020, 2024] };
+ * console.log(tallyMedals([{ name: "France", medal: "gold", sport: "judo", games: 2024 }, { name: "Japan", medal: "gold", sport: "wrestling", games: 2024 }], filter).length);
+ * ```
+ */
 export interface MedalFilter {
   sport?: string | readonly string[];
   category?: string | readonly string[];
@@ -88,6 +146,23 @@ const matches = (value: string | number | undefined, want: unknown): boolean => 
 /**
  * Adds up a list of medals into the rows of a table, one row for each name, keeping the first flag, mark, code and note given for it. `filter` keeps only the medals of one sport, one category or
  * one Games (or a list of them): the same list gives the table of an event, of a sport and of all time. Throws a `RangeError` for a medal that is not gold, silver or bronze or has no name.
+ *
+ * @param awards - The medals won.
+ * @param filter - Which medals to count: a sport, a category or a Games.
+ * @returns One row for each name, ready for `medalTable`.
+ * @example
+ * ```ts
+ * import { medalTable, tallyMedals } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const awards = [
+ *   { name: "France", flag: "FR", medal: "gold", sport: "judo", category: "+100 kg", games: 2024 },
+ *   { name: "Japan", flag: "JP", medal: "silver", sport: "judo", category: "+100 kg", games: 2024 },
+ *   { name: "France", medal: "bronze", sport: "judo", category: "-66 kg", games: 2020 },
+ *   { name: "Japan", medal: "gold", sport: "wrestling", category: "-65 kg", games: 2020 },
+ * ] as const;
+ * const judo = tallyMedals(awards, { sport: "judo" });
+ * console.log(judo.map((r) => `${r.name} ${r.gold}-${r.silver}-${r.bronze}`).join(", "), medalTable({ rows: judo }).includes("France"));
+ * ```
  */
 export function tallyMedals(awards: readonly MedalAward[], filter: MedalFilter = {}): MedalRow[] {
   const rows = new Map<string, MedalRow>();
@@ -120,7 +195,20 @@ function ordered(rows: readonly MedalRow[], sort: NonNullable<MedalTableOptions[
   return out;
 }
 
-/** The ranks of a list of rows, as `medalTable` draws them (`[1, 2, 2, 4]`), in the order they are drawn. */
+/**
+ * The ranks of a list of rows, as `medalTable` draws them (`[1, 2, 2, 4]`), in the order they are drawn.
+ *
+ * @param rows - The rows, in the order they are listed.
+ * @param options - `sort` (`gold`, `total` or `given`) and `ties`.
+ * @returns The ranks, one for each row.
+ * @example
+ * ```ts
+ * import { medalRanks } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const rows = [{ name: "A", gold: 1 }, { name: "B", gold: 1 }, { name: "C", silver: 3 }, { name: "D", silver: 1 }];
+ * console.log(medalRanks(rows).join(" "), medalRanks(rows, { sort: "total" }).join(" "));
+ * ```
+ */
 export function medalRanks(rows: readonly MedalRow[], options: Pick<MedalTableOptions, "sort" | "ties"> = {}): number[] {
   return ordered(rows, options.sort ?? "gold", options.ties ?? true).map((x) => x.rank);
 }
@@ -150,7 +238,22 @@ export function chosenMedalRows(source: MedalTableSource, options: Pick<MedalTab
   return options.top ? list.slice(0, options.top) : list;
 }
 
-/** The table as a sentence, the drawing's description. */
+/**
+ * The table as a sentence, the drawing's description.
+ *
+ * @param source - The medal table.
+ * @param options - The language, the words, the sort and the rows chosen.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeMedalTable } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeMedalTable({ rows: [
+ *   { name: "France", flag: "FR", gold: 6, silver: 1, bronze: 3 },
+ *   { name: "Japan", flag: "JP", gold: 5, silver: 3, bronze: 2 },
+ * ] }));
+ * ```
+ */
 export function describeMedalTable(source: MedalTableSource, options: Pick<MedalTableOptions, "locale" | "words" | "sort" | "ties" | "top" | "skipEmpty"> = {}): string {
   const v = voiceOf(options);
   const w = v.words;
@@ -167,6 +270,24 @@ const teamFor = (r: MedalRow, id: string): Team => ({ id, name: r.name, abbr: (r
 
 /**
  * The medal table as an SVG. Throws a `RangeError` for a row with no name, a medal count that is not a whole number from 0, an option that is not one of its values, or a bad size or theme.
+ *
+ * @param source - The title, the event and the rows.
+ * @param options - The sort, ties, rows, columns, the size, the theme and the language.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { medalTable } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const svg = medalTable({
+ *   subtitle: "Men's judo +100 kg",
+ *   rows: [
+ *     { name: "France", flag: "FR", gold: 6, silver: 1, bronze: 3 },
+ *     { name: "Japan", flag: "JP", gold: 5, silver: 3, bronze: 2 },
+ *     { name: "Soviet Union", code: "URS", note: "1922–1991", gold: 1, bronze: 4 },
+ *   ],
+ * }, { size: "portrait" });
+ * console.log(svg.includes("Soviet Union"), svg.includes("1922–1991"), svg.includes("URS"));
+ * ```
  */
 export function medalTable(source: MedalTableSource, options: MedalTableOptions = {}): string {
   validateMedalSource(source, options);

@@ -10,23 +10,64 @@ import { drawMark, markDefs, type MarkContext } from "./marks.ts";
 import { emWidth, esc, fit, fitLines, hash, num, safeId } from "./text.ts";
 import type { Team } from "./types.ts";
 
-/** What the contest card shows: the two athletes and the header. The scores and the clock of a `JudoContest` are not drawn. */
+/**
+ * What the contest card shows: the two athletes and the header. The scores and the clock of a `JudoContest` are not drawn.
+ *
+ * @example
+ * ```ts
+ * import { judoContestCard, type JudoCardContest } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const contest: JudoCardContest = { white: { name: "Daiki Hoshino", code: "JPN" }, blue: { name: "Mathis Roussel", code: "FRA" }, weight: "Men -66 kg", mat: 1 };
+ * console.log(judoContestCard(contest).startsWith("<svg"));
+ * ```
+ */
 export type JudoCardContest = Pick<JudoContest, "white" | "blue" | "weight" | "round" | "mat" | "contest">;
 
-/** One contest of a mat's queue: its number (`"G-24"`, `24`) and the two athletes, and optionally the weight class and the round (for a caption). */
+/**
+ * One contest of a mat's queue: its number (`"G-24"`, `24`) and the two athletes, and optionally the weight class and the round (for a caption).
+ *
+ * @example
+ * ```ts
+ * import { judoMatQueue, type JudoQueueContest } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const next: JudoQueueContest = { number: "G-1", white: { name: "Daiki Hoshino", code: "JPN" }, blue: { name: "Mathis Roussel", code: "FRA" } };
+ * console.log(judoMatQueue({ mat: 1, contests: [next] }).includes("G-1"));
+ * ```
+ */
 export interface JudoQueueContest {
   number: string | number;
   white: JudoAthlete;
   blue: JudoAthlete;
 }
 
-/** One mat: its number or name, its colour (any CSS colour that a hex code gives, default by position) and its contests in the order they will be fought. */
+/**
+ * One mat: its number or name, its colour (any CSS colour that a hex code gives, default by position) and its contests in the order they will be fought.
+ *
+ * @example
+ * ```ts
+ * import { judoMatQueue, type JudoMat } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const mat: JudoMat = { mat: 2, color: "#0b6fb8", contests: [{ number: "G-2", white: { name: "Levan M.", code: "GEO" }, blue: { name: "Min-jae Seong", code: "KOR" } }] };
+ * console.log(judoMatQueue(mat).includes("#0b6fb8"));
+ * ```
+ */
 export interface JudoMat {
   mat: string | number;
   color?: string;
   contests: readonly JudoQueueContest[];
 }
 
+/**
+ * What a mat queue can be told: the size, the theme, how many rows, whether the first contest is marked as the current one, and the mat colours.
+ *
+ * @example
+ * ```ts
+ * import { judoMatQueue, type JudoQueueOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: JudoQueueOptions = { size: "tv", theme: "dark", rows: 4, current: true };
+ * console.log(judoMatQueue({ mat: 1, contests: [{ number: 1, white: { name: "A" }, blue: { name: "B" } }] }, options).startsWith("<svg"));
+ * ```
+ */
 export interface JudoQueueOptions extends Omit<JudoBoardOptions, "style" | "coaches"> {
   /** The most contests drawn for a mat. Default: as many as fit at a readable size, up to 12. */
   rows?: number;
@@ -36,7 +77,16 @@ export interface JudoQueueOptions extends Omit<JudoBoardOptions, "style" | "coac
   colors?: readonly string[];
 }
 
-/** The IJF-style mat colours, in turn: red, green, yellow, purple, orange, teal. Each reads with the ink the board picks for it. */
+/**
+ * The IJF-style mat colours, in turn: red, green, yellow, purple, orange, teal. Each reads with the ink the board picks for it.
+ *
+ * @example
+ * ```ts
+ * import { JUDO_MAT_COLORS } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(JUDO_MAT_COLORS.length, JUDO_MAT_COLORS[0]);
+ * ```
+ */
 export const JUDO_MAT_COLORS: readonly string[] = Object.freeze(["#d2232a", "#1e9c4c", "#e7b800", "#7a3fb4", "#e8741a", "#12877f"]);
 
 /** White or near-black, whichever reads better on a hex colour. */
@@ -110,7 +160,19 @@ export function check(a: JudoAthlete | undefined, side: string): void {
 
 // ------------------------------------------------------------------------------------------------ the contest card
 
-/** The contest card as a sentence, the drawing's description. */
+/**
+ * The contest card as a sentence, the drawing's description.
+ *
+ * @param contest - The contest.
+ * @param options - The language and the words.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeJudoCard } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeJudoCard({ white: { name: "Daiki Hoshino" }, blue: { name: "Mathis Roussel" }, weight: "Men -66 kg" }));
+ * ```
+ */
 export function describeJudoCard(contest: JudoCardContest, options: Pick<JudoBoardOptions, "locale" | "words"> = {}): string {
   const v = voiceOf(options);
   const w = v.words;
@@ -127,6 +189,17 @@ export function describeJudoCard(contest: JudoCardContest, options: Pick<JudoBoa
 /**
  * The contest card: the weight class and the round on top, then the white athlete over the blue one, each as a wide band with the flag, the name as big as the band lets it be,
  * and the country code. Throws a `RangeError` for an athlete with no name or a bad size or theme. `swap` draws blue first.
+ *
+ * @param contest - The contest.
+ * @param options - The size, the theme, the flags and the language.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { judoContestCard } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const svg = judoContestCard({ white: { name: "Daiki Hoshino", code: "JPN" }, blue: { name: "Mathis Roussel", code: "FRA" }, weight: "Men -66 kg", round: "Final" }, { size: "tablet" });
+ * console.log(svg.includes("Hoshino"));
+ * ```
  */
 export function judoContestCard(contest: JudoCardContest, options: JudoBoardOptions = {}): string {
   check(contest.white, "white");
@@ -178,7 +251,19 @@ export function judoContestCard(contest: JudoCardContest, options: JudoBoardOpti
 
 // ------------------------------------------------------------------------------------------------ the mat queue board
 
-/** The mat queue as a sentence: for each mat, its contests in order. */
+/**
+ * The mat queue as a sentence: for each mat, its contests in order.
+ *
+ * @param mats - One mat or a list of mats.
+ * @param options - The language and the words.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeJudoQueue } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeJudoQueue({ mat: 1, contests: [{ number: "G-1", white: { name: "Daiki Hoshino" }, blue: { name: "Mathis Roussel" } }] }));
+ * ```
+ */
 export function describeJudoQueue(mats: JudoMat | readonly JudoMat[], options: Pick<JudoBoardOptions, "locale" | "words"> = {}): string {
   const v = voiceOf(options);
   const w = v.words;
@@ -190,6 +275,20 @@ export function describeJudoQueue(mats: JudoMat | readonly JudoMat[], options: P
  * The mat queue board: for each mat a big number in the mat's colour and the contests to come, in order, each a row with the contest number, the white athlete and the blue
  * one (name, code, flag). The mats are in columns on a wide board and stacked on an upright one. A mat with more contests than fit is cut at `rows`. Throws a `RangeError`
  * for no mat, a mat with no number, a contest with no number or no athlete name, a colour that is not a hex code, or a bad size or theme.
+ *
+ * @param input - One mat or a list of mats.
+ * @param options - The size, the theme, how many rows, the mat colours, the flags and the language.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { judoMatQueue } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const svg = judoMatQueue([
+ *   { mat: 1, contests: [{ number: "G-1", white: { name: "Daiki Hoshino", code: "JPN" }, blue: { name: "Mathis Roussel", code: "FRA" } }] },
+ *   { mat: 2, color: "#0b6fb8", contests: [{ number: "G-2", white: { name: "Levan M.", code: "GEO" }, blue: { name: "Min-jae Seong", code: "KOR" } }] },
+ * ], { size: "tv", theme: "dark" });
+ * console.log(svg.includes("G-2"), svg.includes("#0b6fb8"));
+ * ```
  */
 export function judoMatQueue(input: JudoMat | readonly JudoMat[], options: JudoQueueOptions = {}): string {
   const mats: readonly JudoMat[] = Array.isArray(input) ? (input as readonly JudoMat[]) : [input as JudoMat];

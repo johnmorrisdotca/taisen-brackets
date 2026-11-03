@@ -9,7 +9,17 @@ import { drawMark } from "./marks.ts";
 import { nameText, type RankingName, type RankingOptions } from "./ranking.ts";
 import { abbreviate, fit } from "./text.ts";
 
-/** One of the two athletes of a bout. Only `name` is needed. */
+/**
+ * One of the two athletes of a bout. Only `name` is needed.
+ *
+ * @example
+ * ```ts
+ * import { boutBoard, type BoutAthlete } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const red: BoutAthlete = { code: "BRA", flag: "BR", name: "TAVARES M." };
+ * console.log(boutBoard({ title: "Final", red, blue: { name: "MAYER M." } }).includes("TAVARES"));
+ * ```
+ */
 export interface BoutAthlete {
   /** The name as it is to be written (`MAYER M.`), or its two parts (set by `nameStyle`). */
   name: string | RankingName;
@@ -21,12 +31,40 @@ export interface BoutAthlete {
   mark?: string;
 }
 
-/** A referee or a judge. Only `name` is needed. */
+/**
+ * A referee or a judge. Only `name` is needed.
+ *
+ * @example
+ * ```ts
+ * import { boutBoard, type BoutOfficial } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const referee: BoutOfficial = { role: "referee", code: "MGL", flag: "MN", name: "KHISHIGEE Khas-Erdene" };
+ * console.log(boutBoard({ title: "Final", red: { name: "A" }, blue: { name: "B" }, officials: [referee] }).includes("KHISHIGEE"));
+ * ```
+ */
 export interface BoutOfficial extends BoutAthlete {
   /** `referee` (the language's word), `judge` (numbered 1, 2, 3 in the order given, in the language's words), or any text you want written (`Chair`, `Mat president`). Default `judge`. */
   role?: "referee" | "judge" | (string & {});
 }
 
+/**
+ * A bout to draw: the title, the phase, the bout number, the red and blue athletes and the officials.
+ *
+ * @example
+ * ```ts
+ * import { boutBoard, type BoutBoardSource } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const source: BoutBoardSource = {
+ *   title: "Women's 57-60 kg",
+ *   phase: "Preliminaries",
+ *   bout: 142,
+ *   red: { code: "BRA", flag: "BR", name: "TAVARES M." },
+ *   blue: { code: "USA", flag: "US", name: "MAYER M." },
+ *   officials: [{ role: "referee", code: "MGL", flag: "MN", name: "KHISHIGEE Khas-Erdene" }, { code: "POL", flag: "PL", name: "GORNY Mariusz" }],
+ * };
+ * console.log(boutBoard(source).includes("BOUT: 142"));
+ * ```
+ */
 export interface BoutBoardSource {
   /** The event, in capitals in the title band ("Women's 57-60 kg"). */
   title: string;
@@ -41,6 +79,24 @@ export interface BoutBoardSource {
   officials?: readonly BoutOfficial[];
 }
 
+/**
+ * What a bout board can be told: the name style and case, and the options of every broadcast board.
+ *
+ * @example
+ * ```ts
+ * import { boutBoard, type BoutBoardOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: BoutBoardOptions = { width: 960, look: "night", nameCase: "upper" };
+ * console.log(boutBoard({
+ *   title: "Women's 57-60 kg",
+ *   phase: "Preliminaries",
+ *   bout: 142,
+ *   red: { code: "BRA", flag: "BR", name: "TAVARES M." },
+ *   blue: { code: "USA", flag: "US", name: "MAYER M." },
+ *   officials: [{ role: "referee", code: "MGL", flag: "MN", name: "KHISHIGEE Khas-Erdene" }, { code: "POL", flag: "PL", name: "GORNY Mariusz" }],
+ * }, options).startsWith("<svg"));
+ * ```
+ */
 export interface BoutBoardOptions extends BroadcastOptions, Pick<RankingOptions, "nameStyle"> {
   /** `upper` writes the names in capitals; `as-is` (the default) leaves them as given. */
   nameCase?: "as-is" | "upper";
@@ -48,7 +104,19 @@ export interface BoutBoardOptions extends BroadcastOptions, Pick<RankingOptions,
 
 const MAX_OFFICIALS = 12;
 
-/** The width and the height of a bout board with `officialCount` officials: the width given (1280 by default) and a height of 64 + 38 + 10 + 62 + 10 + 38 + 42 an official + 10, in units of the width over 1280. */
+/**
+ * The width and the height of a bout board with `officialCount` officials: the width given (1280 by default) and a height of 64 + 38 + 10 + 62 + 10 + 38 + 42 an official + 10, in units of the width over 1280.
+ *
+ * @param officialCount - How many officials are listed.
+ * @param options - The `width`. Default 960.
+ * @returns The width and the height, in pixels.
+ * @example
+ * ```ts
+ * import { boutBoardSize } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(boutBoardSize(3, { width: 960 }));
+ * ```
+ */
 export function boutBoardSize(officialCount: number, options: Pick<BroadcastOptions, "width"> = {}): { width: number; height: number } {
   const width = options.width ?? 1280;
   const u = width / 1280;
@@ -88,7 +156,26 @@ function roles(officials: readonly BoutOfficial[], v: Voice): string[] {
   });
 }
 
-/** The board as a sentence, the drawing's description. */
+/**
+ * The board as a sentence, the drawing's description.
+ *
+ * @param source - The bout.
+ * @param options - The language, the words, the name style and case.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeBoutBoard } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeBoutBoard({
+ *   title: "Women's 57-60 kg",
+ *   phase: "Preliminaries",
+ *   bout: 142,
+ *   red: { code: "BRA", flag: "BR", name: "TAVARES M." },
+ *   blue: { code: "USA", flag: "US", name: "MAYER M." },
+ *   officials: [{ role: "referee", code: "MGL", flag: "MN", name: "KHISHIGEE Khas-Erdene" }, { code: "POL", flag: "PL", name: "GORNY Mariusz" }],
+ * }));
+ * ```
+ */
 export function describeBoutBoard(source: BoutBoardSource, options: Pick<BoutBoardOptions, "locale" | "words" | "nameStyle" | "nameCase"> = {}): string {
   const v = voiceOf(options);
   const w = v.words;
@@ -109,6 +196,25 @@ export function describeBoutBoard(source: BoutBoardSource, options: Pick<BoutBoa
 /**
  * The bout presentation board as a standalone SVG. Throws a `RangeError` for a board with no title, an athlete or official with no name, more than 12 officials, a role that is not a text, an unknown option
  * value, or a width outside 720 to 4000.
+ *
+ * @param source - The bout, its athletes and its officials.
+ * @param options - The width, the look, the icon, the language and the flags.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { boutBoard, boutBoardSize } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const source = {
+ *   title: "Women's 57-60 kg",
+ *   phase: "Preliminaries",
+ *   bout: 142,
+ *   red: { code: "BRA", flag: "BR", name: "TAVARES M." },
+ *   blue: { code: "USA", flag: "US", name: "MAYER M." },
+ *   officials: [{ role: "referee", code: "MGL", flag: "MN", name: "KHISHIGEE Khas-Erdene" }, { code: "POL", flag: "PL", name: "GORNY Mariusz" }],
+ * };
+ * const svg = boutBoard(source, { width: 960 });
+ * console.log(svg.includes("BOUT: 142"), svg.includes("REFEREE AND JUDGES"), JSON.stringify(boutBoardSize(source.officials.length, { width: 960 })));
+ * ```
  */
 export function boutBoard(source: BoutBoardSource, options: BoutBoardOptions = {}): string {
   validate(source, options);

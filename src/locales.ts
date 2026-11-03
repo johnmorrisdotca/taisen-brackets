@@ -213,7 +213,16 @@ const ROUNDS: Record<string, readonly [fr: string, ja: string, es: string, de: s
 
 const rounds = (index: 0 | 1 | 2 | 3): Record<string, string> => Object.fromEntries(Object.entries(ROUNDS).map(([en, names]) => [en, names[index]]));
 
-/** The built-in languages, by code. */
+/**
+ * The built-in languages, by code.
+ *
+ * @example
+ * ```ts
+ * import { LOCALES } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(Object.keys(LOCALES), LOCALES.ja.tag);
+ * ```
+ */
 export const LOCALES: Readonly<Record<"en" | "fr" | "ja" | "es" | "de", Locale>> = Object.freeze({
   en: { code: "en", tag: "en", words: EN, rounds: {} },
   fr: { code: "fr", tag: "fr", words: FR, rounds: rounds(0) },
@@ -222,22 +231,64 @@ export const LOCALES: Readonly<Record<"en" | "fr" | "ja" | "es" | "de", Locale>>
   de: { code: "de", tag: "de", words: DE, rounds: rounds(3) },
 });
 
-/** The codes of the built-in languages, English first. */
+/**
+ * The codes of the built-in languages, English first.
+ *
+ * @example
+ * ```ts
+ * import { LOCALE_CODES } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(LOCALE_CODES);
+ * ```
+ */
 export const LOCALE_CODES: readonly string[] = Object.freeze(["en", "fr", "ja", "es", "de"]);
 
-/** The English words, as they were before there were languages. */
+/**
+ * The English words, as they were before there were languages.
+ *
+ * @example
+ * ```ts
+ * import { WORDS } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(WORDS.champion, WORDS.tbd);
+ * ```
+ */
 export const WORDS: Readonly<Words> = LOCALES.en.words;
 
 /**
  * A language of your own: what you give, on top of the base language's (English unless `base` says another) for what you leave out.
  * `tag` is what `Intl` formats numbers and dates with (default `code`).
+ *
+ * @param code - A short code for the language, the one you pass as `locale`.
+ * @param parts - The language tag, and the words and round names to replace.
+ * @param base - The language to start from. Default `en`.
+ * @returns The language, to pass as `locale`.
+ * @example
+ * ```ts
+ * import { defineLocale, drawBracket, type Matchup } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const pirate = defineLocale("pirate", { words: { champion: "Admiral" } });
+ * const ties: Matchup[] = [{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }];
+console.log(pirate.code, pirate.words.champion, drawBracket(ties, { locale: pirate }).startsWith("<svg"));
+ * ```
  */
 export function defineLocale(code: string, parts: { tag?: string; words?: Partial<Words>; rounds?: Readonly<Record<string, string>> }, base: keyof typeof LOCALES = "en"): Locale {
   const from = LOCALES[base];
   return { code, tag: parts.tag ?? code, words: { ...from.words, ...parts.words }, rounds: { ...from.rounds, ...parts.rounds } };
 }
 
-/** The language an option names: a code of a built-in one, or a `Locale`. */
+/**
+ * The language an option names: a code of a built-in one, or a `Locale`.
+ *
+ * @param option - A code such as `ja`, a `Locale`, or `undefined`.
+ * @returns The language; English when the option is empty or the code is not one of the five.
+ * @example
+ * ```ts
+ * import { localeOf } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(localeOf("ja").tag, localeOf(undefined).tag);
+ * ```
+ */
 export function localeOf(option: string | Locale | undefined): Locale {
   if (option === undefined) return LOCALES.en;
   if (typeof option !== "string") return option;
@@ -246,7 +297,17 @@ export function localeOf(option: string | Locale | undefined): Locale {
   return hit;
 }
 
-/** A language ready to write with: the words with any replacements, and the formats. */
+/**
+ * A language ready to write with: the words with any replacements, and the formats.
+ *
+ * @example
+ * ```ts
+ * import { voiceOf, type Voice } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const voice: Voice = voiceOf({ locale: "fr" });
+ * console.log(voice.upper("finale"));
+ * ```
+ */
 export interface Voice {
   locale: Locale;
   words: Words;
@@ -262,6 +323,19 @@ export interface Voice {
   team(team: Team): string;
 }
 
+/**
+ * Builds the voice of a drawing from its `locale`, `words` and `teamName` options.
+ *
+ * @param options - The options of a drawing that name its language.
+ * @returns The voice.
+ * @example
+ * ```ts
+ * import { voiceOf } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const voice = voiceOf({ locale: "ja" });
+ * console.log(voice.words.champion, voice.number(1234));
+ * ```
+ */
 export function voiceOf(options: Pick<DrawOptions, "locale" | "words" | "teamName">): Voice {
   const locale = localeOf(options.locale);
   const words = options.words ? { ...locale.words, ...options.words } : locale.words;
@@ -302,6 +376,16 @@ const SUBDIVISIONS: Readonly<Record<string, Readonly<Record<string, string>>>> =
  * The name of a country in a language, from its ISO 3166 code, through `Intl.DisplayNames`: no list to write ("DE" is
  * Germany, Allemagne, ドイツ, Alemania, Deutschland). The home nations (`GB-ENG`, `GB-SCT`, `GB-WLS`, `GB-NIR`) are not regions
  * to `Intl`, so they have names here. A code `Intl` does not know gives `undefined`.
+ *
+ * @param code - The country's ISO 3166 code: `CA`, `JP`.
+ * @param locale - The language, as for `locale`. Default English.
+ * @returns The name, or `undefined` when the code is not a country the runtime knows.
+ * @example
+ * ```ts
+ * import { countryName } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(countryName("JP", "en"), countryName("JP", "ja"));
+ * ```
  */
 export function countryName(code: string, locale: string | Locale = "en"): string | undefined {
   const l = localeOf(locale);

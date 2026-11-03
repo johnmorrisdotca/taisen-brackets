@@ -8,6 +8,20 @@ import { chosenMedalRows, describeMedalTable, validateMedalSource, type MedalRow
 import { drawMark } from "./marks.ts";
 import { abbreviate, esc, fit, num } from "./text.ts";
 
+/**
+ * What a broadcast medal table can be told: `labels` (the codes or the names), `ranks`, the sort and the rows, and the options of every broadcast board.
+ *
+ * @example
+ * ```ts
+ * import { broadcastMedalTable, type BroadcastMedalOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: BroadcastMedalOptions = { width: 960, labels: "name", ranks: true };
+ * console.log(broadcastMedalTable({ subtitle: "Day 16", rows: [
+ *   { name: "United States", code: "USA", flag: "US", gold: 46, silver: 29, bronze: 29 },
+ *   { name: "China", code: "CHN", flag: "CN", gold: 38, silver: 27, bronze: 22 },
+ * ] }, options).startsWith("<svg"));
+ * ```
+ */
 export interface BroadcastMedalOptions extends BroadcastOptions, Pick<MedalTableOptions, "sort" | "ties" | "top" | "skipEmpty"> {
   /** Write each row's `code` (the default where every row has one) or its `name`. */
   labels?: "code" | "name";
@@ -19,7 +33,19 @@ const MAX_ROWS = 24;
 /** The height of a row of this table, in units of the width over 1280. */
 const ROW = 46;
 
-/** The width and the height of a broadcast medal table of `rowCount` rows: the width given (1280 by default) and a height of 64 + 36 + 10 + 48 a row + 10, in units of the width over 1280. */
+/**
+ * The width and the height of a broadcast medal table of `rowCount` rows: the width given (1280 by default) and a height of 64 + 36 + 10 + 48 a row + 10, in units of the width over 1280.
+ *
+ * @param rowCount - How many rows the table has.
+ * @param options - The `width`. Default 960.
+ * @returns The width and the height, in pixels.
+ * @example
+ * ```ts
+ * import { broadcastMedalSize } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(broadcastMedalSize(3, { width: 960 }));
+ * ```
+ */
 export function broadcastMedalSize(rowCount: number, options: Pick<BroadcastOptions, "width"> = {}): { width: number; height: number } {
   const width = options.width ?? 1280;
   const u = width / 1280;
@@ -36,6 +62,21 @@ function disc(cx: number, cy: number, r: number, kind: 1 | 2 | 3): string {
 /**
  * The broadcast-style medal table as a standalone SVG. Throws a `RangeError` for what `medalTable` refuses, more than 24 rows after `top` and `skipEmpty`, a `labels` that is not `code` or `name`,
  * a look or icon that is not one of its values, or a width outside 720 to 4000.
+ *
+ * @param source - The medal table: the title, the event, the date and the rows.
+ * @param options - The width, the look, the labels, the ranks, the sort and the language.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { broadcastMedalSize, broadcastMedalTable } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const source = { subtitle: "Day 16", rows: [
+ *   { name: "United States", code: "USA", flag: "US", gold: 46, silver: 29, bronze: 29 },
+ *   { name: "China", code: "CHN", flag: "CN", gold: 38, silver: 27, bronze: 22 },
+ * ] };
+ * const svg = broadcastMedalTable(source, { width: 960 });
+ * console.log(svg.includes("TOTAL"), svg.includes("USA"), JSON.stringify(broadcastMedalSize(source.rows.length, { width: 960 })));
+ * ```
  */
 export function broadcastMedalTable(source: MedalTableSource, options: BroadcastMedalOptions = {}): string {
   const rule: MedalTableOptions = { ...(options.sort !== undefined ? { sort: options.sort } : {}), ...(options.ties !== undefined ? { ties: options.ties } : {}), ...(options.top !== undefined ? { top: options.top } : {}), ...(options.skipEmpty !== undefined ? { skipEmpty: options.skipEmpty } : {}) };

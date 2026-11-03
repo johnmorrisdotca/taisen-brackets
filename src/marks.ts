@@ -5,6 +5,15 @@ import { abbreviate, esc, num } from "./text.ts";
  * Takes inline SVG markup from a caller and makes it safe to put inside a drawing: the outer `<svg>`'s viewBox is kept,
  * and scripts, event handlers, `<style>`, `<foreignObject>`, comments and `javascript:` addresses are removed. Returns the
  * viewBox and the inner markup, or `null` when it is not an `<svg>`.
+ *
+ * @param markup - The SVG text of a team's mark.
+ * @returns The view box and the inner markup with scripts, events and external references removed; `null` when the text is not an `<svg>`.
+ * @example
+ * ```ts
+ * import { cleanSvg } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(cleanSvg('<svg viewBox="0 0 10 10" onload="alert(1)"><script>alert(1)</script><circle cx="5" cy="5" r="4"/></svg>'), cleanSvg("not svg"));
+ * ```
  */
 export function cleanSvg(markup: string): { viewBox: string; inner: string } | null {
   const text = markup.trim().replace(/^<\?xml[^>]*>/i, "").replace(/<!DOCTYPE[^>]*>/gi, "").replace(/<!--[\s\S]*?-->/g, "");
@@ -28,7 +37,18 @@ export function cleanSvg(markup: string): { viewBox: string; inner: string } | n
 
 const EMBLEM_ID = /^[a-z][a-z0-9-]*:[a-z0-9][a-z0-9-]*(?:\/(?:metal|line|color))?$/;
 
-/** Whether a `trophy` value names an emblem (`"trophy:hockey-cup"`, `"medal:gold/line"`) rather than being inline SVG or an image address. */
+/**
+ * Whether a `trophy` value names an emblem (`"trophy:hockey-cup"`, `"medal:gold/line"`) rather than being inline SVG or an image address.
+ *
+ * @param value - The text of a `trophy` option.
+ * @returns `true` for an emblem id.
+ * @example
+ * ```ts
+ * import { isEmblemId } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(isEmblemId("trophy:hockey-cup"), isEmblemId("https://example.com/cup.svg"));
+ * ```
+ */
 export function isEmblemId(value: string): boolean {
   return EMBLEM_ID.test(value.trim());
 }
@@ -66,7 +86,18 @@ export function inkOn(color: string): string | null {
   return 0.2126 * r + 0.7152 * g + 0.0722 * b < 0.35 ? "#ffffff" : "#1f2320";
 }
 
-/** Whether an image address is one a drawing will load: http(s), a relative path, or a `data:image/`. */
+/**
+ * Whether an image address is one a drawing will load: http(s), a relative path, or a `data:image/`.
+ *
+ * @param url - The address.
+ * @returns `true` when the address is allowed.
+ * @example
+ * ```ts
+ * import { safeUrl } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(safeUrl("https://example.com/mark.svg"), safeUrl("javascript:alert(1)"));
+ * ```
+ */
 export function safeUrl(url: string): boolean {
   const u = url.trim();
   if (/^data:image\/(png|jpe?g|gif|webp|svg\+xml|avif);/i.test(u)) return true;
@@ -100,7 +131,18 @@ export interface MarkContext {
   defs?: Map<string, string>;
 }
 
-/** Whether an address may be a link in a drawing: http(s), a relative path or a `#` fragment. `javascript:`, `data:` and every other scheme are refused. */
+/**
+ * Whether an address may be a link in a drawing: http(s), a relative path or a `#` fragment. `javascript:`, `data:` and every other scheme are refused.
+ *
+ * @param url - The address.
+ * @returns `true` when the address is allowed.
+ * @example
+ * ```ts
+ * import { safeHref } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(safeHref("#final"), safeHref("javascript:alert(1)"));
+ * ```
+ */
 export function safeHref(url: string): boolean {
   const u = url.trim();
   // eslint-disable-next-line no-control-regex

@@ -9,7 +9,17 @@ import { drawMark } from "./marks.ts";
 import { nameText, type RankingName, type RankingOptions } from "./ranking.ts";
 import { abbreviate, fit } from "./text.ts";
 
-/** One line of a results board. Only `name` is needed. */
+/**
+ * One line of a results board. Only `name` is needed.
+ *
+ * @example
+ * ```ts
+ * import { resultsBoard, type ResultsRow } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const row: ResultsRow = { code: "USA", flag: "US", name: "Michael Phillips", values: [50.58], record: "OR" };
+ * console.log(resultsBoard({ title: "Final", rows: [row] }).includes("50.58"));
+ * ```
+ */
 export interface ResultsRow {
   /** The name as it is to be written ("A. SACRAMONE", "Svetlana Khorkina"), or its two parts (set by `nameStyle`). */
   name: string | RankingName;
@@ -29,12 +39,41 @@ export interface ResultsRow {
   note?: string;
 }
 
-/** A column of scores: its heading in the sub bar, and the decimals of its numbers. */
+/**
+ * A column of scores: its heading in the sub bar, and the decimals of its numbers.
+ *
+ * @example
+ * ```ts
+ * import { resultsBoard, type ResultsColumn } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const time: ResultsColumn = { label: "Time", precision: 2 };
+ * console.log(resultsBoard({ title: "Final", columns: [time], rows: [{ name: "A", values: [50.5] }] }).includes("50.50"));
+ * ```
+ */
 export interface ResultsColumn {
   label?: string;
   precision?: number;
 }
 
+/**
+ * A results board to draw: the title, the phase, the columns and the rows.
+ *
+ * @example
+ * ```ts
+ * import { resultsBoard, type ResultsBoardSource } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const source: ResultsBoardSource = {
+ *   title: "Men's 100m butterfly",
+ *   phase: "Results · Final",
+ *   columns: [{ precision: 2 }],
+ *   rows: [
+ *     { code: "USA", flag: "US", name: "Michael Phillips", values: [50.58], record: "OR" },
+ *     { code: "HUN", flag: "HU", name: "Laszlo Czigany", values: [50.59] },
+ *   ],
+ * };
+ * console.log(resultsBoard(source).includes("50.58"));
+ * ```
+ */
 export interface ResultsBoardSource {
   /** The event, in capitals in the title band ("Women's apparatus final"). */
   title: string;
@@ -45,6 +84,25 @@ export interface ResultsBoardSource {
   rows: readonly ResultsRow[];
 }
 
+/**
+ * What a results board can be told: the width, the look, the icon, the rank style, the name style and case, and the language.
+ *
+ * @example
+ * ```ts
+ * import { resultsBoard, type ResultsBoardOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: ResultsBoardOptions = { width: 960, look: "night", rankStyle: "medal", nameCase: "upper" };
+ * console.log(resultsBoard({
+ *   title: "Men's 100m butterfly",
+ *   phase: "Results · Final",
+ *   columns: [{ precision: 2 }],
+ *   rows: [
+ *     { code: "USA", flag: "US", name: "Michael Phillips", values: [50.58], record: "OR" },
+ *     { code: "HUN", flag: "HU", name: "Laszlo Czigany", values: [50.59] },
+ *   ],
+ * }, options).startsWith("<svg"));
+ * ```
+ */
 export interface ResultsBoardOptions extends BroadcastOptions, Pick<RankingOptions, "nameStyle"> {
   /** `box` (the default: a red square, as a broadcast has it), `medal` (gold, silver and bronze boxes for the first three) or `plain` (a white numeral). */
   rankStyle?: "box" | "medal" | "plain";
@@ -58,7 +116,19 @@ export interface ResultsBoardOptions extends BroadcastOptions, Pick<RankingOptio
 
 const MAX_ROWS = 24;
 
-/** The width and the height of a results board with `rowCount` rows: the width given (1280 by default) and a height of 64 + 36 + 20 + 54 a row, in units of the width over 1280. */
+/**
+ * The width and the height of a results board with `rowCount` rows: the width given (1280 by default) and a height of 64 + 36 + 20 + 54 a row, in units of the width over 1280.
+ *
+ * @param rowCount - How many rows the board has.
+ * @param options - The `width`. Default 960.
+ * @returns The width and the height, in pixels.
+ * @example
+ * ```ts
+ * import { resultsBoardSize } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(resultsBoardSize(3, { width: 960 }));
+ * ```
+ */
 export function resultsBoardSize(rowCount: number, options: Pick<BroadcastOptions, "width"> = {}): { width: number; height: number } {
   const width = options.width ?? 1280;
   const u = width / 1280;
@@ -106,7 +176,27 @@ function ranksOf(rows: readonly ResultsRow[], ties: boolean): (number | string)[
   return out;
 }
 
-/** The board as a sentence, the drawing's description. */
+/**
+ * The board as a sentence, the drawing's description.
+ *
+ * @param source - The results.
+ * @param options - The language, the words, the name style, the precision, ties and name case.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeResultsBoard } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeResultsBoard({
+ *   title: "Men's 100m butterfly",
+ *   phase: "Results · Final",
+ *   columns: [{ precision: 2 }],
+ *   rows: [
+ *     { code: "USA", flag: "US", name: "Michael Phillips", values: [50.58], record: "OR" },
+ *     { code: "HUN", flag: "HU", name: "Laszlo Czigany", values: [50.59] },
+ *   ],
+ * }));
+ * ```
+ */
 export function describeResultsBoard(source: ResultsBoardSource, options: Pick<ResultsBoardOptions, "locale" | "words" | "nameStyle" | "precision" | "ties" | "nameCase"> = {}): string {
   const v = voiceOf(options);
   const w = v.words;
@@ -124,6 +214,26 @@ export function describeResultsBoard(source: ResultsBoardSource, options: Pick<R
 /**
  * The results board as a standalone SVG. Throws a `RangeError` for a board with no title or no rows, more than 24 rows, a row with no name, a value that is not a number, a text or null, a precision
  * that is not a whole number from 0 to 6, an unknown option value, or a width outside 720 to 4000.
+ *
+ * @param source - The title, the phase, the columns and the rows.
+ * @param options - The width, the look, the icon, the rank style, the language and the flags.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { resultsBoard, resultsBoardSize } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const source = {
+ *   title: "Men's 100m butterfly",
+ *   phase: "Results · Final",
+ *   columns: [{ precision: 2 }],
+ *   rows: [
+ *     { code: "USA", flag: "US", name: "Michael Phillips", values: [50.58], record: "OR" },
+ *     { code: "HUN", flag: "HU", name: "Laszlo Czigany", values: [50.59] },
+ *   ],
+ * };
+ * const svg = resultsBoard(source, { width: 960 });
+ * console.log(svg.includes("MEN'S 100M BUTTERFLY"), svg.includes("50.58"), JSON.stringify(resultsBoardSize(source.rows.length, { width: 960 })));
+ * ```
  */
 export function resultsBoard(source: ResultsBoardSource, options: ResultsBoardOptions = {}): string {
   validate(source, options);

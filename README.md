@@ -233,6 +233,12 @@ npm install @johnmorrisdotca/taisen-brackets
 
 It is ESM, and `require` works on Node 22.12 and later. It needs no DOM: the functions return strings. Five entry points: `@johnmorrisdotca/taisen-brackets` (everything), `/layout` (the layout and the helpers, no drawing), `/presets` (the formats), `/road` (the road to the final) and `/backgrounds` (the twenty-five backgrounds on their own).
 
+## Every way to use it
+
+The [demo](https://johnmorrisdotca.github.io/taisen-brackets/), the [docs](https://johnmorrisdotca.github.io/taisen-brackets/docs/) (English and Japanese) and the [embed page](https://johnmorrisdotca.github.io/taisen-brackets/embed.html). Each way below is a tested file in [`examples/`](./examples) (`pnpm test:usage`).
+
+Guides: [script tag](./docs/guides/html-and-cdn.md), [Vite and webpack](./docs/guides/bundlers.md), [React, Vue, Svelte, Angular](./docs/guides/frameworks.md), [iframe](./docs/guides/embed-in-an-iframe.md), [TypeScript and Node](./docs/guides/typescript-and-node.md).
+
 ## Examples
 
 ### A bracket from its ties
@@ -692,7 +698,7 @@ The layout began as the playoff bracket of [spxn.com](https://spxn.com), the his
 ### The family
 
 <!-- family:start (made by scripts/family-readme.mjs from scripts/family-template.mjs; change those, not this) -->
-Taisen Brackets is one of thirty-two packages, each made for the same site, each at
+Taisen Brackets is one of thirty-three packages, each made for the same site, each at
 [github.com/johnmorrisdotca](https://github.com/johnmorrisdotca) or [github.com/spxis](https://github.com/spxis). The code of every one is MIT.
 
 **Games — board**
@@ -736,6 +742,7 @@ Taisen Brackets is one of thirty-two packages, each made for the same site, each
 **Geography & data**
 
 - [address-plus](https://github.com/johnmorrisdotca/address-plus) (アドレスプラス): parse and format addresses in the United States, Canada, Japan, Australia, France, Germany and the United Kingdom. [Demo](https://johnmorrisdotca.github.io/address-plus/).
+- [Chikyu Earth](https://github.com/johnmorrisdotca/chikyu-earth) (地球): a line-drawn globe that turns at the Earth's own rate, with an optional realistic Earth from space and markers for any place. [Demo](https://johnmorrisdotca.github.io/chikyu-earth/).
 - [Chizu](https://github.com/johnmorrisdotca/chizu) (地図): maps of the world and of countries' regions, in English and Japanese, with a quiz and callouts. [Demo](https://johnmorrisdotca.github.io/chizu/).
 - [Hata](https://github.com/johnmorrisdotca/hata) (旗): country and regional flags as SVG, at their true proportions and keyed by ISO code. [Demo](https://johnmorrisdotca.github.io/hata/).
 - [Kuni](https://github.com/johnmorrisdotca/kuni) (国): countries and their regions, with ISO codes and names in English and Japanese. [Demo](https://johnmorrisdotca.github.io/kuni/).
@@ -752,7 +759,7 @@ Taisen Brackets is one of thirty-two packages, each made for the same site, each
 - [REST in Pieces](https://github.com/spxis/rest-in-pieces) (レスト・イン・ピーシーズ): seeded test data and REST APIs for frontend development, with latency and error drills. [Demo](https://spxis.github.io/rest-in-pieces/).
 
 
-**This package is Taisen Brackets.** The demos of all thirty-two share one header and footer, so each links the rest.
+**This package is Taisen Brackets.** The demos of all thirty-three share one header and footer, so each links the rest.
 <!-- family:end -->
 
 ## Development

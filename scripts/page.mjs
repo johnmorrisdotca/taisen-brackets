@@ -34,6 +34,6 @@ export function renderIndex() {
     .replace("<!--family:footer-->", familyFooter({ id }))
     .replace(
       /<!--family:scripts ([\w.-]+)-->/,
-      (_, script) => `<script>${FAMILY_SCRIPT}</script>\n<script>familyLanguage({ id: ${JSON.stringify(id)}, words: ${JSON.stringify(WORDS)} });</script>\n<script type="module" src="${script}"></script>`,
+      (_, script) => `<script>${FAMILY_SCRIPT}</script>\n<script type="module" src="kazoku-parts.js"></script>\n<script>familyLanguage({ id: ${JSON.stringify(id)}, words: ${JSON.stringify(WORDS)} });</script>\n<script type="module" src="${script}"></script>`,
     );
 }

@@ -22,13 +22,34 @@ const nameOf = (e: RankingEntry): string => (typeof e.name === "string" ? e.name
 
 // ------------------------------------------------------------------------------------------------ number ones
 
-/** A category and its number one. */
+/**
+ * A category and its number one.
+ *
+ * @example
+ * ```ts
+ * import { rankingNumberOnes, type RankingCard } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const card: RankingCard = { category: "-60 kg", entry: { name: { surname: "Nakamura", given: "Kenji" }, points: 1240 } };
+ * console.log(rankingNumberOnes({ cards: [card] }).includes("NAKAMURA Kenji"));
+ * ```
+ */
 export interface RankingCard {
   /** The category as it is written ("-57 kg", "U18 · Men -60 kg"; `rankingCategoryLabel` writes one). */
   category: string;
   entry: RankingEntry;
 }
 
+/**
+ * The number ones to draw: a title, a date, a source and one card for each category.
+ *
+ * @example
+ * ```ts
+ * import { rankingNumberOnes, type NumberOnesSource } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const source: NumberOnesSource = { date: "October 2026", cards: [{ category: "-66 kg", entry: { name: "Leclerc", points: 1175 } }] };
+ * console.log(rankingNumberOnes(source).includes("#1 in -66 kg"));
+ * ```
+ */
 export interface NumberOnesSource {
   /** The heading. Default: the language's "Number ones". */
   title?: string;
@@ -39,6 +60,17 @@ export interface NumberOnesSource {
   cards: readonly RankingCard[];
 }
 
+/**
+ * What the number-ones board can be told: the columns, the card colours, and the options of every board.
+ *
+ * @example
+ * ```ts
+ * import { rankingNumberOnes, type NumberOnesOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: NumberOnesOptions = { size: "square", columns: 2, nameStyle: "given-first" };
+ * console.log(rankingNumberOnes({ cards: [{ category: "-60 kg", entry: { name: { surname: "Nakamura", given: "Kenji" } } }] }, options).startsWith("<svg"));
+ * ```
+ */
 export interface NumberOnesOptions extends BoardOptions, Shared {
   /** Columns of cards, 1 to 4. Default: the number that makes the cards biggest. */
   columns?: number;
@@ -46,11 +78,32 @@ export interface NumberOnesOptions extends BoardOptions, Shared {
   colors?: readonly string[];
 }
 
-/** Orange, crimson, blue, teal, purple and amber, each dark enough for white type (4.5 to 1 or better). */
+/**
+ * Orange, crimson, blue, teal, purple and amber, each dark enough for white type (4.5 to 1 or better).
+ *
+ * @example
+ * ```ts
+ * import { NUMBER_ONE_COLORS } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(NUMBER_ONE_COLORS.length);
+ * ```
+ */
 export const NUMBER_ONE_COLORS: readonly string[] = Object.freeze(["#c2410c", "#be123c", "#1d4ed8", "#0f766e", "#6d28d9", "#a16207"]);
 const HEX = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i;
 
-/** The cards as a sentence, the drawing's description. */
+/**
+ * The cards as a sentence, the drawing's description.
+ *
+ * @param source - The number ones.
+ * @param options - The language, the words, the name style and the precision.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeNumberOnes } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeNumberOnes({ cards: [{ category: "-60 kg", entry: { name: "Nakamura", points: 1240 } }] }));
+ * ```
+ */
 export function describeNumberOnes(source: NumberOnesSource, options: Pick<NumberOnesOptions, "locale" | "words" | "nameStyle" | "precision"> = {}): string {
   const v = voiceOf(options);
   const w = v.words;
@@ -70,6 +123,23 @@ export function describeNumberOnes(source: NumberOnesSource, options: Pick<Numbe
 /**
  * The number ones as cards in a grid: a coloured panel with the 1, the flag, the name and the club or country, the points and a pill that says "#1 in -57 kg". Throws a `RangeError` for
  * no cards, a card with no category, an entry with no name, a colour that is not a hex code, columns that are not 1 to 4, or a bad size or theme.
+ *
+ * @param source - The cards.
+ * @param options - The columns, the colours, the size, the theme and the language.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { rankingNumberOnes } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const svg = rankingNumberOnes({
+ *   date: "October 2026",
+ *   cards: [
+ *     { category: "-60 kg", entry: { name: { surname: "Nakamura", given: "Kenji" }, club: "Coastal Pine Judo", flag: "CA-BC", points: 1240 } },
+ *     { category: "-66 kg", entry: { name: { surname: "Leclerc", given: "Mathieu" }, club: "Kestrel Valley Judo", flag: "CA-QC", points: 1175 } },
+ *   ],
+ * }, { size: "square" });
+ * console.log(svg.includes("#1 in -66 kg"), svg.includes("LECLERC Mathieu"));
+ * ```
  */
 export function rankingNumberOnes(source: NumberOnesSource, options: NumberOnesOptions = {}): string {
   if (!source || !Array.isArray(source.cards) || source.cards.length === 0) throw new RangeError("taisen-brackets: the number ones need at least one card");
@@ -176,6 +246,17 @@ function drawCard(f: BoardFrame, r: R, card: RankingCard, color: string, nameSty
 
 // ------------------------------------------------------------------------------------------------ the entry list
 
+/**
+ * An entry list to draw: a title, a category, a date and the athletes entered, with their rank if they have one.
+ *
+ * @example
+ * ```ts
+ * import { rankingEntryList, type EntryListSource } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const source: EntryListSource = { category: "Men -66 kg", entries: [{ name: { surname: "Hoshino", given: "Daiki" }, code: "JPN", rank: 3 }] };
+ * console.log(rankingEntryList(source).includes("HOSHINO Daiki"));
+ * ```
+ */
 export interface EntryListSource {
   /** The heading. Default: the language's "Entry list". */
   title?: string;
@@ -189,6 +270,17 @@ export interface EntryListSource {
   entries: readonly RankingEntry[];
 }
 
+/**
+ * What an entry list can be told: the sort (`entry` or `ranking`), numbers, columns, rows and page.
+ *
+ * @example
+ * ```ts
+ * import { rankingEntryList, type EntryListOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: EntryListOptions = { sort: "ranking", numbers: true, columns: 2 };
+ * console.log(rankingEntryList({ entries: [{ name: "A", rank: 2 }, { name: "B" }] }, options).startsWith("<svg"));
+ * ```
+ */
 export interface EntryListOptions extends BoardOptions, Shared {
   /** `entry` (the default) keeps the order given; `ranking` puts the best ranked first and the unranked last. */
   sort?: "entry" | "ranking";
@@ -203,7 +295,19 @@ export interface EntryListOptions extends BoardOptions, Shared {
   badge?: boolean;
 }
 
-/** The entry list as a sentence, the drawing's description. */
+/**
+ * The entry list as a sentence, the drawing's description.
+ *
+ * @param source - The entry list.
+ * @param options - The language, the words, the name style and the sort.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeEntryList } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeEntryList({ category: "Men -66 kg", entries: [{ name: "Hoshino", rank: 3 }, { name: "Whitfield" }] }));
+ * ```
+ */
 export function describeEntryList(source: EntryListSource, options: Pick<EntryListOptions, "locale" | "words" | "nameStyle" | "sort" | "precision"> = {}): string {
   const v = voiceOf(options);
   const w = v.words;
@@ -227,6 +331,23 @@ const entryOrder = (source: EntryListSource, sort: EntryListOptions["sort"]): Ra
 /**
  * An event's entry list: a numbered row for each athlete in the order of the draw, with the flag, the name and club, the country's letters and the athlete's ranking (`NR` for none) at the right. Throws a
  * `RangeError` for an entry with no name, a ranking that is not a whole number from 1, an unknown option value or a bad size or theme.
+ *
+ * @param source - The entry list.
+ * @param options - The sort, numbers, columns, rows, the size, the theme and the language.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { rankingEntryList } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const svg = rankingEntryList({
+ *   category: "Men -66 kg",
+ *   entries: [
+ *     { name: { surname: "Hoshino", given: "Daiki" }, code: "JPN", flag: "JP", rank: 3 },
+ *     { name: { surname: "Whitfield", given: "Marcus" }, code: "USA", flag: "US" },
+ *   ],
+ * }, { sort: "ranking" });
+ * console.log(svg.includes("HOSHINO Daiki"), svg.includes("NR"));
+ * ```
  */
 export function rankingEntryList(source: EntryListSource, options: EntryListOptions = {}): string {
   if (!source || !Array.isArray(source.entries)) throw new RangeError("taisen-brackets: an entry list needs a list of entries");

@@ -6,9 +6,30 @@ import { fill, voiceOf } from "./locales.ts";
 export { JUDO_WEIGHT_CLASSES, judoOutcome, judoSeconds, judoClock } from "./judo-model.ts";
 export type { JudoMethod, JudoOutcome, JudoResult, JudoSide } from "./judo-model.ts";
 
-/** How a judo tournament is drawn: `repechage` (the IJF's quarter-final repechage, with its two bronze medal contests), or `direct` (a direct knockout in which both semi-final losers are bronze medallists). */
+/**
+ * How a judo tournament is drawn: `repechage` (the IJF's quarter-final repechage, with its two bronze medal contests), or `direct` (a direct knockout in which both semi-final losers are bronze medallists).
+ *
+ * @example
+ * ```ts
+ * import { judoBracket, type JudoSystem } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const system: JudoSystem = "direct";
+ * console.log(judoBracket(["A", "B", "C", "D"].map((name) => ({ id: name, name })), { system }).matchups.length);
+ * ```
+ */
 export type JudoSystem = "repechage" | "direct";
 
+/**
+ * What `judoBracket` can be told: the system and a prefix for the ties' ids.
+ *
+ * @example
+ * ```ts
+ * import { judoBracket, type JudoBracketOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: JudoBracketOptions = { system: "repechage", prefix: "m66" };
+ * console.log(judoBracket(["Haru", "Marc", "Levan", "Min", "Rafa", "Jasur", "Tom", "Joris"].map((name) => ({ id: name, name })), options).matchups.length);
+ * ```
+ */
 export interface JudoBracketOptions {
   /** Default `repechage` for eight athletes or more, else `direct`. */
   system?: JudoSystem;
@@ -28,6 +49,18 @@ export interface JudoBracketOptions {
  * the bronze medallists (`judoPodium`).
  *
  * Double repechage and full repechage (2.5.3 and 2.5.4) are not drawn: their pools are laid out in the rules' Appendix G charts.
+ *
+ * @param athletes - The athletes as teams, best seed first.
+ * @param options - The system and a prefix for the ties' ids.
+ * @returns The athletes and the matchups, none played yet, ready for `drawBracket`.
+ * @example
+ * ```ts
+ * import { judoBracket } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const athletes = ["Haru", "Marc", "Levan", "Min", "Rafa", "Jasur", "Tom", "Joris"].map((name, i) => ({ id: name, name, seed: i + 1 }));
+ * const { matchups } = judoBracket(athletes);
+ * console.log(matchups.length, matchups.filter((m) => m.stage === "bronze").length);
+ * ```
  */
 export function judoBracket(athletes: readonly Team[], options: JudoBracketOptions = {}): { teams: Team[]; matchups: Matchup[] } {
   const system: JudoSystem = options.system ?? (athletes.length >= 8 ? "repechage" : "direct");
@@ -58,7 +91,18 @@ export function judoBracket(athletes: readonly Team[], options: JudoBracketOptio
   return { teams: made.teams, matchups: [...made.matchups, ...extra] };
 }
 
-/** The medallists of a judo tournament, as far as it has been fought. */
+/**
+ * The medallists of a judo tournament, as far as it has been fought.
+ *
+ * @example
+ * ```ts
+ * import { judoPodium, type JudoPodium, advanceWinners, judoBracket } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const { matchups } = judoBracket(["Haru", "Marc", "Levan", "Min"].map((name) => ({ id: name, name })));
+ * const podium: JudoPodium = judoPodium(advanceWinners(matchups));
+ * console.log(podium.gold, podium.bronze.length);
+ * ```
+ */
 export interface JudoPodium {
   gold: Team | null;
   silver: Team | null;
@@ -66,7 +110,19 @@ export interface JudoPodium {
   bronze: Team[];
 }
 
-/** The gold, silver and two bronze medals of a bracket (matchups, input or layout), from the final, the bronze medal contests or the semi-finals. */
+/**
+ * The gold, silver and two bronze medals of a bracket (matchups, input or layout), from the final, the bronze medal contests or the semi-finals.
+ *
+ * @param input - The matchups, a `{ matchups, teams }` or a layout.
+ * @returns The podium; a place is `null` until its contest is played.
+ * @example
+ * ```ts
+ * import { advanceWinners, judoBracket, judoPodium } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const { matchups } = judoBracket(["Haru", "Marc", "Levan", "Min"].map((name) => ({ id: name, name })));
+ * console.log(judoPodium(advanceWinners(matchups)).gold);
+ * ```
+ */
 export function judoPodium(input: BracketLayout | readonly Matchup[] | BracketInput): JudoPodium {
   const layout: BracketLayout = "ties" in input && "sides" in input ? (input as BracketLayout) : layoutBracket(input as readonly Matchup[] | BracketInput);
   const fin = layout.finalIndex === null ? null : layout.ties[layout.finalIndex];
@@ -82,13 +138,36 @@ export function judoPodium(input: BracketLayout | readonly Matchup[] | BracketIn
   return { gold, silver, bronze };
 }
 
+/**
+ * A judo category: the sex and the weight class.
+ *
+ * @example
+ * ```ts
+ * import { judoCategoryLabel, type JudoCategory } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const category: JudoCategory = { sex: "women", weight: "-48" };
+ * console.log(judoCategoryLabel(category, "es"));
+ * ```
+ */
 export interface JudoCategory {
   sex: "men" | "women";
   /** `"-66"` (up to and including 66 kg), `"+100"` (over 100 kg): see `JUDO_WEIGHT_CLASSES`. */
   weight: string;
 }
 
-/** A weight category as a heading in a language: "Men -66 kg", "Women +78 kg". */
+/**
+ * A weight category as a heading in a language: "Men -66 kg", "Women +78 kg".
+ *
+ * @param category - The sex and the weight class.
+ * @param locale - The language. Default English.
+ * @returns The label.
+ * @example
+ * ```ts
+ * import { judoCategoryLabel } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(judoCategoryLabel({ sex: "women", weight: "-48" }, "es"), judoCategoryLabel({ sex: "men", weight: "+100" }));
+ * ```
+ */
 export function judoCategoryLabel(category: JudoCategory, locale?: string): string {
   if (category.sex !== "men" && category.sex !== "women") throw new RangeError(`taisen-brackets: a judo category's sex is "men" or "women", not ${JSON.stringify(category.sex)}`);
   if (!/^[-+]\d{2,3}$/.test(category.weight)) throw new RangeError(`taisen-brackets: a judo weight is "-66" or "+100", not ${JSON.stringify(category.weight)}`);

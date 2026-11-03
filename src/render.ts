@@ -13,11 +13,29 @@ import { drawGroups } from "./groups.ts";
 import { headTile } from "./furniture.ts";
 import { drawPlayIn } from "./playin.ts";
 
-/** The names of the layouts, the tree first. */
+/**
+ * The names of the layouts, the tree first.
+ *
+ * @example
+ * ```ts
+ * import { LAYOUTS } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(LAYOUTS);
+ * ```
+ */
 export const LAYOUTS: readonly LayoutName[] = Object.freeze(["tree", "rows", "shields", "update", "columns", "playin", "series", "groups", "picture"] as const);
 const VARIANTS: readonly string[] = ["rows", "shields", "update", "columns", "series", "picture"];
 
-/** The sizes by name. A phone's drawing is 390 wide and as tall as the bracket needs; a card is 1080 by 1350, a tall post. */
+/**
+ * The sizes by name. A phone's drawing is 390 wide and as tall as the bracket needs; a card is 1080 by 1350, a tall post.
+ *
+ * @example
+ * ```ts
+ * import { SIZES } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(SIZES.wide);
+ * ```
+ */
 export const SIZES: Readonly<Record<SizeName, Size>> = Object.freeze({
   wide: { width: 1200, height: 675 },
   square: { width: 1080, height: 1080 },
@@ -117,14 +135,39 @@ function pathOf(layout: BracketLayout, team: unknown): Set<number> {
   return out;
 }
 
-/** The layout with each team's name in the language: what the drawing, the table and the description are written from. */
+/**
+ * The layout with each team's name in the language: what the drawing, the table and the description are written from.
+ *
+ * @param layout - The layout from `layoutBracket`.
+ * @param v - The voice of a language, from `voiceOf`.
+ * @returns A new layout; the one passed in is not changed.
+ * @example
+ * ```ts
+ * import { layoutBracket, localizedLayout, voiceOf } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const layout = localizedLayout(layoutBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }]), voiceOf({ locale: "ja" }));
+ * console.log(layout.rounds);
+ * ```
+ */
 export function localizedLayout(layout: BracketLayout, v: Voice): BracketLayout {
   const named = new Map(layout.teams.map((t) => [t.id, { ...t, name: v.team(t) }]));
   const swap = <T extends Team | null>(t: T): T => (t ? ((named.get(t.id) ?? t) as T) : t);
   return { ...layout, ties: layout.ties.map((t) => ({ ...t, sides: [swap(t.sides[0]), swap(t.sides[1])] as const })), champion: swap(layout.champion), teams: [...named.values()] };
 }
 
-/** The text a screen reader gets for the drawing as a whole, in the language of `locale`. */
+/**
+ * The text a screen reader gets for the drawing as a whole, in the language of `locale`.
+ *
+ * @param input - The matchups, a `{ matchups, teams }` or a layout.
+ * @param options - The language, words and round names.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeBracket } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }]));
+ * ```
+ */
 export function describeBracket(input: BracketLayout | readonly Matchup[] | BracketInput, options: Pick<DrawOptions, "locale" | "words" | "teamName" | "roundNames"> = {}): string {
   const v = voiceOf(options);
   const layout = localizedLayout(isLayout(input) ? input : layoutBracket(input), v);
@@ -139,6 +182,17 @@ export function describeBracket(input: BracketLayout | readonly Matchup[] | Brac
 /**
  * Draws a bracket as an SVG string. `input` is a list of matchups, `{ matchups, teams }` or a layout from `layoutBracket`.
  * The same input and options always give the same string: no clock, no random number, no counter.
+ *
+ * @param input - The matchups, a `{ matchups, teams }` or a layout from `layoutBracket`.
+ * @param options - The look, size, theme, language, background and everything else a drawing can be told.
+ * @returns The SVG, a string that begins with `<svg`, with its own style and no script.
+ * @example
+ * ```ts
+ * import { drawBracket } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const svg = drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], { theme: "dark", size: "square" });
+ * console.log(svg.startsWith("<svg"));
+ * ```
  */
 export function drawBracket(input: BracketLayout | readonly Matchup[] | BracketInput, options: DrawOptions = {}): string {
   const v = voiceOf(options);
@@ -198,6 +252,16 @@ function scopeOf(o: Pick<DrawOptions, "styleScope">, prefix: string): string {
 /**
  * The stylesheet of a drawing with these options, for a page that draws the same bracket twice (a desk's size and a phone's): put it in the page once, give each drawing the same `styleScope`
  * and `style: false`, and every drawing takes its colours from it. Needs `styleScope`; `theme`, `look`, `background`, `layout`, `headers`, and whether there is an `href` or a `highlightPath` decide which rules are in it.
+ *
+ * @param options - The same options as the drawings that will share the rules.
+ * @returns The CSS text, or an empty string for `theme: "none"`.
+ * @example
+ * ```ts
+ * import { bracketStyle, drawBracket } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const css = bracketStyle({ styleScope: "tb1" });
+ * console.log(css.length > 0, drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], { styleScope: "tb1", style: false }).includes("<style"));
+ * ```
  */
 export function bracketStyle(options: DrawOptions): string {
   if (options.styleScope === undefined) throw new RangeError("taisen-brackets: bracketStyle needs a styleScope");

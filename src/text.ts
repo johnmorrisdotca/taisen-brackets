@@ -34,7 +34,18 @@ export function fit(text: string, size: number, width: number, measure: (text: s
   return chars.length <= 1 && measure(text, size) > width * 2 ? "…" : `${chars.join("").trimEnd()}…`;
 }
 
-/** A short name for a small box: the initials of a name of several words ("NYR"), else its first three letters; capitals. */
+/**
+ * A short name for a small box: the initials of a name of several words ("NYR"), else its first three letters; capitals.
+ *
+ * @param name - The team's name.
+ * @returns The abbreviation, in capitals.
+ * @example
+ * ```ts
+ * import { abbreviate } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(abbreviate("Northern Owls"), abbreviate("Aurora"));
+ * ```
+ */
 export function abbreviate(name: string): string {
   const words = name.trim().split(/\s+/).filter(Boolean);
   const letters = (word: string) => [...word].filter((c) => /\p{L}/u.test(c));

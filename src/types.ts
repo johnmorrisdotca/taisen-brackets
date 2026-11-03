@@ -5,10 +5,32 @@
 
 import type { JudoOutcome, JudoResult } from "./judo-model.ts";
 
-/** A side's key: a team code, a franchise id, anything that is unique within one bracket. */
+/**
+ * A side's key: a team code, a franchise id, anything that is unique within one bracket.
+ *
+ * @example
+ * ```ts
+ * import { layoutBracket, type SideId } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const home: SideId = "ARG";
+ * const away: SideId = 22;
+ * console.log(layoutBracket([{ sides: [home, away], score: [1, 0] }]).champion?.name);
+ * ```
+ */
 export type SideId = string | number;
 
-/** A side of a tie: a team, with the marks and labels a drawing needs. Only `id` and `name` are required. */
+/**
+ * A side of a tie: a team, with the marks and labels a drawing needs. Only `id` and `name` are required.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type Team } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const argentina: Team = { id: "ARG", name: "Argentina", abbr: "ARG", flag: "AR" };
+ * const svg = drawBracket({ teams: [argentina], matchups: [{ sides: ["ARG", "FRA"], score: [3, 3], pens: [4, 2] }] });
+ * console.log(svg.includes("Argentina"));
+ * ```
+ */
 export interface Team {
   id: SideId;
   name: string;
@@ -40,7 +62,18 @@ export interface Team {
   code?: string;
 }
 
-/** One game of a tie: a match of a knockout, a game of a series, a leg of an aggregate, a replay. */
+/**
+ * One game of a tie: a match of a knockout, a game of a series, a leg of an aggregate, a replay.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type Game } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const first: Game = { score: [2, 1], date: "2026-06-01" };
+ * const svg = drawBracket([{ sides: ["Aurora", "Harbour"], kind: "series", bestOf: 3, games: [first, { score: [0, 1] }, { score: [1, 0] }] }]);
+ * console.log(svg.startsWith("<svg"));
+ * ```
+ */
 export interface Game {
   /** The score, in the order of the tie's `sides`. */
   score: readonly [number, number];
@@ -54,7 +87,17 @@ export interface Game {
   note?: string;
 }
 
-/** How a tie is contested. Left out, it is read from the other fields. */
+/**
+ * How a tie is contested. Left out, it is read from the other fields.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type MatchupKind } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const kind: MatchupKind = "aggregate";
+ * console.log(drawBracket([{ sides: ["Aurora", "Harbour"], kind, legs: [{ score: [1, 0] }, { score: [1, 1] }] }]).startsWith("<svg"));
+ * ```
+ */
 export type MatchupKind =
   /** One game. */
   | "game"
@@ -65,12 +108,36 @@ export type MatchupKind =
   /** A drawn game and the game replayed: the last one decides. */
   | "replay";
 
-/** What takes a side of a tie: a tie's id (its winner, as `feeds` always meant) or `{ tie, result }`, which can name the tie's loser as well (a play-in's loser goes on to a decider). */
+/**
+ * What takes a side of a tie: a tie's id (its winner, as `feeds` always meant) or `{ tie, result }`, which can name the tie's loser as well (a play-in's loser goes on to a decider).
+ *
+ * @example
+ * ```ts
+ * import { layoutBracket, type Feed } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const loser: Feed = { tie: "sf1", result: "loser" };
+ * const layout = layoutBracket([
+ *   { id: "sf1", sides: ["A", "B"], score: [1, 0] },
+ *   { id: "sf2", sides: ["C", "D"], score: [0, 2] },
+ *   { id: "final", sides: ["A", "D"], score: [2, 1] },
+ *   { id: "bronze", sides: [null, null], feeds: [loser, { tie: "sf2", result: "loser" }], third: true },
+ * ]);
+ * console.log(layout.third);
+ * ```
+ */
 export type Feed = string | { tie: string; result: "winner" | "loser" };
 
 /**
  * One tie: two sides and who went through. Everything but `sides` is optional, so that a bracket can be drawn from
  * what is known (the sides of a first round, a few results) and fill in as the games are played.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type Matchup } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const final: Matchup = { id: "final", sides: ["ARG", "FRA"], score: [3, 3], extraTime: true, pens: [4, 2], date: "2022-12-18" };
+ * console.log(drawBracket([final]).startsWith("<svg"));
+ * ```
  */
 export interface Matchup {
   /** Names the tie for `feeds` of another and for the table. Left out, `m1`, `m2`… by position. */
@@ -127,7 +194,17 @@ export interface Matchup {
   seeds?: readonly [string | number | null, string | number | null];
 }
 
-/** What a tie came to, worked out from its games. */
+/**
+ * What a tie came to, worked out from its games.
+ *
+ * @example
+ * ```ts
+ * import { layoutBracket, type Result } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const result: Result = layoutBracket([{ sides: ["ARG", "FRA"], score: [3, 3], pens: [4, 2] }]).ties[0].result;
+ * console.log(result.score, result.pens, result.decided);
+ * ```
+ */
 export interface Result {
   kind: MatchupKind;
   /** The number drawn for each side: goals in a game, games won in a series, the total of an aggregate. `null` when nothing was played. */
@@ -145,7 +222,17 @@ export interface Result {
   decided: boolean;
 }
 
-/** A tie as the layout knows it. `index` is the position of its matchup in the list given. */
+/**
+ * A tie as the layout knows it. `index` is the position of its matchup in the list given.
+ *
+ * @example
+ * ```ts
+ * import { layoutBracket, type Tie } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const tie: Tie = layoutBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }]).ties[0];
+ * console.log(tie.sides.map((side) => side?.name), tie.winner);
+ * ```
+ */
 export interface Tie {
   index: number;
   id: string;
@@ -175,16 +262,54 @@ export interface Tie {
   home?: 0 | 1;
 }
 
-/** Where a side of a tie comes from: the winner or the loser of the tie at `tie` (its index). */
+/**
+ * Where a side of a tie comes from: the winner or the loser of the tie at `tie` (its index).
+ *
+ * @example
+ * ```ts
+ * import { layoutBracket, type Source } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const layout = layoutBracket([
+ *   { id: "sf1", sides: ["A", "B"], score: [1, 0] },
+ *   { id: "sf2", sides: ["C", "D"], score: [0, 2] },
+ *   { id: "final", sides: ["A", "D"], score: [2, 1] },
+ *   { id: "bronze", sides: [null, null], feeds: [{ tie: "sf1", result: "loser" }, { tie: "sf2", result: "loser" }], third: true },
+ * ]);
+ * const source: Source | null | undefined = layout.ties[3].from?.[0];
+ * console.log(source);
+ * ```
+ */
 export interface Source {
   tie: number;
   result: "winner" | "loser";
 }
 
-/** Where the layout put a tie. */
+/**
+ * Where the layout put a tie.
+ *
+ * @example
+ * ```ts
+ * import { layoutBracket, type Place } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const layout = layoutBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }]);
+ * const places: Place[] = layout.place;
+ * console.log(places);
+ * ```
+ */
 export type Place = "l" | "r" | "f" | "o";
 
-/** A tie's place in the tree. */
+/**
+ * A tie's place in the tree.
+ *
+ * @example
+ * ```ts
+ * import { layoutBracket, type LayoutBox } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const layout = layoutBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }]);
+ * const box: LayoutBox = layout.sides[0].boxes[0];
+ * console.log(box.round, box.y, box.to);
+ * ```
+ */
 export interface LayoutBox {
   /** The tie's index. */
   i: number;
@@ -203,6 +328,18 @@ export interface LayoutBox {
   byes: readonly (0 | 1)[];
 }
 
+/**
+ * One half of a bracket: its boxes, its rows and the name of its group.
+ *
+ * @example
+ * ```ts
+ * import { layoutBracket, type LayoutSide } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const layout = layoutBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }]);
+ * const side: LayoutSide = layout.sides[0];
+ * console.log(side.key, side.rows, side.boxes.length);
+ * ```
+ */
 export interface LayoutSide {
   /** `l` the left half (the top half on a phone), `r` the right. */
   key: "l" | "r";
@@ -212,6 +349,17 @@ export interface LayoutSide {
   rows: number;
 }
 
+/**
+ * The shape of a bracket worked out from its ties: the ties, the halves, the rounds, the rows and the champion.
+ *
+ * @example
+ * ```ts
+ * import { layoutBracket, drawBracket, type BracketLayout } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const layout: BracketLayout = layoutBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }]);
+ * console.log(layout.shape, layout.rounds, drawBracket(layout).startsWith("<svg"));
+ * ```
+ */
 export interface BracketLayout {
   /** Every tie, in the order given. */
   ties: Tie[];
@@ -244,12 +392,37 @@ export interface BracketLayout {
   teams: Team[];
 }
 
+/**
+ * A bracket's input with its teams listed once: `{ matchups, teams }`.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type BracketInput } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const input: BracketInput = {
+ *   teams: [{ id: "A", name: "Aurora" }, { id: "H", name: "Harbour" }],
+ *   matchups: [{ sides: ["A", "H"], score: [2, 1] }],
+ * };
+ * console.log(drawBracket(input).includes("Aurora"));
+ * ```
+ */
 export interface BracketInput {
   matchups: readonly Matchup[];
   /** The teams: names, marks, groups. A side named by an id that is not here is a team of that name. */
   teams?: readonly Team[];
 }
 
+/**
+ * What `layoutBracket` can be told: the shape (`halves` or left to right) and the order of the groups.
+ *
+ * @example
+ * ```ts
+ * import { layoutBracket, type LayoutOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: LayoutOptions = { shape: "ltr" };
+ * console.log(layoutBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], options).shape);
+ * ```
+ */
 export interface LayoutOptions {
   /** `halves` (the default when two ties feed the final) draws two halves meeting at the final; `ltr` one tree left to right. */
   shape?: "auto" | "halves" | "ltr";
@@ -257,7 +430,17 @@ export interface LayoutOptions {
   groupOrder?: readonly string[];
 }
 
-/** The words a drawing and a table use, in one language. Every one can be replaced (`words`), and a language can be added (`defineLocale`). Phrases take `{name}`-style holes. */
+/**
+ * The words a drawing and a table use, in one language. Every one can be replaced (`words`), and a language can be added (`defineLocale`). Phrases take `{name}`-style holes.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type Words } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const words: Partial<Words> = { champion: "Winner" };
+ * console.log(drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], { words }).includes("Winner"));
+ * ```
+ */
 export interface Words {
   /** A side not known yet. */
   tbd: string;
@@ -460,7 +643,17 @@ export interface Words {
   rbJudge: string;
 }
 
-/** A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for. */
+/**
+ * A language: its words, the names of the rounds (by their English names), and the tag `Intl` formats numbers and dates for.
+ *
+ * @example
+ * ```ts
+ * import { localeOf, type Locale } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const french: Locale = localeOf("fr");
+ * console.log(french.code, french.tag, french.words.champion);
+ * ```
+ */
 export interface Locale {
   /** The code (`fr`) and the tag (`fr-CA`, `ja-JP`) used for numbers, dates and capitals. */
   code: string;
@@ -472,10 +665,43 @@ export interface Locale {
 
 export type { JudoMethod, JudoOutcome, JudoResult, JudoSide } from "./judo-model.ts";
 
+/**
+ * The colours of a drawing: `auto` follows the page's light or dark, `light`, `dark`, `poster` is dark with gold lines, and `none` writes no style, for your own CSS.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type ThemeName } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const theme: ThemeName = "poster";
+ * console.log(drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], { theme }).startsWith("<svg"));
+ * ```
+ */
 export type ThemeName = "auto" | "light" | "dark" | "poster" | "none";
 
+/**
+ * The sizes a drawing has by name: `wide`, `square`, `card` and `phone`.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type SizeName } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const size: SizeName = "card";
+ * console.log(drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], { size }).includes("1350"));
+ * ```
+ */
 export type SizeName = "wide" | "square" | "phone" | "card";
 
+/**
+ * A size in pixels: a width and, when it is not worked out from the drawing, a height.
+ *
+ * @example
+ * ```ts
+ * import { SIZES, type Size } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const wide: Size = SIZES.wide;
+ * console.log(wide.width, wide.height);
+ * ```
+ */
 export interface Size {
   /** The width of the drawing, in pixels. */
   width: number;
@@ -483,13 +709,44 @@ export interface Size {
   height: number | null;
 }
 
-/** How much a box shows: both names and scores, an abbreviation and the score, or only the marks. */
+/**
+ * How much a box shows: both names and scores, an abbreviation and the score, or only the marks.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type Detail } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const detail: Detail = "compact";
+ * console.log(drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], { detail }).startsWith("<svg"));
+ * ```
+ */
 export type Detail = "auto" | "full" | "compact" | "mark";
 
-/** How a flag is framed: `round` in a circle, `square`, or `rect` in its own proportions. */
+/**
+ * How a flag is framed: `round` in a circle, `square`, or `rect` in its own proportions.
+ *
+ * @example
+ * ```ts
+ * import { type FlagShape, type FlagRenderer } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const shapes: FlagShape[] = ["round", "square", "rect"];
+ * const renderer: FlagRenderer = (code, request) => (shapes.includes(request.shape) ? `<svg viewBox="0 0 3 2"><title>${code}</title></svg>` : null);
+ * console.log(renderer("JP", { shape: "round", size: 24, theme: "inherit" }));
+ * ```
+ */
 export type FlagShape = "round" | "square" | "rect";
 
-/** What a drawing asks a `flags` renderer for. */
+/**
+ * What a drawing asks a `flags` renderer for.
+ *
+ * @example
+ * ```ts
+ * import { type FlagRequest } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const request: FlagRequest = { shape: "round", size: 32, theme: "dark" };
+ * console.log(request);
+ * ```
+ */
 export interface FlagRequest {
   shape: FlagShape;
   /** Width and height in pixels (the diameter, for a round flag). */
@@ -502,16 +759,55 @@ export interface FlagRequest {
  * A function from a country code and a request to an SVG string, or `null` or `undefined` for a code it has no flag for. It must be
  * synchronous: a drawing is a pure function of its options. `@johnmorrisdotca/hata`'s `flag()` is asynchronous, so load the flags first
  * (`await flag(code, { shape: "round" })` for each code) and pass `(code) => loaded[code]`.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type FlagRenderer } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const flags: FlagRenderer = (code) => `<svg viewBox="0 0 30 20"><rect width="30" height="20" fill="#2f5d4a"/><title>${code}</title></svg>`;
+ * const svg = drawBracket({ teams: [{ id: "JPN", name: "Japan", flag: "JP" }], matchups: [{ sides: ["JPN", "CAN"], score: [1, 0] }] }, { flags });
+ * console.log(svg.startsWith("<svg"));
+ * ```
  */
 export type FlagRenderer = (code: string, request: FlagRequest) => string | null | undefined;
 
-/** How a bracket is drawn: `classic` (the default) or `road`, with large round marks, big scores and a dotted path. */
+/**
+ * How a bracket is drawn: `classic` (the default) or `road`, with large round marks, big scores and a dotted path.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type Look } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const look: Look = "road";
+ * console.log(drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], { look }).startsWith("<svg"));
+ * ```
+ */
 export type Look = "classic" | "road";
 
-/** How an emblem is drawn; the names are those of `@johnmorrisdotca/dougu-sports`. */
+/**
+ * How an emblem is drawn; the names are those of `@johnmorrisdotca/dougu-sports`.
+ *
+ * @example
+ * ```ts
+ * import { type EmblemStyle } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const style: EmblemStyle = "line";
+ * console.log(style);
+ * ```
+ */
 export type EmblemStyle = "metal" | "line" | "color";
 
-/** What `drawBracket` asks an `emblems` renderer for. */
+/**
+ * What `drawBracket` asks an `emblems` renderer for.
+ *
+ * @example
+ * ```ts
+ * import { type EmblemRequest } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const request: EmblemRequest = { style: "metal", size: 96, theme: "light" };
+ * console.log(request.size);
+ * ```
+ */
 export interface EmblemRequest {
   style: EmblemStyle;
   /** Width and height in pixels. */
@@ -522,14 +818,34 @@ export interface EmblemRequest {
   theme: "inherit" | "light" | "dark";
 }
 
-/** A function from an emblem id and a request to an SVG string; `renderEmblem` of `@johnmorrisdotca/dougu-sports/emblems` is one. */
+/**
+ * A function from an emblem id and a request to an SVG string; `renderEmblem` of `@johnmorrisdotca/dougu-sports/emblems` is one.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type EmblemRenderer } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const emblems: EmblemRenderer = () => '<svg viewBox="0 0 10 10"><circle cx="5" cy="5" r="4" fill="gold"/></svg>';
+ * console.log(drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], { trophy: "trophy:cup", emblems }).startsWith("<svg"));
+ * ```
+ */
 export type EmblemRenderer = (id: string, options: EmblemRequest) => string;
 
 /** A background preset's name. */
-export type { BackgroundPresetName } from "./family-backgrounds.ts";
+export type { BackgroundPresetName } from "./backgrounds-entry.ts";
 import type { BackgroundPresetName } from "./family-backgrounds.ts";
 
-/** A preset, tuned: your own colours (hex or `rgb()`, the first two the ground), the gradient's angle, how strong the pattern is (0 to 1, default 0.6), a seed for the scattered parts, and which of its two variants. */
+/**
+ * A preset, tuned: your own colours (hex or `rgb()`, the first two the ground), the gradient's angle, how strong the pattern is (0 to 1, default 0.6), a seed for the scattered parts, and which of its two variants.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type BackgroundOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const background: BackgroundOptions = { preset: "aurora", intensity: 0.6, seed: 7 };
+ * console.log(drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], { background }).startsWith("<svg"));
+ * ```
+ */
 export interface BackgroundOptions {
   /** Default `midnight`. */
   preset?: BackgroundPresetName;
@@ -541,7 +857,17 @@ export interface BackgroundOptions {
   theme?: "light" | "dark";
 }
 
-/** Your own picture as the background: an image address (http(s), relative or `data:image/…`; anything else is refused), laid under a veil so the text reads. */
+/**
+ * Your own picture as the background: an image address (http(s), relative or `data:image/…`; anything else is refused), laid under a veil so the text reads.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type BackgroundImageOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const background: BackgroundImageOptions = { image: "./stadium.webp", fit: "cover", dim: 0.4 };
+ * console.log(drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], { background }).startsWith("<svg"));
+ * ```
+ */
 export interface BackgroundImageOptions {
   image: string;
   /** `cover` (the default) fills the drawing; `contain` shows all of the picture. */
@@ -551,9 +877,30 @@ export interface BackgroundImageOptions {
   theme?: "light" | "dark";
 }
 
-/** How the ties are drawn: `tree` (the default) is the bracket as ever; the others are other ways to draw the same ties. */
+/**
+ * How the ties are drawn: `tree` (the default) is the bracket as ever; the others are other ways to draw the same ties.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type LayoutName } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const layout: LayoutName = "rows";
+ * console.log(drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], { layout }).startsWith("<svg"));
+ * ```
+ */
 export type LayoutName = "tree" | "rows" | "shields" | "update" | "columns" | "playin" | "series" | "groups" | "picture";
 
+/**
+ * Everything a drawing can be told: the layout, look, size, theme, background, language, marks, flags, trophy, links and titles.
+ *
+ * @example
+ * ```ts
+ * import { drawBracket, type DrawOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: DrawOptions = { look: "road", theme: "dark", size: "card", title: "Aurora Cup", locale: "ja" };
+ * console.log(drawBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }], options).startsWith("<svg"));
+ * ```
+ */
 export interface DrawOptions extends LayoutOptions {
   /**
    * `tree` (the default): the halves meeting at the final. `rows`: each team a row, its name on the left and its mark on the right, a slot for the result toward the centre. `shields`: marks in shields with "vs",

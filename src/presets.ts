@@ -5,8 +5,30 @@
  * its own entry. The year is the year the playoffs are played in (the NHL's and the NBA's 2024 are the 2024 playoffs, of the 2023-24 season), except for the NFL, whose year is its season's: 2024 is the season played in 2024, with playoffs in January and February 2025.
  */
 
+/**
+ * A league with a playoff format by era: `nhl`, `nba`, `mlb`, `nfl`, `cfl`, `mls` or `worldcup`.
+ *
+ * @example
+ * ```ts
+ * import { playoffFormat, type League } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const league: League = "nhl";
+ * console.log(playoffFormat(league, 2024)?.teams);
+ * ```
+ */
 export type League = "nhl" | "nba" | "mlb" | "nfl" | "cfl" | "mls" | "worldcup";
 
+/**
+ * One round of a playoff format: its name and how many games a series is (`null` for a single game).
+ *
+ * @example
+ * ```ts
+ * import { playoffFormat, type PlayoffRound } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const rounds: PlayoffRound[] = playoffFormat("nba", 2024)?.rounds ?? [];
+ * console.log(rounds.map((round) => `${round.name}: ${round.bestOf}`));
+ * ```
+ */
 export interface PlayoffRound {
   /** The round's name as the league calls it. */
   name: string;
@@ -14,6 +36,17 @@ export interface PlayoffRound {
   bestOf: number | null;
 }
 
+/**
+ * A league's playoff format in one era: the years it ran, its rounds, how many teams it took, its byes and its sources.
+ *
+ * @example
+ * ```ts
+ * import { playoffFormat, type PlayoffFormat } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const format: PlayoffFormat | null = playoffFormat("nhl", 2024);
+ * console.log(format?.label, format?.rounds.length);
+ * ```
+ */
 export interface PlayoffFormat {
   league: League;
   /** The season (or edition) this was asked for. */
@@ -41,6 +74,13 @@ export interface PlayoffFormat {
 /**
  * The emblem each league's champion gets by default: an id of `@johnmorrisdotca/dougu-sports` (generic forms, no league's own mark). Pass it as
  * `trophy` together with an `emblems` renderer; with no renderer it draws nothing. A cup for MLS because the MLS Cup is one.
+ *
+ * @example
+ * ```ts
+ * import { LEAGUE_EMBLEMS } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(LEAGUE_EMBLEMS.nhl);
+ * ```
  */
 export const LEAGUE_EMBLEMS: Readonly<Record<League, string>> = Object.freeze({
   nhl: "trophy:hockey-cup",
@@ -112,12 +152,31 @@ const ERAS: Record<League, readonly Era[]> = {
   ],
 };
 
-/** The leagues that have a format here. */
+/**
+ * The leagues that have a format here.
+ *
+ * @example
+ * ```ts
+ * import { LEAGUES } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(LEAGUES);
+ * ```
+ */
 export const LEAGUES: readonly League[] = Object.freeze(Object.keys(ERAS) as League[]);
 
 /**
  * The playoff format of a league in a season (or a World Cup in its year), or `null` when there was none or this
  * package does not cover it. The rounds' names go straight to `drawBracket`'s `roundNames`.
+ *
+ * @param league - The league.
+ * @param year - The year the playoffs were played.
+ * @returns The format, or `null` when the league had no playoffs that year or the year is outside the ones known.
+ * @example
+ * ```ts
+ * import { playoffFormat } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(playoffFormat("nhl", 2024)?.rounds.map((round) => round.name), playoffFormat("nhl", 1900));
+ * ```
  */
 export function playoffFormat(league: League, year: number): PlayoffFormat | null {
   const list = ERAS[league];
@@ -129,7 +188,18 @@ export function playoffFormat(league: League, year: number): PlayoffFormat | nul
   return { ...rest, year, emblem: LEAGUE_EMBLEMS[league] };
 }
 
-/** Every era of a league, oldest first. */
+/**
+ * Every era of a league, oldest first.
+ *
+ * @param league - The league.
+ * @returns The formats, one for each era; an empty list for a league with none.
+ * @example
+ * ```ts
+ * import { playoffEras } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(playoffEras("nba").map((era) => era.from));
+ * ```
+ */
 export function playoffEras(league: League): PlayoffFormat[] {
   return ERAS[league].map(({ years: _y, except: _e, ...rest }) => { void _y; void _e; return { ...rest, year: rest.from, emblem: LEAGUE_EMBLEMS[league] }; });
 }

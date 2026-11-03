@@ -8,7 +8,20 @@ import { drawMark } from "./marks.ts";
 import { abbreviate, fit, fitLines, num } from "./text.ts";
 import { nameText, pointsText, teamFor, type R, type RankingEntry, type RankingOptions } from "./ranking.ts";
 
-/** One previous meeting of the two athletes. */
+/**
+ * One previous meeting of the two athletes.
+ *
+ * @example
+ * ```ts
+ * import { matchupRecord, type RankingMeeting } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const meetings: RankingMeeting[] = [
+ *   { date: "2026-09-13", event: "Fall Open", round: "Semi-final", winner: 0, result: "ippon · 2:11" },
+ *   { date: "2026-05-17", event: "Spring Classic", round: "Final", winner: 1, result: "waza-ari · golden score" },
+ * ];
+ * console.log(matchupRecord(meetings));
+ * ```
+ */
 export interface RankingMeeting {
   /** The date, as an ISO date (`2026-05-17`, written the language's way) or any text. */
   date?: string;
@@ -21,6 +34,25 @@ export interface RankingMeeting {
   result?: string;
 }
 
+/**
+ * A matchup to draw: the two athletes with their ranks and points, and their earlier meetings.
+ *
+ * @example
+ * ```ts
+ * import { rankingMatchup, type MatchupSource } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const source: MatchupSource = {
+ *   category: "U18 · Men -60 kg",
+ *   a: { name: { surname: "Nakamura", given: "Kenji" }, rank: 1, points: 412.5 },
+ *   b: { name: { surname: "Brar", given: "Harpreet" }, rank: 2, points: 398 },
+ *   meetings: [
+ *   { date: "2026-09-13", event: "Fall Open", round: "Semi-final", winner: 0, result: "ippon · 2:11" },
+ *   { date: "2026-05-17", event: "Spring Classic", round: "Final", winner: 1, result: "waza-ari · golden score" },
+ * ],
+ * };
+ * console.log(rankingMatchup(source).includes("PREVIOUS MEETINGS"));
+ * ```
+ */
 export interface MatchupSource {
   /** The heading. Default: the language's "Head to head". */
   title?: string;
@@ -37,12 +69,37 @@ export interface MatchupSource {
   meetings?: readonly RankingMeeting[];
 }
 
+/**
+ * What a matchup board can be told: how many meetings are listed, the name and rank style, the precision, and the options of every board.
+ *
+ * @example
+ * ```ts
+ * import { rankingMatchup, type MatchupOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: MatchupOptions = { size: "square", rows: 3, precision: 2 };
+ * console.log(rankingMatchup({ a: { name: "Nakamura", rank: 1 }, b: { name: "Brar", rank: 2 } }, options).startsWith("<svg"));
+ * ```
+ */
 export interface MatchupOptions extends BoardOptions, Pick<RankingOptions, "nameStyle" | "precision" | "rankStyle"> {
   /** The most meetings drawn. Default: as many as fit at a readable size. The rest are counted ("+2 more"); the record counts them all. */
   rows?: number;
 }
 
-/** The record of the meetings: how many each athlete won. A draw or a meeting with no winner is in neither. */
+/**
+ * The record of the meetings: how many each athlete won. A draw or a meeting with no winner is in neither.
+ *
+ * @param meetings - The meetings.
+ * @returns The wins of the first athlete and of the second.
+ * @example
+ * ```ts
+ * import { matchupRecord } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(matchupRecord([
+ *   { date: "2026-09-13", event: "Fall Open", round: "Semi-final", winner: 0, result: "ippon · 2:11" },
+ *   { date: "2026-05-17", event: "Spring Classic", round: "Final", winner: 1, result: "waza-ari · golden score" },
+ * ]).join("–"));
+ * ```
+ */
 export function matchupRecord(meetings: readonly RankingMeeting[] = []): [number, number] {
   return [meetings.filter((m) => m.winner === 0).length, meetings.filter((m) => m.winner === 1).length];
 }
@@ -60,7 +117,22 @@ const rankLine = (e: RankingEntry, v: Voice, hash: boolean): string => (e.rank =
 
 const meetingDate = (m: RankingMeeting, v: Voice): string => (m.date === undefined ? "" : v.date(m.date) ?? m.date);
 
-/** The card as a sentence, the drawing's description. */
+/**
+ * The card as a sentence, the drawing's description.
+ *
+ * @param source - The matchup.
+ * @param options - The language, the words, the name style, the precision and the rank style.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeMatchup } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeMatchup({ a: { name: "Nakamura", rank: 1 }, b: { name: "Brar", rank: 2 }, meetings: [
+ *   { date: "2026-09-13", event: "Fall Open", round: "Semi-final", winner: 0, result: "ippon · 2:11" },
+ *   { date: "2026-05-17", event: "Spring Classic", round: "Final", winner: 1, result: "waza-ari · golden score" },
+ * ] }));
+ * ```
+ */
 export function describeMatchup(source: MatchupSource, options: Pick<MatchupOptions, "locale" | "words" | "nameStyle" | "precision" | "rankStyle"> = {}): string {
   const v = voiceOf(options);
   const w = v.words;
@@ -91,6 +163,26 @@ export function describeMatchup(source: MatchupSource, options: Pick<MatchupOpti
 /**
  * The head-to-head card for two athletes and their meetings. Throws a `RangeError` for an athlete with no name, a ranking that is not a whole number from 1, a meeting whose winner is not
  * 0, 1 or null, `rows` that is not a whole number from 1 to 50, or a bad size or theme.
+ *
+ * @param source - The matchup.
+ * @param options - The rows, the size, the theme, the precision and the language.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { matchupRecord, rankingMatchup, type RankingMeeting } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const meetings: RankingMeeting[] = [
+ *   { date: "2026-09-13", event: "Fall Open", round: "Semi-final", winner: 0, result: "ippon · 2:11" },
+ *   { date: "2026-05-17", event: "Spring Classic", round: "Final", winner: 1, result: "waza-ari · golden score" },
+ * ];
+ * const svg = rankingMatchup({
+ *   category: "U18 · Men -60 kg",
+ *   a: { name: { surname: "Nakamura", given: "Kenji" }, rank: 1, points: 412.5 },
+ *   b: { name: { surname: "Brar", given: "Harpreet" }, rank: 2, points: 398 },
+ *   meetings,
+ * }, { precision: 2, size: "square" });
+ * console.log(matchupRecord(meetings).join("–"), svg.includes("PREVIOUS MEETINGS"));
+ * ```
  */
 export function rankingMatchup(source: MatchupSource, options: MatchupOptions = {}): string {
   if (!source) throw new RangeError("taisen-brackets: a head-to-head needs two athletes");

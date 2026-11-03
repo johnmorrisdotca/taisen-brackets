@@ -7,3 +7,5 @@ playwright-report/
 .cache/
 .readme-examples/
 .DS_Store
+.docs-examples/
+.usage/

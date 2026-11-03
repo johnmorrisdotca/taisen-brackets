@@ -4,7 +4,20 @@ import { judoNotes, sideScoreLong } from "./judo-text.ts";
 import { abbreviate } from "./text.ts";
 import { fill, type Voice } from "./locales.ts";
 
-/** A bracket's teams: the list given, plus a team made from every id that a matchup names and the list does not. */
+/**
+ * A bracket's teams: the list given, plus a team made from every id that a matchup names and the list does not.
+ *
+ * @param matchups - The matchups whose sides are to be found.
+ * @param given - The teams listed once, with names, marks and groups.
+ * @returns A map from each side's id to its team.
+ * @example
+ * ```ts
+ * import { collectTeams } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const teams = collectTeams([{ sides: ["ARG", "FRA"], score: [3, 3] }], [{ id: "ARG", name: "Argentina" }]);
+ * console.log(teams.get("ARG")?.name, teams.get("FRA")?.name);
+ * ```
+ */
 export function collectTeams(matchups: readonly Matchup[], given: readonly Team[] = []): Map<SideId, Team> {
   const teams = new Map<SideId, Team>();
   for (const team of given) {
@@ -68,7 +81,22 @@ function kindOf(m: Matchup): MatchupKind {
   return "game";
 }
 
-/** One matchup as a tie: sides resolved to teams, the winner and the result worked out. The round is set by the layout. */
+/**
+ * One matchup as a tie: sides resolved to teams, the winner and the result worked out. The round is set by the layout.
+ *
+ * @param m - The matchup.
+ * @param index - Its place in the list of matchups.
+ * @param teams - The teams, from `collectTeams`.
+ * @returns The tie, with its result worked out from the score, the games or the legs.
+ * @example
+ * ```ts
+ * import { collectTeams, resolveMatchup } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const matchup = { sides: ["ARG", "FRA"], score: [3, 3], pens: [4, 2] } as const;
+ * const tie = resolveMatchup(matchup, 0, collectTeams([matchup]));
+ * console.log(tie.winner, tie.result.decided);
+ * ```
+ */
 export function resolveMatchup(m: Matchup, index: number, teams: ReadonlyMap<SideId, Team>): Tie {
   const ids = [sideId(m.sides[0]), sideId(m.sides[1])] as const;
   if (ids[0] !== null && ids[0] === ids[1]) throw new Error(`taisen-brackets: matchup ${index} has ${JSON.stringify(ids[0])} on both sides`);
@@ -113,7 +141,20 @@ export function resolveMatchup(m: Matchup, index: number, teams: ReadonlyMap<Sid
 /** The short name of a team for a small box. */
 export const abbrOf = (team: Team | null, v: Voice): string => (team ? team.abbr ?? abbreviate(v.team(team)) : v.words.tbd);
 
-/** The pieces of a note under a tie's score, short: "a.e.t.", "pens", "in 7", "agg.". */
+/**
+ * The pieces of a note under a tie's score, short: "a.e.t.", "pens", "in 7", "agg.".
+ *
+ * @param tie - The tie.
+ * @param v - The voice of a language, from `voiceOf`.
+ * @returns The notes; an empty list when the score needs none.
+ * @example
+ * ```ts
+ * import { layoutBracket, noteParts, voiceOf } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const { ties } = layoutBracket([{ sides: ["ARG", "FRA"], score: [3, 3], extraTime: true, pens: [4, 2] }]);
+ * console.log(noteParts(ties[0], voiceOf({})));
+ * ```
+ */
 export function noteParts(tie: Tie, v: Voice): string[] {
   const r = tie.result;
   const w = v.words;
@@ -138,7 +179,20 @@ export function noteParts(tie: Tie, v: Voice): string[] {
   return out;
 }
 
-/** The notes of a tie written out, for a sentence or a table: "after extra time", "4–2 on penalties". */
+/**
+ * The notes of a tie written out, for a sentence or a table: "after extra time", "4–2 on penalties".
+ *
+ * @param tie - The tie.
+ * @param v - The voice of a language, from `voiceOf`.
+ * @returns The notes in full; an empty list when the score needs none.
+ * @example
+ * ```ts
+ * import { layoutBracket, noteLong, voiceOf } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const { ties } = layoutBracket([{ sides: ["ARG", "FRA"], score: [3, 3], extraTime: true, pens: [4, 2] }]);
+ * console.log(noteLong(ties[0], voiceOf({ locale: "ja" })));
+ * ```
+ */
 export function noteLong(tie: Tie, v: Voice): string[] {
   const r = tie.result;
   const w = v.words;
@@ -162,7 +216,20 @@ export function noteLong(tie: Tie, v: Voice): string[] {
   return out;
 }
 
-/** A tie in a sentence, for a tooltip, a table and a description: "Argentina 3, France 3 (after extra time, 4–2 on penalties). Winner: Argentina". */
+/**
+ * A tie in a sentence, for a tooltip, a table and a description: "Argentina 3, France 3 (after extra time, 4–2 on penalties). Winner: Argentina".
+ *
+ * @param tie - The tie.
+ * @param v - The voice of a language, from `voiceOf`.
+ * @returns The sentence, in the voice's language.
+ * @example
+ * ```ts
+ * import { describeTie, layoutBracket, voiceOf } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const { ties } = layoutBracket([{ sides: ["Aurora", "Harbour"], score: [2, 1] }]);
+ * console.log(describeTie(ties[0], voiceOf({})));
+ * ```
+ */
 export function describeTie(tie: Tie, v: Voice): string {
   const w = v.words;
   const name = (t: Team | null) => (t ? v.team(t) : w.tbd);

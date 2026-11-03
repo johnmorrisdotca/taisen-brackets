@@ -1,7 +1,7 @@
 {
   "name": "@johnmorrisdotca/taisen-brackets",
-  "version": "0.18.0",
-  "description": "Taisen Brackets 対戦, knockout brackets as SVG: from a list of ties (games, best-of series, two legs, replays, byes, a third-place match) it works out the rounds and halves and draws the bracket with the halves meeting at the final, or left to right, wide, square, as a tall card or for a phone, in a classic or a road look (large round flags, big scores, a team's dotted path, a link on every box), in light, dark or a gold-on-navy poster look, in eight layouts (the tree, rows, shields, a score-update card, tall columns, the NBA's play-in, a series card and group tables), on one of twenty-five poster backgrounds (the playing surfaces of five sports among them) or your own, with each team's logo or round flag, the champion in the centre, and an accessible table; and the road to the final of either finalist. NHL, NBA, MLB, NFL, CFL, MLS and World Cup formats by era, in English, French, Japanese, Spanish and German. Zero dependencies.",
+  "version": "0.19.0",
+  "description": "Taisen Brackets 対戦 — Knockout brackets as SVG: from a list of ties (games, best-of series, two legs, replays, byes, a third-place match) it works out the rounds and halves and draws the bracket with the halves meeting at the final, or left to right, wide, square, as a tall card or for a phone, in a classic or a road look (large round flags, big scores, a team's dotted path, a link on every box), in light, dark or a gold-on-navy poster look, in eight layouts (the tree, rows, shields, a score-update card, tall columns, the NBA's play-in, a series card and group tables), on one of twenty-five poster backgrounds (the playing surfaces of five sports among them) or your own, with each team's logo or round flag, the champion in the centre, and an accessible table; and the road to the final of either finalist. NHL, NBA, MLB, NFL, CFL, MLS and World Cup formats by era, in English, French, Japanese, Spanish and German. Zero dependencies.",
   "keywords": [
     "bracket",
     "tournament",
@@ -99,10 +99,15 @@
     "dev": "pnpm build && node scripts/dev.mjs",
     "flags": "node scripts/make-flags.mjs",
     "site": "pnpm build && node scripts/site.mjs",
-    "test:demo": "pnpm site && playwright test",
+    "test:demo": "pnpm site && node scripts/docs-site.mjs build && playwright test",
     "images": "pnpm site && node scripts/screenshots.mjs",
     "screenshots": "pnpm site && node scripts/screenshots.mjs",
-    "animations": "pnpm build && node scripts/animations.mjs"
+    "animations": "pnpm build && node scripts/animations.mjs",
+    "docs:site": "pnpm build && node scripts/docs-site.mjs build",
+    "docs:check": "pnpm build && node scripts/docs-site.mjs check",
+    "size": "node scripts/docs-site.mjs size",
+    "test:usage": "pnpm site && node scripts/check-usage.ts",
+    "check:standard": "node scripts/check-standard.mjs"
   },
   "peerDependencies": {
     "@johnmorrisdotca/dougu-sports": ">=0.1.0 <1",
@@ -117,14 +122,34 @@
     }
   },
   "devDependencies": {
+    "@angular/common": "^22.2.4",
+    "@angular/compiler": "^22.2.4",
+    "@angular/core": "^22.2.4",
+    "@angular/platform-browser": "^22.2.4",
     "@eslint/js": "^9.0.0",
     "@johnmorrisdotca/dougu-sports": "0.1.0",
     "@johnmorrisdotca/hata": "1.6.2",
+    "@johnmorrisdotca/kazoku-ui": "^0.10.1",
     "@playwright/test": "^1.63.0",
+    "@sveltejs/vite-plugin-svelte": "^7.3.1",
     "@types/node": "^24.0.0",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "@vitejs/plugin-vue": "^6.0.10",
+    "esbuild": "^0.28.2",
     "eslint": "^9.0.0",
+    "marked": "^18.1.3",
+    "pagefind": "^1.6.0",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "rxjs": "^7.8.2",
+    "svelte": "^5.57.3",
     "typescript": "^5.9.0",
-    "typescript-eslint": "^8.0.0"
+    "typescript-eslint": "^8.0.0",
+    "vite": "^8.3.5",
+    "vue": "^3.5.44",
+    "webpack": "^5.112.2",
+    "webpack-cli": "^7.3.1"
   },
   "publishConfig": {
     "access": "public"

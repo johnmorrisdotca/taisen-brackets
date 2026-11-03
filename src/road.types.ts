@@ -1,20 +1,63 @@
 // The types of the road-to-the-final chart: what `roadToFinal` takes (a tournament, or the two finalists and the matches on their way) and what it gives back.
 import type { BracketInput, BracketLayout, DrawOptions, Matchup, SideId, SizeName, Team } from "./types.ts";
 
-/** A team of a road chart: a `Team` whose `id` is optional (a standalone finalist needs only a name), with `logo` as another name for `mark`. */
+/**
+ * A team of a road chart: a `Team` whose `id` is optional (a standalone finalist needs only a name), with `logo` as another name for `mark`.
+ *
+ * @example
+ * ```ts
+ * import { roadToFinal, type RoadTeam } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const gulls: RoadTeam = { name: "Harbour City Gulls", abbr: "HCG", color: "#1d4f91" };
+ * const owls: RoadTeam = { name: "Northern Owls", abbr: "NOW" };
+ * const chart = roadToFinal([{ ...gulls, path: [] }, { ...owls, path: [] }]);
+ * console.log(chart.totals.finalists.map((one) => one.name));
+ * ```
+ */
 export type RoadTeam = Omit<Team, "id" | "group"> & {
   id?: SideId;
   /** The address or inline SVG of a flag or a crest: another name for `mark`. */
   logo?: string;
 };
 
-/** A match's score from the finalist's side: `[for, against]` (numbers, or text such as a series' `4`), or one text, `"4-2"`, that is split at its dash. */
+/**
+ * A match's score from the finalist's side: `[for, against]` (numbers, or text such as a series' `4`), or one text, `"4-2"`, that is split at its dash.
+ *
+ * @example
+ * ```ts
+ * import { type RoadScore } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const game: RoadScore = [2, 1];
+ * const series: RoadScore = "4-2";
+ * console.log(game, series);
+ * ```
+ */
 export type RoadScore = readonly [number | string, number | string] | string;
 
-/** How a match was decided: `ft` (full time, the default), `aet` (after extra time) or `pens` (a shoot-out after extra time). */
+/**
+ * How a match was decided: `ft` (full time, the default), `aet` (after extra time) or `pens` (a shoot-out after extra time).
+ *
+ * @example
+ * ```ts
+ * import { type RoadDecided } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const how: RoadDecided = "pens";
+ * console.log(how);
+ * ```
+ */
 export type RoadDecided = "ft" | "aet" | "pens";
 
-/** One match on a finalist's way. */
+/**
+ * One match on a finalist's way.
+ *
+ * @example
+ * ```ts
+ * import { type RoadMatch } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const semi: RoadMatch = { round: "semi-final", opponent: { name: "Valley Stars", abbr: "VAL" }, score: [1, 1], decidedBy: "pens", pens: [4, 3] };
+ * console.log(semi.round, semi.decidedBy);
+ * ```
+ */
 export interface RoadMatch {
   /** The round, as a key. `round-of-32`, `round-of-16`, `quarter-final` and `semi-final` have words in every language; any other key is written as it is, or as `options.labels` names it. */
   round: string;
@@ -32,10 +75,31 @@ export interface RoadMatch {
   note?: string;
 }
 
-/** One match of the group stage: as a knockout match, without a round. */
+/**
+ * One match of the group stage: as a knockout match, without a round.
+ *
+ * @example
+ * ```ts
+ * import { type RoadGroupMatch } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const opener: RoadGroupMatch = { opponent: { name: "Summit Peaks", abbr: "SMT" }, score: [0, 0] };
+ * console.log(opener.score);
+ * ```
+ */
 export type RoadGroupMatch = Omit<RoadMatch, "round"> & { round?: string };
 
-/** A finalist: a team and the matches it played on the way, the earliest first. */
+/**
+ * A finalist: a team and the matches it played on the way, the earliest first.
+ *
+ * @example
+ * ```ts
+ * import { roadToFinal, type RoadFinalist } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const owls: RoadFinalist = { name: "Northern Owls", abbr: "NOW", path: [{ round: "semi-final", opponent: { name: "Valley Stars" }, score: [2, 0] }] };
+ * const gulls: RoadFinalist = { name: "Harbour City Gulls", abbr: "HCG", path: [{ round: "semi-final", opponent: { name: "Metro Bolts" }, score: [2, 1] }] };
+ * console.log(roadToFinal([owls, gulls]).totals.rounds);
+ * ```
+ */
 export interface RoadFinalist extends RoadTeam {
   /** The knockout matches before the final, the earliest first. */
   path: readonly RoadMatch[];
@@ -43,7 +107,18 @@ export interface RoadFinalist extends RoadTeam {
   group?: readonly RoadGroupMatch[];
 }
 
-/** The final, when it has been played. */
+/**
+ * The final, when it has been played.
+ *
+ * @example
+ * ```ts
+ * import { roadToFinal, type RoadFinal } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const final: RoadFinal = { score: [1, 2], decidedBy: "aet" };
+ * const chart = roadToFinal([{ name: "Owls", path: [] }, { name: "Gulls", path: [] }], { final });
+ * console.log(chart.totals.champion);
+ * ```
+ */
 export interface RoadFinal {
   /** The score, the first finalist's first. */
   score: RoadScore;
@@ -53,10 +128,30 @@ export interface RoadFinal {
   note?: string;
 }
 
-/** The sizes of the road chart are the bracket's: `card` (the default here), `square`, `wide` (the finalists at the two ends) and `phone`. */
+/**
+ * The sizes of the road chart are the bracket's: `card` (the default here), `square`, `wide` (the finalists at the two ends) and `phone`.
+ *
+ * @example
+ * ```ts
+ * import { roadToFinal, type RoadSize } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const size: RoadSize = "wide";
+ * console.log(roadToFinal([{ name: "Owls", path: [] }, { name: "Gulls", path: [] }], { size }).draw().startsWith("<svg"));
+ * ```
+ */
 export type RoadSize = SizeName;
 
-/** What `roadToFinal` takes besides the finalists or the tournament. */
+/**
+ * What `roadToFinal` takes besides the finalists or the tournament.
+ *
+ * @example
+ * ```ts
+ * import { roadToFinal, type RoadOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: RoadOptions = { title: "Northern Cup 2030", size: "square", codes: true };
+ * console.log(roadToFinal([{ name: "Owls", abbr: "NOW", path: [] }, { name: "Gulls", abbr: "HCG", path: [] }], options).title);
+ * ```
+ */
 export interface RoadOptions extends Pick<DrawOptions, "locale" | "words" | "teamName" | "roundNames" | "markShape" | "flags" | "flagHref" | "theme" | "background" | "id" | "className"> {
   /** With a tournament: the finalist whose road is on the left (by team id); the other finalist is its opponent in the final. Left out, the first side of the final. */
   team?: SideId;
@@ -80,7 +175,18 @@ export interface RoadOptions extends Pick<DrawOptions, "locale" | "words" | "tea
   endnote?: string;
 }
 
-/** One finalist's record on the way. */
+/**
+ * One finalist's record on the way.
+ *
+ * @example
+ * ```ts
+ * import { roadToFinal, type RoadRecord } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const chart = roadToFinal([{ name: "Owls", path: [{ round: "semi-final", opponent: { name: "Stars" }, score: [2, 0] }] }, { name: "Gulls", path: [] }]);
+ * const owls: RoadRecord = chart.totals.finalists[0];
+ * console.log(owls.matches, owls.won, owls.scored);
+ * ```
+ */
 export interface RoadRecord {
   name: string;
   /** Matches played in the group and the knockout rounds (not the final), and how many it won, drew and lost. */
@@ -93,7 +199,17 @@ export interface RoadRecord {
   conceded: number;
 }
 
-/** The numbers behind a road chart. */
+/**
+ * The numbers behind a road chart.
+ *
+ * @example
+ * ```ts
+ * import { roadToFinal, type RoadTotals } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const totals: RoadTotals = roadToFinal([{ name: "Owls", path: [] }, { name: "Gulls", path: [] }]).totals;
+ * console.log(totals.played, totals.champion);
+ * ```
+ */
 export interface RoadTotals {
   finalists: [RoadRecord, RoadRecord];
   /** The rounds of the chart, the earliest first, as keys. */
@@ -104,10 +220,30 @@ export interface RoadTotals {
   champion: string | null;
 }
 
-/** What `roadToFinal` takes: the two finalists with their paths, or a tournament (a list of matchups, `{ matchups, teams }` or a layout) whose final has two sides. */
+/**
+ * What `roadToFinal` takes: the two finalists with their paths, or a tournament (a list of matchups, `{ matchups, teams }` or a layout) whose final has two sides.
+ *
+ * @example
+ * ```ts
+ * import { roadToFinal, type RoadInput } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const input: RoadInput = [{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }];
+ * console.log(roadToFinal(input).totals.champion);
+ * ```
+ */
 export type RoadInput = readonly [RoadFinalist, RoadFinalist] | BracketLayout | readonly Matchup[] | BracketInput;
 
-/** What `roadToFinal` gives back. */
+/**
+ * What `roadToFinal` gives back.
+ *
+ * @example
+ * ```ts
+ * import { roadToFinal, type RoadChart } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const chart: RoadChart = roadToFinal([{ sides: ["Aurora", "Harbour"], score: [2, 1] }, { sides: ["Cascade", "Delta"], score: [0, 1] }, { sides: ["Aurora", "Delta"], score: [3, 1] }]);
+ * console.log(chart.title, chart.draw().startsWith("<svg"), chart.table().startsWith("<table"));
+ * ```
+ */
 export interface RoadChart {
   /** The options the chart was made with: pass changes to `draw`. */
   options: RoadOptions;

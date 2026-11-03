@@ -17,7 +17,9 @@ createServer(async (request, response) => {
   const rel = normalize(path === "/" ? "/index.html" : path).replace(/^([/\\])+/, "");
   // The demo's trophies come from the emblems package (a dev dependency), served at /dougu-sports/ as the Pages build copies them.
   const emblems = rel.startsWith("dougu-sports/");
-  const base = emblems ? join(root, "node_modules", "@johnmorrisdotca", "dougu-sports", "dist") : rel.startsWith("dist/") ? root : join(root, "demo");
+  // What `pnpm site` and the docs build make (the family header's picker, the documentation site) is served from site/.
+  const built = rel.startsWith("docs/") || ["kazoku-parts.js", "api.html", "llms.txt", "llms-full.txt"].includes(rel);
+  const base = built ? join(root, "site") : emblems ? join(root, "node_modules", "@johnmorrisdotca", "dougu-sports", "dist") : rel.startsWith("dist/") ? root : join(root, "demo");
   const file = join(base, emblems ? rel.slice("dougu-sports/".length) : rel);
   if (!file.startsWith(root)) { response.writeHead(403).end("no"); return; }
   try {

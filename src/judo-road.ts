@@ -14,7 +14,20 @@ import { roundLabel } from "./rounds.ts";
 import { fit, fitLines, num } from "./text.ts";
 import type { BracketInput, BracketLayout, DrawOptions, Matchup, SideId, Team } from "./types.ts";
 
-/** One win on the road: the round it was in, the opponent (none for a bye), and how it was won in words ("ippon · 1:12", "decision · GS · 5:12", or a score). */
+/**
+ * One win on the road: the round it was in, the opponent (none for a bye), and how it was won in words ("ippon · 1:12", "decision · GS · 5:12", or a score).
+ *
+ * @example
+ * ```ts
+ * import { judoWins, type JudoWin } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const wins: JudoWin[] = judoWins([
+ *   { id: "a", round: 1, sides: ["Haru", "Marc"], judo: { sides: [{ ippon: true }, {}], time: "1:12" } },
+ *   { id: "f", round: 2, sides: ["Haru", "Levan"], judo: { sides: [{ wazaAri: 1 }, { yuko: 1 }], goldenScore: true, time: "5:40" } },
+ * ], "Haru");
+ * console.log(wins[0].round, wins[0].how);
+ * ```
+ */
 export interface JudoWin {
   round: string;
   opponent?: JudoAthlete;
@@ -22,6 +35,20 @@ export interface JudoWin {
   bye?: boolean;
 }
 
+/**
+ * What `judoWins` can be told: the language, the round names, how to make an athlete of a team, and whether byes are listed.
+ *
+ * @example
+ * ```ts
+ * import { judoWins, type JudoWinsOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: JudoWinsOptions = { locale: "fr", byes: false };
+ * console.log(judoWins([
+ *   { id: "a", round: 1, sides: ["Haru", "Marc"], judo: { sides: [{ ippon: true }, {}], time: "1:12" } },
+ *   { id: "f", round: 2, sides: ["Haru", "Levan"], judo: { sides: [{ wazaAri: 1 }, { yuko: 1 }], goldenScore: true, time: "5:40" } },
+ * ], "Haru", options).length);
+ * ```
+ */
 export interface JudoWinsOptions {
   locale?: DrawOptions["locale"];
   words?: DrawOptions["words"];
@@ -38,6 +65,21 @@ const asAthlete = (t: Team): JudoAthlete => ({ name: t.name, ...(t.code ? { code
 /**
  * The contests an athlete has won in a bracket, oldest first, with a bye for each round skipped at the start: the opponent, the round (a repechage and a bronze medal contest are named as
  * such) and how it was won, from the judo result's notes or the score. Throws a `RangeError` for an athlete that is not in the bracket.
+ *
+ * @param input - The matchups, a `{ matchups, teams }` or a layout.
+ * @param athlete - The id of the athlete.
+ * @param options - The language, the round names and whether byes are listed.
+ * @returns The wins, earliest first; an empty list when the athlete has won none.
+ * @example
+ * ```ts
+ * import { judoWins } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const wins = judoWins([
+ *   { id: "a", round: 1, sides: ["Haru", "Marc"], judo: { sides: [{ ippon: true }, {}], time: "1:12" } },
+ *   { id: "f", round: 2, sides: ["Haru", "Levan"], judo: { sides: [{ wazaAri: 1 }, { yuko: 1 }], goldenScore: true, time: "5:40" } },
+ * ], "Haru");
+ * console.log(wins.map((w) => `${w.round}: ${w.opponent?.name}, ${w.how}`).join(" / "));
+ * ```
  */
 export function judoWins(input: BracketLayout | readonly Matchup[] | BracketInput, athlete: SideId, options: JudoWinsOptions = {}): JudoWin[] {
   const layout: BracketLayout = "ties" in input && "sides" in input ? (input as BracketLayout) : layoutBracket(input as readonly Matchup[] | BracketInput);
@@ -65,12 +107,37 @@ export function judoWins(input: BracketLayout | readonly Matchup[] | BracketInpu
   return [...byes, ...rows];
 }
 
+/**
+ * What a road panel shows: the athlete and the contests they won.
+ *
+ * @example
+ * ```ts
+ * import { judoRoadPanel, judoWins, type JudoRoadSource } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const source: JudoRoadSource = { athlete: { name: "Haru", code: "JPN" }, wins: judoWins([
+ *   { id: "a", round: 1, sides: ["Haru", "Marc"], judo: { sides: [{ ippon: true }, {}], time: "1:12" } },
+ *   { id: "f", round: 2, sides: ["Haru", "Levan"], judo: { sides: [{ wazaAri: 1 }, { yuko: 1 }], goldenScore: true, time: "5:40" } },
+ * ], "Haru") };
+ * console.log(judoRoadPanel(source).startsWith("<svg"));
+ * ```
+ */
 export interface JudoRoadSource {
   athlete: JudoAthlete;
   /** Oldest first, as `judoWins` gives them. */
   wins: readonly JudoWin[];
 }
 
+/**
+ * What a road panel can be told: the weight class, the side's colour, the order of the wins, how many rows, the size, the theme and the language.
+ *
+ * @example
+ * ```ts
+ * import { judoRoadPanel, type JudoRoadOptions } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const options: JudoRoadOptions = { weight: "Men -66 kg", side: "blue", order: "first", rows: 4 };
+ * console.log(judoRoadPanel({ athlete: { name: "Haru" }, wins: [] }, options).startsWith("<svg"));
+ * ```
+ */
 export interface JudoRoadOptions extends Omit<JudoBoardOptions, "style" | "swap" | "coaches"> {
   /** The weight class as a heading (`judoCategoryLabel`), written at the right of the header. */
   weight?: string;
@@ -92,7 +159,22 @@ const ROAD_CSS = [
   "$S .jr-bye{fill:#e9e8e1;stroke:#bdbbae;stroke-width:1.5}",
 ].join("\n");
 
-/** The road as a sentence, the drawing's description. */
+/**
+ * The road as a sentence, the drawing's description.
+ *
+ * @param source - The athlete and their wins.
+ * @param options - The language, the words, the weight class and the order.
+ * @returns The description.
+ * @example
+ * ```ts
+ * import { describeJudoRoad, judoWins } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * console.log(describeJudoRoad({ athlete: { name: "Haru" }, wins: judoWins([
+ *   { id: "a", round: 1, sides: ["Haru", "Marc"], judo: { sides: [{ ippon: true }, {}], time: "1:12" } },
+ *   { id: "f", round: 2, sides: ["Haru", "Levan"], judo: { sides: [{ wazaAri: 1 }, { yuko: 1 }], goldenScore: true, time: "5:40" } },
+ * ], "Haru") }));
+ * ```
+ */
 export function describeJudoRoad(source: JudoRoadSource, options: Pick<JudoRoadOptions, "locale" | "words" | "weight" | "order"> = {}): string {
   const v = voiceOf(options);
   const w = v.words;
@@ -106,6 +188,21 @@ export function describeJudoRoad(source: JudoRoadSource, options: Pick<JudoRoadO
 /**
  * The road-to-the-final panel for an athlete: their block (flag, name, code, coach) in the colour of a judogi, and a row for each contest won, most recent first: the round, the
  * opponent's flag, code and name, and how it was won. A bye is a quiet row. Throws a `RangeError` for an athlete with no name, a win with no round, or a bad size, theme or `rows`.
+ *
+ * @param source - The athlete and their wins.
+ * @param options - The weight class, the side, the order, the rows, the size, the theme and the language.
+ * @returns The SVG, a string that begins with `<svg`.
+ * @example
+ * ```ts
+ * import { judoRoadPanel, judoWins } from "@johnmorrisdotca/taisen-brackets";
+ *
+ * const wins = judoWins([
+ *   { id: "a", round: 1, sides: ["Haru", "Marc"], judo: { sides: [{ ippon: true }, {}], time: "1:12" } },
+ *   { id: "f", round: 2, sides: ["Haru", "Levan"], judo: { sides: [{ wazaAri: 1 }, { yuko: 1 }], goldenScore: true, time: "5:40" } },
+ * ], "Haru");
+ * const svg = judoRoadPanel({ athlete: { name: "Haru", code: "JPN" }, wins }, { weight: "Men -66 kg" });
+ * console.log(svg.includes("Road to the final"));
+ * ```
  */
 export function judoRoadPanel(source: JudoRoadSource, options: JudoRoadOptions = {}): string {
   check(source.athlete, "road");

@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Taisen Brackets from jsDelivr</title>
+  </head>
+  <body>
+    <div id="bracket"></div>
+    <script type="module">
+      import { drawBracket } from "https://cdn.jsdelivr.net/npm/@johnmorrisdotca/taisen-brackets@0/dist/index.js";
+
+      document.getElementById("bracket").innerHTML = drawBracket([
+        { sides: ["Aurora", "Harbour"], score: [2, 1] },
+        { sides: ["Cascade", "Delta"], score: [0, 1] },
+        { sides: ["Aurora", "Delta"], score: [3, 1] },
+      ]);
+    </script>
+  </body>
+</html>

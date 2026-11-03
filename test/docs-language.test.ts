@@ -108,7 +108,9 @@ function proseOf(text: string, allowed: Allowed[]): string[] {
 }
 
 const all = pages();
-const japanesePages = all.filter((file) => file.endsWith(".ja.md"));
+// A Japanese page is a `<name>.ja.md` beside its English twin, or a guide under docs/guides/ja/ (the documentation site's: one language to a page, the same file names as docs/guides/).
+const inJapaneseFolder = (file: string) => file.startsWith("docs/guides/ja/");
+const japanesePages = all.filter((file) => file.endsWith(".ja.md") || inJapaneseFolder(file));
 const allowedOf = (file: string) => ALLOWED.filter((entry) => entry.file === file);
 
 describe("the docs are single-language", () => {
@@ -119,7 +121,7 @@ describe("the docs are single-language", () => {
   it("have an English page with no Japanese outside code, except what ALLOWED names", () => {
     const found: string[] = [];
     for (const file of all) {
-      if (file.endsWith(".ja.md")) continue;
+      if (file.endsWith(".ja.md") || inJapaneseFolder(file)) continue;
       const allowed = allowedOf(file);
       if (allowed.some((entry) => entry.both)) continue;
       proseOf(readFileSync(file, "utf8"), allowed).forEach((line, index) => {
@@ -144,7 +146,7 @@ describe("the docs are single-language", () => {
 
   it("link the two pages of a pair to each other, at the top", () => {
     const found: string[] = [];
-    for (const file of japanesePages) {
+    for (const file of japanesePages.filter((one) => one.endsWith(".ja.md"))) {
       const twin = file.replace(/\.ja\.md$/, ".md");
       if (!existsSync(twin)) {
         found.push(`${file} has no English twin ${twin}`);
