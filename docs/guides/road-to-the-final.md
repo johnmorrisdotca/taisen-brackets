@@ -7,8 +7,6 @@ description: A bracket shows the whole tournament.
 
 A bracket shows the whole tournament. A road-to-the-final chart shows only two stories: how each finalist got there. It is the picture for a social post on the day of the final: two large round marks at the top, the rounds down the middle with the last at the top, and each finalist's matches on its side with the score between the two teams' marks. This guide draws one from a tournament you already have, from two teams' paths you write by hand, and as a table.
 
-![A road to the final, wide](../images/road-wide-nhl-light.webp)
-
 ## From a tournament
 
 `roadToFinal(input, options?)` takes what `drawBracket` takes. The two sides of its final are the finalists, and each one's played ties are its road. It returns `{ options, title, summary, totals, draw(extra?), table(options?) }`: the options it was made with, an accessible name, a caption, the numbers behind the picture, the SVG string, and an HTML table.

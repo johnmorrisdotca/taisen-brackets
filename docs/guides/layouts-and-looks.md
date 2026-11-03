@@ -7,8 +7,6 @@ description: The same ties can be drawn many ways.
 
 The same ties can be drawn many ways. This guide separates the six choices that are independent of each other: the **size** of the picture, the **shape** of the tree, the **layout** (tree, rows, shields and the rest), the **look** (classic or road), the **theme** (light, dark, poster) and the **background**. Any combination works.
 
-![A bracket in the classic look, wide](../images/classic-desk-light.webp)
-
 ## Size and shape
 
 ```js

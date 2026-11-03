@@ -7,8 +7,6 @@ description: The package began with knockout brackets, and the same drawing kit 
 
 The package began with knockout brackets, and the same drawing kit now makes the other graphics around a tournament: a judo bracket with its repechage, a scoreboard for one contest, a ranking list, a medal table and a television-style results board. They share the sizes, the five languages, the flags plug-in and the rule that a drawing is one standalone SVG. This guide gives each a short working example; the pages linked from each heading have every option.
 
-![A judo bracket with a repechage](../images/judo-desk-light.webp)
-
 ## A judo contest and its bracket
 
 A judo contest is a tie with a `judo` result: ippon, waza-ari, yuko and shido as the IJF's current rules score them, golden score and the contest time. `judoOutcome` checks it against the rules and says who won and how; the box writes the marks, the shido as cards and a note under the two rows. `judoBracket` makes a weight category's bracket with the repechage and two bronze medal contests. [Judo](../judo.md).

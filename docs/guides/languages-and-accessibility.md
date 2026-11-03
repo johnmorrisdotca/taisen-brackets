@@ -7,8 +7,6 @@ description: A World Cup is read in many languages, and a bracket is read by peo
 
 A World Cup is read in many languages, and a bracket is read by people who cannot see it. Both come down to words: every text the package writes, the round names, the notes, the champion's label, the table's headers and the description, is in a table of words, and there is one table for each of five languages. This guide shows how to choose one, how to name a team in it, how to add a language of your own and what a screen reader gets.
 
-![The same bracket in five languages](../images/languages-wc2022.webp)
-
 ## Choose a language
 
 `locale` is `"en"` (the default), `"fr"`, `"ja"`, `"es"`, `"de"` or a `Locale` you made. It sets the words, the names of the rounds, the `lang` of the `<svg>` and the `<table>`, the digits and the dates (through `Intl`), and capitals by the language's rules (not for Japanese).

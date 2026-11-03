@@ -7,8 +7,6 @@ description: A bracket of names is a table.
 
 A bracket of names is a table. What makes it a picture is each team's mark, a flag or a crest, and the champion in the middle with a cup. None of them is a dependency of the package: you bring the marks, the package draws them safely and writes each once. This guide covers the four things you can bring.
 
-![A bracket with round flags](../images/road-card-light.webp)
-
 ## A mark of your own
 
 A team's `mark` is an image address (`https://`, `data:image/` or a relative path) or inline SVG. It is drawn in a circle (`markShape: "round"`, the default), a square, or left out (`"none"`). A team with no mark is its initials on its `color`, so nothing looks missing. In the road look a team with no mark is a rounded tile with its letters.

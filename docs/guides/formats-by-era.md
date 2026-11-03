@@ -7,8 +7,6 @@ description: A bracket is not the same thing in every year.
 
 A bracket is not the same thing in every year. The NHL's first round was best of five until 1986; the NFL added a wild-card round; the World Cup has had four different knockouts. `playoffFormat(league, year)` returns the round names, the length of each series, the number of teams and the byes for a season, so a drawing says "Conference Semifinals" and "best of 7" because that is what it was called then.
 
-![A World Cup bracket](../images/hero-desk-light.webp)
-
 ## Ask for a season
 
 ```js
