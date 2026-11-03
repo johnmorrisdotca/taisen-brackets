@@ -5,19 +5,25 @@
 //
 //   node scripts/screenshots.mjs                   every picture of docs/images
 //   node scripts/screenshots.mjs --extra <folder>  also the review shots (taisen-bg-*.png, taisen-layout-*.png) into <folder>
+//   node scripts/screenshots.mjs --thumbnail       only the family's thumbnail, dark thumbnail and icon (docs/images/thumbnail.png, thumbnail-dark.png,
+//                                                  icon.png; scripts/family-thumbnail.mjs), which every run also takes
+// TEST_PORT serves the demo on another port of the block (a worktree: 7102 and up).
 import { spawn } from "node:child_process";
 import { mkdirSync, writeFileSync } from "node:fs";
 import process from "node:process";
 import { fileURLToPath } from "node:url";
 import { chromium } from "@playwright/test";
 
+import { captureDrawing, composeThumbnails } from "./family-thumbnail.mjs";
+
 const root = fileURLToPath(new URL("..", import.meta.url));
 const out = `${root}docs/images`;
 const extraAt = process.argv.indexOf("--extra");
 const extra = extraAt > -1 ? process.argv[extraAt + 1] : null;
+const onlyThumbnail = process.argv.includes("--thumbnail");
 mkdirSync(out, { recursive: true });
 if (extra) mkdirSync(extra, { recursive: true });
-const port = 7101;
+const port = Number(process.env.TEST_PORT ?? 7101);
 const server = spawn(process.execPath, ["scripts/dev.mjs"], { cwd: root, env: { ...process.env, PORT: String(port) }, stdio: "ignore" });
 try {
   await new Promise((resolve, reject) => {
@@ -64,160 +70,190 @@ try {
     else await element.screenshot({ path: `${dir}/${name}.png` });
     await context.close();
   };
-  // Each example opens on the background that suits its sport (the demo's default), so the pictures show the range: ice, hardwood, an infield, turf, a pitch, waves, a sunburst...
-  await shoot("hero-desk-light", "ex=wc2022", { width: 1280, height: 900 });
-  await shoot("hero-desk-dark", "ex=wc2022", { width: 1280, height: 900, scheme: "dark" });
-  await shoot("nhl-desk-light", "ex=nhl2024", { width: 1280, height: 900 });
-  await shoot("poster-desk", "ex=poster", { width: 1280, height: 900 });
-  await shoot("phone-light", "ex=wc2022", { width: 390, height: 844, phone: true });
-  await shoot("phone-dark", "ex=wc2022", { width: 390, height: 844, phone: true, scheme: "dark" });
-  await shoot("phone-poster", "ex=poster", { width: 390, height: 844, phone: true });
-  await shoot("byes-desk-light", "ex=mlb2022", { width: 1280, height: 900 });
-  await shoot("replays-desk-light", "ex=wc1938", { width: 1280, height: 900 });
-  await shoot("generic32-desk-light", "ex=generic32", { width: 1280, height: 900 });
-  await shoot("nba-desk-light", "ex=nba2024", { width: 1280, height: 900 });
-  await shoot("nfl-desk-light", "ex=nfl2024", { width: 1280, height: 900 });
-  await shoot("cfl-desk-light", "ex=cfl2024", { width: 1280, height: 900 });
-  await shoot("mls-desk-light", "ex=mls2024", { width: 1280, height: 900 });
-  await shoot("nhl1984-desk-light", "ex=nhl1984", { width: 1280, height: 900 });
-  await shoot("judo-desk-light", "ex=judo66", { width: 1280, height: 900 });
-  await shoot("judo-desk-dark", "ex=judo66", { width: 1280, height: 900, scheme: "dark" });
-  // The judo scoreboard: a TV board in the dark in golden score with an osaekomi running, table-top flip cards on a tablet, and a tablet held upright at the end of a contest.
-  await shoot("judo-board-tv-dark", "bstyle=board&bsize=tv&btheme=dark&bgs=1&bclock=0:42&bosa=1:14&bw=0,1,1,1&bb=0,1,0,2", { width: 1280, height: 900 }, out, "#board-stage svg");
-  await shoot("judo-board-flip-tablet-light", "bstyle=flip&bsize=tablet&btheme=light", { width: 1280, height: 900 }, out, "#board-stage svg");
-  await shoot("judo-queue-tv-dark", "qview=queue&qmats=3&qsize=tv&qtheme=dark", { width: 1280, height: 900 }, out, "#queue-stage svg");
-  await shoot("judo-queue-tablet-light", "qview=queue&qmats=4&qsize=tablet&qtheme=light", { width: 1280, height: 900 }, out, "#queue-stage svg");
-  await shoot("judo-card-tv-dark", "qview=card&qsize=tv&qtheme=dark", { width: 1280, height: 900 }, out, "#queue-stage svg");
-  await shoot("judo-road-tv-dark", "rathlete=J01&rsize=tv&rtheme=dark", { width: 1280, height: 900 }, out, "#judoroad-stage svg");
-  await shoot("judo-road-tall-light", "rathlete=J02&rsize=tablet-tall&rtheme=light&rside=white", { width: 1280, height: 900 }, out, "#judoroad-stage svg");
-  // The ranking lists: the podium on a TV in the dark, a champion and two columns on a square card, and a phone in the dark with the movement as row colours.
-  await shoot("ranking-podium-tv-dark", "ksize=tv&ktheme=dark", { width: 1280, height: 900 }, out, "#ranking-stage svg");
-  await shoot("ranking-podium-tv-light", "ksize=tv&ktheme=light", { width: 1280, height: 900 }, out, "#ranking-stage svg");
-  await shoot("ranking-featured-square-light", "klist=senior-women-57&kstyle=featured&ksize=square&kmove=both&ktheme=light", { width: 1280, height: 900 }, out, "#ranking-stage svg");
-  await shoot("ranking-phone-dark", "ksize=phone&ktheme=dark&kmove=both&krows=10", { width: 1280, height: 900 }, out, "#ranking-stage svg");
-  await shoot("ranking-numbers-square-light", "kview=numbers&ksize=square&ktheme=light", { width: 1280, height: 900 }, out, "#ranking-stage svg");
-  await shoot("ranking-entries-portrait-light", "kview=entries&ksize=portrait&ktheme=light&ksort=ranking", { width: 1280, height: 900 }, out, "#ranking-stage svg");
-  await shoot("ranking-matchup-phone-light", "kview=matchup&ksize=phone&ktheme=light", { width: 1280, height: 900 }, out, "#ranking-stage svg");
-  // The medal table: all Games on a TV in the dark, in two columns, and the +100 kg judo table on a 4:5 card in the light.
-  await shoot("medal-table-tv-dark", "mtheme=dark&msize=tv", { width: 1280, height: 900 }, out, "#medal-stage svg");
-  await shoot("medal-table-portrait-light", "msport=judo&mcat=%2B100+kg&mtop=10&msize=portrait&mtheme=light", { width: 1280, height: 900 }, out, "#medal-stage svg");
-  // The broadcast boards: a gymnastics final in the blue look, a swimming final with a record badge on the paper look, and athletics on the night look with medal boxes.
-  await shoot("results-apparatus-blue", "gex=apparatus&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
-  await shoot("results-swimming-paper", "gex=swimming&glook=paper&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
-  await shoot("results-athletics-night", "gex=athletics&glook=night&grank=medal&gicon=stopwatch&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
-  await shoot("bout-board-blue", "gview=bout&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
-  await shoot("bout-board-night", "gview=bout&glook=night&gicon=none&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
-  await shoot("broadcast-medal-table-blue", "gview=medals&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
-  await shoot("broadcast-medal-table-night", "gview=medals&glook=night&gicon=none&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
-  await shoot("judo-board-tall-light", "bstyle=board&bsize=tablet-tall&btheme=light&bw=1,0,0,0&bb=0,0,1,1&bclock=1:51&bosa=none", { width: 1280, height: 900 }, out, "#board-stage svg");
-  // The road look's own pictures: the classic look beside it (it keeps its plain colour), a card, one team's path, and the road to the final in three sizes.
-  await shoot("classic-desk-light", "ex=wc2022&look=classic&bg=plain", { width: 1280, height: 900 });
-  await shoot("card-light", "ex=wc2022&size=card&bg=royal", { width: 1280, height: 900 });
-  await shoot("path-desk-light", "ex=wc2022&path=1&bg=floodlights", { width: 1280, height: 900 });
-  await shoot("road-card-light", "ex=wc2022&view=road&size=card&bg=royal", { width: 1280, height: 900 });
-  await shoot("road-wide-nhl-light", "ex=nhl2024&view=road&size=wide", { width: 1280, height: 900 });
-  await shoot("road-phone-dark", "ex=wc2022&view=road&size=phone&theme=dark&bg=aurora", { width: 390, height: 844, phone: true, scheme: "dark" });
-  await shoot("poster-desk-ja", "ex=poster&lang=ja", { width: 1280, height: 900 });
-  await shoot("hero-desk-fr", "ex=wc2022&lang=fr", { width: 1280, height: 900 });
-  await shoot("phone-ja", "ex=wc2022&lang=ja", { width: 390, height: 844, phone: true });
-  // The same bracket in all five languages, side by side: the World Cup of 2022 on a phone's layout, drawn by the package itself in the demo's page.
-  {
-    const { page, context } = await open("ex=wc2022", { width: 2000, height: 1200, scale: 1.5 });
-    await page.evaluate(async () => {
-      const T = await import("/dist/index.js");
-      const { examples } = await import("/examples.js");
-      const example = examples(T).find((e) => e.key === "wc2022");
-      const teamName = (team, locale) => (team.region ? T.countryName(team.region, locale) : undefined);
-      const names = { en: "English", fr: "Français", ja: "日本語", es: "Español", de: "Deutsch" };
-      const box = document.createElement("div");
-      box.id = "languages";
-      box.style.cssText = "display:flex;gap:14px;align-items:flex-start;padding:14px;background:#f4efe4;width:max-content;font:700 15px system-ui,sans-serif;color:#1f2320";
-      box.innerHTML = T.LOCALE_CODES.map((code) => `<figure style="margin:0;width:390px"><figcaption style="padding:0 0 8px">${names[code]}</figcaption>${T.drawBracket(example.data, { ...example.options, size: "phone", locale: code, teamName, id: `l-${code}`, title: example.titles?.[code] ?? example.options.title, background: false })}</figure>`).join("");
-      document.body.replaceChildren(box);
-    });
-    writeFileSync(`${out}/languages-wc2022.webp`, await toWebp(await (await page.$("#languages")).screenshot({ type: "png" })));
-    await context.close();
+  if (!onlyThumbnail) {
+    // Each example opens on the background that suits its sport (the demo's default), so the pictures show the range: ice, hardwood, an infield, turf, a pitch, waves, a sunburst...
+    await shoot("hero-desk-light", "ex=wc2022", { width: 1280, height: 900 });
+    await shoot("hero-desk-dark", "ex=wc2022", { width: 1280, height: 900, scheme: "dark" });
+    await shoot("nhl-desk-light", "ex=nhl2024", { width: 1280, height: 900 });
+    await shoot("poster-desk", "ex=poster", { width: 1280, height: 900 });
+    await shoot("phone-light", "ex=wc2022", { width: 390, height: 844, phone: true });
+    await shoot("phone-dark", "ex=wc2022", { width: 390, height: 844, phone: true, scheme: "dark" });
+    await shoot("phone-poster", "ex=poster", { width: 390, height: 844, phone: true });
+    await shoot("byes-desk-light", "ex=mlb2022", { width: 1280, height: 900 });
+    await shoot("replays-desk-light", "ex=wc1938", { width: 1280, height: 900 });
+    await shoot("generic32-desk-light", "ex=generic32", { width: 1280, height: 900 });
+    await shoot("nba-desk-light", "ex=nba2024", { width: 1280, height: 900 });
+    await shoot("nfl-desk-light", "ex=nfl2024", { width: 1280, height: 900 });
+    await shoot("cfl-desk-light", "ex=cfl2024", { width: 1280, height: 900 });
+    await shoot("mls-desk-light", "ex=mls2024", { width: 1280, height: 900 });
+    await shoot("nhl1984-desk-light", "ex=nhl1984", { width: 1280, height: 900 });
+    await shoot("judo-desk-light", "ex=judo66", { width: 1280, height: 900 });
+    await shoot("judo-desk-dark", "ex=judo66", { width: 1280, height: 900, scheme: "dark" });
+    // The judo scoreboard: a TV board in the dark in golden score with an osaekomi running, table-top flip cards on a tablet, and a tablet held upright at the end of a contest.
+    await shoot("judo-board-tv-dark", "bstyle=board&bsize=tv&btheme=dark&bgs=1&bclock=0:42&bosa=1:14&bw=0,1,1,1&bb=0,1,0,2", { width: 1280, height: 900 }, out, "#board-stage svg");
+    await shoot("judo-board-flip-tablet-light", "bstyle=flip&bsize=tablet&btheme=light", { width: 1280, height: 900 }, out, "#board-stage svg");
+    await shoot("judo-queue-tv-dark", "qview=queue&qmats=3&qsize=tv&qtheme=dark", { width: 1280, height: 900 }, out, "#queue-stage svg");
+    await shoot("judo-queue-tablet-light", "qview=queue&qmats=4&qsize=tablet&qtheme=light", { width: 1280, height: 900 }, out, "#queue-stage svg");
+    await shoot("judo-card-tv-dark", "qview=card&qsize=tv&qtheme=dark", { width: 1280, height: 900 }, out, "#queue-stage svg");
+    await shoot("judo-road-tv-dark", "rathlete=J01&rsize=tv&rtheme=dark", { width: 1280, height: 900 }, out, "#judoroad-stage svg");
+    await shoot("judo-road-tall-light", "rathlete=J02&rsize=tablet-tall&rtheme=light&rside=white", { width: 1280, height: 900 }, out, "#judoroad-stage svg");
+    // The ranking lists: the podium on a TV in the dark, a champion and two columns on a square card, and a phone in the dark with the movement as row colours.
+    await shoot("ranking-podium-tv-dark", "ksize=tv&ktheme=dark", { width: 1280, height: 900 }, out, "#ranking-stage svg");
+    await shoot("ranking-podium-tv-light", "ksize=tv&ktheme=light", { width: 1280, height: 900 }, out, "#ranking-stage svg");
+    await shoot("ranking-featured-square-light", "klist=senior-women-57&kstyle=featured&ksize=square&kmove=both&ktheme=light", { width: 1280, height: 900 }, out, "#ranking-stage svg");
+    await shoot("ranking-phone-dark", "ksize=phone&ktheme=dark&kmove=both&krows=10", { width: 1280, height: 900 }, out, "#ranking-stage svg");
+    await shoot("ranking-numbers-square-light", "kview=numbers&ksize=square&ktheme=light", { width: 1280, height: 900 }, out, "#ranking-stage svg");
+    await shoot("ranking-entries-portrait-light", "kview=entries&ksize=portrait&ktheme=light&ksort=ranking", { width: 1280, height: 900 }, out, "#ranking-stage svg");
+    await shoot("ranking-matchup-phone-light", "kview=matchup&ksize=phone&ktheme=light", { width: 1280, height: 900 }, out, "#ranking-stage svg");
+    // The medal table: all Games on a TV in the dark, in two columns, and the +100 kg judo table on a 4:5 card in the light.
+    await shoot("medal-table-tv-dark", "mtheme=dark&msize=tv", { width: 1280, height: 900 }, out, "#medal-stage svg");
+    await shoot("medal-table-portrait-light", "msport=judo&mcat=%2B100+kg&mtop=10&msize=portrait&mtheme=light", { width: 1280, height: 900 }, out, "#medal-stage svg");
+    // The broadcast boards: a gymnastics final in the blue look, a swimming final with a record badge on the paper look, and athletics on the night look with medal boxes.
+    await shoot("results-apparatus-blue", "gex=apparatus&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
+    await shoot("results-swimming-paper", "gex=swimming&glook=paper&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
+    await shoot("results-athletics-night", "gex=athletics&glook=night&grank=medal&gicon=stopwatch&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
+    await shoot("bout-board-blue", "gview=bout&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
+    await shoot("bout-board-night", "gview=bout&glook=night&gicon=none&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
+    await shoot("broadcast-medal-table-blue", "gview=medals&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
+    await shoot("broadcast-medal-table-night", "gview=medals&glook=night&gicon=none&gwidth=960", { width: 1280, height: 900 }, out, "#boards-stage svg");
+    await shoot("judo-board-tall-light", "bstyle=board&bsize=tablet-tall&btheme=light&bw=1,0,0,0&bb=0,0,1,1&bclock=1:51&bosa=none", { width: 1280, height: 900 }, out, "#board-stage svg");
+    // The road look's own pictures: the classic look beside it (it keeps its plain colour), a card, one team's path, and the road to the final in three sizes.
+    await shoot("classic-desk-light", "ex=wc2022&look=classic&bg=plain", { width: 1280, height: 900 });
+    await shoot("card-light", "ex=wc2022&size=card&bg=royal", { width: 1280, height: 900 });
+    await shoot("path-desk-light", "ex=wc2022&path=1&bg=floodlights", { width: 1280, height: 900 });
+    await shoot("road-card-light", "ex=wc2022&view=road&size=card&bg=royal", { width: 1280, height: 900 });
+    await shoot("road-wide-nhl-light", "ex=nhl2024&view=road&size=wide", { width: 1280, height: 900 });
+    await shoot("road-phone-dark", "ex=wc2022&view=road&size=phone&theme=dark&bg=aurora", { width: 390, height: 844, phone: true, scheme: "dark" });
+    await shoot("poster-desk-ja", "ex=poster&lang=ja", { width: 1280, height: 900 });
+    await shoot("hero-desk-fr", "ex=wc2022&lang=fr", { width: 1280, height: 900 });
+    await shoot("phone-ja", "ex=wc2022&lang=ja", { width: 390, height: 844, phone: true });
+    // The same bracket in all five languages, side by side: the World Cup of 2022 on a phone's layout, drawn by the package itself in the demo's page.
+    {
+      const { page, context } = await open("ex=wc2022", { width: 2000, height: 1200, scale: 1.5 });
+      await page.evaluate(async () => {
+        const T = await import("/dist/index.js");
+        const { examples } = await import("/examples.js");
+        const example = examples(T).find((e) => e.key === "wc2022");
+        const teamName = (team, locale) => (team.region ? T.countryName(team.region, locale) : undefined);
+        const names = { en: "English", fr: "Français", ja: "日本語", es: "Español", de: "Deutsch" };
+        const box = document.createElement("div");
+        box.id = "languages";
+        box.style.cssText = "display:flex;gap:14px;align-items:flex-start;padding:14px;background:#f4efe4;width:max-content;font:700 15px system-ui,sans-serif;color:#1f2320";
+        box.innerHTML = T.LOCALE_CODES.map((code) => `<figure style="margin:0;width:390px"><figcaption style="padding:0 0 8px">${names[code]}</figcaption>${T.drawBracket(example.data, { ...example.options, size: "phone", locale: code, teamName, id: `l-${code}`, title: example.titles?.[code] ?? example.options.title, background: false })}</figure>`).join("");
+        document.body.replaceChildren(box);
+      });
+      writeFileSync(`${out}/languages-wc2022.webp`, await toWebp(await (await page.$("#languages")).screenshot({ type: "png" })));
+      await context.close();
+    }
+    // The twenty-five backgrounds, each on the sport it suits, in the dark and in the light variant: two grids of five by five.
+    for (const scheme of ["dark", "light"]) {
+      const { page, context } = await open("ex=wc2022", { width: 2000, height: 1200, scale: 1, scheme });
+      await page.evaluate(async (theme) => {
+        const T = await import("/dist/index.js");
+        const { examples } = await import("/examples.js");
+        const { renderEmblem } = await import("/emblems.js");
+        const { FLAGS } = await import("/flags-data.js");
+        const all = examples(T);
+        const pick = { midnight: "nhl2024", crimson: "mls2024", royal: "wc2022", emerald: "cfl2024", pitch: "wc2022", ice: "nhl2024", hardwood: "nba2024", infield: "mlb2022", turf: "nfl2024", "ball-panels": "wc1938", swirl: "nba2024", waves: "mls2024", glow: "poster", floodlights: "wc2022", confetti: "twoLegs", carbon: "nfl2024", aurora: "nhl1984", sunburst: "cfl2024", chevrons: "mlb2022", halftone: "generic32", argyle: "nhl1984", contour: "wc1938", stardust: "poster", mesh: "nba2024", spotlight: "wc2022" };
+        const teamName = (team, locale) => (team.region ? T.countryName(team.region, locale) : undefined);
+        const box = document.createElement("div");
+        box.id = "grid";
+        box.style.cssText = "display:grid;grid-template-columns:repeat(5,384px);gap:8px;padding:8px;background:#20242b;width:max-content";
+        box.innerHTML = T.BACKGROUND_PRESETS.map((name) => {
+          const e = all.find((x) => x.key === pick[name]);
+          const emblem = T.LEAGUE_EMBLEMS[e.sport === "wc" ? "worldcup" : e.sport];
+          const svg = T.drawBracket(e.data, { ...e.options, ...(emblem && { emblems: renderEmblem, trophy: emblem }), look: "road", flags: (c) => FLAGS[c], size: "wide", theme, background: name, id: `g-${name}`, teamName, seeds: e.key === "nhl2024" });
+          return `<figure style="margin:0;position:relative;width:384px"><figcaption style="position:absolute;left:8px;bottom:8px;padding:3px 10px;border-radius:99px;background:rgba(0,0,0,.62);color:#fff;font:700 13px system-ui,sans-serif;z-index:2">${name}</figcaption>${svg.replace('style="max-width:100%;height:auto"', 'style="display:block;width:100%;height:auto"')}</figure>`;
+        }).join("");
+        document.body.replaceChildren(box);
+      }, scheme);
+      writeFileSync(`${out}/backgrounds-${scheme}.webp`, await toWebp(await (await page.$("#grid")).screenshot({ type: "png" })));
+      await context.close();
+    }
+    // Every layout, on the sport that suits it, on its own background; the playground opens each from the address.
+    const LAYOUT_SHOTS = [
+      ["layout-rows-nhl", "rows", "ex=nhl2024&layout=rows&bg=ice", { width: 1280, height: 900 }],
+      ["layout-update-nhl", "update", "ex=nhl2024&layout=update&bg=aurora", { width: 1280, height: 900 }],
+      ["layout-shields-wc2022", "shields", "ex=wc2022&layout=shields&bg=floodlights", { width: 1280, height: 900 }],
+      ["layout-columns-nfl", "columns", "ex=nfl2024&layout=columns&bg=turf&headers=1", { width: 1280, height: 900 }],
+      ["layout-playin-nba", "playin", "ex=nba2024playin&bg=hardwood", { width: 1280, height: 900 }],
+      ["layout-series-nba", "series", "ex=nba2024&layout=series&bg=carbon&size=card&headers=1", { width: 1280, height: 900 }],
+      ["layout-groups-cup", "groups", "ex=cupGroups&bg=midnight", { width: 1280, height: 900 }],
+      ["layout-groups-softball", "groups", "ex=softballGroups&bg=royal&size=phone", { width: 390, height: 844, phone: true }],
+      ["layout-columns-phone", "columns", "ex=wc2022&layout=columns&bg=pitch&size=phone", { width: 390, height: 844, phone: true }],
+      ["layout-picture-mlb", "picture", "ex=mlb2025&layout=picture&bg=infield", { width: 1280, height: 900 }],
+      ["layout-picture-nhl-dark", "picture", "ex=nhl2024&layout=picture&bg=ice&theme=dark", { width: 1280, height: 900, scheme: "dark" }],
+      ["layout-picture-phone", "picture", "ex=mlb2025&layout=picture&bg=infield&size=phone", { width: 390, height: 844, phone: true }],
+    ];
+    for (const [name, , query, options] of LAYOUT_SHOTS) await shoot(name, query, options);
+    // A final alone, with its third-place match, centred (the World Cups of 1974 and 1978 ended so): drawn by the package itself in the demo's page.
+    {
+      const { page, context } = await open("ex=wc2022", { width: 1280, height: 900 });
+      await page.evaluate(async () => {
+        const T = await import("/dist/index.js");
+        const { FLAGS } = await import("/flags-data.js");
+        const { renderEmblem } = await import("/emblems.js");
+        const teams = [{ id: "NED", name: "Netherlands", flag: "NL", abbr: "NED" }, { id: "GER", name: "West Germany", flag: "DE", abbr: "FRG" }, { id: "POL", name: "Poland", flag: "PL", abbr: "POL" }, { id: "BRA", name: "Brazil", flag: "BR", abbr: "BRA" }];
+        const matchups = [{ id: "F", sides: ["NED", "GER"], round: 1, score: [1, 2] }, { id: "T", sides: ["POL", "BRA"], third: true, score: [1, 0] }];
+        document.getElementById("stage").innerHTML = T.drawBracket({ teams, matchups }, { look: "road", flags: (c) => FLAGS[c], background: "pitch", title: "FIFA World Cup 1974", subtitle: "The final and the third-place match", emblems: renderEmblem, trophy: T.LEAGUE_EMBLEMS.worldcup, id: "lone" });
+      });
+      writeFileSync(`${out}/layout-lone-final.webp`, await toWebp(await (await page.$("#stage svg")).screenshot({ type: "png" })));
+      await context.close();
+    }
+    // The review shots, when asked for: the World Cup 2022 card on four backgrounds, the NHL wide, a phone in the dark, and a picture of your own.
+    if (extra) {
+      // One picture of each layout, for review.
+      await shoot("taisen-layout-tree", "ex=wc2022&bg=pitch", { width: 1280, height: 900 }, extra);
+      for (const [, layout, query, options] of LAYOUT_SHOTS.slice(0, 7)) await shoot(`taisen-layout-${layout}`, query, options, extra);
+      await shoot("taisen-layout-groups-softball", "ex=softballGroups&bg=royal", { width: 1280, height: 900 }, extra);
+      for (const bg of ["pitch", "royal", "crimson", "aurora"]) await shoot(`taisen-bg-wc2022-card-${bg}`, `ex=wc2022&size=card&bg=${bg}`, { width: 1280, height: 900 }, extra);
+      await shoot("taisen-bg-nhl-wide", "ex=nhl2024&size=wide", { width: 1280, height: 900 }, extra);
+      await shoot("taisen-bg-phone-dark", "ex=wc2022&size=phone&theme=dark", { width: 390, height: 844, phone: true, scheme: "dark" }, extra);
+      // A picture of your own: drawn in the page (a gradient and some lines, as a data address), so that no file is needed.
+      const { page, context } = await open("ex=wc2022&size=card", { width: 1280, height: 900 });
+      await page.evaluate(async () => {
+        const T = await import("/dist/index.js");
+        const { examples } = await import("/examples.js");
+        const { renderEmblem } = await import("/emblems.js");
+        const { FLAGS } = await import("/flags-data.js");
+        const e = examples(T).find((x) => x.key === "wc2022");
+        const photo = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6b26b"/><stop offset=".55" stop-color="#c0504d"/><stop offset="1" stop-color="#2b2a4c"/></linearGradient></defs><rect width="400" height="500" fill="url(#s)"/><circle cx="270" cy="170" r="70" fill="#ffe9b0"/><path d="M0 380 L90 300 L170 370 L260 280 L400 390 V500 H0Z" fill="#1b1f3a"/></svg>`;
+        const image = `data:image/svg+xml;base64,${window.btoa(photo)}`;
+        const svg = T.drawBracket(e.data, { ...e.options, emblems: renderEmblem, trophy: T.LEAGUE_EMBLEMS.worldcup, look: "road", flags: (c) => FLAGS[c], size: "card", theme: "dark", background: { image, fit: "cover", dim: 0.5 }, id: "mine", teamName: (t, l) => (t.region ? T.countryName(t.region, l) : undefined) });
+        document.getElementById("stage").innerHTML = svg;
+      });
+      await (await page.$("#stage svg")).screenshot({ path: `${extra}/taisen-bg-custom-image.png` });
+      await context.close();
+    }
   }
-  // The twenty-five backgrounds, each on the sport it suits, in the dark and in the light variant: two grids of five by five.
-  for (const scheme of ["dark", "light"]) {
-    const { page, context } = await open("ex=wc2022", { width: 2000, height: 1200, scale: 1, scheme });
-    await page.evaluate(async (theme) => {
-      const T = await import("/dist/index.js");
-      const { examples } = await import("/examples.js");
-      const { renderEmblem } = await import("/emblems.js");
-      const { FLAGS } = await import("/flags-data.js");
-      const all = examples(T);
-      const pick = { midnight: "nhl2024", crimson: "mls2024", royal: "wc2022", emerald: "cfl2024", pitch: "wc2022", ice: "nhl2024", hardwood: "nba2024", infield: "mlb2022", turf: "nfl2024", "ball-panels": "wc1938", swirl: "nba2024", waves: "mls2024", glow: "poster", floodlights: "wc2022", confetti: "twoLegs", carbon: "nfl2024", aurora: "nhl1984", sunburst: "cfl2024", chevrons: "mlb2022", halftone: "generic32", argyle: "nhl1984", contour: "wc1938", stardust: "poster", mesh: "nba2024", spotlight: "wc2022" };
-      const teamName = (team, locale) => (team.region ? T.countryName(team.region, locale) : undefined);
-      const box = document.createElement("div");
-      box.id = "grid";
-      box.style.cssText = "display:grid;grid-template-columns:repeat(5,384px);gap:8px;padding:8px;background:#20242b;width:max-content";
-      box.innerHTML = T.BACKGROUND_PRESETS.map((name) => {
-        const e = all.find((x) => x.key === pick[name]);
-        const emblem = T.LEAGUE_EMBLEMS[e.sport === "wc" ? "worldcup" : e.sport];
-        const svg = T.drawBracket(e.data, { ...e.options, ...(emblem && { emblems: renderEmblem, trophy: emblem }), look: "road", flags: (c) => FLAGS[c], size: "wide", theme, background: name, id: `g-${name}`, teamName, seeds: e.key === "nhl2024" });
-        return `<figure style="margin:0;position:relative;width:384px"><figcaption style="position:absolute;left:8px;bottom:8px;padding:3px 10px;border-radius:99px;background:rgba(0,0,0,.62);color:#fff;font:700 13px system-ui,sans-serif;z-index:2">${name}</figcaption>${svg.replace('style="max-width:100%;height:auto"', 'style="display:block;width:100%;height:auto"')}</figure>`;
-      }).join("");
-      document.body.replaceChildren(box);
-    }, scheme);
-    writeFileSync(`${out}/backgrounds-${scheme}.webp`, await toWebp(await (await page.$("#grid")).screenshot({ type: "png" })));
-    await context.close();
-  }
-  // Every layout, on the sport that suits it, on its own background; the playground opens each from the address.
-  const LAYOUT_SHOTS = [
-    ["layout-rows-nhl", "rows", "ex=nhl2024&layout=rows&bg=ice", { width: 1280, height: 900 }],
-    ["layout-update-nhl", "update", "ex=nhl2024&layout=update&bg=aurora", { width: 1280, height: 900 }],
-    ["layout-shields-wc2022", "shields", "ex=wc2022&layout=shields&bg=floodlights", { width: 1280, height: 900 }],
-    ["layout-columns-nfl", "columns", "ex=nfl2024&layout=columns&bg=turf&headers=1", { width: 1280, height: 900 }],
-    ["layout-playin-nba", "playin", "ex=nba2024playin&bg=hardwood", { width: 1280, height: 900 }],
-    ["layout-series-nba", "series", "ex=nba2024&layout=series&bg=carbon&size=card&headers=1", { width: 1280, height: 900 }],
-    ["layout-groups-cup", "groups", "ex=cupGroups&bg=midnight", { width: 1280, height: 900 }],
-    ["layout-groups-softball", "groups", "ex=softballGroups&bg=royal&size=phone", { width: 390, height: 844, phone: true }],
-    ["layout-columns-phone", "columns", "ex=wc2022&layout=columns&bg=pitch&size=phone", { width: 390, height: 844, phone: true }],
-    ["layout-picture-mlb", "picture", "ex=mlb2025&layout=picture&bg=infield", { width: 1280, height: 900 }],
-    ["layout-picture-nhl-dark", "picture", "ex=nhl2024&layout=picture&bg=ice&theme=dark", { width: 1280, height: 900, scheme: "dark" }],
-    ["layout-picture-phone", "picture", "ex=mlb2025&layout=picture&bg=infield&size=phone", { width: 390, height: 844, phone: true }],
-  ];
-  for (const [name, , query, options] of LAYOUT_SHOTS) await shoot(name, query, options);
-  // A final alone, with its third-place match, centred (the World Cups of 1974 and 1978 ended so): drawn by the package itself in the demo's page.
-  {
-    const { page, context } = await open("ex=wc2022", { width: 1280, height: 900 });
-    await page.evaluate(async () => {
-      const T = await import("/dist/index.js");
-      const { FLAGS } = await import("/flags-data.js");
-      const { renderEmblem } = await import("/emblems.js");
-      const teams = [{ id: "NED", name: "Netherlands", flag: "NL", abbr: "NED" }, { id: "GER", name: "West Germany", flag: "DE", abbr: "FRG" }, { id: "POL", name: "Poland", flag: "PL", abbr: "POL" }, { id: "BRA", name: "Brazil", flag: "BR", abbr: "BRA" }];
-      const matchups = [{ id: "F", sides: ["NED", "GER"], round: 1, score: [1, 2] }, { id: "T", sides: ["POL", "BRA"], third: true, score: [1, 0] }];
-      document.getElementById("stage").innerHTML = T.drawBracket({ teams, matchups }, { look: "road", flags: (c) => FLAGS[c], background: "pitch", title: "FIFA World Cup 1974", subtitle: "The final and the third-place match", emblems: renderEmblem, trophy: T.LEAGUE_EMBLEMS.worldcup, id: "lone" });
-    });
-    writeFileSync(`${out}/layout-lone-final.webp`, await toWebp(await (await page.$("#stage svg")).screenshot({ type: "png" })));
-    await context.close();
-  }
-  // The review shots, when asked for: the World Cup 2022 card on four backgrounds, the NHL wide, a phone in the dark, and a picture of your own.
-  if (extra) {
-    // One picture of each layout, for review.
-    await shoot("taisen-layout-tree", "ex=wc2022&bg=pitch", { width: 1280, height: 900 }, extra);
-    for (const [, layout, query, options] of LAYOUT_SHOTS.slice(0, 7)) await shoot(`taisen-layout-${layout}`, query, options, extra);
-    await shoot("taisen-layout-groups-softball", "ex=softballGroups&bg=royal", { width: 1280, height: 900 }, extra);
-    for (const bg of ["pitch", "royal", "crimson", "aurora"]) await shoot(`taisen-bg-wc2022-card-${bg}`, `ex=wc2022&size=card&bg=${bg}`, { width: 1280, height: 900 }, extra);
-    await shoot("taisen-bg-nhl-wide", "ex=nhl2024&size=wide", { width: 1280, height: 900 }, extra);
-    await shoot("taisen-bg-phone-dark", "ex=wc2022&size=phone&theme=dark", { width: 390, height: 844, phone: true, scheme: "dark" }, extra);
-    // A picture of your own: drawn in the page (a gradient and some lines, as a data address), so that no file is needed.
-    const { page, context } = await open("ex=wc2022&size=card", { width: 1280, height: 900 });
-    await page.evaluate(async () => {
+  // The family's thumbnail: the World Cup of 2022 from the round of 16 in the road look, with a round flag for each nation, the scores and the champion under
+  // a plain cup (not the tournament's own trophy), drawn with no background and laid by scripts/family-thumbnail.mjs on the family's paper (light) and its black
+  // cloth (dark). The icon is the last four alone, the two semi-finals and the final, as round flags with no words, so that it reads at 40 pixels.
+  const thumbnailDrawing = async (scheme, lastFour) => {
+    const { page } = await open("ex=wc2022", { width: 1600, height: 1400, scheme });
+    await page.evaluate(async ({ theme, lastFour }) => {
       const T = await import("/dist/index.js");
       const { examples } = await import("/examples.js");
       const { renderEmblem } = await import("/emblems.js");
       const { FLAGS } = await import("/flags-data.js");
       const e = examples(T).find((x) => x.key === "wc2022");
-      const photo = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 500"><defs><linearGradient id="s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f6b26b"/><stop offset=".55" stop-color="#c0504d"/><stop offset="1" stop-color="#2b2a4c"/></linearGradient></defs><rect width="400" height="500" fill="url(#s)"/><circle cx="270" cy="170" r="70" fill="#ffe9b0"/><path d="M0 380 L90 300 L170 370 L260 280 L400 390 V500 H0Z" fill="#1b1f3a"/></svg>`;
-      const image = `data:image/svg+xml;base64,${window.btoa(photo)}`;
-      const svg = T.drawBracket(e.data, { ...e.options, emblems: renderEmblem, trophy: T.LEAGUE_EMBLEMS.worldcup, look: "road", flags: (c) => FLAGS[c], size: "card", theme: "dark", background: { image, fit: "cover", dim: 0.5 }, id: "mine", teamName: (t, l) => (t.region ? T.countryName(t.region, l) : undefined) });
-      document.getElementById("stage").innerHTML = svg;
-    });
-    await (await page.$("#stage svg")).screenshot({ path: `${extra}/taisen-bg-custom-image.png` });
-    await context.close();
-  }
+      const teamName = (team, locale) => (team.region ? T.countryName(team.region, locale) : undefined);
+      const rounds = Math.max(...e.data.matchups.map((m) => m.round ?? 0));
+      const matchups = lastFour ? e.data.matchups.filter((m) => !m.third && m.round >= rounds - 1) : e.data.matchups;
+      const svg = T.drawBracket({ teams: e.data.teams, matchups }, { look: "road", flags: (c) => FLAGS[c], emblems: renderEmblem, trophy: "trophy:cup", size: lastFour ? { width: 560, height: 560 } : "wide", theme, background: false, thirdPlace: "hide", ...(lastFour ? { detail: "mark", roundLabels: false, scores: false, words: { champion: "" }, teamName: () => "" } : { teamName }), id: "thumbnail" });
+      const box = document.createElement("div");
+      box.id = "thumbnail-stage";
+      box.style.cssText = `width:${lastFour ? 1120 : 1200}px`;
+      box.innerHTML = svg.replace('style="max-width:100%;height:auto"', 'style="display:block;width:100%;height:auto"');
+      document.body.replaceChildren(box);
+    }, { theme: scheme, lastFour });
+    return { page, drawing: await captureDrawing(page, "#thumbnail-stage svg") };
+  };
+  const light = await thumbnailDrawing("light", false);
+  const dark = await thumbnailDrawing("dark", false);
+  const icon = await thumbnailDrawing("light", true);
+  for (const picture of await composeThumbnails({ page: icon.page, root, light: light.drawing, dark: dark.drawing, icon: icon.drawing, label: "Taisen Brackets 対戦" })) console.log(picture.file, `${Math.round(picture.bytes / 1024)} KB`);
+  for (const one of [light, dark, icon]) await one.page.context().close();
   await browser.close();
   console.log(`pictures written to ${out}${extra ? ` and ${extra}` : ""}`);
 } finally {

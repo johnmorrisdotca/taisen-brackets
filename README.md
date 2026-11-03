@@ -1,3 +1,5 @@
+<p align="center"><a href="https://johnmorrisdotca.github.io/taisen-brackets/"><picture><source media="(prefers-color-scheme: dark)" srcset="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/thumbnail-dark.png"><img src="https://raw.githubusercontent.com/johnmorrisdotca/taisen-brackets/main/docs/images/thumbnail.png" alt="Taisen Brackets: the knockout stage of the 2022 World Cup in two halves that meet at the final, with a round flag for each nation, the scores and Argentina under a cup as champion." width="1200"></picture></a></p>
+
 <h1 align="center">Taisen Brackets <sub>対戦</sub></h1>
 
 <p align="center"><strong>Knockout brackets as SVG, from a list of ties.</strong><br>

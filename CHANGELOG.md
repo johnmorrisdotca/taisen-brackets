@@ -8,6 +8,8 @@ All notable changes to this project are written here. The format follows
 
 ### Changed
 
+- The README opens with the package's thumbnail, and the demo carries it as its link preview (og:image) and publishes the card, a dark card and an icon on Pages at `thumbnail.png`, `thumbnail-dark.png` and `icon.png`.
+
 - The demo (not the package): fewer folds (MODULES-113). The bracket's table and call, two folds at the foot of a page 13,000 pixels long, are now three tabs (Picture, Table, The call) under the bracket they describe, with the arrow keys. The four road cards each had a "Table" fold; one switch above them (Pictures or Tables) now does it for all four. What stays is one closed fold of code beside each of the six demos that have one. Tests in `e2e/demo.demo.mjs` and `e2e/road.demo.mjs`.
 
 ## [0.18.0] - 2026-10-30
