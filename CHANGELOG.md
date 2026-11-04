@@ -6,6 +6,8 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+## [0.20.0] - 2026-11-04
+
 The builder's code section is the family's embed panel (MODULES-373). No change to the package's drawings.
 
 - **`builder.html`'s code section is kazoku-ui's `<kazoku-embed-panel>`** (kazoku-ui ^0.15.1). Nothing it had is gone, and a test counts it: the six rows of choices (teams, size, look, theme, layout, background), the two tabs "The call" and "In a page" with the same code as before, Copy (now "Copy code"), and the links Getting started, Layouts, looks and backgrounds and API reference.
