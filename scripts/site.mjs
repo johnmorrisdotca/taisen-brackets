@@ -29,4 +29,13 @@ await build({
   minify: true,
   logLevel: "silent",
 });
+// The family's embed panel for the builder page, as one small module.
+await build({
+  stdin: { contents: 'import "@johnmorrisdotca/kazoku-ui/embed-panel/define";\n', resolveDir: process.cwd() },
+  outfile: "site/embed-panel.js",
+  bundle: true,
+  format: "esm",
+  minify: true,
+  logLevel: "silent",
+});
 console.log("site/ is ready");

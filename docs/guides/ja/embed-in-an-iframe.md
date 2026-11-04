@@ -5,7 +5,7 @@ order: 17
 description: スクリプトを使えないページでも、デモの埋め込みページを iframe で載せてトーナメント表を表示します。
 ---
 
-スクリプトを使えないサイトでも、デモの埋め込みページを iframe で載せればトーナメント表を表示できます。自分でコードを書く必要はありません。アドレスで、見た目 (`look`。`classic` か `road`)、テーマ (`theme`。`auto`、`light`、`dark`、`poster`)、言語 (`locale`。`en`、`fr`、`ja`、`es`、`de`)、大きさ (`size`。`wide`、`square`、`card`、`phone`)、タイトル (`title`) を選びます。キーは `drawBracket` のオプションと同じです。
+スクリプトを使えないサイトでも、デモの埋め込みページを iframe で載せればトーナメント表を表示できます。自分でコードを書く必要はありません。[ビルダー](https://johnmorrisdotca.github.io/taisen-brackets/builder.html)がそのコードを書いてくれます。ビルダーのコードの部分はファミリー共通の埋め込みパネルで、選んだトーナメント表の大きさのiframeのタブのほか、呼び出し、ふつうのページ、React、Vue、Angular、Svelte用のコードも並びます。アドレスで、見た目 (`look`。`classic` か `road`)、テーマ (`theme`。`auto`、`light`、`dark`、`poster`)、言語 (`locale`。`en`、`fr`、`ja`、`es`、`de`)、大きさ (`size`。`wide`、`square`、`card`、`phone`)、タイトル (`title`) を選びます。キーは `drawBracket` のオプションと同じです。
 
 ```html
 <!doctype html>

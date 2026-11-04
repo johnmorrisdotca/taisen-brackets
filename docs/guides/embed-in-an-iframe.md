@@ -5,7 +5,7 @@ order: 17
 description: Show a bracket on a page that allows no scripts, with an iframe of the demo's embed page.
 ---
 
-A site that allows no scripts can still show a bracket: an iframe of the demo's embed page needs no code of your own. The address chooses the look (`look`: `classic` or `road`), the theme (`theme`: `auto`, `light`, `dark` or `poster`), the language (`locale`: `en`, `fr`, `ja`, `es` or `de`), the size (`size`: `wide`, `square`, `card` or `phone`) and a title (`title`). The keys are the options of `drawBracket`.
+A site that allows no scripts can still show a bracket: an iframe of the demo's embed page needs no code of your own. The [builder](https://johnmorrisdotca.github.io/taisen-brackets/builder.html) writes it for you: its code section is the family's embed panel, with the iframe tab at the size of the bracket you chose, and the code for the call, a plain page, React, Vue, Angular and Svelte beside it. The address chooses the look (`look`: `classic` or `road`), the theme (`theme`: `auto`, `light`, `dark` or `poster`), the language (`locale`: `en`, `fr`, `ja`, `es` or `de`), the size (`size`: `wide`, `square`, `card` or `phone`) and a title (`title`). The keys are the options of `drawBracket`.
 
 ```html
 <!doctype html>

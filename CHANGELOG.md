@@ -6,6 +6,11 @@ All notable changes to this project are written here. The format follows
 
 ## [Unreleased]
 
+The builder's code section is the family's embed panel (MODULES-373). No change to the package's drawings.
+
+- **`builder.html`'s code section is kazoku-ui's `<kazoku-embed-panel>`** (kazoku-ui ^0.15.1). Nothing it had is gone, and a test counts it: the six rows of choices (teams, size, look, theme, layout, background), the two tabs "The call" and "In a page" with the same code as before, Copy (now "Copy code"), and the links Getting started, Layouts, looks and backgrounds and API reference.
+- **Added by the panel**: React, Vue, Angular and Svelte tabs, an iframe tab at the drawn bracket's own size (the embed page reads the look, the theme and the size, and says so in a note), the picture made from the same choices beside the code, Open the embed page, Read the docs and the credit line. The code is written by `demo/embed-code.js`, and `test/embed-code.test.ts` runs the call against the package and checks every other way.
+- `scripts/check-standard.mjs` is kazoku-ui 0.15's (the `embed-panel` item); the demo moves to `@johnmorrisdotca/kazoku-ui` ^0.15.1.
 - Docs only (MODULES-247): nine more guides in `docs/guides/` (ties and results, a bracket for any number of teams, layouts and looks, formats by era, marks, flags and trophies, the road to the final, languages and accessibility, judo, rankings, medals and boards, and an architecture guide), each with a Japanese twin in `docs/guides/ja/`; `docs/functions.md`, what each family of functions is for and the options of `drawBracket` and `roadToFinal` (moved out of the README's API section); `demo/builder.html` (the number of teams, the size, the look, the theme, the layout and a background, with the code that draws the result) and `e2e/builder.demo.mjs`. The README has a Guides section and more examples (TypeScript, a server, shaping the data), and is under npm's 64,000 characters: the details of marks, flags, emblems, the road to the final and links moved to the guides.
 
 ## [0.19.0] - 2026-11-03

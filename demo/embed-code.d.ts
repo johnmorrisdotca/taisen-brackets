@@ -1,0 +1,10 @@
+import type { Matchup, Team } from "../src/index.ts";
+export const PACKAGE: string;
+export const SITE: string;
+export const CHOICES: Record<"teams" | "size" | "look" | "theme" | "layout" | "background", { label: string; values: string[]; default: string }>;
+export type State = Record<keyof typeof CHOICES, string>;
+export function drawOptions(state: State): Record<string, unknown>;
+export function tournament(T: { singleElimination(teams: Team[]): { matchups: Matchup[] }; advanceWinners(matchups: readonly Matchup[]): Matchup[] }, count: number): { teams: Team[]; results: Record<string, number[]>; matchups: Matchup[] };
+export function embedCode(kind: string, played: { teams: readonly { name: string }[]; results: Record<string, number[]> }, options: Record<string, unknown>): string | undefined;
+export function frameQuery(state: State): string;
+export function frameCode(state: State, width: number, height: number, preview: boolean): string;
