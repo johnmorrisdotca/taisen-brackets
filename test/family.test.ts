@@ -32,8 +32,8 @@ const id = pkg.name.replace(/^@[^/]+\//, "");
 
 // The template of 2026-11-02b lists thirty-three packages, in eight groups. The family's list is swept again, in every repository at once, when
 // a package is added to it, and this hash is then the new one.
-const TEMPLATE = { version: "2026-11-02b", sha256: "ba62baad076a3d2821c793fa2bf73184ea9b5d1b40721b0987b7cc459a27960d" };
-const WRITER_SHA256 = "ea87c4b45eaaa14cbd40eb40d9eccb38dbe7d45855f9eb0f1c75a4e3b0596306";
+const TEMPLATE = { version: "2026-11-09", sha256: "75ca7e7da99092f360e5a539e34b109b14c92e9c04e7ad98f9e4b1e715c9240e" };
+const WRITER_SHA256 = "dfd4c27b70fe5d7d5f82724180cc739812f0dd13d209c41c053dbdc61bf90188";
 
 test("the family template is the one file, byte for byte, in every package", () => {
   assert.equal(template.FAMILY_TEMPLATE_VERSION, TEMPLATE.version);
@@ -42,7 +42,7 @@ test("the family template is the one file, byte for byte, in every package", () 
 });
 
 test("it lists every package of the family, in order, each with its Japanese name and a line on it", () => {
-  assert.equal(template.FAMILY.length, 33);
+  assert.equal(template.FAMILY.length, 41);
   assert.deepEqual(template.FAMILY_GROUPS.flatMap((group) => group.members), template.FAMILY.map((one) => one.id));
   for (const group of template.FAMILY_GROUPS) assert.deepEqual(group.members, [...group.members].sort());
   for (const one of template.FAMILY) {
